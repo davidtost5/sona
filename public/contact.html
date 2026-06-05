@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- Theme — fully automatic, follows the wall clock (7am–7pm light, else dark) -->
+<script>(function(){try{var h=new Date().getHours();var dark=h<7||h>=19;document.documentElement.setAttribute('data-theme',dark?'dark':'light');}catch(e){}})();</script>
+<meta name="color-scheme" content="light dark">
+<title>Sona — Contact</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800&family=Geist+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg: #ffffff; --bg-soft: #f7f7f4; --surface: #ffffff;
+    --border: rgba(20,20,28,0.08); --border-strong: rgba(20,20,28,0.16);
+    --text: #15151a; --text-mid: #57575f; --text-dim: #95959d;
+    --accent: #4f46e5; --accent-soft: rgba(79,70,229,0.08);
+    --btn: #15151a; --btn-text: #ffffff;
+    --shadow-sm: 0 1px 2px rgba(20,20,30,0.04); --shadow: 0 6px 30px rgba(20,20,30,0.07);
+  }
+  html[data-theme="dark"] {
+    --bg: #0c0c0f; --bg-soft: #121216; --surface: #15151a;
+    --border: rgba(255,255,255,0.09); --border-strong: rgba(255,255,255,0.18);
+    --text: #f4f4f6; --text-mid: #a0a0aa; --text-dim: #6a6a74;
+    --accent: #8b84ff; --accent-soft: rgba(139,132,255,0.14);
+    --btn: #f4f4f6; --btn-text: #15151a;
+    --shadow-sm: 0 1px 2px rgba(0,0,0,0.4); --shadow: 0 6px 30px rgba(0,0,0,0.4);
+  }
+
+  body {
+    font-family: 'Geist', -apple-system, sans-serif; background: var(--bg); color: var(--text);
+    -webkit-font-smoothing: antialiased; overflow-x: hidden; line-height: 1.5; min-height: 100vh;
+    display: flex; flex-direction: column; transition: background .5s, color .5s;
+  }
+  a { color: inherit; }
+  .mono { font-family: 'Geist Mono', monospace; }
+
+  [data-reveal] { opacity: 0; transform: translate3d(0,24px,0); transition: opacity .9s cubic-bezier(.16,1,.3,1), transform 1s cubic-bezier(.16,1,.3,1); }
+  [data-reveal].in { opacity: 1; transform: none; }
+
+  /* NAV */
+  nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; display: flex; align-items: center; justify-content: space-between; padding: 16px 36px; background: color-mix(in srgb, var(--bg) 80%, transparent); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); border-bottom: 1px solid transparent; transition: border-color .3s; }
+  nav.scrolled { border-bottom-color: var(--border); }
+  .logo { display: inline-flex; align-items: center; gap: 10px; text-decoration: none; }
+  .logo-mark { width: 32px; height: 32px; border-radius: 9px; background: linear-gradient(150deg,#34343c,#131316); border: 1px solid rgba(255,255,255,.09); box-shadow: var(--shadow-sm), inset 0 1px 0 rgba(255,255,255,.08); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .logo-mark svg { width: 20px; height: 20px; }
+  .logo-word { font-size: 19px; font-weight: 600; letter-spacing: -.5px; color: var(--text); }
+  .nav-links { display: flex; gap: 30px; list-style: none; }
+  .nav-links a { font-size: 14px; font-weight: 500; color: var(--text-mid); text-decoration: none; transition: color .2s; }
+  .nav-links a:hover, .nav-links a.active { color: var(--text); }
+  .nav-right { display: flex; align-items: center; gap: 14px; }
+  /* Theme is fully automatic — clock-based, no toggle */
+  .nav-signin { font-size: 14px; font-weight: 500; color: var(--text-mid); text-decoration: none; cursor: pointer; transition: color .2s; }
+  .nav-signin:hover { color: var(--text); }
+  .btn { display: inline-flex; align-items: center; gap: 9px; justify-content: center; font-family: inherit; font-size: 14px; font-weight: 500; border: none; border-radius: 999px; cursor: pointer; text-decoration: none; transition: transform .2s, box-shadow .3s, background .2s, border-color .2s, filter .2s, opacity .2s; white-space: nowrap; }
+  .btn-primary {
+    padding: 10px 18px; color: #fff;
+    background: linear-gradient(180deg, #6b63f5 0%, #3d36c2 100%);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.22), inset 0 -1px 0 rgba(0,0,0,0.18), 0 1px 2px rgba(40,30,140,0.18);
+  }
+  .btn-primary:hover { transform: translateY(-1px); filter: brightness(1.05); box-shadow: inset 0 1px 0 rgba(255,255,255,0.28), inset 0 -1px 0 rgba(0,0,0,0.22), 0 10px 24px rgba(79,70,229,0.32); }
+  .menu-btn { display: none; background: none; border: none; width: 26px; height: 18px; position: relative; cursor: pointer; z-index: 200; }
+  .menu-btn span { position: absolute; left: 0; width: 100%; height: 2px; background: var(--text); border-radius: 2px; transition: transform .3s; }
+  .menu-btn span:nth-child(1) { top: 2px; } .menu-btn span:nth-child(2) { bottom: 2px; }
+  .menu-btn.open span:nth-child(1) { top: 8px; transform: rotate(45deg); }
+  .menu-btn.open span:nth-child(2) { bottom: 8px; transform: rotate(-45deg); }
+  .mobile-menu { display: none; position: fixed; inset: 0; z-index: 150; background: var(--bg); flex-direction: column; align-items: center; justify-content: center; gap: 26px; opacity: 0; transition: opacity .3s; pointer-events: none; }
+  .mobile-menu.open { display: flex; opacity: 1; pointer-events: auto; }
+  .mobile-menu a { font-size: 25px; font-weight: 600; color: var(--text); text-decoration: none; }
+
+  main { flex: 1; }
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 150px 36px 80px; display: grid; grid-template-columns: 1fr 1.1fr; gap: 72px; align-items: start; }
+
+  .eyebrow { font-family: 'Geist Mono', monospace; font-size: 12px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--accent); margin-bottom: 18px; display: inline-block; }
+  .info h1 { font-size: clamp(38px, 5vw, 60px); font-weight: 600; letter-spacing: -2.4px; line-height: 1.02; margin-bottom: 18px; }
+  .info > p { font-size: 18px; color: var(--text-mid); line-height: 1.55; margin-bottom: 40px; max-width: 420px; }
+  .channels { display: flex; flex-direction: column; gap: 24px; }
+  .channel .k { font-family: 'Geist Mono', monospace; font-size: 11px; letter-spacing: 1px; text-transform: uppercase; color: var(--text-dim); margin-bottom: 6px; }
+  .channel .v { font-size: 16px; font-weight: 500; text-decoration: none; color: var(--text); transition: color .2s; }
+  a.channel-v:hover { color: var(--accent); }
+
+  .form-card { background: var(--surface); border: 1px solid var(--border); border-radius: 20px; box-shadow: var(--shadow); padding: 36px; }
+  .form-msg { font-size: 14px; padding: 13px 16px; border-radius: 12px; margin-bottom: 22px; display: none; line-height: 1.5; }
+  .form-msg.success { display: block; color: var(--accent); background: var(--accent-soft); border: 1px solid var(--accent-soft); }
+  .form-msg.error { display: block; color: #d4493f; background: rgba(212,73,63,.08); border: 1px solid rgba(212,73,63,.18); }
+  .form { display: flex; flex-direction: column; gap: 18px; }
+  .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .field { display: flex; flex-direction: column; gap: 7px; }
+  .field label { font-size: 12px; font-weight: 600; letter-spacing: .3px; color: var(--text-mid); text-transform: uppercase; font-family: 'Geist Mono', monospace; }
+  .field input, .field textarea, .field select {
+    font-family: 'Geist', sans-serif; font-size: 15px; padding: 13px 15px;
+    border: 1px solid var(--border-strong); border-radius: 11px; background: var(--bg);
+    color: var(--text); outline: none; transition: border-color .2s, box-shadow .2s; -webkit-appearance: none; appearance: none;
+  }
+  .field select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' fill='none'%3E%3Cpath d='M1 1.5l5 5 5-5' stroke='%2395959d' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; padding-right: 36px; cursor: pointer; }
+  .field textarea { resize: vertical; min-height: 130px; line-height: 1.6; }
+  .field input:focus, .field textarea:focus, .field select:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+  .field input::placeholder, .field textarea::placeholder { color: var(--text-dim); }
+  .submit {
+    font-family: 'Geist', sans-serif; font-size: 15px; font-weight: 500; width: 100%;
+    padding: 15px; color: #fff; border: none; border-radius: 999px; cursor: pointer;
+    background: linear-gradient(180deg, #6b63f5 0%, #3d36c2 100%);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.22), inset 0 -1px 0 rgba(0,0,0,0.18), 0 1px 2px rgba(40,30,140,0.18);
+    transition: filter .2s, transform .15s, box-shadow .3s; margin-top: 4px;
+  }
+  .submit:hover { filter: brightness(1.05); transform: translateY(-1px); box-shadow: inset 0 1px 0 rgba(255,255,255,0.28), inset 0 -1px 0 rgba(0,0,0,0.22), 0 10px 24px rgba(79,70,229,0.32); }
+  .submit:active { transform: translateY(0); filter: brightness(.97); }
+  .submit:disabled { opacity: .5; cursor: not-allowed; transform: none; }
+  .form-foot { text-align: center; font-size: 13px; color: var(--text-dim); margin-top: 2px; }
+
+  footer { border-top: 1px solid var(--border); }
+  .footer-base { max-width: 1080px; margin: 0 auto; padding: 28px 36px; display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; }
+  .foot-credit { text-align: center; padding: 36px 24px 24px; max-width: 1080px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; gap: 4px; border-top: 1px solid var(--border); }
+  .foot-credit .label { font-family: 'Geist Mono', monospace; font-size: 11px; letter-spacing: 1.2px; text-transform: uppercase; color: var(--text-dim); display: inline-flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+  .foot-credit .label::before, .foot-credit .label::after { content: ''; width: 22px; height: 1px; background: currentColor; opacity: .5; }
+  .foot-credit .name { font-size: clamp(20px, 3vw, 24px); font-weight: 600; letter-spacing: -.6px; line-height: 1.15; color: var(--text); text-decoration: none; transition: color .2s; }
+  a.foot-credit-name:hover { color: var(--accent); }
+  .foot-credit .role { font-size: 13px; color: var(--text-mid); margin-top: 2px; }
+  .footer-base .logo .logo-word { font-size: 16px; }
+  .footer-base span { font-size: 13px; color: var(--text-dim); }
+
+  @media (max-width: 860px) {
+    nav { padding: 14px 20px; }
+    .nav-links, .nav-signin { display: none; }
+    .menu-btn { display: block; }
+    .mobile-menu { display: flex; }
+    .wrap { grid-template-columns: 1fr; gap: 44px; padding: 120px 22px 60px; }
+    .form-card { padding: 26px; }
+    .footer-base { flex-direction: column; }
+  }
+  @media (max-width: 768px) {
+    nav { padding: max(12px, env(safe-area-inset-top)) max(18px, env(safe-area-inset-right)) 12px max(18px, env(safe-area-inset-left)); }
+    .wrap { padding: 100px 18px 50px; gap: 32px; }
+    .info h1 { font-size: clamp(32px, 9vw, 44px); letter-spacing: -1.4px; }
+    .info > p { font-size: 16px; margin-bottom: 32px; }
+    .channel .v { font-size: 15px; padding: 4px 0; display: inline-block; } /* tap target */
+    .form-card { padding: 22px; }
+    .field input, .field textarea, .field select { font-size: 16px; padding: 14px 14px; } /* 16px = no zoom on iOS focus */
+    .submit { padding: 16px; min-height: 48px; }
+    .footer-base { padding: max(20px, env(safe-area-inset-bottom)) 18px; }
+  }
+  @media (max-width: 480px) { .row2 { grid-template-columns: 1fr; } }
+  @media (hover: none) and (pointer: coarse) {
+    .submit:hover { transform: none !important; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="logo">
+    <span class="logo-mark"><svg viewBox="0 0 24 24" fill="none"><path d="M5 15 Q8 9 12 12 Q16 15 19 9" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M19 3.6 C19.15 5.1 20.3 6.25 21.8 6.4 C20.3 6.55 19.15 7.7 19 9.2 C18.85 7.7 17.7 6.55 16.2 6.4 C17.7 6.25 18.85 5.1 19 3.6 Z" fill="#8b84ff"/></svg></span>
+    <span class="logo-word">Sona</span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="index.html#features">Features</a></li>
+    <li><a href="index.html#how">How it works</a></li>
+    <li><a href="index.html#pricing">Pricing</a></li>
+    <li><a href="contact.html" class="active">Contact</a></li>
+  </ul>
+  <div class="nav-right">
+    <a class="nav-signin" onclick="CanopyAuth.openLogin()">Sign in</a>
+    <a href="#" class="btn btn-primary" onclick="event.preventDefault(); CanopyAuth.openSignup();">Get started</a>
+  </div>
+  <button class="menu-btn" aria-label="Menu"><span></span><span></span></button>
+</nav>
+
+<div class="mobile-menu">
+  <a href="index.html#features">Features</a>
+  <a href="index.html#how">How it works</a>
+  <a href="index.html#pricing">Pricing</a>
+  <a href="contact.html">Contact</a>
+  <a href="#" class="btn btn-primary" onclick="event.preventDefault(); CanopyAuth.openSignup();">Start free</a>
+</div>
+
+<main>
+  <div class="wrap">
+    <div class="info" data-reveal>
+      <span class="eyebrow">Contact</span>
+      <h1>Let's talk.</h1>
+      <p>Questions, partnerships, or feedback — we read everything and reply within one business day.</p>
+      <div class="channels">
+        <div class="channel"><div class="k">Email</div><a href="mailto:hello@sona.so" class="v channel-v">hello@sona.so</a></div>
+        <div class="channel"><div class="k">Support</div><a href="mailto:support@sona.so" class="v channel-v">support@sona.so</a></div>
+        <div class="channel"><div class="k">Social</div><a href="#" class="v channel-v">@aria · X (Twitter)</a></div>
+      </div>
+    </div>
+
+    <div class="form-card" data-reveal style="transition-delay:.08s">
+      <div class="form-msg" id="form-msg"></div>
+      <form class="form" id="contact-form" autocomplete="on">
+        <div class="row2">
+          <div class="field"><label for="c-name">Name</label><input type="text" id="c-name" placeholder="Jane Smith" required autocomplete="name"></div>
+          <div class="field"><label for="c-email">Email</label><input type="email" id="c-email" placeholder="jane@company.com" required autocomplete="email"></div>
+        </div>
+        <div class="row2">
+          <div class="field"><label for="c-company">Company</label><input type="text" id="c-company" placeholder="Optional" autocomplete="organization"></div>
+          <div class="field"><label for="c-subject">Topic</label>
+            <select id="c-subject">
+              <option value="general">General</option>
+              <option value="demo">Request a demo</option>
+              <option value="partnership">Partnership</option>
+              <option value="support">Support</option>
+              <option value="press">Press</option>
+            </select>
+          </div>
+        </div>
+        <div class="field"><label for="c-message">Message</label><textarea id="c-message" placeholder="How can we help?" required></textarea></div>
+        <button type="submit" class="submit" id="c-submit">Send message</button>
+        <div class="form-foot">We typically reply within one business day.</div>
+      </form>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <div class="footer-base">
+    <a href="index.html" class="logo">
+      <span class="logo-mark"><svg viewBox="0 0 24 24" fill="none"><path d="M5 15 Q8 9 12 12 Q16 15 19 9" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M19 3.6 C19.15 5.1 20.3 6.25 21.8 6.4 C20.3 6.55 19.15 7.7 19 9.2 C18.85 7.7 17.7 6.55 16.2 6.4 C17.7 6.25 18.85 5.1 19 3.6 Z" fill="#8b84ff"/></svg></span>
+      <span class="logo-word">Sona</span>
+    </a>
+    <span>&copy; 2026 Sona Labs Inc.</span>
+  </div>
+  <div class="foot-credit">
+    <span class="label">Created by</span>
+    <a class="name foot-credit-name" href="https://www.linkedin.com/in/davidtost/" target="_blank" rel="noopener">David Tost</a>
+    <span class="role">Founder of Sona</span>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="data.js"></script>
+<script src="auth.js"></script>
+<script>
+  // Theme — fully automatic, follows the clock (head bootstrap set the initial state)
+  setInterval(() => {
+    const h = new Date().getHours();
+    document.documentElement.setAttribute('data-theme', (h < 7 || h >= 19) ? 'dark' : 'light');
+  }, 60 * 1000);
+
+  const nav = document.querySelector('nav');
+  window.addEventListener('scroll', () => nav.classList.toggle('scrolled', window.scrollY > 16), { passive: true });
+
+  const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }), { threshold: .15 });
+  document.querySelectorAll('[data-reveal]').forEach(el => io.observe(el));
+
+  const menuBtn = document.querySelector('.menu-btn');
+  const mm = document.querySelector('.mobile-menu');
+  menuBtn.addEventListener('click', () => {
+    const open = !mm.classList.contains('open');
+    menuBtn.classList.toggle('open', open); mm.classList.toggle('open', open);
+    document.body.style.overflow = open ? 'hidden' : '';
+  });
+  mm.querySelectorAll('a').forEach(a => a.addEventListener('click', () => { menuBtn.classList.remove('open'); mm.classList.remove('open'); document.body.style.overflow = ''; }));
+
+  // Contact form -> CanopyData (Supabase)
+  const form = document.getElementById('contact-form');
+  const msg = document.getElementById('form-msg');
+  const btn = document.getElementById('c-submit');
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    btn.disabled = true; btn.textContent = 'Sending...'; msg.className = 'form-msg';
+    const result = await window.CanopyData.submitContact({
+      name: document.getElementById('c-name').value,
+      email: document.getElementById('c-email').value,
+      company: document.getElementById('c-company').value,
+      subject: document.getElementById('c-subject').value,
+      message: document.getElementById('c-message').value,
+    });
+    if (result.ok) { msg.textContent = result.message; msg.className = 'form-msg success'; form.reset(); }
+    else { msg.textContent = result.error || 'Something went wrong.'; msg.className = 'form-msg error'; }
+    btn.disabled = false; btn.textContent = 'Send message';
+  });
+</script>
+</body>
+</html>

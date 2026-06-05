@@ -1,0 +1,1770 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- Theme bootstrap — runs before paint so there's no flash of wrong theme -->
+<!-- Theme — fully automatic, follows the wall clock (7am–7pm light, else dark) -->
+<script>(function(){try{var h=new Date().getHours();var dark=h<7||h>=19;document.documentElement.setAttribute('data-theme',dark?'dark':'light');}catch(e){}})();</script>
+<meta name="color-scheme" content="light dark">
+<title>Sona — Find proven ideas. Write in your voice.</title>
+<meta name="description" content="Sona studies what's working across every platform and helps you turn it into original content that sounds like you.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800&family=Geist+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg: #ffffff;
+    --bg-soft: #f7f7f4;
+    --surface: #ffffff;
+    --border: rgba(20,20,28,0.08);
+    --border-strong: rgba(20,20,28,0.14);
+    --text: #15151a;
+    --text-mid: #5a5a62;
+    --text-dim: #95959d;
+    --accent: #4f46e5;
+    --accent-2: #6b63f5;
+    --accent-soft: rgba(79,70,229,0.08);
+    --shadow-sm: 0 1px 2px rgba(20,20,30,0.04);
+    --shadow: 0 6px 30px rgba(20,20,30,0.07);
+    --shadow-lg: 0 30px 80px rgba(20,20,30,0.12);
+  }
+  html[data-theme="dark"] {
+    --bg: #0c0c0f;
+    --bg-soft: #131318;
+    --surface: #16161b;
+    --border: rgba(255,255,255,0.09);
+    --border-strong: rgba(255,255,255,0.16);
+    --text: #f4f4f6;
+    --text-mid: #a0a0aa;
+    --text-dim: #6a6a74;
+    --accent: #8b84ff;
+    --accent-2: #6b63f5;
+    --accent-soft: rgba(139,132,255,0.14);
+    --shadow-sm: 0 1px 2px rgba(0,0,0,0.4);
+    --shadow: 0 6px 30px rgba(0,0,0,0.4);
+    --shadow-lg: 0 30px 80px rgba(0,0,0,0.55);
+  }
+
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Geist', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+    line-height: 1.5;
+  }
+  ::selection { background: var(--accent-soft); }
+  a { color: inherit; }
+  .mono { font-family: 'Geist Mono', monospace; }
+
+  .eyebrow {
+    font-family: 'Geist Mono', monospace;
+    font-size: 12px; letter-spacing: 1.2px; text-transform: uppercase;
+    color: var(--text-dim); margin-bottom: 22px; display: inline-block;
+  }
+  .eyebrow.accent { color: var(--accent); }
+
+  [data-r] { opacity: 0; transform: translate3d(0,18px,0); will-change: opacity, transform; transition: opacity .7s cubic-bezier(.2,.7,.2,1), transform .7s cubic-bezier(.2,.7,.2,1); }
+  [data-r].in { opacity: 1; transform: none; }
+
+  /* ─── AWWWARDS-GRADE SCROLL TOUCHES ─── */
+
+  /* 1. Hairline scroll-progress bar — top of viewport, fills as you scroll */
+  .scroll-progress {
+    position: fixed; top: 0; left: 0; right: 0; height: 2px; z-index: 200; pointer-events: none;
+    background: transparent;
+  }
+  .scroll-progress::before {
+    content:''; position: absolute; inset: 0;
+    background: linear-gradient(90deg, var(--accent), var(--accent-2));
+    transform-origin: left; transform: scaleX(var(--sp, 0));
+    transition: transform .08s linear;
+  }
+
+  /* 2. Word-by-word reveal for headlines (the trademark Awwwards move) */
+  [data-split] .w {
+    display: inline-block; opacity: 0; transform: translateY(0.55em);
+    transition: opacity .75s cubic-bezier(.16,.86,.21,1), transform .75s cubic-bezier(.16,.86,.21,1);
+    will-change: opacity, transform;
+  }
+  [data-split].in .w { opacity: 1; transform: none; }
+
+  /* 3. Eyebrow line-draw — thin line strokes in before each section's eyebrow */
+  .eyebrow.line { position: relative; padding-left: 32px; }
+  .eyebrow.line::before {
+    content:''; position: absolute; left: 0; top: 50%; width: 22px; height: 1px;
+    background: currentColor; transform-origin: left;
+    transform: translateY(-50%) scaleX(0);
+    transition: transform .65s cubic-bezier(.16,.86,.21,1) .1s;
+  }
+  .eyebrow.line.in::before, .in .eyebrow.line::before { transform: translateY(-50%) scaleX(1); }
+
+  /* 4. Cinematic mask-reveal — the product panel "unveils" from top */
+  .mask-reveal { clip-path: inset(0 0 100% 0); transition: clip-path 1.25s cubic-bezier(.2,.85,.2,1) .1s; }
+  .mask-reveal.in { clip-path: inset(0); }
+
+  /* Subtle parallax on the hero glow — drives off CSS var the scroll handler updates */
+  .mock-wrap::before { transform: translateY(var(--sp-y, 0px)); transition: transform .1s linear; }
+
+  @media (prefers-reduced-motion: reduce) {
+    [data-split] .w, .mask-reveal, .eyebrow.line::before { transition: none !important; transform: none !important; opacity: 1 !important; clip-path: none !important; }
+  }
+
+  /* ─── NAV ─── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 18px 36px;
+    background: color-mix(in srgb, var(--bg) 82%, transparent);
+    backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+    border-bottom: 1px solid transparent; transition: border-color .3s;
+  }
+  nav.scrolled { border-bottom-color: var(--border); }
+  .logo { display: inline-flex; align-items: center; gap: 10px; text-decoration: none; }
+  .logo-mark { width: 32px; height: 32px; border-radius: 9px; background: linear-gradient(150deg,#34343c,#131316); border: 1px solid rgba(255,255,255,.09); box-shadow: var(--shadow-sm), inset 0 1px 0 rgba(255,255,255,.08); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .logo-mark svg { width: 20px; height: 20px; }
+  .logo-word { font-size: 19px; font-weight: 600; letter-spacing: -.5px; color: var(--text); }
+  .nav-links { display: flex; gap: 30px; list-style: none; }
+  .nav-links a { font-size: 14px; font-weight: 500; color: var(--text-mid); text-decoration: none; transition: color .2s; }
+  .nav-links a:hover { color: var(--text); }
+  .nav-right { display: flex; align-items: center; gap: 14px; }
+  /* Theme is fully automatic — clock-based (7am–7pm light, else dark), no toggle */
+  .nav-signin { font-size: 14px; font-weight: 500; color: var(--text-mid); text-decoration: none; cursor: pointer; transition: color .2s; }
+  .nav-signin:hover { color: var(--text); }
+
+  /* ─── BUTTONS ─── */
+  .btn { display: inline-flex; align-items: center; gap: 9px; justify-content: center; font-family: inherit; font-size: 15px; font-weight: 500; border: none; border-radius: 999px; cursor: pointer; text-decoration: none; transition: transform .2s, box-shadow .3s, filter .2s, border-color .2s; white-space: nowrap; }
+  .btn-primary {
+    padding: 13px 24px; color: #fff;
+    background: linear-gradient(180deg, #6b63f5 0%, #3d36c2 100%);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.22), inset 0 -1px 0 rgba(0,0,0,0.18), 0 1px 2px rgba(40,30,140,0.18);
+  }
+  .btn-primary:hover { transform: translateY(-1px); filter: brightness(1.05); box-shadow: inset 0 1px 0 rgba(255,255,255,0.28), inset 0 -1px 0 rgba(0,0,0,0.22), 0 10px 24px rgba(79,70,229,0.32); }
+  .btn-primary:active { transform: translateY(0); filter: brightness(0.96); }
+  .btn-lg { padding: 15px 28px; font-size: 15.5px; }
+  .btn-arrow { display: inline-block; transition: transform .2s; }
+  .btn:hover .btn-arrow { transform: translateX(3px); }
+
+  nav .btn-primary { padding: 10px 18px; font-size: 14px; }
+
+  /* Quiet inline link — honest secondary */
+  .quiet-link {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-family: inherit; font-size: 14.5px; font-weight: 500;
+    color: var(--text-mid); text-decoration: none; padding: 6px 4px;
+    transition: color .2s;
+  }
+  .quiet-link:hover { color: var(--text); }
+  .quiet-link svg { width: 13px; height: 13px; transition: transform .25s; }
+  .quiet-link:hover svg { transform: translateY(3px); }
+
+  /* ─── HAMBURGER ─── */
+  .menu-btn { display: none; background: none; border: none; width: 26px; height: 18px; position: relative; cursor: pointer; z-index: 200; }
+  .menu-btn span { position: absolute; left: 0; width: 100%; height: 2px; background: var(--text); border-radius: 2px; transition: transform .3s; }
+  .menu-btn span:nth-child(1) { top: 2px; } .menu-btn span:nth-child(2) { bottom: 2px; }
+  .menu-btn.open span:nth-child(1) { top: 8px; transform: rotate(45deg); }
+  .menu-btn.open span:nth-child(2) { bottom: 8px; transform: rotate(-45deg); }
+  .mobile-menu { display: none; position: fixed; inset: 0; z-index: 150; background: var(--bg); flex-direction: column; align-items: center; justify-content: center; gap: 28px; opacity: 0; transition: opacity .3s; pointer-events: none; }
+  .mobile-menu.open { display: flex; opacity: 1; pointer-events: auto; }
+  .mobile-menu a { font-size: 26px; font-weight: 600; color: var(--text); text-decoration: none; }
+  /* Fix: the indigo Get-started pill should stay white inside the mobile menu */
+  .mobile-menu a.btn-primary { color: #fff; }
+  /* Explicit close (×) button at top right of the mobile menu */
+  .mobile-menu-close {
+    position: absolute;
+    top: max(18px, env(safe-area-inset-top));
+    right: max(18px, env(safe-area-inset-right));
+    width: 44px; height: 44px;
+    border: 1px solid var(--border-strong);
+    background: var(--surface);
+    border-radius: 50%;
+    cursor: pointer; color: var(--text);
+    font-size: 26px; line-height: 1; font-weight: 300;
+    display: flex; align-items: center; justify-content: center;
+    transition: background .2s, border-color .2s;
+    padding: 0;
+  }
+  .mobile-menu-close:hover { background: var(--bg-soft); border-color: var(--text-mid); }
+
+  /* ─── HERO ─── */
+  .hero { position: relative; padding: 170px 36px 0; text-align: center; }
+  .hero-inner { max-width: 880px; margin: 0 auto; position: relative; z-index: 1; }
+
+  /* ─── CONVERSION TRUST MICROBAR ─── */
+  .hero-proof {
+    display: inline-flex; align-items: stretch;
+    margin-top: 28px;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 14px; box-shadow: var(--shadow-sm);
+    overflow: hidden;
+    max-width: 100%;
+  }
+  .hero-proof-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 12px 18px; text-align: left;
+    font-size: 13px; line-height: 1.3;
+    white-space: nowrap;
+  }
+  .hero-proof-item + .hero-proof-item { border-left: 1px solid var(--border); }
+  .hero-proof-ico {
+    width: 26px; height: 26px; border-radius: 8px;
+    background: var(--accent-soft); color: var(--accent);
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .hero-proof-ico svg { width: 13px; height: 13px; }
+  .hero-proof-text { display: flex; flex-direction: column; gap: 1px; }
+  .hero-proof-text b { font-weight: 600; color: var(--text); font-size: 13px; }
+  .hero-proof-text span { color: var(--text-mid); font-size: 11.5px; font-family: 'Geist Mono', monospace; letter-spacing: .3px; }
+  @media (max-width: 720px) {
+    .hero-proof { flex-direction: column; max-width: calc(100vw - 36px); }
+    .hero-proof-item { white-space: normal; }
+    .hero-proof-item + .hero-proof-item { border-left: 0; border-top: 1px solid var(--border); }
+  }
+  .pill {
+    display: inline-flex; align-items: center; gap: 9px; padding: 6px 14px 6px 8px;
+    background: var(--surface); border: 1px solid var(--border); border-radius: 100px;
+    font-size: 13px; color: var(--text-mid); margin-bottom: 32px; box-shadow: var(--shadow-sm);
+  }
+  .pill .tag { font-family: 'Geist Mono', monospace; font-size: 10.5px; font-weight: 500; letter-spacing: .5px; padding: 3px 9px; background: var(--accent-soft); color: var(--accent); border-radius: 100px; text-transform: uppercase; }
+  .hero h1 { font-size: clamp(46px, 7vw, 92px); font-weight: 600; line-height: 0.98; letter-spacing: -3.5px; margin-bottom: 30px; }
+  .hero h1 .quiet { color: var(--text-dim); font-weight: 500; }
+  .hero-sub { font-size: clamp(17px, 2.1vw, 21px); color: var(--text-mid); max-width: 560px; margin: 0 auto 42px; line-height: 1.55; }
+  .hero-cta { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; margin-bottom: 18px; align-items: center; }
+  .hero-note { font-size: 13px; color: var(--text-dim); }
+
+  .mock-wrap { max-width: 1020px; margin: 96px auto 0; padding: 0 24px; position: relative; }
+  .mock-wrap::before { content:''; position:absolute; inset: 25% 8% 0; background: radial-gradient(ellipse at center, var(--accent-soft), transparent 70%); filter: blur(50px); z-index:0; pointer-events:none; }
+  .panel { position: relative; z-index: 1; background: var(--surface); border: 1px solid var(--border); border-radius: 18px; box-shadow: var(--shadow-lg); overflow: hidden; }
+  .panel-bar { display: flex; align-items: center; gap: 8px; padding: 14px 18px; border-bottom: 1px solid var(--border); }
+  .panel-bar i { width: 10px; height: 10px; border-radius: 50%; background: var(--border-strong); display: block; }
+  .panel-bar .u { margin-left: 12px; font-size: 11px; color: var(--text-dim); font-family: 'Geist Mono', monospace; }
+  .panel-body { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 1px; background: var(--border); }
+  .panel-col { background: var(--surface); padding: 26px; text-align: left; }
+  .pc-label { font-family: 'Geist Mono', monospace; font-size: 10.5px; letter-spacing: 1px; text-transform: uppercase; color: var(--text-dim); margin-bottom: 18px; }
+  .draft-line { height: 9px; border-radius: 5px; background: var(--bg-soft); margin-bottom: 9px; }
+  .draft-line.a { background: linear-gradient(90deg, var(--accent-soft), var(--bg-soft)); }
+  .badge-row { display: flex; gap: 10px; margin-top: 22px; flex-wrap: wrap; }
+  .conf { display: flex; flex-direction: column; gap: 4px; padding: 12px 14px; background: var(--bg-soft); border: 1px solid var(--border); border-radius: 12px; flex: 1; }
+  .conf .k { font-family: 'Geist Mono', monospace; font-size: 10px; letter-spacing: .5px; text-transform: uppercase; color: var(--text-dim); }
+  .conf .v { font-size: 22px; font-weight: 600; letter-spacing: -.5px; }
+  .conf .v.acc { color: var(--accent); }
+  .spark { display: flex; align-items: flex-end; gap: 5px; height: 64px; margin-top: 6px; }
+  .spark i { flex: 1; background: var(--accent-soft); border-radius: 4px 4px 0 0; display: block; transform: scaleY(0); transform-origin: bottom; transition: transform .9s cubic-bezier(.16,1,.3,1); }
+  .spark i:nth-child(odd) { background: var(--accent); opacity: .85; }
+  .panel.live .spark i { transform: scaleY(1); }
+  .panel.live .spark i:nth-child(1) { transition-delay: .05s; }
+  .panel.live .spark i:nth-child(2) { transition-delay: .12s; }
+  .panel.live .spark i:nth-child(3) { transition-delay: .19s; }
+  .panel.live .spark i:nth-child(4) { transition-delay: .26s; }
+  .panel.live .spark i:nth-child(5) { transition-delay: .33s; }
+  .panel.live .spark i:nth-child(6) { transition-delay: .40s; }
+  .panel.live .spark i:nth-child(7) { transition-delay: .47s; }
+  /* Draft lines — animate width in on view */
+  .draft-line { width: 0; transition: width 1s cubic-bezier(.16,1,.3,1); }
+  .panel.live .draft-line { width: var(--w, 80%); }
+  .panel.live .draft-line:nth-child(2) { transition-delay: .15s; }
+  .panel.live .draft-line:nth-child(3) { transition-delay: .30s; }
+  .panel.live .draft-line:nth-child(4) { transition-delay: .45s; }
+  .panel.live .draft-line:nth-child(5) { transition-delay: .60s; }
+  .conf .v { font-variant-numeric: tabular-nums; }
+  .cv-row { display: flex; align-items: center; gap: 11px; padding: 12px 14px; background: var(--bg-soft); border: 1px solid var(--border); border-radius: 11px; margin-bottom: 10px; }
+  .cv-av { width: 28px; height: 28px; border-radius: 50%; background: var(--accent-soft); border: 1px solid var(--border); flex-shrink: 0; }
+  .cv-line { height: 8px; border-radius: 4px; background: var(--border); }
+  .cv-tag { font-family: 'Geist Mono', monospace; font-size: 11px; font-weight: 500; color: var(--accent); background: var(--accent-soft); padding: 3px 9px; border-radius: 100px; margin-left: auto; white-space: nowrap; transition: transform .25s cubic-bezier(.16,1,.3,1); }
+
+  /* ─── PANEL MICRO-INTERACTIONS ─── */
+  /* 1. Cursor-follow soft spotlight on the panel */
+  .panel { --mx: 50%; --my: 50%; }
+  .panel::before {
+    content: ''; position: absolute; inset: 0; border-radius: inherit;
+    background: radial-gradient(420px circle at var(--mx) var(--my), rgba(107,99,245,0.10), transparent 45%);
+    pointer-events: none; opacity: 0; transition: opacity .35s ease-out; z-index: 2;
+  }
+  .panel:hover::before { opacity: 1; }
+
+  /* 2. Spark bars — dim siblings, highlight target with lift + glow */
+  .panel.live .spark i { cursor: pointer; }
+  .panel.live .spark:hover i { opacity: .35; transition: opacity .2s, transform .2s; }
+  .panel.live .spark i:hover {
+    opacity: 1;
+    transform: scaleY(1.1);
+    filter: brightness(1.25) drop-shadow(0 4px 12px rgba(107,99,245,0.45));
+    transition: transform .2s cubic-bezier(.16,1,.3,1), opacity .15s, filter .2s;
+    transition-delay: 0s !important;
+    z-index: 1;
+  }
+
+  /* 3. Outlier rows — accent slide + tag bump */
+  .cv-row { cursor: pointer; transition: border-color .2s, background-color .2s, transform .25s cubic-bezier(.16,1,.3,1); }
+  .cv-row:hover {
+    border-color: var(--accent);
+    background-color: var(--accent-soft);
+    transform: translateX(3px);
+  }
+  .cv-row:hover .cv-tag { transform: scale(1.08); }
+  .cv-row:hover .cv-line { background: var(--accent); opacity: .35; }
+  .cv-line { transition: background .2s, opacity .2s; }
+
+  /* 4. Confidence cards — lift with accent border */
+  .conf { cursor: pointer; transition: border-color .2s, transform .25s cubic-bezier(.16,1,.3,1), box-shadow .25s; }
+  .conf:hover {
+    border-color: var(--accent);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(107,99,245,0.10);
+  }
+
+  /* 5. Draft lines — subtle indigo wash on hover (suggests editability) */
+  .draft-line { cursor: text; transition: width 1s cubic-bezier(.16,1,.3,1), background .2s; }
+  .panel.live .draft-line:hover {
+    background: linear-gradient(90deg, var(--accent-soft) 0%, rgba(107,99,245,0.04) 100%);
+  }
+
+  /* ─── SECTIONS ─── */
+  .section { max-width: 1140px; margin: 0 auto; padding: 160px 36px 0; }
+  .sec-head { max-width: 700px; margin: 0 auto 60px; text-align: center; }
+  .sec-head h2 { font-size: clamp(32px, 4.8vw, 56px); font-weight: 600; letter-spacing: -2.2px; line-height: 1.04; margin-bottom: 18px; }
+  .sec-head h2 .quiet { color: var(--text-dim); }
+  .sec-head p { font-size: 17px; color: var(--text-mid); line-height: 1.55; }
+
+  /* WHO IT'S FOR */
+  .personas { display: grid; grid-template-columns: repeat(3,1fr); gap: 18px; }
+  .persona { background: var(--surface); border: 1px solid var(--border); border-radius: 18px; padding: 30px; box-shadow: var(--shadow-sm); transition: transform .3s, border-color .3s; }
+  .persona:hover { transform: translateY(-2px); border-color: var(--border-strong); }
+  .persona .role { font-family: 'Geist Mono', monospace; font-size: 11px; letter-spacing: .8px; text-transform: uppercase; color: var(--accent); margin-bottom: 14px; }
+  .persona h3 { font-size: 20px; font-weight: 600; letter-spacing: -.4px; margin-bottom: 10px; }
+  .persona p { font-size: 14.5px; color: var(--text-mid); line-height: 1.6; margin-bottom: 18px; }
+  .persona .out { font-family: 'Geist Mono', monospace; font-size: 11.5px; color: var(--text-dim); padding-top: 16px; border-top: 1px dashed var(--border-strong); }
+  .persona .out b { color: var(--text); font-weight: 600; }
+
+  /* ─── BENTO GRID ─── */
+  .bento { display: grid; grid-template-columns: repeat(3, 1fr); grid-auto-rows: minmax(240px, auto); gap: 18px; max-width: 1140px; margin: 0 auto; }
+  .bento .tile { background: var(--surface); border: 1px solid var(--border); border-radius: 22px; padding: 28px; box-shadow: var(--shadow-sm); display: flex; flex-direction: column; overflow: hidden; position: relative; transition: border-color .3s, transform .3s; }
+  .bento .tile:hover { border-color: var(--border-strong); transform: translateY(-2px); }
+  .bento .t-wide { grid-column: span 2; }
+  .bento .t-eye { font-family: 'Geist Mono', monospace; font-size: 10.5px; letter-spacing: 1px; text-transform: uppercase; color: var(--accent); margin-bottom: 14px; }
+  .bento .t-title { font-size: 21px; font-weight: 600; letter-spacing: -.55px; margin-bottom: 8px; line-height: 1.18; }
+  .bento .t-sub { font-size: 14.5px; color: var(--text-mid); line-height: 1.55; margin-bottom: 22px; max-width: 92%; }
+  .bento .t-visual { margin-top: auto; }
+
+  /* Voice signature rows */
+  .voice-row { display: flex; align-items: center; gap: 12px; padding: 10px 14px; background: var(--bg-soft); border: 1px solid var(--border); border-radius: 11px; margin-bottom: 8px; }
+  .voice-name { font-size: 12.5px; font-weight: 500; min-width: 88px; color: var(--text); }
+  .voice-bar { flex: 1; height: 6px; border-radius: 999px; background: var(--border); overflow: hidden; }
+  .voice-bar i { display: block; height: 100%; background: var(--accent); border-radius: 999px; }
+  .voice-pct { font-family: 'Geist Mono', monospace; font-size: 11.5px; color: var(--text); min-width: 36px; text-align: right; }
+
+  /* Mini spark for outlier */
+  .mini-spark { display: flex; align-items: flex-end; gap: 5px; height: 78px; padding: 4px 0; }
+  .mini-spark i { flex: 1; background: var(--accent-soft); border-radius: 3px 3px 0 0; display: block; }
+  .mini-spark i.peak { background: var(--accent); }
+  .outlier-tag { display: inline-flex; align-items: center; gap: 6px; font-family: 'Geist Mono', monospace; font-size: 10.5px; font-weight: 500; color: var(--accent); background: var(--accent-soft); padding: 4px 10px; border-radius: 100px; margin-top: 12px; }
+  .outlier-tag::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
+
+  /* Platform chips */
+  .plat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 7px; }
+  .plat-chip { display: flex; align-items: center; justify-content: center; padding: 12px 6px; background: var(--bg-soft); border: 1px solid var(--border); border-radius: 10px; font-size: 12.5px; font-weight: 600; color: var(--text); letter-spacing: -.2px; }
+
+  /* Editor mock */
+  .ed-mock { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 14px; padding: 18px; font-family: 'Geist Mono', monospace; font-size: 12.5px; line-height: 1.75; color: var(--text-mid); position: relative; }
+  .ed-mock .hl { background: var(--accent-soft); color: var(--accent); padding: 1px 5px; border-radius: 4px; }
+  .ed-mock .regen { display: inline-flex; align-items: center; gap: 5px; font-family: 'Geist', sans-serif; font-size: 10.5px; font-weight: 500; color: var(--accent); background: var(--accent-soft); padding: 3px 9px; border-radius: 100px; margin-left: 8px; vertical-align: middle; }
+  .ed-mock .regen svg { width: 9px; height: 9px; }
+
+  /* Mini calendar */
+  .cal-mini { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; max-width: 320px; }
+  .cal-mini > span { aspect-ratio: 1; border-radius: 6px; background: var(--bg-soft); border: 1px solid var(--border); }
+  .cal-mini > span.dot { background-image: radial-gradient(circle, var(--text-mid) 1.6px, transparent 2.2px); background-position: center; background-repeat: no-repeat; }
+  .cal-mini > span.dot.acc { background-color: var(--accent-soft); border-color: var(--accent); background-image: radial-gradient(circle, var(--accent) 2px, transparent 2.6px); }
+
+  /* Hook rows */
+  .hook-row { padding: 10px 13px; background: var(--bg-soft); border: 1px solid var(--border); border-radius: 9px; margin-bottom: 7px; font-size: 12.5px; color: var(--text-mid); line-height: 1.4; }
+  .hook-row b { color: var(--text); font-weight: 600; }
+  .hook-row:last-child { margin-bottom: 0; }
+
+  /* ─── PRODUCT PREVIEW (interactive app window) ─── */
+  .app-window { max-width: 1140px; margin: 0 auto; background: var(--surface); border: 1px solid var(--border); border-radius: 18px; overflow: hidden; box-shadow: var(--shadow-lg); }
+  .app-bar { display: flex; align-items: center; gap: 8px; padding: 13px 16px; border-bottom: 1px solid var(--border); background: var(--bg-soft); }
+  .app-bar i { width: 10px; height: 10px; border-radius: 50%; background: var(--border-strong); display: block; }
+  .app-bar .u { margin-left: 12px; font-family: 'Geist Mono', monospace; font-size: 11px; color: var(--text-dim); }
+  .app-body { display: grid; grid-template-columns: 240px 1fr; min-height: 520px; }
+
+  /* Sidebar */
+  .app-side { background: var(--bg-soft); border-right: 1px solid var(--border); padding: 18px 12px; display: flex; flex-direction: column; gap: 16px; }
+  .app-side-top { display: flex; align-items: center; gap: 9px; padding: 4px 8px; }
+  .app-side-top .lm { width: 22px; height: 22px; border-radius: 6px; background: linear-gradient(150deg,#34343c,#131316); border: 1px solid rgba(255,255,255,.09); display: flex; align-items: center; justify-content: center; }
+  .app-side-top .lm svg { width: 14px; height: 14px; }
+  .app-side-top .name { font-size: 13.5px; font-weight: 600; letter-spacing: -.3px; }
+  .app-side-top .badge { margin-left: auto; font-family: 'Geist Mono', monospace; font-size: 9.5px; color: var(--accent); background: var(--accent-soft); padding: 2px 7px; border-radius: 100px; letter-spacing: .5px; text-transform: uppercase; }
+  .app-search { display: flex; align-items: center; gap: 8px; padding: 7px 10px; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; font-size: 12px; color: var(--text-dim); }
+  .app-search svg { width: 12px; height: 12px; flex-shrink: 0; }
+  .app-search .kbd { margin-left: auto; font-family: 'Geist Mono', monospace; font-size: 9.5px; padding: 1px 6px; background: var(--bg-soft); border: 1px solid var(--border); border-radius: 4px; color: var(--text-mid); }
+  .app-nav { display: flex; flex-direction: column; gap: 2px; }
+  .app-nav-item { display: flex; align-items: center; gap: 9px; padding: 7px 9px; border-radius: 7px; cursor: pointer; font-size: 12.5px; color: var(--text-mid); transition: background .2s, color .2s; user-select: none; }
+  .app-nav-item:hover { color: var(--text); background: var(--surface); }
+  .app-nav-item.active { background: var(--surface); color: var(--text); font-weight: 500; box-shadow: var(--shadow-sm); }
+  .app-nav-item svg { width: 14px; height: 14px; flex-shrink: 0; opacity: .85; }
+  .app-nav-item .pill-n { margin-left: auto; font-family: 'Geist Mono', monospace; font-size: 9.5px; color: var(--text-dim); }
+  .app-section-label { font-family: 'Geist Mono', monospace; font-size: 9.5px; color: var(--text-dim); letter-spacing: .6px; text-transform: uppercase; padding: 0 10px; margin-bottom: 5px; }
+  .app-side-bottom { margin-top: auto; padding-top: 8px; border-top: 1px solid var(--border); }
+  .app-side-bottom .app-nav-item { font-size: 12px; }
+  .app-user { display: flex; align-items: center; gap: 8px; padding: 6px 8px; margin-top: 4px; }
+  .app-user-av { width: 22px; height: 22px; border-radius: 50%; background: linear-gradient(135deg, var(--accent), var(--accent-soft)); flex-shrink: 0; }
+  .app-user-text { display: flex; flex-direction: column; line-height: 1.2; }
+  .app-user-name { font-size: 11.5px; font-weight: 500; }
+  .app-user-meta { font-size: 10px; color: var(--text-dim); font-family: 'Geist Mono', monospace; }
+
+  /* Main */
+  .app-main { padding: 22px 26px; overflow: hidden; min-width: 0; }
+  .app-view { display: none; }
+  .app-view.active { display: block; animation: fadein .3s ease-out; }
+  @keyframes fadein { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+  .app-view-head { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 18px; gap: 12px; }
+  .app-view-title { font-size: 17px; font-weight: 600; letter-spacing: -.3px; }
+  .app-view-sub { font-size: 11px; color: var(--text-dim); font-family: 'Geist Mono', monospace; letter-spacing: .5px; text-transform: uppercase; margin-top: 4px; }
+  .app-chip { display: inline-flex; align-items: center; gap: 5px; font-family: 'Geist Mono', monospace; font-size: 10px; color: var(--accent); background: var(--accent-soft); padding: 4px 9px; border-radius: 100px; letter-spacing: .5px; text-transform: uppercase; }
+  .app-chip::before { content:''; width: 5px; height: 5px; border-radius: 50%; background: var(--accent); }
+
+  /* DISCOVER */
+  .disc-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 9px; }
+  .disc-card { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 10px; padding: 12px; transition: border-color .2s; }
+  .disc-card:hover { border-color: var(--border-strong); }
+  .disc-card .head { display: flex; align-items: center; gap: 7px; margin-bottom: 8px; }
+  .disc-av { width: 20px; height: 20px; border-radius: 50%; background: linear-gradient(135deg, var(--accent), var(--accent-soft)); flex-shrink: 0; }
+  .disc-name { font-size: 11px; font-weight: 500; line-height: 1.2; }
+  .disc-handle { font-size: 10px; color: var(--text-dim); }
+  .disc-text { font-size: 11.5px; color: var(--text); line-height: 1.45; margin-bottom: 10px; min-height: 50px; }
+  .disc-meta { display: flex; justify-content: space-between; align-items: center; }
+  .disc-tag { font-family: 'Geist Mono', monospace; font-size: 9.5px; color: var(--accent); background: var(--accent-soft); padding: 3px 7px; border-radius: 100px; font-weight: 500; }
+  .disc-views { font-family: 'Geist Mono', monospace; font-size: 10px; color: var(--text-dim); }
+
+  /* STUDIO */
+  .studio-grid { display: grid; grid-template-columns: 1fr 220px; gap: 16px; }
+  .studio-doc { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 12px; padding: 22px 24px; font-size: 13.5px; line-height: 1.75; color: var(--text); min-height: 320px; }
+  .studio-doc p { margin-bottom: 12px; }
+  .studio-doc p:last-child { margin-bottom: 0; }
+  .studio-doc .hl { background: var(--accent-soft); color: var(--accent); padding: 1px 4px; border-radius: 3px; }
+  .studio-doc .cursor { display: inline-block; width: 2px; background: var(--accent); height: 14px; vertical-align: -2px; margin-left: 1px; animation: blink 1.05s steps(2) infinite; }
+  @keyframes blink { 0%, 50% { opacity: 1; } 51%, 100% { opacity: 0; } }
+  .studio-side { display: flex; flex-direction: column; gap: 9px; }
+  .studio-card { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 10px; padding: 13px 14px; }
+  .studio-card .lbl { font-family: 'Geist Mono', monospace; font-size: 9.5px; color: var(--text-dim); letter-spacing: .5px; text-transform: uppercase; margin-bottom: 8px; }
+  .studio-card .big { font-size: 26px; font-weight: 600; letter-spacing: -.7px; line-height: 1; color: var(--text); font-variant-numeric: tabular-nums; }
+  .studio-card .big.acc { color: var(--accent); }
+  .studio-card .small { font-size: 11px; color: var(--text-mid); margin-top: 4px; }
+  .studio-actions { display: flex; flex-direction: column; gap: 6px; padding: 10px 14px; }
+  .studio-act { display: flex; align-items: center; gap: 8px; padding: 7px 10px; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; font-size: 12px; color: var(--text); cursor: pointer; transition: border-color .2s; }
+  .studio-act:hover { border-color: var(--text-mid); }
+  .studio-act svg { width: 12px; height: 12px; color: var(--accent); }
+
+  /* VOICE */
+  .voice-list { display: flex; flex-direction: column; gap: 8px; }
+  .voice-card { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 12px; padding: 16px; }
+  .voice-card.training { border-color: var(--accent); background: linear-gradient(180deg, var(--accent-soft), var(--bg-soft) 100%); }
+  .voice-card .row1 { display: flex; align-items: center; justify-content: space-between; margin-bottom: 11px; gap: 12px; }
+  .voice-card-name { font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+  .voice-card-name .dot { width: 7px; height: 7px; border-radius: 50%; background: #2bbf6c; }
+  .voice-card.training .voice-card-name .dot { background: var(--accent); animation: pulse 1.3s ease-in-out infinite; }
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .5; } }
+  .voice-card-status { font-family: 'Geist Mono', monospace; font-size: 10.5px; color: var(--text-mid); padding: 3px 9px; background: var(--surface); border: 1px solid var(--border); border-radius: 100px; }
+  .voice-card.training .voice-card-status { color: var(--accent); border-color: var(--accent); background: var(--surface); }
+  .voice-card-bar { height: 6px; border-radius: 999px; background: var(--border); overflow: hidden; margin-bottom: 9px; }
+  .voice-card-bar i { display: block; height: 100%; background: var(--accent); border-radius: 999px; }
+  .voice-card-meta { font-size: 11px; color: var(--text-mid); display: flex; justify-content: space-between; font-family: 'Geist Mono', monospace; letter-spacing: .3px; }
+  .voice-add { display: flex; align-items: center; justify-content: center; gap: 7px; padding: 14px; background: transparent; border: 1px dashed var(--border-strong); border-radius: 12px; color: var(--text-mid); font-size: 12.5px; cursor: pointer; transition: color .2s, border-color .2s; font-family: inherit; }
+  .voice-add:hover { color: var(--accent); border-color: var(--accent); }
+
+  /* CALENDAR */
+  .cal-week { display: grid; grid-template-columns: repeat(5, 1fr); gap: 7px; }
+  .cal-day { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 10px; padding: 10px 9px; min-height: 220px; display: flex; flex-direction: column; gap: 5px; }
+  .cal-day.today { border-color: var(--accent); background: var(--accent-soft); }
+  .cal-day .d-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px; }
+  .cal-day .d-name { font-family: 'Geist Mono', monospace; font-size: 9.5px; color: var(--text-dim); text-transform: uppercase; letter-spacing: .5px; }
+  .cal-day .d-num { font-size: 14px; font-weight: 600; }
+  .cal-day.today .d-num { color: var(--accent); }
+  .cal-post { padding: 6px 8px; background: var(--surface); border: 1px solid var(--border); border-radius: 6px; font-size: 10.5px; color: var(--text); line-height: 1.35; }
+  .cal-post.x { border-left: 3px solid #1d9bf0; }
+  .cal-post.li { border-left: 3px solid #0a66c2; }
+  .cal-post.yt { border-left: 3px solid #ff3838; }
+  .cal-post.draft { color: var(--text-mid); font-style: italic; }
+  .cal-post b { font-family: 'Geist Mono', monospace; font-size: 9px; font-weight: 600; letter-spacing: .4px; text-transform: uppercase; color: var(--text-dim); display: block; margin-bottom: 2px; }
+  .cal-post.x b { color: #1d9bf0; } .cal-post.li b { color: #0a66c2; } .cal-post.yt b { color: #ff3838; }
+
+  /* Responsive */
+  @media (max-width: 880px) {
+    .app-body { grid-template-columns: 1fr; }
+    .app-side { flex-direction: row; gap: 8px; overflow-x: auto; padding: 12px; border-right: 0; border-bottom: 1px solid var(--border); }
+    .app-side-top, .app-search, .app-section-label, .app-side-bottom, .app-user { display: none; }
+    .app-side .app-nav { flex-direction: row; gap: 4px; }
+    .app-side > div:nth-of-type(2) { display: none; } /* hide workspace boards */
+    .app-nav-item { white-space: nowrap; padding: 7px 12px; }
+    .disc-grid { grid-template-columns: 1fr; }
+    .studio-grid { grid-template-columns: 1fr; }
+    .cal-week { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  /* ─── FORMATS SHOWCASE (Eden's "templates", reimagined as marketing) ─── */
+  .formats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px; max-width: 1100px; margin: 0 auto; }
+  .fmt { background: var(--surface); border: 1px solid var(--border); border-radius: 22px; padding: 28px; box-shadow: var(--shadow-sm); display: flex; flex-direction: column; gap: 22px; transition: border-color .3s, transform .3s; overflow: hidden; }
+  .fmt:hover { border-color: var(--border-strong); transform: translateY(-2px); }
+  .fmt-head { display: flex; align-items: center; gap: 11px; }
+  .fmt-glyph { width: 36px; height: 36px; border-radius: 10px; background: var(--bg-soft); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; flex-shrink: 0; color: var(--text); }
+  .fmt-title { font-size: 17px; font-weight: 600; letter-spacing: -.3px; }
+  .fmt-meta { margin-left: auto; font-family: 'Geist Mono', monospace; font-size: 10.5px; color: var(--text-dim); letter-spacing: .6px; text-transform: uppercase; }
+  /* X / Twitter preview */
+  .twt-card { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 14px; padding: 18px; }
+  .twt-row { display: flex; gap: 10px; margin-bottom: 12px; }
+  .twt-av { width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, var(--accent), var(--accent-soft)); flex-shrink: 0; }
+  .twt-name { font-size: 13.5px; font-weight: 600; }
+  .twt-handle { font-size: 12.5px; color: var(--text-dim); }
+  .twt-text { font-size: 14.5px; color: var(--text); line-height: 1.55; }
+  .twt-text b { font-weight: 600; }
+  .twt-meta { display: flex; gap: 18px; margin-top: 14px; font-family: 'Geist Mono', monospace; font-size: 11px; color: var(--text-dim); }
+  .twt-meta b { color: var(--text); }
+  /* LinkedIn carousel */
+  .li-slides { display: flex; gap: 8px; }
+  .li-slide { aspect-ratio: 4/5; flex: 1; background: var(--bg-soft); border: 1px solid var(--border); border-radius: 10px; padding: 14px 12px; display: flex; flex-direction: column; justify-content: space-between; }
+  .li-slide.active { background: var(--accent-soft); border-color: var(--accent); }
+  .li-num { font-family: 'Geist Mono', monospace; font-size: 10.5px; color: var(--text-dim); font-weight: 500; }
+  .li-slide.active .li-num { color: var(--accent); }
+  .li-body { font-size: 11.5px; line-height: 1.35; font-weight: 600; color: var(--text); }
+  .li-slide.active .li-body { color: var(--accent); }
+  /* YouTube hook */
+  .yt-thumb { aspect-ratio: 16/9; background: linear-gradient(135deg, #15151a 0%, #2a2a35 100%); border-radius: 12px; padding: 18px; display: flex; flex-direction: column; justify-content: space-between; position: relative; overflow: hidden; }
+  .yt-thumb::before { content:''; position: absolute; inset: 0; background: radial-gradient(circle at 30% 70%, rgba(107,99,245,0.35), transparent 60%); }
+  .yt-thumb-title { font-size: 18px; font-weight: 700; color: #fff; letter-spacing: -.5px; line-height: 1.1; position: relative; max-width: 80%; }
+  .yt-thumb-bottom { display: flex; align-items: center; gap: 10px; position: relative; }
+  .yt-play { width: 30px; height: 30px; border-radius: 50%; background: rgba(255,255,255,.95); display: flex; align-items: center; justify-content: center; }
+  .yt-play svg { width: 11px; height: 12px; margin-left: 2px; color: #15151a; }
+  .yt-dur { font-family: 'Geist Mono', monospace; font-size: 11px; color: rgba(255,255,255,.85); background: rgba(0,0,0,.5); padding: 3px 8px; border-radius: 4px; }
+  .yt-hook { font-family: 'Geist Mono', monospace; font-size: 12.5px; color: var(--text-mid); margin-top: 2px; line-height: 1.55; padding-left: 12px; border-left: 2px solid var(--accent); }
+  /* Substack essay */
+  .sub-essay { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 14px; padding: 22px; }
+  .sub-title { font-size: 19px; font-weight: 600; letter-spacing: -.4px; line-height: 1.2; margin-bottom: 10px; }
+  .sub-lede { font-size: 13px; color: var(--text-mid); line-height: 1.55; margin-bottom: 14px; }
+  .sub-byline { font-family: 'Geist Mono', monospace; font-size: 10.5px; color: var(--text-dim); letter-spacing: .5px; text-transform: uppercase; }
+  @media (max-width: 760px) { .formats { grid-template-columns: 1fr; } }
+
+  /* ─── PROOF SECTION (Eden-style "the pattern works") ─── */
+  .proof { max-width: 1140px; margin: 0 auto; padding: 0 36px; display: grid; grid-template-columns: 1fr 1.2fr; gap: 60px; align-items: center; }
+  .proof-left { max-width: 500px; }
+  .proof-eye { font-family: 'Geist Mono', monospace; font-size: 11px; letter-spacing: 1.2px; text-transform: uppercase; color: var(--text-dim); margin-bottom: 22px; display: inline-block; }
+  .proof-title { font-size: clamp(34px, 5vw, 56px); font-weight: 600; letter-spacing: -2px; line-height: 1.02; margin-bottom: 22px; }
+  .proof-title .hl { color: var(--accent); }
+  .proof-body { font-size: 16px; color: var(--text-mid); line-height: 1.6; margin-bottom: 24px; }
+  .proof-body b { color: var(--text); font-weight: 600; }
+  .proof-lesson { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 14px; padding: 20px 22px; font-size: 14.5px; color: var(--text-mid); line-height: 1.6; }
+  .proof-lesson b { color: var(--accent); font-weight: 600; }
+
+  .proof-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .proof-card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; transition: transform .3s, border-color .3s; box-shadow: var(--shadow-sm); }
+  .proof-card:hover { transform: translateY(-3px); border-color: var(--border-strong); }
+  .pc-thumb { aspect-ratio: 16/10; padding: 20px; display: flex; align-items: flex-end; color: #fff; position: relative; overflow: hidden; }
+  .pc-thumb::before { content: ''; position: absolute; inset: 0; pointer-events: none; }
+  .pc-thumb > * { position: relative; z-index: 1; max-width: 90%; }
+  .pc-thumb-title { font-size: 18px; font-weight: 700; letter-spacing: -.4px; line-height: 1.18; }
+  .pc-thumb-num { position: absolute; top: 14px; right: 16px; font-family: 'Geist Mono', monospace; font-size: 32px; font-weight: 700; opacity: .14; line-height: 1; z-index: 0; letter-spacing: -1.5px; }
+  .pc-meta { padding: 14px 16px 16px; }
+  .pc-name { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 5px; line-height: 1.3; display: flex; align-items: baseline; gap: 6px; flex-wrap: wrap; }
+  .pc-handle { font-family: 'Geist Mono', monospace; font-size: 10.5px; font-weight: 500; color: var(--text-dim); letter-spacing: .3px; text-transform: lowercase; }
+  .proof-foot {
+    grid-column: 1 / -1;
+    margin-top: 18px;
+    text-align: center;
+    font-family: 'Geist Mono', monospace;
+    font-size: 11px;
+    color: var(--text-dim);
+    letter-spacing: .3px;
+    line-height: 1.55;
+  }
+  .pc-stat { font-size: 11.5px; color: var(--text-dim); font-family: 'Geist Mono', monospace; display: flex; align-items: center; justify-content: space-between; gap: 8px; letter-spacing: .3px; text-transform: uppercase; }
+  .pc-tag { background: var(--accent-soft); color: var(--accent); padding: 3px 8px; border-radius: 100px; font-weight: 700; text-transform: none; letter-spacing: 0; font-size: 11px; }
+
+  /* Platform-themed thumbnails */
+  .pc-x .pc-thumb { background: linear-gradient(135deg, #0d0c1a 0%, #1a1530 100%); }
+  .pc-x .pc-thumb::before { background: radial-gradient(circle at 70% 30%, rgba(107,99,245,0.42), transparent 60%); }
+  .pc-li .pc-thumb { background: linear-gradient(135deg, #08233f 0%, #003a6c 100%); }
+  .pc-li .pc-thumb::before { background: radial-gradient(circle at 30% 70%, rgba(0,119,255,0.35), transparent 60%); }
+  .pc-yt .pc-thumb { background: linear-gradient(135deg, #1a0a0a 0%, #3a0808 100%); }
+  .pc-yt .pc-thumb::before { background: radial-gradient(circle at 60% 40%, rgba(255,40,40,0.35), transparent 60%); }
+  .pc-yt .pc-thumb-title { text-transform: uppercase; font-size: 17px; line-height: 1.12; }
+  .pc-sub .pc-thumb { background: #f5e9d3; color: #2a1f10; }
+  .pc-sub .pc-thumb-title { font-weight: 600; }
+
+  @media (max-width: 880px) {
+    .proof { grid-template-columns: 1fr; gap: 36px; }
+    .proof-left { max-width: 100%; }
+  }
+  @media (max-width: 480px) {
+    .proof-grid { grid-template-columns: 1fr; }
+    .pc-thumb-title { font-size: 17px; }
+  }
+
+  /* TIMELINE / 3 STEPS */
+  .steps { max-width: 880px; margin: 0 auto; position: relative; }
+  .step { display: grid; grid-template-columns: 56px 1fr; gap: 26px; padding: 30px 0; border-bottom: 1px solid var(--border); align-items: start; }
+  .step:last-child { border-bottom: 0; }
+  .step .num { font-family: 'Geist Mono', monospace; font-size: 13px; font-weight: 500; color: var(--accent); padding-top: 4px; letter-spacing: .5px; }
+  .step h3 { font-size: 22px; font-weight: 600; letter-spacing: -.4px; margin-bottom: 8px; }
+  .step p { font-size: 16px; color: var(--text-mid); line-height: 1.6; max-width: 580px; }
+  .step .timer { float: right; font-family: 'Geist Mono', monospace; font-size: 11px; color: var(--text-dim); padding: 4px 10px; background: var(--bg-soft); border: 1px solid var(--border); border-radius: 100px; }
+
+  /* ─── FOUNDING MEMBER OFFER (replaces panic-trial pattern) ─── */
+  .founding {
+    max-width: 720px; margin: 0 auto; position: relative;
+    border-radius: 26px; padding: 1.5px;
+    background: linear-gradient(140deg, #6b63f5 0%, #3d36c2 50%, var(--border-strong) 100%);
+    box-shadow: 0 30px 80px rgba(79,70,229,0.18), 0 0 0 1px rgba(107,99,245,0.1);
+  }
+  .founding-inner { background: var(--surface); border-radius: 24px; padding: 40px 42px; position: relative; overflow: hidden; }
+  .founding-inner::before { content:''; position: absolute; top: -50%; right: -10%; width: 380px; height: 380px; border-radius: 50%; background: radial-gradient(circle, rgba(107,99,245,0.10), transparent 70%); filter: blur(40px); pointer-events: none; }
+  .founding-eye { display: inline-flex; align-items: center; gap: 7px; font-family: 'Geist Mono', monospace; font-size: 11px; letter-spacing: 1px; text-transform: uppercase; color: var(--accent); padding: 5px 12px; background: var(--accent-soft); border-radius: 100px; margin-bottom: 22px; position: relative; }
+  .founding-eye .star { font-size: 12px; line-height: 1; }
+  .founding h3 { font-size: clamp(28px, 4vw, 40px); font-weight: 600; letter-spacing: -1.6px; line-height: 1.05; margin-bottom: 14px; position: relative; max-width: 480px; }
+  .founding .lede { font-size: 16px; color: var(--text-mid); line-height: 1.55; margin-bottom: 28px; position: relative; max-width: 460px; }
+  .founding-price { display: flex; align-items: baseline; gap: 14px; margin-bottom: 28px; position: relative; flex-wrap: wrap; }
+  .founding-price .big { font-size: 56px; font-weight: 600; letter-spacing: -2.2px; line-height: 1; font-variant-numeric: tabular-nums; }
+  .founding-price .per { font-size: 14px; color: var(--text-mid); }
+  .founding-price .per b { font-weight: 600; color: var(--text); }
+  .founding-price .strike { font-size: 13px; color: var(--text-dim); text-decoration: line-through; font-family: 'Geist Mono', monospace; }
+  .founding-feats { list-style: none; display: grid; grid-template-columns: 1fr 1fr; gap: 11px 22px; margin-bottom: 32px; position: relative; }
+  .founding-feats li { display: flex; align-items: flex-start; gap: 9px; font-size: 14.5px; color: var(--text); line-height: 1.45; }
+  .founding-feats svg { width: 16px; height: 16px; color: var(--accent); flex-shrink: 0; margin-top: 2px; }
+  .founding-cta { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; position: relative; }
+  .founding-cta .btn-primary { padding: 15px 30px; font-size: 15.5px; }
+  .founding-cta .meta { font-size: 13px; color: var(--text-mid); }
+  .founding-cta .meta b { color: var(--text); font-weight: 600; }
+  /* Seats counter (replaces Eden's countdown timer) */
+  .seats { margin-top: 26px; padding-top: 22px; border-top: 1px solid var(--border); position: relative; }
+  .seats-row { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 9px; }
+  .seats-row .lbl { font-family: 'Geist Mono', monospace; font-size: 10.5px; letter-spacing: .8px; text-transform: uppercase; color: var(--text-dim); }
+  .seats-row .num { font-family: 'Geist Mono', monospace; font-size: 13px; font-variant-numeric: tabular-nums; color: var(--text); font-weight: 500; }
+  .seats-row .num b { color: var(--accent); font-weight: 700; }
+  .seats-bar { height: 7px; background: var(--bg-soft); border-radius: 999px; overflow: hidden; }
+  .seats-bar i { display: block; height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent-2)); border-radius: 999px; transition: width 1.4s cubic-bezier(.16,1,.3,1); }
+
+  .pricing-footnote { text-align: center; font-size: 13px; color: var(--text-dim); margin-top: 30px; line-height: 1.6; }
+  .pricing-footnote b { color: var(--text-mid); font-weight: 500; }
+
+  @media (max-width: 640px) {
+    .founding-inner { padding: 30px 24px; }
+    .founding-feats { grid-template-columns: 1fr; }
+  }
+
+  /* PRICING */
+  .price-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 18px; max-width: 1080px; margin: 0 auto; }
+  .price { background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: 34px; display: flex; flex-direction: column; }
+  .price.featured { border-color: var(--accent); box-shadow: 0 0 0 4px var(--accent-soft); position: relative; }
+  .price.featured::before { content: 'Most popular'; position: absolute; top: -12px; left: 50%; transform: translateX(-50%); font-family: 'Geist Mono', monospace; font-size: 10.5px; letter-spacing: .8px; text-transform: uppercase; background: var(--accent); color: #fff; padding: 4px 12px; border-radius: 100px; }
+  .price h3 { font-size: 18px; font-weight: 600; letter-spacing: -.3px; margin-bottom: 6px; }
+  .price .price-tag { font-size: 44px; font-weight: 600; letter-spacing: -1.6px; line-height: 1.1; margin-top: 14px; }
+  .price .price-tag span { font-size: 16px; font-weight: 500; color: var(--text-dim); letter-spacing: 0; }
+  .price > p { font-size: 14px; color: var(--text-mid); line-height: 1.55; margin: 14px 0 22px; }
+  .price ul { list-style: none; display: flex; flex-direction: column; gap: 11px; flex: 1; margin-bottom: 24px; }
+  .price li { display: flex; gap: 10px; align-items: flex-start; font-size: 14px; color: var(--text); }
+  .price li svg { width: 16px; height: 16px; flex-shrink: 0; margin-top: 2px; color: var(--accent); }
+  .price .btn { width: 100%; }
+  .price .btn-outline { background: transparent; color: var(--text); border: 1px solid var(--border-strong); padding: 13px 22px; }
+  .price .btn-outline:hover { border-color: var(--text-mid); transform: translateY(-1px); }
+
+  /* FAQ */
+  .faq { max-width: 720px; margin: 0 auto; }
+  .q { border-bottom: 1px solid var(--border); }
+  .q summary { list-style: none; padding: 22px 0; cursor: pointer; display: flex; justify-content: space-between; align-items: center; gap: 24px; font-size: 16.5px; font-weight: 500; }
+  .q summary::-webkit-details-marker { display: none; }
+  .q .qi { width: 22px; height: 22px; border-radius: 50%; border: 1px solid var(--border-strong); display: flex; align-items: center; justify-content: center; flex-shrink: 0; color: var(--text-mid); transition: transform .3s, background .3s, color .3s, border-color .3s; }
+  .q[open] .qi { transform: rotate(45deg); background: var(--accent); color: #fff; border-color: var(--accent); }
+  .q .ans { padding: 0 0 22px; color: var(--text-mid); line-height: 1.6; font-size: 15px; max-width: 600px; }
+
+  /* (CTA band removed — footer flows directly after the FAQ section) */
+
+  /* ─── FOOTER (new) ─── */
+  footer { margin-top: 160px; border-top: 1px solid var(--border); padding-top: 60px; overflow: hidden; }
+  .foot-top { max-width: 1140px; margin: 0 auto; padding: 0 36px 50px; display: grid; grid-template-columns: 1.4fr 1fr 1fr 1fr; gap: 48px; }
+  .foot-brand p { font-size: 14px; color: var(--text-mid); line-height: 1.6; margin: 14px 0 22px; max-width: 280px; }
+  .foot-sub { display: flex; gap: 8px; max-width: 320px; }
+  .foot-sub input { flex: 1; padding: 11px 14px; font-family: inherit; font-size: 13px; background: var(--surface); border: 1px solid var(--border-strong); border-radius: 999px; color: var(--text); outline: none; transition: border-color .2s; }
+  .foot-sub input:focus { border-color: var(--accent); }
+  .foot-sub input::placeholder { color: var(--text-dim); }
+  .foot-sub button { padding: 11px 18px; font-family: inherit; font-size: 13px; font-weight: 500; color: #fff; background: linear-gradient(180deg, #6b63f5 0%, #3d36c2 100%); border: none; border-radius: 999px; cursor: pointer; box-shadow: inset 0 1px 0 rgba(255,255,255,0.22), 0 1px 2px rgba(40,30,140,0.18); transition: filter .2s, transform .2s; }
+  .foot-sub button:hover { filter: brightness(1.05); transform: translateY(-1px); }
+  .foot-col h4 { font-family: 'Geist Mono', monospace; font-size: 11px; font-weight: 500; color: var(--text-dim); margin-bottom: 16px; letter-spacing: .8px; text-transform: uppercase; }
+  .foot-col a { display: block; font-size: 14px; color: var(--text); text-decoration: none; margin-bottom: 11px; transition: color .2s; width: fit-content; }
+  .foot-col a:hover { color: var(--accent); }
+  .foot-status { display: inline-flex; align-items: center; gap: 7px; font-size: 13px; color: var(--text-mid); margin-top: 8px; }
+  .foot-status .dot { width: 7px; height: 7px; border-radius: 50%; background: #2bbf6c; box-shadow: 0 0 0 3px rgba(43,191,108,.18); display: inline-block; }
+
+  .foot-wordmark {
+    text-align: center; padding: 30px 36px 10px;
+    font-size: clamp(120px, 24vw, 320px); font-weight: 700; letter-spacing: -14px;
+    line-height: 0.85; color: transparent;
+    -webkit-text-stroke: 1px var(--border-strong);
+    background: linear-gradient(180deg, var(--text) -10%, transparent 90%);
+    -webkit-background-clip: text; background-clip: text;
+    user-select: none; pointer-events: none;
+    opacity: .14;
+  }
+  html[data-theme="dark"] .foot-wordmark { opacity: .22; }
+
+  /* Signature credit block — sits between the wordmark and the base row */
+  .foot-credit {
+    text-align: center;
+    padding: 38px 36px 30px;
+    max-width: 1140px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+  }
+  .foot-credit .label {
+    font-family: 'Geist Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+  .foot-credit .label::before,
+  .foot-credit .label::after {
+    content: '';
+    width: 22px;
+    height: 1px;
+    background: currentColor;
+    opacity: .5;
+  }
+  .foot-credit .name {
+    font-size: clamp(22px, 3vw, 28px);
+    font-weight: 600;
+    letter-spacing: -.7px;
+    line-height: 1.15;
+    color: var(--text);
+    text-decoration: none;
+    transition: color .2s;
+  }
+  a.foot-credit-name:hover { color: var(--accent); }
+  .foot-credit .role { font-size: 13.5px; color: var(--text-mid); margin-top: 2px; }
+
+  .foot-base { max-width: 1140px; margin: 0 auto; padding: 30px 36px 38px; display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; border-top: 1px solid var(--border); }
+  .foot-base span { font-size: 12.5px; color: var(--text-dim); }
+  .foot-base .links { display: flex; gap: 22px; }
+  .foot-base a { font-size: 12.5px; color: var(--text-dim); text-decoration: none; transition: color .2s; }
+  .foot-base a:hover { color: var(--text); }
+
+  @media (max-width: 900px) {
+    .panel-body, .personas, .price-grid { grid-template-columns: 1fr; }
+    .bento { grid-template-columns: 1fr 1fr; }
+    .bento .t-wide { grid-column: span 2; }
+    .foot-top { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 640px) {
+    .bento { grid-template-columns: 1fr; }
+    .bento .t-wide { grid-column: span 1; }
+  }
+  @media (max-width: 760px) {
+    nav { padding: 14px 20px; }
+    .nav-links, .nav-signin { display: none; }
+    .menu-btn { display: block; }
+    .mobile-menu { display: flex; }
+    .hero { padding: 140px 20px 0; }
+    .section { padding: 110px 22px 0; }
+    .foot-top { grid-template-columns: 1fr; gap: 36px; }
+    .foot-base { flex-direction: column; align-items: flex-start; }
+    footer { margin-top: 110px; }
+  }
+
+  /* ─── MOBILE OPTIMIZATION PASS ─── */
+  @media (max-width: 768px) {
+    /* Nav: safe-area for iPhone notch */
+    nav {
+      padding: max(12px, env(safe-area-inset-top)) max(18px, env(safe-area-inset-right)) 12px max(18px, env(safe-area-inset-left));
+    }
+    .logo-word { font-size: 17px; }
+    .scroll-progress { height: 2px; }
+
+    /* Hero: tighter typography, gentler tracking, stacked CTAs */
+    .hero { padding: 100px 18px 0; }
+    .hero h1 { letter-spacing: -1.6px; font-weight: 600; line-height: 1.04; }
+    .hero-sub { font-size: 16.5px; margin-bottom: 32px; max-width: 100%; }
+    .hero-cta { flex-direction: column; align-items: stretch; gap: 10px; padding: 0 8px; margin-bottom: 14px; }
+    .hero-cta .btn-primary { width: 100%; justify-content: center; padding: 14px 22px; }
+    .hero-cta .quiet-link { justify-content: center; margin-top: 4px; padding: 10px 4px; }
+    .pill {
+      font-size: 12px; padding: 5px 12px 5px 5px; max-width: calc(100vw - 36px);
+      white-space: normal; line-height: 1.3; text-align: left;
+    }
+    .pill .tag { font-size: 9.5px; padding: 2px 7px; flex-shrink: 0; }
+    .hero-note { font-size: 12px; padding: 0 12px; line-height: 1.5; }
+
+    /* Hero product mock */
+    .mock-wrap { margin-top: 56px; padding: 0 6px; }
+    .panel-bar { padding: 11px 14px; }
+    .panel-bar .u { font-size: 10px; }
+    .panel-col { padding: 18px; }
+    .pc-label { font-size: 9.5px; letter-spacing: .8px; margin-bottom: 14px; }
+    .badge-row { gap: 8px; margin-top: 18px; }
+    .conf { padding: 10px 12px; }
+    .conf .v { font-size: 19px; }
+    .spark { height: 56px; }
+    .cv-tag { font-size: 9.5px; padding: 2px 7px; }
+    .cv-row { padding: 10px 12px; }
+
+    /* Section typography */
+    .section { padding: 80px 18px 0; }
+    .sec-head { margin-bottom: 40px; }
+    .sec-head h2 { font-size: clamp(26px, 8vw, 38px); letter-spacing: -1.2px; }
+    .sec-head p { font-size: 15px; }
+    .eyebrow { font-size: 11px; margin-bottom: 16px; }
+
+    /* Personas */
+    .persona { padding: 24px; }
+    .persona h3 { font-size: 18px; }
+
+    /* Bento */
+    .bento { gap: 14px; }
+    .bento .tile { padding: 22px; }
+    .bento .t-title { font-size: 19px; }
+    .bento .t-sub { font-size: 14px; margin-bottom: 18px; }
+
+    /* Product preview app window */
+    .app-window { border-radius: 14px; }
+    .app-side { padding: 10px; gap: 4px; }
+    .app-search span:not(.kbd) { display: none; }
+    .app-search .kbd { display: none; }
+    .app-main { padding: 18px 16px; }
+    .app-view-head { flex-wrap: wrap; gap: 8px; }
+    .app-view-title { font-size: 16px; }
+    .disc-text { min-height: 0; }
+    .studio-grid { grid-template-columns: 1fr; }
+    .studio-doc { padding: 18px; font-size: 13px; }
+    .cal-week { grid-template-columns: 1fr; gap: 6px; }
+    .cal-day { min-height: 80px; }
+    .voice-card { padding: 14px; }
+
+    /* Formats showcase */
+    .fmt { padding: 22px; gap: 18px; }
+    .fmt-title { font-size: 16px; }
+    .fmt-meta { font-size: 9.5px; }
+    .yt-thumb-title { font-size: 16px; }
+    .twt-text { font-size: 13.5px; }
+    .sub-title { font-size: 17px; }
+
+    /* Workflow steps */
+    .step { grid-template-columns: 38px 1fr; gap: 14px; padding: 22px 0; }
+    .step h3 { font-size: 18px; }
+    .step p { font-size: 14.5px; }
+    .step .timer { float: none; display: inline-block; margin-top: 6px; margin-left: 0; }
+
+    /* Founding member offer */
+    .founding-inner { padding: 30px 22px; }
+    .founding h3 { font-size: clamp(24px, 7vw, 32px); letter-spacing: -1.2px; }
+    .founding .lede { font-size: 15px; margin-bottom: 22px; }
+    .founding-price { gap: 12px; margin-bottom: 22px; }
+    .founding-price .big { font-size: 44px; letter-spacing: -1.8px; }
+    .founding-price .strike { font-size: 12px; }
+    .founding-feats { grid-template-columns: 1fr; gap: 10px; margin-bottom: 24px; }
+    .founding-feats li { font-size: 14px; }
+    .founding-cta { flex-direction: column; align-items: stretch; gap: 12px; }
+    .founding-cta .btn-primary { width: 100%; padding: 14px 22px; justify-content: center; }
+    .founding-cta .meta { text-align: center; font-size: 12.5px; }
+    .seats { margin-top: 22px; padding-top: 18px; }
+
+    /* FAQ */
+    .q summary { padding: 18px 0; font-size: 15px; gap: 14px; }
+    .q .ans { font-size: 14px; padding-right: 12px; }
+
+    /* Footer */
+    footer { margin-top: 80px; padding-top: 36px; }
+    .foot-top { padding: 0 18px 36px; }
+    .foot-brand p { font-size: 13.5px; }
+    .foot-sub { max-width: 100%; }
+    .foot-sub input { padding: 10px 14px; font-size: 13px; }
+    .foot-sub button { padding: 10px 16px; font-size: 12.5px; }
+    .foot-col h4 { font-size: 11px; margin-bottom: 12px; }
+    .foot-col a { font-size: 13.5px; padding: 4px 0; margin-bottom: 4px; } /* tap target */
+    .foot-wordmark { font-size: clamp(70px, 30vw, 200px); letter-spacing: -7px; padding: 18px 18px 0; }
+    .foot-base { padding: 22px 18px max(28px, env(safe-area-inset-bottom)); gap: 12px; }
+    .foot-base span, .foot-base a { font-size: 12px; }
+  }
+
+  /* Very small phones */
+  @media (max-width: 420px) {
+    .hero h1 { letter-spacing: -1.2px; }
+    .hero-sub { font-size: 15.5px; }
+    .pill { font-size: 11.5px; }
+    .pill .tag { font-size: 9px; padding: 2px 6px; }
+    .founding-inner { padding: 26px 18px; }
+    .founding-price .big { font-size: 38px; }
+    .founding-price .per { font-size: 13px; }
+    .conf .v { font-size: 17px; }
+    .seats-row .num { font-size: 12px; }
+  }
+
+  /* Touch devices: kill hover transforms (avoid sticky-tap state) */
+  @media (hover: none) and (pointer: coarse) {
+    .btn-primary:hover, .f-card:hover, .persona:hover,
+    .disc-card:hover, .fmt:hover, .bento .tile:hover,
+    .price:hover, .voice-card:hover, .twt-card:hover,
+    .founding:hover { transform: none !important; }
+    /* Soft-reset shadow on tap-up */
+    .btn-primary:hover { filter: brightness(1) !important; }
+  }
+
+  /* Mobile perf: kill hero parallax + word-stagger delay */
+  @media (max-width: 768px) {
+    .mock-wrap::before { transform: none !important; }
+    [data-split] .w { transition-delay: 0s !important; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Hairline scroll progress (Awwwards touch #1) -->
+<div class="scroll-progress" aria-hidden="true"></div>
+
+<nav>
+  <a href="index.html" class="logo">
+    <span class="logo-mark"><svg viewBox="0 0 24 24" fill="none"><path d="M5 15 Q8 9 12 12 Q16 15 19 9" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M19 3.6 C19.15 5.1 20.3 6.25 21.8 6.4 C20.3 6.55 19.15 7.7 19 9.2 C18.85 7.7 17.7 6.55 16.2 6.4 C17.7 6.25 18.85 5.1 19 3.6 Z" fill="#8b84ff"/></svg></span>
+    <span class="logo-word">Sona</span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="#features">Product</a></li>
+    <li><a href="#how">How it works</a></li>
+    <li><a href="#pricing">Pricing</a></li>
+    <li><a href="contact.html">Contact</a></li>
+  </ul>
+  <div class="nav-right">
+    <a class="nav-signin" onclick="CanopyAuth.openLogin()">Sign in</a>
+    <a href="#" class="btn btn-primary" onclick="event.preventDefault(); CanopyAuth.openSignup();">Get started</a>
+  </div>
+  <button class="menu-btn" aria-label="Menu"><span></span><span></span></button>
+</nav>
+
+<div class="mobile-menu">
+  <button class="mobile-menu-close" id="mobile-menu-close" aria-label="Close menu">&times;</button>
+  <a href="#features">Product</a>
+  <a href="#how">How it works</a>
+  <a href="#pricing">Pricing</a>
+  <a href="contact.html">Contact</a>
+  <a href="#" class="btn btn-primary btn-lg" onclick="event.preventDefault(); CanopyAuth.openSignup();">Get started</a>
+</div>
+
+<!-- HERO -->
+<header class="hero">
+  <div class="hero-inner">
+    <div class="pill" data-r><span class="tag">Beta</span> Discover is live · Studio &amp; Voice ship next</div>
+    <h1 data-r data-split>Write at the<br><span class="quiet">speed of thought.</span></h1>
+    <p class="hero-sub" data-r>Sona finds what's working and turns it into original content in your voice — not a robot's. Sign up free, start browsing outliers right now.</p>
+    <div class="hero-cta" data-r>
+      <a href="#" class="btn btn-primary btn-lg" onclick="event.preventDefault(); CanopyAuth.openSignup();">Get started free <span class="btn-arrow">→</span></a>
+      <a href="#how" class="quiet-link">See how it works <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12l7 7 7-7"/></svg></a>
+    </div>
+    <div class="hero-note" data-r>Free during beta · No card required · In the studio in 10 seconds</div>
+
+    <div class="hero-proof" data-r>
+      <div class="hero-proof-item">
+        <span class="hero-proof-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>
+        <span class="hero-proof-text"><b>Live today</b><span>Browse · Save · Workspace</span></span>
+      </div>
+      <div class="hero-proof-item">
+        <span class="hero-proof-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l2.5 6.5L21 9l-5 4.5L17.5 21 12 17.5 6.5 21 8 13.5 3 9l6.5-.5z"/></svg></span>
+        <span class="hero-proof-text"><b>$99/yr for life</b><span>founding rate</span></span>
+      </div>
+      <div class="hero-proof-item">
+        <span class="hero-proof-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg></span>
+        <span class="hero-proof-text"><b>30-day refund</b><span>cancel anytime</span></span>
+      </div>
+    </div>
+  </div>
+
+  <div class="mock-wrap" data-r>
+    <div class="panel mask-reveal" data-r id="hero-panel">
+      <div class="panel-bar"><i></i><i></i><i></i><span class="u mono">sona.so/studio</span></div>
+      <div class="panel-body">
+        <div class="panel-col">
+          <div class="pc-label">Draft · in your voice</div>
+          <div class="draft-line a" style="--w:96%"></div>
+          <div class="draft-line" style="--w:88%"></div>
+          <div class="draft-line" style="--w:92%"></div>
+          <div class="draft-line" style="--w:64%"></div>
+          <div class="badge-row">
+            <div class="conf"><span class="k">Voice match</span><span class="v acc" data-count="98" data-suffix="%">0%</span></div>
+            <div class="conf"><span class="k">Predicted reach</span><span class="v" data-count="3.2" data-suffix="×" data-decimals="1">0×</span></div>
+          </div>
+        </div>
+        <div class="panel-col">
+          <div class="pc-label">Top outliers · last 30d</div>
+          <div class="spark"><i style="height:40%"></i><i style="height:62%"></i><i style="height:50%"></i><i style="height:84%"></i><i style="height:70%"></i><i style="height:100%"></i><i style="height:78%"></i></div>
+          <div class="cv-row" style="margin-top:18px"><span class="cv-av"></span><div style="flex:1"><div class="cv-line" style="width:80%"></div></div><span class="cv-tag" data-count="12" data-suffix="× outlier">0× outlier</span></div>
+          <div class="cv-row"><span class="cv-av"></span><div style="flex:1"><div class="cv-line" style="width:65%"></div></div><span class="cv-tag" data-count="7" data-suffix="× outlier">0× outlier</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- WHO IT'S FOR -->
+<section class="section" id="who">
+  <div class="sec-head" data-r>
+    <span class="eyebrow accent line">Who it's for</span>
+    <h2>Built for the way <span class="quiet">you actually create.</span></h2>
+    <p>Whether you're scaling a personal brand or running content for a team, Sona fits the way you work — not the other way around.</p>
+  </div>
+  <div class="personas" data-r>
+    <div class="persona">
+      <div class="role">Solo creators</div>
+      <h3>Ship daily without burning out.</h3>
+      <p>Turn one idea into a week of content across every platform — all in the voice your audience already trusts.</p>
+      <div class="out">Outcome · <b>10× output</b>, same hours.</div>
+    </div>
+    <div class="persona">
+      <div class="role">Founders</div>
+      <h3>Build in public, on autopilot.</h3>
+      <p>Distill product updates and learnings into thought leadership without taking time away from building.</p>
+      <div class="out">Outcome · <b>2× pipeline</b> from owned audience.</div>
+    </div>
+    <div class="persona">
+      <div class="role">Agencies</div>
+      <h3>Scale client content, keep voice.</h3>
+      <p>Train a custom voice model per client. Draft, review, and ship at the speed your accounts need.</p>
+      <div class="out">Outcome · <b>3× clients</b>, no new hires.</div>
+    </div>
+  </div>
+</section>
+
+<!-- BENTO FEATURES -->
+<section class="section" id="features">
+  <div class="sec-head" data-r>
+    <span class="eyebrow line">Inside Sona</span>
+    <h2>Built for depth. <span class="quiet">Designed for focus.</span></h2>
+    <p>Six tools that quietly do the heavy lifting, so writing stays the only thing you think about.</p>
+  </div>
+
+  <div class="bento" data-r>
+
+    <!-- 1. VOICE MODELS (WIDE) -->
+    <div class="tile t-wide">
+      <span class="t-eye">Voice models</span>
+      <h3 class="t-title">Trained on the way you actually write.</h3>
+      <p class="t-sub">Sona learns your phrasing, rhythm, and point of view from your existing posts. The more you publish, the sharper it gets — 98% match average within a week.</p>
+      <div class="t-visual">
+        <div class="voice-row"><span class="voice-name">Personal</span><span class="voice-bar"><i style="width:98%"></i></span><span class="voice-pct">98%</span></div>
+        <div class="voice-row"><span class="voice-name">Professional</span><span class="voice-bar"><i style="width:92%"></i></span><span class="voice-pct">92%</span></div>
+        <div class="voice-row"><span class="voice-name">Client · Acme</span><span class="voice-bar"><i style="width:87%"></i></span><span class="voice-pct">87%</span></div>
+      </div>
+    </div>
+
+    <!-- 2. OUTLIER RADAR (SMALL) -->
+    <div class="tile">
+      <span class="t-eye">Discovery</span>
+      <h3 class="t-title">Outliers the moment they pop.</h3>
+      <p class="t-sub">Daily alerts when something's breaking out in your niche.</p>
+      <div class="t-visual">
+        <div class="mini-spark">
+          <i style="height:30%"></i><i style="height:42%"></i><i style="height:38%"></i><i style="height:55%"></i><i class="peak" style="height:100%"></i><i style="height:48%"></i><i style="height:36%"></i>
+        </div>
+        <span class="outlier-tag">12× yesterday</span>
+      </div>
+    </div>
+
+    <!-- 3. CROSS-PLATFORM (SMALL) -->
+    <div class="tile">
+      <span class="t-eye">Distribution</span>
+      <h3 class="t-title">Every platform, one draft.</h3>
+      <p class="t-sub">Sona reformats automatically for each.</p>
+      <div class="t-visual">
+        <div class="plat-grid">
+          <span class="plat-chip">𝕏</span>
+          <span class="plat-chip">in</span>
+          <span class="plat-chip">@</span>
+          <span class="plat-chip">IG</span>
+          <span class="plat-chip">YT</span>
+          <span class="plat-chip">▣</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4. STUDIO (WIDE) -->
+    <div class="tile t-wide">
+      <span class="t-eye">Studio editor</span>
+      <h3 class="t-title">Regenerate sections without losing the flow.</h3>
+      <p class="t-sub">Highlight a line, swap the angle, tighten the hook. Sona keeps your voice intact across every revision.</p>
+      <div class="t-visual">
+        <div class="ed-mock">
+Most founders post too much — not too little.<br>
+<span class="hl">The ones who break out pick one contrarian take</span> <span class="regen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M21 12a9 9 0 1 1-9-9"/><path d="M21 4v5h-5"/></svg> regenerate</span><br>
+and they stick with it for ninety days.
+        </div>
+      </div>
+    </div>
+
+    <!-- 5. SCHEDULER (WIDE) -->
+    <div class="tile t-wide">
+      <span class="t-eye">Scheduler</span>
+      <h3 class="t-title">Publishing rhythm. Not chaos.</h3>
+      <p class="t-sub">Queue across every platform from one calendar. Sona suggests times based on what's worked for you — and ships while you sleep.</p>
+      <div class="t-visual">
+        <div class="cal-mini">
+          <span class="dot"></span><span></span><span class="dot"></span><span class="dot"></span><span></span><span class="dot"></span><span></span>
+          <span class="dot"></span><span class="dot"></span><span></span><span class="dot acc"></span><span class="dot"></span><span></span><span class="dot"></span>
+          <span></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span></span><span class="dot"></span><span class="dot"></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 6. HOOKS (SMALL) -->
+    <div class="tile">
+      <span class="t-eye">Templates</span>
+      <h3 class="t-title">1,200+ proven hooks.</h3>
+      <p class="t-sub">Filtered by topic, platform, and angle.</p>
+      <div class="t-visual">
+        <div class="hook-row"><b>"Most X get Y wrong because..."</b></div>
+        <div class="hook-row">"The 3 mistakes I made building..."</div>
+        <div class="hook-row">"Here's what nobody tells you about..."</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- INTERACTIVE PRODUCT PREVIEW -->
+<section class="section" id="inside">
+  <div class="sec-head" data-r>
+    <span class="eyebrow accent line">A peek inside</span>
+    <h2>This is where you'll work. <span class="quiet">Click around.</span></h2>
+    <p>A real preview of the studio. Tap any item in the sidebar to switch views — the real thing ships with your invite.</p>
+  </div>
+
+  <div class="app-window" data-r>
+    <div class="app-bar"><i></i><i></i><i></i><span class="u">sona.so/app</span></div>
+    <div class="app-body">
+
+      <!-- SIDEBAR -->
+      <aside class="app-side">
+        <div class="app-side-top">
+          <span class="lm"><svg viewBox="0 0 24 24" fill="none"><path d="M5 15 Q8 9 12 12 Q16 15 19 9" stroke="#fff" stroke-width="2.6" stroke-linecap="round" fill="none"/><path d="M19 3.6 C19.15 5.1 20.3 6.25 21.8 6.4 C20.3 6.55 19.15 7.7 19 9.2 C18.85 7.7 17.7 6.55 16.2 6.4 C17.7 6.25 18.85 5.1 19 3.6 Z" fill="#8b84ff"/></svg></span>
+          <span class="name">Sona</span>
+          <span class="badge">Beta</span>
+        </div>
+
+        <div class="app-search">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+          <span>Find ideas</span>
+          <span class="kbd">⌘K</span>
+        </div>
+
+        <div class="app-nav">
+          <a class="app-nav-item active" data-view="discover">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m14.5 9.5-5 1.5 1.5 5 5-1.5z"/></svg>
+            Discover<span class="pill-n">128</span>
+          </a>
+          <a class="app-nav-item" data-view="studio">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 1 1 3 3L7 19l-4 1 1-4Z"/></svg>
+            Studio
+          </a>
+          <a class="app-nav-item" data-view="voice">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h2M7 8v8M11 5v14M15 8v8M19 12h2"/></svg>
+            Voice
+          </a>
+          <a class="app-nav-item" data-view="calendar">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>
+            Calendar<span class="pill-n">7</span>
+          </a>
+        </div>
+
+        <div>
+          <div class="app-section-label">Workspace</div>
+          <div class="app-nav">
+            <a class="app-nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>Personal brand</a>
+            <a class="app-nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>Client · Acme</a>
+            <a class="app-nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>Idea swipe</a>
+          </div>
+        </div>
+
+        <div class="app-side-bottom">
+          <div class="app-nav">
+            <a class="app-nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>Settings</a>
+            <a class="app-nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3M12 17h.01"/></svg>Help</a>
+          </div>
+          <div class="app-user">
+            <span class="app-user-av"></span>
+            <span class="app-user-text">
+              <span class="app-user-name">David Tost</span>
+              <span class="app-user-meta">@davidtost · personal</span>
+            </span>
+          </div>
+        </div>
+      </aside>
+
+      <!-- MAIN AREA -->
+      <main class="app-main">
+
+        <!-- DISCOVER -->
+        <div class="app-view active" data-view="discover">
+          <div class="app-view-head">
+            <div>
+              <div class="app-view-title">Discover</div>
+              <div class="app-view-sub">Founders · last 7 days · sorted by outlier</div>
+            </div>
+            <span class="app-chip">Refreshed 4 min ago</span>
+          </div>
+          <div class="disc-grid">
+            <div class="disc-card"><div class="head"><span class="disc-av"></span><div><div class="disc-name">Maya O.</div><div class="disc-handle">@mayabuilds · X</div></div></div><div class="disc-text">Most founders post too much — not too little. The ones who break out pick one contrarian take and stick to it.</div><div class="disc-meta"><span class="disc-tag">12× outlier</span><span class="disc-views">1.2M views</span></div></div>
+            <div class="disc-card"><div class="head"><span class="disc-av" style="background:linear-gradient(135deg,#e93,#7a4);"></span><div><div class="disc-name">Lucas T.</div><div class="disc-handle">@lucasgrows · in</div></div></div><div class="disc-text">I deleted 80% of my todo list last month. Output went up 3×. Here's the framework I used.</div><div class="disc-meta"><span class="disc-tag">8× outlier</span><span class="disc-views">840K</span></div></div>
+            <div class="disc-card"><div class="head"><span class="disc-av" style="background:linear-gradient(135deg,#5cd,#2b8);"></span><div><div class="disc-name">Priya R.</div><div class="disc-handle">@priyawrites · X</div></div></div><div class="disc-text">Three questions I ask before writing anything. They've saved me hundreds of bad drafts.</div><div class="disc-meta"><span class="disc-tag">18× outlier</span><span class="disc-views">2.4M views</span></div></div>
+            <div class="disc-card"><div class="head"><span class="disc-av" style="background:linear-gradient(135deg,#d36,#a14);"></span><div><div class="disc-name">Theo K.</div><div class="disc-handle">@theonotes · X</div></div></div><div class="disc-text">Stop optimizing your morning routine. Start optimizing what you do with the next 6 hours.</div><div class="disc-meta"><span class="disc-tag">6× outlier</span><span class="disc-views">510K</span></div></div>
+            <div class="disc-card"><div class="head"><span class="disc-av" style="background:linear-gradient(135deg,#7c8,#4a6);"></span><div><div class="disc-name">Nadia S.</div><div class="disc-handle">@nadiateaches · YT</div></div></div><div class="disc-text">AI didn't kill writing. Lazy writing did. Here's how to use AI without losing your voice.</div><div class="disc-meta"><span class="disc-tag">14× outlier</span><span class="disc-views">1.8M</span></div></div>
+            <div class="disc-card"><div class="head"><span class="disc-av" style="background:linear-gradient(135deg,#a7d,#647);"></span><div><div class="disc-name">Ben H.</div><div class="disc-handle">@benessays · in</div></div></div><div class="disc-text">The one essay format that changed how I think about everything I publish.</div><div class="disc-meta"><span class="disc-tag">9× outlier</span><span class="disc-views">690K</span></div></div>
+          </div>
+        </div>
+
+        <!-- STUDIO -->
+        <div class="app-view" data-view="studio">
+          <div class="app-view-head">
+            <div>
+              <div class="app-view-title">Untitled draft</div>
+              <div class="app-view-sub">Voice · Personal · saved 12s ago</div>
+            </div>
+            <span class="app-chip">Auto-save on</span>
+          </div>
+          <div class="studio-grid">
+            <div class="studio-doc">
+              <p>Most founders post too much — not too little.</p>
+              <p><span class="hl">The ones who break out pick one contrarian take</span> and stick with it for ninety days.</p>
+              <p>Here's the framework I've been using to find mine<span class="cursor"></span></p>
+            </div>
+            <div class="studio-side">
+              <div class="studio-card"><div class="lbl">Voice match</div><div class="big acc">98%</div><div class="small">Sounds like you.</div></div>
+              <div class="studio-card"><div class="lbl">Predicted reach</div><div class="big">3.2×</div><div class="small">vs your baseline</div></div>
+              <div class="studio-card studio-actions" style="padding:8px;">
+                <div class="studio-act"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M21 12a9 9 0 1 1-9-9"/><path d="M21 4v5h-5"/></svg> Regenerate line</div>
+                <div class="studio-act"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 9 L19 9 M5 15 L13 15"/></svg> Tighten</div>
+                <div class="studio-act"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12 L19 12 M12 5 L19 12 L12 19"/></svg> Continue writing</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- VOICE -->
+        <div class="app-view" data-view="voice">
+          <div class="app-view-head">
+            <div>
+              <div class="app-view-title">Voice models</div>
+              <div class="app-view-sub">3 active · 1 training</div>
+            </div>
+            <span class="app-chip">Training in progress</span>
+          </div>
+          <div class="voice-list">
+            <div class="voice-card">
+              <div class="row1"><span class="voice-card-name"><span class="dot"></span>Personal · David Tost</span><span class="voice-card-status">Ready</span></div>
+              <div class="voice-card-bar"><i style="width:98%"></i></div>
+              <div class="voice-card-meta"><span>247 posts · 3 days ago</span><span>98% match</span></div>
+            </div>
+            <div class="voice-card">
+              <div class="row1"><span class="voice-card-name"><span class="dot"></span>Professional · Sona</span><span class="voice-card-status">Ready</span></div>
+              <div class="voice-card-bar"><i style="width:92%"></i></div>
+              <div class="voice-card-meta"><span>89 posts · 1 week ago</span><span>92% match</span></div>
+            </div>
+            <div class="voice-card training">
+              <div class="row1"><span class="voice-card-name"><span class="dot"></span>Client · Acme Inc.</span><span class="voice-card-status">Training · 64%</span></div>
+              <div class="voice-card-bar"><i style="width:64%"></i></div>
+              <div class="voice-card-meta"><span>52 posts · started 11 min ago</span><span>Est. 4 min left</span></div>
+            </div>
+            <button type="button" class="voice-add"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg> New voice model</button>
+          </div>
+        </div>
+
+        <!-- CALENDAR -->
+        <div class="app-view" data-view="calendar">
+          <div class="app-view-head">
+            <div>
+              <div class="app-view-title">This week</div>
+              <div class="app-view-sub">Jun 2 — Jun 6 · 7 posts queued</div>
+            </div>
+            <span class="app-chip">Auto-publish on</span>
+          </div>
+          <div class="cal-week">
+            <div class="cal-day"><div class="d-head"><span class="d-name">Mon</span><span class="d-num">2</span></div><div class="cal-post x"><b>X · 9am</b>Most founders post too much…</div><div class="cal-post li"><b>LinkedIn · 1pm</b>The 3-part framework that grew our brand 10×</div></div>
+            <div class="cal-day"><div class="d-head"><span class="d-name">Tue</span><span class="d-num">3</span></div><div class="cal-post x"><b>X · 10am</b>I deleted 80% of my todo list…</div></div>
+            <div class="cal-day today"><div class="d-head"><span class="d-name">Wed</span><span class="d-num">4</span></div><div class="cal-post yt"><b>YouTube · 11am</b>I tried 47 AI tools…</div><div class="cal-post li"><b>LinkedIn · 2pm</b>Three questions before writing</div></div>
+            <div class="cal-day"><div class="d-head"><span class="d-name">Thu</span><span class="d-num">5</span></div><div class="cal-post draft"><b>Draft</b>Hook needs work…</div></div>
+            <div class="cal-day"><div class="d-head"><span class="d-name">Fri</span><span class="d-num">6</span></div><div class="cal-post x"><b>X · 9am</b>The one essay format…</div></div>
+          </div>
+        </div>
+
+      </main>
+    </div>
+  </div>
+</section>
+
+<!-- WHAT YOU'LL SHIP — formats showcase -->
+<section class="section" id="formats">
+  <div class="sec-head" data-r>
+    <span class="eyebrow accent line">What you'll ship</span>
+    <h2>One voice. <span class="quiet">Every format your audience reads in.</span></h2>
+    <p>Threads, carousels, scripts, essays. Sona writes the format your audience reads — in your voice.</p>
+  </div>
+  <div class="formats" data-r>
+
+    <!-- X / Twitter thread -->
+    <div class="fmt">
+      <div class="fmt-head">
+        <span class="fmt-glyph">𝕏</span>
+        <span class="fmt-title">X threads</span>
+        <span class="fmt-meta">280 CHAR · HOOK</span>
+      </div>
+      <div class="twt-card">
+        <div class="twt-row">
+          <span class="twt-av"></span>
+          <div>
+            <div class="twt-name">You</div>
+            <div class="twt-handle">@yourhandle</div>
+          </div>
+        </div>
+        <div class="twt-text"><b>Most founders post too much — not too little.</b><br><br>The ones who break out pick one contrarian take and stick with it for ninety days.<br><br>Here's the framework I use ↓</div>
+        <div class="twt-meta"><span><b>2,847</b> likes</span><span><b>412</b> reposts</span><span><b>1.2M</b> impressions</span></div>
+      </div>
+    </div>
+
+    <!-- LinkedIn carousel -->
+    <div class="fmt">
+      <div class="fmt-head">
+        <span class="fmt-glyph">in</span>
+        <span class="fmt-title">LinkedIn carousels</span>
+        <span class="fmt-meta">8-SLIDE · SWIPE</span>
+      </div>
+      <div class="li-slides">
+        <div class="li-slide active"><span class="li-num">01 / 08</span><div class="li-body">The 3-part framework that grew our brand 10× — without ads.</div></div>
+        <div class="li-slide"><span class="li-num">02</span><div class="li-body">First, find what's already working in your niche.</div></div>
+        <div class="li-slide"><span class="li-num">03</span><div class="li-body">Second, rewrite it through your unique POV.</div></div>
+        <div class="li-slide"><span class="li-num">04</span><div class="li-body">Third, ship daily. Compound it.</div></div>
+      </div>
+    </div>
+
+    <!-- YouTube hook -->
+    <div class="fmt">
+      <div class="fmt-head">
+        <span class="fmt-glyph">YT</span>
+        <span class="fmt-title">YouTube hooks &amp; scripts</span>
+        <span class="fmt-meta">5-SEC HOOK</span>
+      </div>
+      <div class="yt-thumb">
+        <div class="yt-thumb-title">I tried 47 AI tools.<br>Only one sounded like me.</div>
+        <div class="yt-thumb-bottom">
+          <span class="yt-play"><svg viewBox="0 0 10 12" fill="currentColor"><path d="M1 1v10l8-5z"/></svg></span>
+          <span class="yt-dur">8:42</span>
+        </div>
+      </div>
+      <p class="yt-hook">"Stop. Before you click off — let me show you the one feature that made me delete every other tool I'd been paying for…"</p>
+    </div>
+
+    <!-- Substack essay -->
+    <div class="fmt">
+      <div class="fmt-head">
+        <span class="fmt-glyph">¶</span>
+        <span class="fmt-title">Substack essays</span>
+        <span class="fmt-meta">LONG-FORM</span>
+      </div>
+      <div class="sub-essay">
+        <div class="sub-title">Most AI writing tools make you sound like a robot. Here's the one rule I follow instead.</div>
+        <p class="sub-lede">For the last six months I've been quietly running an experiment with my own writing. I've trained an AI on every essay I've ever published — and what came back surprised me. The voice wasn't just close. It was unmistakably mine…</p>
+        <div class="sub-byline">By you · 8 min read · 12,847 reads</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- PROOF — "the pattern repeats" -->
+<section class="section" id="proof">
+  <div class="proof" data-r>
+    <div class="proof-left">
+      <span class="proof-eye">The pattern repeats</span>
+      <h2 class="proof-title">Same hook. Four voices. <span class="hl">15M+ views.</span></h2>
+      <p class="proof-body">The "<b>5 lessons I learned</b>" hook breaks out every time — across X, LinkedIn, YouTube, and Substack. Different niches, different voices, the same proven structure underneath.</p>
+      <div class="proof-lesson">
+        <b>The lesson:</b> Find what works. Make it yours. Sona surfaces the structures that win, then writes them in your voice — not someone else's.
+      </div>
+    </div>
+
+    <div class="proof-grid">
+      <!-- X / Twitter — Dan Koe -->
+      <div class="proof-card pc-x">
+        <div class="pc-thumb">
+          <span class="pc-thumb-num">01</span>
+          <div class="pc-thumb-title">5 lessons from writing online for 5 years</div>
+        </div>
+        <div class="pc-meta">
+          <div class="pc-name">Dan Koe <span class="pc-handle">@thedankoe</span></div>
+          <div class="pc-stat"><span>X · 2.4M views</span><span class="pc-tag">4.2×</span></div>
+        </div>
+      </div>
+
+      <!-- LinkedIn — Justin Welsh -->
+      <div class="proof-card pc-li">
+        <div class="pc-thumb">
+          <span class="pc-thumb-num">02</span>
+          <div class="pc-thumb-title">The 5-step framework that grew my LinkedIn</div>
+        </div>
+        <div class="pc-meta">
+          <div class="pc-name">Justin Welsh <span class="pc-handle">@justinwelsh</span></div>
+          <div class="pc-stat"><span>LinkedIn · 3.7M views</span><span class="pc-tag">8.3×</span></div>
+        </div>
+      </div>
+
+      <!-- YouTube — Ali Abdaal -->
+      <div class="proof-card pc-yt">
+        <div class="pc-thumb">
+          <span class="pc-thumb-num">03</span>
+          <div class="pc-thumb-title">5 things I wish I knew at 20</div>
+        </div>
+        <div class="pc-meta">
+          <div class="pc-name">Ali Abdaal <span class="pc-handle">@aliabdaal</span></div>
+          <div class="pc-stat"><span>YouTube · 5.5M views</span><span class="pc-tag">11.2×</span></div>
+        </div>
+      </div>
+
+      <!-- Substack — Sahil Bloom -->
+      <div class="proof-card pc-sub">
+        <div class="pc-thumb">
+          <span class="pc-thumb-num">04</span>
+          <div class="pc-thumb-title">5 types of wealth nobody talks about</div>
+        </div>
+        <div class="pc-meta">
+          <div class="pc-name">Sahil Bloom <span class="pc-handle">@sahilbloom</span></div>
+          <div class="pc-stat"><span>Substack · 3.4M reads</span><span class="pc-tag">6.1×</span></div>
+        </div>
+      </div>
+    </div>
+
+    <p class="proof-foot">Illustrative · titles paraphrase the "5 X" format these public creators are known for using. Sona is not affiliated with any of them — they're examples of the structure at work.</p>
+  </div>
+</section>
+
+<!-- HOW IT WORKS / TIMELINE -->
+<section class="section" id="how">
+  <div class="sec-head" data-r>
+    <span class="eyebrow accent line">The workflow</span>
+    <h2>From blank page <span class="quiet">to published, in minutes.</span></h2>
+  </div>
+  <div class="steps" data-r>
+    <div class="step">
+      <span class="num">01</span>
+      <div>
+        <h3>Discover proven ideas <span class="timer">~30s</span></h3>
+        <p>Search outliers, study any creator's feed, or let Sona surface posts breaking out in your niche.</p>
+      </div>
+    </div>
+    <div class="step">
+      <span class="num">02</span>
+      <div>
+        <h3>Draft in your voice <span class="timer">~90s</span></h3>
+        <p>Sona reshapes proven structures through your trained voice model. Edit inline, regenerate sections, swap angles.</p>
+      </div>
+    </div>
+    <div class="step">
+      <span class="num">03</span>
+      <div>
+        <h3>Schedule across every channel <span class="timer">~30s</span></h3>
+        <p>Cross-post to X, LinkedIn, Threads, Instagram, Substack, and YouTube from one queue. Sona handles the reformat.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOUNDING MEMBER OFFER (different from Eden's countdown card) -->
+<section class="section" id="pricing">
+  <div class="sec-head" data-r>
+    <span class="eyebrow accent line">Founding members</span>
+    <h2>Be one of the first 100. <span class="quiet">Pay once. Keep it for life.</span></h2>
+    <p>No trial countdown. No discount-pressure. Just a real founding cohort with a lifetime rate that goes away when we close it.</p>
+  </div>
+
+  <div class="founding" data-r>
+    <div class="founding-inner">
+      <span class="founding-eye"><span class="star">✦</span> Founding member · Limited to 100 seats</span>
+      <h3>Lock in lifetime access.</h3>
+      <p class="lede">Skip the waitlist, lock in $99/year forever, and help shape the studio. When the founding cohort closes, the regular Creator plan kicks in at $29/mo.</p>
+
+      <div class="founding-price">
+        <span class="big">$99</span>
+        <span class="per"><b>per year</b><br>for life</span>
+        <span class="strike">vs $29/mo regular</span>
+      </div>
+
+      <ul class="founding-feats">
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Skip the waitlist · instant access</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Lifetime founding rate</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Direct line to the team</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>First access to every new feature</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Founding badge in your profile</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Refund anytime in 30 days</li>
+      </ul>
+
+      <div class="founding-cta">
+        <button type="button" class="btn btn-primary" onclick="claimFoundingSeat(this)">Claim my seat <span class="btn-arrow">→</span></button>
+        <span class="meta">Pays via Stripe · <b>$99</b> billed once today</span>
+      </div>
+
+      <div class="seats">
+        <div class="seats-row"><span class="lbl">Founding seats</span><span class="num"><b id="seats-claimed">0</b> / 100</span></div>
+        <div class="seats-bar"><i id="seats-bar" style="width:0%"></i></div>
+      </div>
+    </div>
+  </div>
+
+  <p class="pricing-footnote"><b>After the founding cohort closes:</b> Starter (free, browse outliers) · Creator ($29/mo) · Team ($79/mo).</p>
+</section>
+
+<!-- FAQ -->
+<section class="section">
+  <div class="sec-head" data-r>
+    <span class="eyebrow line">Questions</span>
+    <h2>Anything else? <span class="quiet">Let's clear it up.</span></h2>
+  </div>
+  <div class="faq" data-r>
+    <details class="q"><summary>Does Sona actually sound like me, or like AI?<span class="qi">+</span></summary><p class="ans">Sona trains on your existing posts to learn your phrasing, rhythm, and point of view. The average voice-match is 98%. The more you publish, the sharper it gets — your audience won't notice the difference.</p></details>
+    <details class="q"><summary>Which platforms does it support?<span class="qi">+</span></summary><p class="ans">X (Twitter), LinkedIn, Threads, Instagram, Substack, and YouTube descriptions. We auto-reformat per platform so you don't have to.</p></details>
+    <details class="q"><summary>Where do the "outlier" posts come from?<span class="qi">+</span></summary><p class="ans">We track over a million high-performing posts across the supported platforms, refreshed daily. Outliers are detected by comparing performance to a creator's baseline — not just raw view counts.</p></details>
+    <details class="q"><summary>Is there a free trial?<span class="qi">+</span></summary><p class="ans">Yes. Every paid plan includes 7 days free with no card required. The Starter plan is free forever.</p></details>
+    <details class="q"><summary>Can I cancel anytime?<span class="qi">+</span></summary><p class="ans">Anytime, one click, no questions. You keep access until the end of the billing period.</p></details>
+    <details class="q"><summary>Will Sona use my content to train other models?<span class="qi">+</span></summary><p class="ans">Never. Your voice model and drafts are private to your workspace and never used for training shared models.</p></details>
+  </div>
+</section>
+
+<!-- FOOTER (new) -->
+<footer>
+  <div class="foot-top">
+    <div class="foot-brand">
+      <a href="index.html" class="logo">
+        <span class="logo-mark"><svg viewBox="0 0 24 24" fill="none"><path d="M5 15 Q8 9 12 12 Q16 15 19 9" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M19 3.6 C19.15 5.1 20.3 6.25 21.8 6.4 C20.3 6.55 19.15 7.7 19 9.2 C18.85 7.7 17.7 6.55 16.2 6.4 C17.7 6.25 18.85 5.1 19 3.6 Z" fill="#8b84ff"/></svg></span>
+        <span class="logo-word">Sona</span>
+      </a>
+      <p>The creator studio that finds proven ideas and writes them in your voice.</p>
+      <form class="foot-sub" id="sub-form" onsubmit="return false;">
+        <input type="email" placeholder="your@email.com" id="sub-email" required>
+        <button type="submit">Subscribe</button>
+      </form>
+      <div class="foot-status"><span class="dot"></span> All systems normal</div>
+    </div>
+    <div class="foot-col">
+      <h4>Product</h4>
+      <a href="#features">Features</a>
+      <a href="#how">How it works</a>
+      <a href="#pricing">Pricing</a>
+      <a href="#how">Changelog</a>
+    </div>
+    <div class="foot-col">
+      <h4>Company</h4>
+      <a href="contact.html">Contact</a>
+      <a href="#">Press kit</a>
+    </div>
+    <div class="foot-col">
+      <h4>Connect</h4>
+      <a href="#">X (Twitter)</a>
+      <a href="#">LinkedIn</a>
+      <a href="#">YouTube</a>
+    </div>
+  </div>
+
+  <div class="foot-wordmark" aria-hidden="true">sona</div>
+
+  <div class="foot-credit">
+    <span class="label">Created by</span>
+    <a class="name foot-credit-name" href="https://www.linkedin.com/in/davidtost/" target="_blank" rel="noopener">David Tost</a>
+    <span class="role">Founder of Sona</span>
+  </div>
+
+  <div class="foot-base">
+    <span>&copy; 2026 Sona Labs Inc. Made for creators.</span>
+    <div class="links"><a href="#">Privacy</a><a href="#">Terms</a><a href="#">Security</a></div>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="data.js"></script>
+<script src="auth.js"></script>
+<script>
+  // Theme — purely automatic, follows the clock. Re-check every minute so the page
+  // flips at 7am / 7pm without a refresh.
+  setInterval(() => {
+    const h = new Date().getHours();
+    document.documentElement.setAttribute('data-theme', (h < 7 || h >= 19) ? 'dark' : 'light');
+  }, 60 * 1000);
+
+  // Nav scrolled state + scroll-progress bar + subtle hero-glow parallax — one rAF, no jank
+  const nav = document.querySelector('nav');
+  const docEl = document.documentElement;
+  let scrollTicking = false;
+  function onScrollFrame() {
+    const y = window.scrollY;
+    nav.classList.toggle('scrolled', y > 16);
+    const max = docEl.scrollHeight - docEl.clientHeight;
+    docEl.style.setProperty('--sp', max > 0 ? Math.min(1, y / max) : 0);
+    docEl.style.setProperty('--sp-y', `${y * 0.18}px`);
+    scrollTicking = false;
+  }
+  window.addEventListener('scroll', () => {
+    if (!scrollTicking) { requestAnimationFrame(onScrollFrame); scrollTicking = true; }
+  }, { passive: true });
+  onScrollFrame();
+
+  // Word-by-word reveal — splits text into <span class="w">, preserves inline tags like <br> and <span class="quiet">
+  document.querySelectorAll('[data-split]').forEach(el => {
+    let i = 0;
+    el.innerHTML = el.innerHTML.replace(/(<[^>]+>|[^<\s]+)/g, (m) => {
+      if (m.startsWith('<')) return m;
+      const delay = (i++ * 0.045).toFixed(3);
+      return `<span class="w" style="transition-delay:${delay}s">${m}</span>`;
+    });
+  });
+
+  // Reveal — single observer, no Lenis
+  const io = new IntersectionObserver(es => es.forEach(e => {
+    if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+  }), { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+  document.querySelectorAll('[data-r]').forEach(el => io.observe(el));
+
+  // Eyebrow line-draw — separate observer (eyebrows aren't always inside data-r containers)
+  const lineIo = new IntersectionObserver(es => es.forEach(e => {
+    if (e.isIntersecting) { e.target.classList.add('in'); lineIo.unobserve(e.target); }
+  }), { threshold: 0.5, rootMargin: '0px 0px -20px 0px' });
+  document.querySelectorAll('.eyebrow.line').forEach(el => lineIo.observe(el));
+
+  // Mobile menu
+  const menuBtn = document.querySelector('.menu-btn');
+  const mm = document.querySelector('.mobile-menu');
+  const closeMenu = () => { menuBtn.classList.remove('open'); mm.classList.remove('open'); document.body.style.overflow = ''; };
+  menuBtn.addEventListener('click', () => {
+    const open = !mm.classList.contains('open');
+    menuBtn.classList.toggle('open', open); mm.classList.toggle('open', open);
+    document.body.style.overflow = open ? 'hidden' : '';
+  });
+  const closeBtn = document.getElementById('mobile-menu-close');
+  if (closeBtn) closeBtn.addEventListener('click', closeMenu);
+  mm.querySelectorAll('a').forEach(a => a.addEventListener('click', closeMenu));
+  // ESC also closes
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && mm.classList.contains('open')) closeMenu(); });
+
+  // Founding-member Stripe checkout
+  window.claimFoundingSeat = async function(btn) {
+    btn.disabled = true; const orig = btn.innerHTML; btn.innerHTML = 'Opening checkout…';
+    try {
+      const r = await fetch('/api/checkout');
+      const j = await r.json();
+      if (j.ok && j.url) { location.href = j.url; return; }
+      btn.innerHTML = 'Payment opens soon — join waitlist?';
+      btn.onclick = () => CanopyAuth.openSignup();
+      setTimeout(() => { btn.innerHTML = orig; btn.disabled = false; btn.onclick = () => claimFoundingSeat(btn); }, 4000);
+    } catch (e) {
+      btn.innerHTML = orig; btn.disabled = false;
+    }
+  };
+
+  // Seats bar — fetch the real count from Supabase (0 today, real once Stripe webhook is wired)
+  (function loadFoundingCount() {
+    const bar = document.getElementById('seats-bar');
+    const num = document.getElementById('seats-claimed');
+    if (!bar || !num) return;
+    fetch('/api/founding-count').then(r => r.json()).then(({ claimed, total }) => {
+      num.textContent = claimed;
+      // animate the bar in when visible
+      const so = new IntersectionObserver(es => es.forEach(e => {
+        if (e.isIntersecting) {
+          bar.style.width = `${Math.min(100, (claimed / total) * 100)}%`;
+          so.unobserve(e.target);
+        }
+      }), { threshold: 0.4 });
+      so.observe(bar);
+    }).catch(() => {});
+  })();
+
+  // Interactive product preview — switch views from the sidebar
+  // If redirected from /app without a session, auto-open the sign-in modal
+  if (new URLSearchParams(location.search).get('signin') === '1') {
+    setTimeout(() => window.CanopyAuth && window.CanopyAuth.openLogin && window.CanopyAuth.openLogin(), 400);
+  }
+
+  (function productPreview() {
+    const items = document.querySelectorAll('.app-side .app-nav-item[data-view]');
+    const views = document.querySelectorAll('.app-main .app-view[data-view]');
+    if (!items.length) return;
+    items.forEach(item => {
+      item.addEventListener('click', (e) => {
+        e.preventDefault();
+        const v = item.dataset.view;
+        items.forEach(i => i.classList.remove('active'));
+        item.classList.add('active');
+        views.forEach(view => view.classList.toggle('active', view.dataset.view === v));
+      });
+    });
+  })();
+
+  // Hero product panel — animate the real product mock when in view (no fake metrics, just visual life)
+  (function heroPanelAnim() {
+    const panel = document.getElementById('hero-panel');
+    if (!panel) return;
+    const counters = panel.querySelectorAll('[data-count]');
+    function easeOutCubic(t) { return 1 - Math.pow(1 - t, 3); }
+    function animateCount(el) {
+      const target = parseFloat(el.dataset.count);
+      const decimals = parseInt(el.dataset.decimals || '0', 10);
+      const suffix = el.dataset.suffix || '';
+      const dur = 1400; const start = performance.now();
+      function frame(t) {
+        const p = Math.min(1, (t - start) / dur);
+        const v = target * easeOutCubic(p);
+        el.textContent = v.toFixed(decimals) + suffix;
+        if (p < 1) requestAnimationFrame(frame);
+      }
+      requestAnimationFrame(frame);
+    }
+    const po = new IntersectionObserver((entries) => entries.forEach((e) => {
+      if (!e.isIntersecting) return;
+      panel.classList.add('live');         // triggers CSS animations: draft lines, spark bars
+      counters.forEach(animateCount);      // counts 0 → 98%, 0 → 3.2×, 0 → 12×, 0 → 7×
+      po.unobserve(panel);
+    }), { threshold: 0.3 });
+    po.observe(panel);
+
+    // Cursor-follow spotlight — track mouse, write CSS vars (rAF-throttled)
+    let pmTicking = false; let lastX = 0, lastY = 0;
+    panel.addEventListener('pointermove', (e) => {
+      const r = panel.getBoundingClientRect();
+      lastX = e.clientX - r.left; lastY = e.clientY - r.top;
+      if (!pmTicking) {
+        requestAnimationFrame(() => {
+          panel.style.setProperty('--mx', `${lastX}px`);
+          panel.style.setProperty('--my', `${lastY}px`);
+          pmTicking = false;
+        });
+        pmTicking = true;
+      }
+    });
+  })();
+
+  // Newsletter (uses waitlist endpoint as a simple capture)
+  const subForm = document.getElementById('sub-form');
+  subForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const email = document.getElementById('sub-email').value;
+    const btn = subForm.querySelector('button');
+    btn.disabled = true; const orig = btn.textContent; btn.textContent = '...';
+    try {
+      if (window.CanopyData && window.CanopyData.submitWaitlist) {
+        await window.CanopyData.submitWaitlist({ email, source: 'footer-newsletter' });
+      }
+      btn.textContent = 'Subscribed ✓';
+      document.getElementById('sub-email').value = '';
+    } catch (_) { btn.textContent = 'Try again'; }
+    setTimeout(() => { btn.textContent = orig; btn.disabled = false; }, 2400);
+  });
+</script>
+</body>
+</html>

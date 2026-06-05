@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Canopy — Docs</title>
+<style>
+  @font-face { font-family: 'Aeonik Pro'; src: local('Aeonik Pro'), local('AeonikPro-Regular'); font-weight: 400; font-style: normal; }
+  @font-face { font-family: 'Aeonik Pro'; src: local('Aeonik Pro Medium'), local('AeonikPro-Medium'); font-weight: 500; font-style: normal; }
+  @font-face { font-family: 'Aeonik Pro'; src: local('Aeonik Pro Bold'), local('AeonikPro-Bold'); font-weight: 700; font-style: normal; }
+</style>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --green-dark: #1a2e1a;
+    --green-deep: #0f1f0f;
+    --green-accent: #c8e64a;
+    --green-muted: #a3b858;
+    --off-white: #f5f4f0;
+    --light-grey: #eae9e4;
+    --text-dark: #1a1a1a;
+    --text-mid: #5a5a56;
+    --text-light: #8a8a84;
+    --border: #ddd9d0;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Aeonik Pro', -apple-system, sans-serif;
+    background: var(--off-white);
+    color: var(--text-dark);
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+
+  /* ─── NAV ─── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 40px;
+    z-index: 1000;
+    background: rgba(245,244,240,0.9);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .nav-logo {
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    color: var(--text-dark);
+    text-decoration: none;
+  }
+
+  .nav-links {
+    display: flex;
+    list-style: none;
+    gap: 32px;
+  }
+
+  .nav-links a {
+    font-size: 14px;
+    color: var(--text-mid);
+    text-decoration: none;
+    font-weight: 500;
+    position: relative;
+    transition: color 0.3s;
+  }
+
+  .nav-links a::after {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 0;
+    width: 0;
+    height: 1.5px;
+    background: var(--green-accent);
+    transition: width 0.3s ease;
+  }
+
+  .nav-links a:hover { color: var(--text-dark); }
+  .nav-links a:hover::after { width: 100%; }
+  .nav-links a.active { color: var(--text-dark); }
+  .nav-links a.active::after { width: 100%; }
+
+  .nav-right {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .nav-right > a:first-child {
+    font-size: 14px;
+    color: var(--text-mid);
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.3s;
+  }
+
+  .nav-right > a:first-child:hover { color: var(--text-dark); }
+
+  .btn-primary {
+    padding: 10px 22px;
+    background: var(--green-dark);
+    color: #fff;
+    border-radius: 40px;
+    font-size: 14px;
+    font-weight: 500;
+    text-decoration: none;
+    transition: background 0.3s, transform 0.3s;
+  }
+
+  .btn-primary:hover { background: #243d24; transform: scale(1.04); }
+
+  /* ─── DOCS LAYOUT ─── */
+  .docs-layout {
+    display: grid;
+    grid-template-columns: 240px 1fr;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 100px 48px 80px;
+    gap: 60px;
+    min-height: 100vh;
+  }
+
+  /* ─── SIDEBAR ─── */
+  .docs-sidebar {
+    position: sticky;
+    top: 100px;
+    height: fit-content;
+    padding-top: 40px;
+  }
+
+  .sidebar-section {
+    margin-bottom: 32px;
+  }
+
+  .sidebar-section h4 {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--text-light);
+    font-weight: 600;
+    margin-bottom: 12px;
+  }
+
+  .sidebar-section ul {
+    list-style: none;
+  }
+
+  .sidebar-section li {
+    margin-bottom: 4px;
+  }
+
+  .sidebar-section a {
+    font-size: 14px;
+    color: var(--text-mid);
+    text-decoration: none;
+    padding: 6px 12px;
+    display: block;
+    border-radius: 8px;
+    transition: background 0.2s, color 0.2s;
+  }
+
+  .sidebar-section a:hover {
+    background: var(--light-grey);
+    color: var(--text-dark);
+  }
+
+  .sidebar-section a.active {
+    background: var(--green-dark);
+    color: #fff;
+  }
+
+  /* ─── DOCS CONTENT ─── */
+  .docs-content {
+    padding-top: 40px;
+    max-width: 720px;
+  }
+
+  .docs-content h1 {
+    font-size: 40px;
+    font-weight: 700;
+    letter-spacing: -1.5px;
+    margin-bottom: 12px;
+  }
+
+  .docs-content .subtitle {
+    font-size: 17px;
+    color: var(--text-mid);
+    line-height: 1.6;
+    margin-bottom: 48px;
+  }
+
+  .docs-content h2 {
+    font-size: 24px;
+    font-weight: 600;
+    letter-spacing: -0.5px;
+    margin: 48px 0 16px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+  }
+
+  .docs-content h3 {
+    font-size: 18px;
+    font-weight: 600;
+    margin: 32px 0 12px;
+  }
+
+  .docs-content p {
+    font-size: 15px;
+    color: var(--text-mid);
+    line-height: 1.7;
+    margin-bottom: 16px;
+  }
+
+  .docs-content ul {
+    margin: 0 0 20px 20px;
+    color: var(--text-mid);
+    font-size: 15px;
+    line-height: 1.8;
+  }
+
+  /* Code blocks */
+  .code-block {
+    background: var(--green-dark);
+    border-radius: 12px;
+    padding: 24px;
+    margin: 20px 0 28px;
+    overflow-x: auto;
+    position: relative;
+  }
+
+  .code-block-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+  }
+
+  .code-block-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: rgba(255,255,255,0.4);
+    font-weight: 600;
+  }
+
+  .code-block-lang {
+    font-size: 11px;
+    padding: 3px 8px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 4px;
+    color: rgba(255,255,255,0.5);
+  }
+
+  .code-block pre {
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    font-size: 13px;
+    line-height: 1.7;
+    color: rgba(255,255,255,0.85);
+    white-space: pre;
+    margin: 0;
+  }
+
+  .code-block .keyword { color: var(--green-accent); }
+  .code-block .string { color: #a8d8a8; }
+  .code-block .comment { color: rgba(255,255,255,0.3); }
+  .code-block .punctuation { color: rgba(255,255,255,0.5); }
+
+  /* Info callout */
+  .callout {
+    background: rgba(200,230,74,0.08);
+    border-left: 3px solid var(--green-accent);
+    border-radius: 0 12px 12px 0;
+    padding: 20px 24px;
+    margin: 24px 0;
+  }
+
+  .callout p {
+    font-size: 14px;
+    color: var(--text-dark);
+    margin: 0;
+  }
+
+  .callout strong {
+    font-weight: 600;
+  }
+
+  /* Endpoint pills */
+  .endpoint {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 8px 14px;
+    margin: 8px 0 16px;
+    font-family: 'SF Mono', monospace;
+    font-size: 13px;
+  }
+
+  .endpoint .method {
+    font-weight: 700;
+    font-size: 11px;
+    padding: 2px 6px;
+    border-radius: 4px;
+    text-transform: uppercase;
+  }
+
+  .method-get { background: rgba(74,144,226,0.12); color: #2d6bc4; }
+  .method-post { background: rgba(200,230,74,0.2); color: #4a6810; }
+
+  /* Table */
+  .docs-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 16px 0 28px;
+    font-size: 14px;
+  }
+
+  .docs-table th {
+    text-align: left;
+    font-weight: 600;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-light);
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .docs-table td {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text-mid);
+  }
+
+  .docs-table code {
+    font-family: 'SF Mono', monospace;
+    font-size: 12px;
+    padding: 2px 6px;
+    background: var(--light-grey);
+    border-radius: 4px;
+  }
+
+  /* ─── FOOTER ─── */
+  .footer-main {
+    background: var(--off-white);
+    border-top: 1px solid var(--border);
+    padding: 72px 48px 0;
+  }
+
+  .footer-top {
+    max-width: 1100px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1.2fr 1fr 0.8fr;
+    gap: 60px;
+    padding-bottom: 60px;
+  }
+
+  .footer-nav-links {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .footer-nav-links a {
+    font-size: 28px;
+    font-weight: 500;
+    color: var(--text-dark);
+    text-decoration: none;
+    letter-spacing: -0.5px;
+    transition: color 0.3s, transform 0.3s;
+    display: inline-block;
+  }
+
+  .footer-nav-links a:hover {
+    color: var(--green-muted);
+    transform: translateX(6px);
+  }
+
+  .footer-col-title {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--text-light);
+    font-weight: 600;
+    margin-bottom: 20px;
+  }
+
+  .footer-contact-info {
+    font-size: 14px;
+    line-height: 1.8;
+    color: var(--text-mid);
+  }
+
+  .footer-contact-links {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .footer-contact-links a {
+    font-size: 14px;
+    color: var(--text-mid);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: color 0.3s;
+  }
+
+  .footer-contact-links a:hover { color: var(--text-dark); }
+
+  .footer-social-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .footer-social-list a {
+    font-size: 14px;
+    color: var(--text-mid);
+    text-decoration: none;
+    transition: color 0.3s;
+  }
+
+  .footer-social-list a:hover { color: var(--text-dark); }
+
+  .footer-bottom-bar {
+    max-width: 1100px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 0;
+    border-top: 1px solid var(--border);
+  }
+
+  .footer-copyright { font-size: 13px; color: var(--text-light); }
+
+  .footer-bottom-links {
+    display: flex;
+    gap: 24px;
+    list-style: none;
+  }
+
+  .footer-bottom-links a {
+    font-size: 13px;
+    color: var(--text-light);
+    text-decoration: none;
+    transition: color 0.3s;
+  }
+
+  .footer-bottom-links a:hover { color: var(--text-dark); }
+
+  .footer-brand {
+    text-align: center;
+    padding: 40px 48px 24px;
+    font-size: clamp(48px, 10vw, 120px);
+    font-weight: 800;
+    letter-spacing: -4px;
+    color: var(--light-grey);
+    user-select: none;
+  }
+
+  /* ─── ANIMATIONS (Motion-driven) ─── */
+  [data-reveal] {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  [data-reveal].revealed { opacity: 1; transform: translateY(0); }
+
+  /* ─── MOBILE MENU ─── */
+  .mobile-menu-btn {
+    display: none;
+    background: none;
+    border: none;
+    width: 28px;
+    height: 20px;
+    position: relative;
+    cursor: pointer;
+    z-index: 2;
+  }
+  .mobile-menu-btn span {
+    display: block;
+    width: 100%;
+    height: 2px;
+    background: var(--text-dark);
+    border-radius: 2px;
+    position: absolute;
+    left: 0;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+  }
+  .mobile-menu-btn span:first-child { top: 4px; }
+  .mobile-menu-btn span:last-child { bottom: 4px; }
+  .mobile-menu-btn.open span:first-child { top: 50%; transform: translateY(-50%) rotate(45deg); }
+  .mobile-menu-btn.open span:last-child { bottom: auto; top: 50%; transform: translateY(-50%) rotate(-45deg); }
+
+  .mobile-menu {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: var(--off-white);
+    z-index: 99;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 24px;
+    padding: 80px 20px 40px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+  }
+  .mobile-menu.open {
+    display: flex;
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .mobile-menu a {
+    font-size: 28px;
+    font-weight: 600;
+    color: var(--text-dark);
+    text-decoration: none;
+    letter-spacing: -0.5px;
+  }
+  .mobile-menu-cta {
+    margin-top: 16px;
+    padding: 14px 40px !important;
+    background: var(--green-dark);
+    color: #fff !important;
+    border-radius: 10px;
+    font-size: 16px !important;
+  }
+
+  @media (max-width: 768px) {
+    nav { padding: 16px 24px; }
+    .nav-links { display: none; }
+    .nav-right { display: none; }
+    .mobile-menu-btn { display: block; }
+    .mobile-menu { display: flex; }
+    .docs-layout { grid-template-columns: 1fr; padding: 100px 24px 60px; gap: 0; }
+    .docs-sidebar { position: static; padding-top: 20px; }
+    .docs-content { padding-top: 20px; }
+    .docs-content h1 { font-size: 32px; }
+    .footer-top { grid-template-columns: 1fr; }
+    .footer-main { padding: 48px 24px 0; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-logo">Canopy</a>
+  <ul class="nav-links">
+    <li><a href="resources.html">Resources</a></li>
+    <li><a href="company.html">Company</a></li>
+    <li><a href="changelog.html">Changelog</a></li>
+    <li><a href="docs.html" class="active">Docs</a></li>
+    <li><a href="brand.html">Brand</a></li>
+  </ul>
+  <div class="nav-right">
+    <a href="contact.html">Contact</a>
+    <a href="#" class="btn-primary">Log in</a>
+  </div>
+  <button class="mobile-menu-btn" aria-label="Menu">
+    <span></span><span></span>
+  </button>
+</nav>
+
+<div class="mobile-menu">
+  <a href="index.html">Home</a>
+  <a href="resources.html">Resources</a>
+  <a href="company.html">Company</a>
+  <a href="changelog.html">Changelog</a>
+  <a href="docs.html">Docs</a>
+  <a href="brand.html">Brand</a>
+  <a href="#" class="mobile-menu-cta">Log in</a>
+</div>
+
+<!-- Docs Layout -->
+<div class="docs-layout">
+  <!-- Sidebar -->
+  <aside class="docs-sidebar">
+    <div class="sidebar-section">
+      <h4>Getting Started</h4>
+      <ul>
+        <li><a href="#" class="active">Introduction</a></li>
+        <li><a href="#">Authentication</a></li>
+        <li><a href="#">Quick Start</a></li>
+        <li><a href="#">Rate Limits</a></li>
+      </ul>
+    </div>
+    <div class="sidebar-section">
+      <h4>Core API</h4>
+      <ul>
+        <li><a href="#">Transactions</a></li>
+        <li><a href="#">Enrichment</a></li>
+        <li><a href="#">Merchants</a></li>
+        <li><a href="#">Categories</a></li>
+      </ul>
+    </div>
+    <div class="sidebar-section">
+      <h4>Webhooks</h4>
+      <ul>
+        <li><a href="#">Event Types</a></li>
+        <li><a href="#">Delivery</a></li>
+        <li><a href="#">Signatures</a></li>
+      </ul>
+    </div>
+    <div class="sidebar-section">
+      <h4>SDKs</h4>
+      <ul>
+        <li><a href="#">Node.js</a></li>
+        <li><a href="#">Python</a></li>
+        <li><a href="#">Go</a></li>
+      </ul>
+    </div>
+  </aside>
+
+  <!-- Content -->
+  <main class="docs-content" data-reveal>
+    <h1>Introduction</h1>
+    <p class="subtitle">The Canopy API gives you programmatic access to real-time transaction enrichment, merchant identification, and categorization at scale.</p>
+
+    <div class="callout">
+      <p><strong>Base URL:</strong> All API requests are made to <code>https://api.canopy.dev/v2</code></p>
+    </div>
+
+    <h2>Authentication</h2>
+    <p>Authenticate requests by including your API key in the Authorization header. You can manage API keys from your dashboard.</p>
+
+    <div class="code-block">
+      <div class="code-block-header">
+        <span class="code-block-label">Request Header</span>
+        <span class="code-block-lang">bash</span>
+      </div>
+      <pre><span class="punctuation">$</span> curl https://api.canopy.dev/v2/enrich \
+  <span class="keyword">-H</span> <span class="string">"Authorization: Bearer cnp_sk_live_..."</span> \
+  <span class="keyword">-H</span> <span class="string">"Content-Type: application/json"</span></pre>
+    </div>
+
+    <h2>Quick Start</h2>
+    <p>Enrich your first transaction in under 60 seconds. Send a POST request with the raw transaction data and receive structured intelligence back.</p>
+
+    <div class="endpoint">
+      <span class="method method-post">POST</span>
+      <span>/v2/transactions/enrich</span>
+    </div>
+
+    <div class="code-block">
+      <div class="code-block-header">
+        <span class="code-block-label">Example Request</span>
+        <span class="code-block-lang">json</span>
+      </div>
+      <pre><span class="punctuation">{</span>
+  <span class="keyword">"transaction_id"</span><span class="punctuation">:</span> <span class="string">"txn_8f2a9c"</span><span class="punctuation">,</span>
+  <span class="keyword">"description"</span><span class="punctuation">:</span> <span class="string">"AMZN MKTP US*2K7F94H"</span><span class="punctuation">,</span>
+  <span class="keyword">"amount"</span><span class="punctuation">:</span> -42.99<span class="punctuation">,</span>
+  <span class="keyword">"currency"</span><span class="punctuation">:</span> <span class="string">"USD"</span><span class="punctuation">,</span>
+  <span class="keyword">"date"</span><span class="punctuation">:</span> <span class="string">"2026-05-14"</span>
+<span class="punctuation">}</span></pre>
+    </div>
+
+    <div class="code-block">
+      <div class="code-block-header">
+        <span class="code-block-label">Response</span>
+        <span class="code-block-lang">json</span>
+      </div>
+      <pre><span class="punctuation">{</span>
+  <span class="keyword">"transaction_id"</span><span class="punctuation">:</span> <span class="string">"txn_8f2a9c"</span><span class="punctuation">,</span>
+  <span class="keyword">"merchant"</span><span class="punctuation">:</span> <span class="punctuation">{</span>
+    <span class="keyword">"name"</span><span class="punctuation">:</span> <span class="string">"Amazon"</span><span class="punctuation">,</span>
+    <span class="keyword">"category"</span><span class="punctuation">:</span> <span class="string">"Shopping"</span><span class="punctuation">,</span>
+    <span class="keyword">"logo_url"</span><span class="punctuation">:</span> <span class="string">"https://cdn.canopy.dev/logos/amazon.svg"</span><span class="punctuation">,</span>
+    <span class="keyword">"confidence"</span><span class="punctuation">:</span> 0.994
+  <span class="punctuation">}</span><span class="punctuation">,</span>
+  <span class="keyword">"enrichment"</span><span class="punctuation">:</span> <span class="punctuation">{</span>
+    <span class="keyword">"is_recurring"</span><span class="punctuation">:</span> <span class="keyword">false</span><span class="punctuation">,</span>
+    <span class="keyword">"is_subscription"</span><span class="punctuation">:</span> <span class="keyword">false</span><span class="punctuation">,</span>
+    <span class="keyword">"channel"</span><span class="punctuation">:</span> <span class="string">"online"</span>
+  <span class="punctuation">}</span>
+<span class="punctuation">}</span></pre>
+    </div>
+
+    <h2>Rate Limits</h2>
+    <p>The API enforces rate limits based on your plan tier. All responses include rate limit headers.</p>
+
+    <table class="docs-table">
+      <thead>
+        <tr>
+          <th>Plan</th>
+          <th>Requests/min</th>
+          <th>Burst</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Starter</td>
+          <td>60</td>
+          <td>100</td>
+        </tr>
+        <tr>
+          <td>Growth</td>
+          <td>600</td>
+          <td>1,000</td>
+        </tr>
+        <tr>
+          <td>Enterprise</td>
+          <td>6,000</td>
+          <td>10,000</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>Response Headers</h3>
+    <p>Every response includes the following rate limit headers:</p>
+    <ul>
+      <li><code>X-RateLimit-Limit</code> — maximum requests per window</li>
+      <li><code>X-RateLimit-Remaining</code> — requests remaining</li>
+      <li><code>X-RateLimit-Reset</code> — Unix timestamp when window resets</li>
+    </ul>
+
+    <h2>Error Handling</h2>
+    <p>The API uses conventional HTTP response codes. Codes in the 2xx range indicate success. Codes in the 4xx range indicate client errors. Codes in the 5xx range indicate server errors.</p>
+
+    <div class="code-block">
+      <div class="code-block-header">
+        <span class="code-block-label">Error Response</span>
+        <span class="code-block-lang">json</span>
+      </div>
+      <pre><span class="punctuation">{</span>
+  <span class="keyword">"error"</span><span class="punctuation">:</span> <span class="punctuation">{</span>
+    <span class="keyword">"code"</span><span class="punctuation">:</span> <span class="string">"invalid_request"</span><span class="punctuation">,</span>
+    <span class="keyword">"message"</span><span class="punctuation">:</span> <span class="string">"The 'amount' field is required."</span><span class="punctuation">,</span>
+    <span class="keyword">"doc_url"</span><span class="punctuation">:</span> <span class="string">"https://docs.canopy.dev/errors#invalid_request"</span>
+  <span class="punctuation">}</span>
+<span class="punctuation">}</span></pre>
+    </div>
+
+  </main>
+</div>
+
+<!-- Footer -->
+<footer class="footer-main">
+  <div class="footer-top">
+    <div>
+      <ul class="footer-nav-links">
+        <li><a href="index.html">Platform</a></li>
+        <li><a href="company.html">Company</a></li>
+        <li><a href="#">Careers</a></li>
+        <li><a href="contact.html">Contact</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="footer-col-title">Contact</div>
+      <div class="footer-contact-info">
+        Canopy, Inc.<br>
+        548 Market St, Suite 42<br>
+        San Francisco, CA 94104
+      </div>
+      <div class="footer-contact-links">
+        <a href="#">&#9993; General Inquiries</a>
+        <a href="#">&#9993; Media Inquiries</a>
+      </div>
+    </div>
+    <div>
+      <div class="footer-col-title">Social</div>
+      <ul class="footer-social-list">
+        <li><a href="#">LinkedIn</a></li>
+        <li><a href="#">X</a></li>
+        <li><a href="#">GitHub</a></li>
+        <li><a href="#">Medium</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom-bar">
+    <span class="footer-copyright">&copy; 2026 Canopy, Inc.</span>
+    <ul class="footer-bottom-links">
+      <li><a href="#">Privacy</a></li>
+      <li><a href="#">Terms</a></li>
+      <li><a href="#">Security</a></li>
+    </ul>
+  </div>
+  <div class="footer-brand">Canopy</div>
+</footer>
+
+<script>
+  // ─── Mobile menu ───
+  const menuBtn = document.querySelector('.mobile-menu-btn');
+  const mobileMenu = document.querySelector('.mobile-menu');
+  if (menuBtn && mobileMenu) {
+    menuBtn.addEventListener('click', () => {
+      const opening = !mobileMenu.classList.contains('open');
+      menuBtn.classList.toggle('open', opening);
+      mobileMenu.classList.toggle('open', opening);
+      document.body.style.overflow = opening ? 'hidden' : '';
+    });
+    mobileMenu.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', () => {
+        menuBtn.classList.remove('open');
+        mobileMenu.classList.remove('open');
+        document.body.style.overflow = '';
+      });
+    });
+  }
+
+  // ─── Scroll reveal ───
+  const revealObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const el = entry.target;
+        if (el.hasAttribute('data-stagger')) {
+          Array.from(el.children).forEach((child, i) => {
+            child.style.transitionDelay = `${i * 0.08}s`;
+          });
+        }
+        el.classList.add('revealed');
+        revealObserver.unobserve(el);
+      }
+    });
+  }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+  document.querySelectorAll('[data-reveal], [data-stagger]').forEach(el => revealObserver.observe(el));
+
+  // ─── Sidebar active tracking ───
+  const sidebarLinks = document.querySelectorAll('.sidebar-section a');
+  const sections = document.querySelectorAll('.docs-content h2');
+  const sidebarObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const idx = [...sections].indexOf(entry.target);
+        sidebarLinks.forEach(l => l.classList.remove('active'));
+        if (sidebarLinks[idx + 1]) sidebarLinks[idx + 1].classList.add('active');
+      }
+    });
+  }, { rootMargin: '-30% 0px -70% 0px' });
+  sections.forEach(s => sidebarObserver.observe(s));
+
+  // ─── Nav hide on scroll ───
+  let lastScrollY = 0;
+  const navEl = document.querySelector('nav');
+  window.addEventListener('scroll', () => {
+    const current = window.scrollY;
+    if (current > 80) {
+      navEl.classList.toggle('hidden', current > lastScrollY);
+    } else {
+      navEl.classList.remove('hidden');
+    }
+    lastScrollY = current;
+  }, { passive: true });
+</script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="data.js"></script>
+<script src="auth.js"></script>
+</body>
+</html>

@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Canopy — Admin</title>
+<style>
+  @font-face { font-family: 'Aeonik Pro'; src: local('Aeonik Pro'), local('AeonikPro-Regular'); font-weight: 400; }
+  @font-face { font-family: 'Aeonik Pro'; src: local('Aeonik Pro Medium'), local('AeonikPro-Medium'); font-weight: 500; }
+  @font-face { font-family: 'Aeonik Pro'; src: local('Aeonik Pro Bold'), local('AeonikPro-Bold'); font-weight: 700; }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --green-dark: #1a2e1a; --green-deep: #0f1f0f; --green-accent: #c8e64a;
+    --green-muted: #a3b858; --off-white: #f5f4f0; --light-grey: #eae9e4;
+    --text-dark: #1a1a1a; --text-mid: #5a5a56; --text-light: #8a8a84; --border: #ddd9d0;
+  }
+  body {
+    font-family: 'Aeonik Pro', -apple-system, sans-serif;
+    background: var(--off-white); color: var(--text-dark);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .admin-nav {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 18px 32px; background: var(--green-dark); color: var(--off-white);
+    position: sticky; top: 0; z-index: 10;
+  }
+  .admin-nav .logo { font-size: 18px; font-weight: 700; letter-spacing: -0.5px; }
+  .admin-nav .logo span { color: var(--green-accent); font-weight: 500; margin-left: 8px; font-size: 13px; }
+  .admin-nav a { color: rgba(245,244,240,0.6); text-decoration: none; font-size: 14px; font-weight: 500; transition: color 0.2s; }
+  .admin-nav a:hover { color: var(--off-white); }
+
+  .admin-wrap { max-width: 1100px; margin: 0 auto; padding: 40px 32px 80px; }
+
+  .mode-banner {
+    background: rgba(200,230,74,0.12); border: 1px solid rgba(200,230,74,0.3);
+    border-radius: 12px; padding: 14px 20px; margin-bottom: 32px;
+    font-size: 13px; color: var(--green-dark); line-height: 1.5;
+  }
+  .mode-banner b { font-weight: 700; }
+
+  /* Tabs */
+  .tabs { display: flex; gap: 4px; margin-bottom: 28px; border-bottom: 1px solid var(--border); }
+  .tab {
+    padding: 12px 20px; font-family: inherit; font-size: 15px; font-weight: 500;
+    background: none; border: none; color: var(--text-light); cursor: pointer;
+    position: relative; transition: color 0.2s;
+  }
+  .tab.active { color: var(--text-dark); }
+  .tab.active::after {
+    content: ''; position: absolute; bottom: -1px; left: 0; right: 0;
+    height: 2px; background: var(--green-dark);
+  }
+  .tab .count {
+    display: inline-block; margin-left: 8px; background: var(--light-grey);
+    color: var(--text-mid); font-size: 12px; font-weight: 600;
+    padding: 2px 8px; border-radius: 100px;
+  }
+  .tab.active .count { background: var(--green-dark); color: var(--off-white); }
+
+  /* Toolbar */
+  .toolbar { display: flex; gap: 12px; align-items: center; margin-bottom: 20px; flex-wrap: wrap; }
+  .search {
+    flex: 1; min-width: 200px; font-family: inherit; font-size: 14px;
+    padding: 11px 16px; border: 1.5px solid var(--border); border-radius: 10px;
+    background: #fff; outline: none; transition: border-color 0.2s;
+  }
+  .search:focus { border-color: var(--green-dark); }
+  .btn {
+    font-family: inherit; font-size: 14px; font-weight: 500; padding: 11px 18px;
+    border-radius: 10px; cursor: pointer; border: 1.5px solid var(--border);
+    background: #fff; color: var(--text-dark); transition: all 0.2s; white-space: nowrap;
+  }
+  .btn:hover { border-color: var(--green-dark); }
+  .btn-primary { background: var(--green-dark); color: var(--off-white); border-color: var(--green-dark); }
+  .btn-primary:hover { background: var(--green-deep); }
+  .btn-danger { color: #c85050; }
+  .btn-danger:hover { border-color: #c85050; background: rgba(200,80,80,0.04); }
+
+  /* Table */
+  .table-card { background: #fff; border: 1px solid var(--border); border-radius: 16px; overflow: hidden; }
+  table { width: 100%; border-collapse: collapse; }
+  thead th {
+    text-align: left; font-size: 11px; font-weight: 600; text-transform: uppercase;
+    letter-spacing: 0.5px; color: var(--text-light); padding: 14px 20px;
+    border-bottom: 1px solid var(--border); background: var(--off-white);
+  }
+  tbody td { padding: 16px 20px; font-size: 14px; border-bottom: 1px solid var(--light-grey); vertical-align: top; }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr:hover { background: rgba(0,0,0,0.015); }
+  .cell-name { font-weight: 500; }
+  .cell-email a { color: var(--green-dark); text-decoration: none; }
+  .cell-email a:hover { text-decoration: underline; }
+  .cell-msg { max-width: 360px; color: var(--text-mid); line-height: 1.5; }
+  .cell-date { color: var(--text-light); font-size: 13px; white-space: nowrap; }
+  .tag {
+    display: inline-block; font-size: 12px; font-weight: 500; padding: 3px 10px;
+    border-radius: 100px; background: var(--light-grey); color: var(--text-mid);
+  }
+
+  .empty { padding: 64px 20px; text-align: center; color: var(--text-light); }
+  .empty h3 { font-size: 17px; color: var(--text-mid); margin-bottom: 6px; font-weight: 500; }
+  .empty p { font-size: 14px; line-height: 1.6; }
+
+  .pane { display: none; }
+  .pane.active { display: block; }
+
+  @media (max-width: 700px) {
+    .admin-wrap { padding: 24px 16px 60px; }
+    .cell-msg { max-width: 180px; }
+    thead { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="admin-nav">
+  <div class="logo">Canopy <span>Admin</span></div>
+  <a href="index.html">← Back to site</a>
+</div>
+
+<div class="admin-wrap">
+  <div class="mode-banner" id="mode-banner"></div>
+
+  <div class="tabs">
+    <button class="tab active" data-pane="waitlist">Waitlist <span class="count" id="count-waitlist">0</span></button>
+    <button class="tab" data-pane="contacts">Messages <span class="count" id="count-contacts">0</span></button>
+  </div>
+
+  <!-- WAITLIST PANE -->
+  <div class="pane active" id="pane-waitlist">
+    <div class="toolbar">
+      <input class="search" id="search-waitlist" placeholder="Search by name, email, or company...">
+      <button class="btn btn-primary" id="export-waitlist">Export CSV</button>
+      <button class="btn btn-danger" id="clear-waitlist">Clear all</button>
+    </div>
+    <div class="table-card" id="table-waitlist"></div>
+  </div>
+
+  <!-- CONTACTS PANE -->
+  <div class="pane" id="pane-contacts">
+    <div class="toolbar">
+      <input class="search" id="search-contacts" placeholder="Search messages...">
+      <button class="btn btn-primary" id="export-contacts">Export CSV</button>
+      <button class="btn btn-danger" id="clear-contacts">Clear all</button>
+    </div>
+    <div class="table-card" id="table-contacts"></div>
+  </div>
+</div>
+
+<script src="data.js"></script>
+<script>
+  const D = window.CanopyData;
+
+  // Mode banner
+  document.getElementById('mode-banner').innerHTML = D.MODE === 'mock'
+    ? `<b>Mock mode.</b> Data is stored in this browser only (localStorage) — it won't sync across devices or visitors. This is the demo backend. To collect real leads from everyone, connect Supabase and flip <code>MODE</code> in <code>data.js</code>.`
+    : `<b>Live mode.</b> Reading from your connected backend.`;
+
+  const fmtDate = (iso) => {
+    const d = new Date(iso);
+    return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) +
+      ' · ' + d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+  };
+  const esc = (s) => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+  // ─── WAITLIST ───
+  function renderWaitlist(filter = '') {
+    let rows = D.getWaitlist();
+    const f = filter.toLowerCase();
+    if (f) rows = rows.filter(r => (r.name + r.email + r.company).toLowerCase().includes(f));
+    document.getElementById('count-waitlist').textContent = D.getWaitlist().length;
+
+    const el = document.getElementById('table-waitlist');
+    if (!rows.length) {
+      el.innerHTML = `<div class="empty"><h3>No signups yet</h3><p>Waitlist entries from "Request access" will appear here.</p></div>`;
+      return;
+    }
+    el.innerHTML = `
+      <table>
+        <thead><tr><th>Name</th><th>Email</th><th>Company</th><th>Joined</th></tr></thead>
+        <tbody>
+          ${rows.map(r => `
+            <tr>
+              <td class="cell-name">${esc(r.name) || '—'}</td>
+              <td class="cell-email"><a href="mailto:${esc(r.email)}">${esc(r.email)}</a></td>
+              <td>${esc(r.company) || '—'}</td>
+              <td class="cell-date">${fmtDate(r.created_at)}</td>
+            </tr>`).join('')}
+        </tbody>
+      </table>`;
+  }
+
+  // ─── CONTACTS ───
+  function renderContacts(filter = '') {
+    let rows = D.getContacts();
+    const f = filter.toLowerCase();
+    if (f) rows = rows.filter(r => (r.name + r.email + r.company + r.message + r.subject).toLowerCase().includes(f));
+    document.getElementById('count-contacts').textContent = D.getContacts().length;
+
+    const el = document.getElementById('table-contacts');
+    if (!rows.length) {
+      el.innerHTML = `<div class="empty"><h3>No messages yet</h3><p>Submissions from the contact form will appear here.</p></div>`;
+      return;
+    }
+    el.innerHTML = `
+      <table>
+        <thead><tr><th>Name</th><th>Email</th><th>Topic</th><th>Message</th><th>Received</th></tr></thead>
+        <tbody>
+          ${rows.map(r => `
+            <tr>
+              <td class="cell-name">${esc(r.name)}<div style="font-size:12px;color:var(--text-light)">${esc(r.company) || ''}</div></td>
+              <td class="cell-email"><a href="mailto:${esc(r.email)}">${esc(r.email)}</a></td>
+              <td><span class="tag">${esc(r.subject)}</span></td>
+              <td class="cell-msg">${esc(r.message)}</td>
+              <td class="cell-date">${fmtDate(r.created_at)}</td>
+            </tr>`).join('')}
+        </tbody>
+      </table>`;
+  }
+
+  function download(filename, text) {
+    const a = document.createElement('a');
+    a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(text);
+    a.download = filename;
+    a.click();
+  }
+
+  // ─── Tabs ───
+  document.querySelectorAll('.tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.pane').forEach(p => p.classList.remove('active'));
+      tab.classList.add('active');
+      document.getElementById('pane-' + tab.dataset.pane).classList.add('active');
+    });
+  });
+
+  // ─── Wire controls ───
+  document.getElementById('search-waitlist').addEventListener('input', e => renderWaitlist(e.target.value));
+  document.getElementById('search-contacts').addEventListener('input', e => renderContacts(e.target.value));
+
+  document.getElementById('export-waitlist').addEventListener('click', () => {
+    const csv = D.toCSV(D.getWaitlist(), [
+      { key: 'name', label: 'Name' }, { key: 'email', label: 'Email' },
+      { key: 'company', label: 'Company' }, { key: 'created_at', label: 'Joined' },
+    ]);
+    download('canopy-waitlist.csv', csv);
+  });
+  document.getElementById('export-contacts').addEventListener('click', () => {
+    const csv = D.toCSV(D.getContacts(), [
+      { key: 'name', label: 'Name' }, { key: 'email', label: 'Email' },
+      { key: 'company', label: 'Company' }, { key: 'subject', label: 'Topic' },
+      { key: 'message', label: 'Message' }, { key: 'created_at', label: 'Received' },
+    ]);
+    download('canopy-messages.csv', csv);
+  });
+
+  document.getElementById('clear-waitlist').addEventListener('click', () => {
+    if (confirm('Delete all waitlist entries? This cannot be undone.')) { D.clearWaitlist(); renderWaitlist(); }
+  });
+  document.getElementById('clear-contacts').addEventListener('click', () => {
+    if (confirm('Delete all messages? This cannot be undone.')) { D.clearContacts(); renderContacts(); }
+  });
+
+  renderWaitlist();
+  renderContacts();
+</script>
+</body>
+</html>

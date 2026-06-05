@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<!-- Theme — fully automatic, follows the wall clock (7am–7pm light, else dark) -->
+<script>(function(){try{var h=new Date().getHours();var dark=h<7||h>=19;document.documentElement.setAttribute('data-theme',dark?'dark':'light');}catch(e){}})();</script>
+<meta name="color-scheme" content="light dark">
+<title>Sona — Studio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  :root {
+    --bg:#fff; --bg-soft:#f7f7f4; --surface:#fff;
+    --border:rgba(20,20,28,0.08); --border-strong:rgba(20,20,28,0.16);
+    --text:#15151a; --text-mid:#5a5a62; --text-dim:#95959d;
+    --accent:#4f46e5; --accent-2:#6b63f5; --accent-soft:rgba(79,70,229,0.08);
+    --shadow-sm:0 1px 2px rgba(20,20,30,.04);
+  }
+  html[data-theme="dark"] {
+    --bg:#0c0c0f; --bg-soft:#131318; --surface:#16161b;
+    --border:rgba(255,255,255,.09); --border-strong:rgba(255,255,255,.16);
+    --text:#f4f4f6; --text-mid:#a0a0aa; --text-dim:#6a6a74;
+    --accent:#8b84ff; --accent-soft:rgba(139,132,255,.14);
+    --shadow-sm:0 1px 2px rgba(0,0,0,.4);
+  }
+  body { font-family:'Geist',-apple-system,sans-serif; background:var(--bg); color:var(--text); -webkit-font-smoothing:antialiased; line-height:1.5; overflow:hidden; height:100vh; }
+
+  /* ─── Auth gate / loading state ─── */
+  .gate { position:fixed; inset:0; display:flex; align-items:center; justify-content:center; flex-direction:column; gap:14px; background:var(--bg); z-index:50; }
+  .gate.hide { display:none; }
+  .gate .lm { width:44px; height:44px; border-radius:11px; background:linear-gradient(150deg,#34343c,#131316); border:1px solid rgba(255,255,255,.09); display:flex; align-items:center; justify-content:center; }
+  .gate .lm svg { width:28px; height:28px; }
+  .gate p { font-size:14px; color:var(--text-mid); }
+  .gate .spinner { width:18px; height:18px; border:2px solid var(--border); border-top-color:var(--accent); border-radius:50%; animation:spin .8s linear infinite; }
+  @keyframes spin { to { transform:rotate(360deg); } }
+
+  /* ─── App shell ─── */
+  .shell { display:grid; grid-template-columns:260px 1fr; height:100vh; }
+  .side { background:var(--bg-soft); border-right:1px solid var(--border); padding:18px 14px; display:flex; flex-direction:column; gap:18px; overflow-y:auto; }
+  .side-top { display:flex; align-items:center; gap:9px; padding:4px 8px; }
+  .lm { width:26px; height:26px; border-radius:7px; background:linear-gradient(150deg,#34343c,#131316); border:1px solid rgba(255,255,255,.09); display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .lm svg { width:16px; height:16px; }
+  .name { font-size:14.5px; font-weight:600; letter-spacing:-.3px; }
+  .badge { margin-left:auto; font-family:'Geist Mono',monospace; font-size:9.5px; color:var(--accent); background:var(--accent-soft); padding:2px 7px; border-radius:100px; letter-spacing:.5px; text-transform:uppercase; }
+
+  .search { display:flex; align-items:center; gap:8px; padding:8px 11px; background:var(--surface); border:1px solid var(--border); border-radius:8px; font-size:12.5px; color:var(--text-dim); cursor:text; }
+  .search svg { width:13px; height:13px; flex-shrink:0; }
+  .kbd { margin-left:auto; font-family:'Geist Mono',monospace; font-size:9.5px; padding:1px 6px; background:var(--bg-soft); border:1px solid var(--border); border-radius:4px; color:var(--text-mid); }
+
+  .nav { display:flex; flex-direction:column; gap:2px; }
+  .nav-item { display:flex; align-items:center; gap:10px; padding:8px 10px; border-radius:7px; cursor:pointer; font-size:13px; color:var(--text-mid); transition:background .15s, color .15s; user-select:none; border:0; background:transparent; font-family:inherit; text-align:left; width:100%; }
+  .nav-item:hover { color:var(--text); background:var(--surface); }
+  .nav-item.active { background:var(--surface); color:var(--text); font-weight:500; box-shadow:var(--shadow-sm); }
+  .nav-item svg { width:15px; height:15px; flex-shrink:0; opacity:.85; }
+  .nav-item .pill-n { margin-left:auto; font-family:'Geist Mono',monospace; font-size:9.5px; color:var(--text-dim); }
+  .section-label { font-family:'Geist Mono',monospace; font-size:9.5px; color:var(--text-dim); letter-spacing:.6px; text-transform:uppercase; padding:0 10px; margin-bottom:6px; }
+  .side-bottom { margin-top:auto; padding-top:10px; border-top:1px solid var(--border); }
+
+  .user-row { display:flex; align-items:center; gap:9px; padding:8px; border-radius:8px; cursor:pointer; transition:background .15s; }
+  .user-row:hover { background:var(--surface); }
+  .user-av { width:26px; height:26px; border-radius:50%; background:linear-gradient(135deg,var(--accent),var(--accent-soft)); flex-shrink:0; display:flex; align-items:center; justify-content:center; color:#fff; font-size:11px; font-weight:600; }
+  .user-text { display:flex; flex-direction:column; line-height:1.2; flex:1; min-width:0; }
+  .user-name { font-size:12.5px; font-weight:500; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .user-email { font-size:11px; color:var(--text-dim); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+
+  /* Main */
+  .main { display:flex; flex-direction:column; overflow:hidden; }
+  .topbar { display:flex; align-items:center; justify-content:space-between; padding:14px 28px; border-bottom:1px solid var(--border); gap:12px; flex-shrink:0; }
+  .topbar-left { display:flex; align-items:baseline; gap:14px; }
+  .topbar h1 { font-size:18px; font-weight:600; letter-spacing:-.4px; }
+  .topbar-sub { font-size:11.5px; color:var(--text-dim); font-family:'Geist Mono',monospace; letter-spacing:.4px; text-transform:uppercase; }
+  .chip { display:inline-flex; align-items:center; gap:6px; font-family:'Geist Mono',monospace; font-size:10.5px; color:var(--accent); background:var(--accent-soft); padding:5px 10px; border-radius:100px; letter-spacing:.4px; text-transform:uppercase; }
+  .chip::before { content:''; width:5px; height:5px; border-radius:50%; background:var(--accent); }
+
+  .content { flex:1; overflow-y:auto; padding:24px 28px; }
+  .view { display:none; }
+  .view.active { display:block; animation:fadein .3s ease-out; }
+  @keyframes fadein { from { opacity:0; transform:translateY(4px); } to { opacity:1; transform:none; } }
+
+  .empty { display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:80px 24px; color:var(--text-mid); }
+  .empty .ico { width:56px; height:56px; border-radius:14px; background:var(--accent-soft); color:var(--accent); display:flex; align-items:center; justify-content:center; margin-bottom:18px; }
+  .empty h3 { color:var(--text); font-size:18px; font-weight:600; letter-spacing:-.3px; margin-bottom:6px; }
+  .empty p { font-size:14px; max-width:380px; line-height:1.55; margin-bottom:18px; }
+
+  .btn { display:inline-flex; align-items:center; gap:8px; padding:11px 20px; font-family:inherit; font-size:14px; font-weight:500; border:0; border-radius:999px; cursor:pointer; color:#fff; background:linear-gradient(180deg,#6b63f5 0%, #3d36c2 100%); box-shadow:inset 0 1px 0 rgba(255,255,255,.22), inset 0 -1px 0 rgba(0,0,0,.18), 0 1px 2px rgba(40,30,140,.18); transition:filter .2s, transform .2s; text-decoration:none; }
+  .btn:hover { filter:brightness(1.05); transform:translateY(-1px); }
+  .btn-ghost { background:transparent; color:var(--text); border:1px solid var(--border-strong); box-shadow:none; padding:10px 18px; }
+  .btn-ghost:hover { background:var(--bg-soft); transform:none; filter:none; }
+
+  /* DISCOVER */
+  .disc-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(260px,1fr)); gap:12px; }
+  .disc-card { background:var(--bg-soft); border:1px solid var(--border); border-radius:12px; padding:14px; transition:border-color .2s, transform .2s; }
+  .disc-card:hover { border-color:var(--border-strong); transform:translateY(-1px); }
+  .disc-head { display:flex; align-items:center; gap:8px; margin-bottom:10px; }
+  .disc-av { width:24px; height:24px; border-radius:50%; background:linear-gradient(135deg,var(--accent),var(--accent-soft)); flex-shrink:0; }
+  .disc-name { font-size:12px; font-weight:600; }
+  .disc-handle { font-size:11px; color:var(--text-dim); }
+  .disc-text { font-size:13px; color:var(--text); line-height:1.5; margin-bottom:12px; }
+  .disc-meta { display:flex; justify-content:space-between; align-items:center; }
+  .disc-tag { font-family:'Geist Mono',monospace; font-size:10.5px; color:var(--accent); background:var(--accent-soft); padding:3px 8px; border-radius:100px; font-weight:500; }
+  .disc-actions { display:flex; gap:6px; }
+  .disc-action { background:transparent; border:1px solid var(--border); border-radius:7px; padding:4px 8px; color:var(--text-mid); cursor:pointer; font-size:11px; font-family:inherit; display:inline-flex; align-items:center; gap:4px; transition:border-color .15s, color .15s; }
+  .disc-action:hover { color:var(--accent); border-color:var(--accent); }
+  .disc-action.saved { color:var(--accent); border-color:var(--accent); background:var(--accent-soft); }
+  .disc-action svg { width:11px; height:11px; }
+
+  .coming-soon { display:inline-flex; align-items:center; gap:6px; font-family:'Geist Mono',monospace; font-size:11px; padding:5px 10px; background:var(--bg-soft); border:1px solid var(--border-strong); border-radius:100px; color:var(--text-mid); letter-spacing:.5px; text-transform:uppercase; }
+  .filters { display:flex; gap:6px; margin-bottom:18px; flex-wrap:wrap; }
+  .filter { padding:5px 11px; font-size:12px; font-family:inherit; background:var(--bg-soft); border:1px solid var(--border); border-radius:100px; color:var(--text-mid); cursor:pointer; transition:all .15s; }
+  .filter:hover { color:var(--text); border-color:var(--border-strong); }
+  .filter.active { background:var(--accent); color:#fff; border-color:var(--accent); }
+
+  /* ─── FOUNDING UPSELL (in-app sidebar — sleeker than Eden's countdown card) ─── */
+  .upsell { position:relative; border-radius:14px; padding:1px; background:linear-gradient(160deg,var(--accent),var(--accent-2) 60%,transparent 100%); margin:14px 0 4px; box-shadow:0 8px 24px rgba(79,70,229,.15); }
+  .upsell-inner { background:var(--bg-soft); border-radius:13px; padding:14px; }
+  .upsell-x { position:absolute; top:8px; right:8px; width:18px; height:18px; border:0; background:transparent; cursor:pointer; color:var(--text-dim); font-size:14px; line-height:1; display:flex; align-items:center; justify-content:center; padding:0; z-index:2; }
+  .upsell-x:hover { color:var(--text); }
+  .upsell-eye { display:inline-flex; align-items:center; gap:5px; font-family:'Geist Mono',monospace; font-size:9px; letter-spacing:.8px; text-transform:uppercase; color:var(--accent); margin-bottom:8px; }
+  .upsell h4 { font-size:13px; font-weight:600; letter-spacing:-.3px; line-height:1.3; margin-bottom:10px; padding-right:16px; }
+  .upsell h4 .acc { color:var(--accent); }
+  .upsell-seats-row { display:flex; justify-content:space-between; align-items:baseline; margin-bottom:5px; }
+  .upsell-seats-row .lbl { font-family:'Geist Mono',monospace; font-size:9px; color:var(--text-dim); text-transform:uppercase; letter-spacing:.4px; }
+  .upsell-seats-row .num { font-family:'Geist Mono',monospace; font-size:10.5px; font-weight:500; }
+  .upsell-seats-row .num b { color:var(--accent); }
+  .upsell-bar { height:4px; background:var(--border); border-radius:999px; overflow:hidden; margin-bottom:11px; }
+  .upsell-bar i { display:block; height:100%; background:linear-gradient(90deg,var(--accent),var(--accent-2)); border-radius:999px; transition:width .9s cubic-bezier(.16,1,.3,1); }
+  .upsell-btn { display:flex; align-items:center; justify-content:center; gap:6px; width:100%; padding:9px 12px; font-family:inherit; font-size:12px; font-weight:500; color:#fff; background:linear-gradient(180deg,#6b63f5 0%,#3d36c2 100%); border:0; border-radius:8px; cursor:pointer; box-shadow:inset 0 1px 0 rgba(255,255,255,.22); transition:filter .2s, transform .15s; }
+  .upsell-btn:hover { filter:brightness(1.07); transform:translateY(-1px); }
+  .upsell-btn:disabled { opacity:.6; cursor:not-allowed; }
+  .upsell.hide { display:none; }
+
+  @media (max-width:880px) {
+    body { overflow:auto; height:auto; }
+    .shell { grid-template-columns:1fr; height:auto; }
+    .side { border-right:0; border-bottom:1px solid var(--border); position:sticky; top:0; z-index:10; background:var(--bg-soft); }
+    .main { height:auto; }
+  }
+  @media (max-width:768px) {
+    .side {
+      padding: max(14px, env(safe-area-inset-top)) 14px 14px;
+      display: flex; flex-direction: column; gap: 12px;
+    }
+    .side-top { padding: 0 4px; }
+    .search { padding: 9px 11px; font-size: 13px; }
+    .search .kbd { display: none; }
+    /* Collapse the nav into horizontal scrollable pill row */
+    .nav { flex-direction: row; gap: 4px; overflow-x: auto; padding-bottom: 4px; scrollbar-width: none; -ms-overflow-style: none; }
+    .nav::-webkit-scrollbar { display: none; }
+    .nav-item { white-space: nowrap; padding: 9px 14px; font-size: 13px; flex-shrink: 0; }
+    .nav-item .pill-n { margin-left: 6px; }
+    .section-label { display: none; }
+    .side > div:not(.side-top):not(.side-bottom):not(.upsell) { display: none; } /* hide workspace section */
+    .upsell { margin: 6px 0 0; }
+    .upsell-inner { padding: 12px; }
+    .side-bottom { padding-top: 8px; }
+    .user-row { padding: 6px; }
+    .user-av { width: 24px; height: 24px; font-size: 10.5px; }
+    .user-name, .user-email { font-size: 11.5px; }
+
+    /* Main content */
+    .topbar { padding: 14px 18px; gap: 10px; flex-wrap: wrap; }
+    .topbar h1 { font-size: 17px; }
+    .topbar-sub { font-size: 10.5px; }
+    .content { padding: 18px; padding-bottom: max(20px, env(safe-area-inset-bottom)); }
+    .filters { gap: 5px; overflow-x: auto; padding-bottom: 4px; flex-wrap: nowrap; }
+    .filters::-webkit-scrollbar { display: none; }
+    .filter { flex-shrink: 0; }
+    .disc-grid { grid-template-columns: 1fr; gap: 10px; }
+    .disc-card { padding: 14px; }
+    .empty { padding: 60px 16px; }
+    .empty h3 { font-size: 17px; }
+    .empty p { font-size: 13.5px; }
+  }
+  /* Tap-up reset */
+  @media (hover: none) and (pointer: coarse) {
+    .disc-card:hover, .nav-item:hover { transform: none !important; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Auth gate (shown until session is verified) -->
+<div class="gate" id="gate">
+  <div class="lm"><svg viewBox="0 0 24 24" fill="none"><path d="M5 15 Q8 9 12 12 Q16 15 19 9" stroke="#fff" stroke-width="2.6" stroke-linecap="round" fill="none"/><path d="M19 3.6 C19.15 5.1 20.3 6.25 21.8 6.4 C20.3 6.55 19.15 7.7 19 9.2 C18.85 7.7 17.7 6.55 16.2 6.4 C17.7 6.25 18.85 5.1 19 3.6 Z" fill="#8b84ff"/></svg></div>
+  <div class="spinner"></div>
+  <p id="gate-msg">Checking your session…</p>
+</div>
+
+<div class="shell" id="shell" style="display:none;">
+
+  <!-- SIDEBAR -->
+  <aside class="side">
+    <div class="side-top">
+      <span class="lm"><svg viewBox="0 0 24 24" fill="none"><path d="M5 15 Q8 9 12 12 Q16 15 19 9" stroke="#fff" stroke-width="2.6" stroke-linecap="round" fill="none"/><path d="M19 3.6 C19.15 5.1 20.3 6.25 21.8 6.4 C20.3 6.55 19.15 7.7 19 9.2 C18.85 7.7 17.7 6.55 16.2 6.4 C17.7 6.25 18.85 5.1 19 3.6 Z" fill="#8b84ff"/></svg></span>
+      <span class="name">Sona</span>
+      <span class="badge">Beta</span>
+    </div>
+
+    <div class="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg><span>Find ideas</span><span class="kbd">⌘K</span></div>
+
+    <nav class="nav">
+      <button class="nav-item active" data-view="discover">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m14.5 9.5-5 1.5 1.5 5 5-1.5z"/></svg>
+        Discover<span class="pill-n">128</span>
+      </button>
+      <button class="nav-item" data-view="studio">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 1 1 3 3L7 19l-4 1 1-4Z"/></svg>
+        Studio
+      </button>
+      <button class="nav-item" data-view="voice">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h2M7 8v8M11 5v14M15 8v8M19 12h2"/></svg>
+        Voice
+      </button>
+      <button class="nav-item" data-view="saved">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+        Saved<span class="pill-n" id="saved-count">0</span>
+      </button>
+    </nav>
+
+    <div>
+      <div class="section-label">Workspace</div>
+      <nav class="nav">
+        <button class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>Personal brand</button>
+        <button class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>Idea swipe</button>
+      </nav>
+    </div>
+
+    <!-- Founding upsell — dismissible, premium, NOT a panic timer -->
+    <div class="upsell" id="upsell">
+      <button class="upsell-x" onclick="dismissUpsell()" aria-label="Dismiss">×</button>
+      <div class="upsell-inner">
+        <div class="upsell-eye">✦ Founding member</div>
+        <h4>Lock in <span class="acc">$99/yr for life</span>. Be one of the first 100.</h4>
+        <div class="upsell-seats-row"><span class="lbl">Founding seats</span><span class="num"><b id="up-claimed">0</b>/100</span></div>
+        <div class="upsell-bar"><i id="up-bar" style="width:0%"></i></div>
+        <button class="upsell-btn" onclick="claimSeat(this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12 L19 12 M13 6 L19 12 L13 18"/></svg>
+          Claim my seat
+        </button>
+      </div>
+    </div>
+
+    <div class="side-bottom">
+      <div class="user-row" id="user-row" title="Sign out">
+        <span class="user-av" id="user-av">·</span>
+        <span class="user-text">
+          <span class="user-name" id="user-name">Loading…</span>
+          <span class="user-email" id="user-email">—</span>
+        </span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;color:var(--text-dim);"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5M21 12H9"/></svg>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="main">
+    <header class="topbar">
+      <div class="topbar-left">
+        <h1 id="view-title">Discover</h1>
+        <span class="topbar-sub" id="view-sub">Founders · last 7 days</span>
+      </div>
+      <span class="chip" id="view-chip">Refreshed just now</span>
+    </header>
+
+    <div class="content">
+      <!-- DISCOVER -->
+      <div class="view active" data-view="discover">
+        <div class="filters">
+          <button class="filter active" data-filter="all">All</button>
+          <button class="filter" data-filter="founders">Founders</button>
+          <button class="filter" data-filter="writers">Writers</button>
+          <button class="filter" data-filter="creators">Creators</button>
+        </div>
+        <div class="disc-grid" id="disc-grid"><!-- rendered by JS --></div>
+      </div>
+
+      <!-- STUDIO -->
+      <div class="view" data-view="studio">
+        <div class="empty">
+          <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:24px;height:24px;"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 1 1 3 3L7 19l-4 1 1-4Z"/></svg></div>
+          <h3>The Studio is rolling out this week.</h3>
+          <p>You'll be able to draft a post and have Sona finish it in your voice — with a real voice model trained on your writing. Saved ideas already work below.</p>
+          <span class="coming-soon">● Connecting AI · ETA this week</span>
+        </div>
+      </div>
+
+      <!-- VOICE -->
+      <div class="view" data-view="voice">
+        <div class="empty">
+          <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:24px;height:24px;"><path d="M3 12h2M7 8v8M11 5v14M15 8v8M19 12h2"/></svg></div>
+          <h3>Voice training opens next.</h3>
+          <p>Upload your existing posts (X, LinkedIn, blog) and we'll train your custom voice model. 98% match average within a week of publishing.</p>
+          <span class="coming-soon">● Training pipeline launching soon</span>
+        </div>
+      </div>
+
+      <!-- SAVED -->
+      <div class="view" data-view="saved">
+        <div id="saved-empty" class="empty">
+          <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:24px;height:24px;"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></div>
+          <h3>Nothing saved yet.</h3>
+          <p>Tap the bookmark icon on any post in Discover to save it. Your saved ideas are stored to your account.</p>
+          <button class="btn-ghost btn" onclick="switchView('discover')">Browse Discover</button>
+        </div>
+        <div class="disc-grid" id="saved-grid"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script>
+  let sb = null;
+  let user = null;
+  const SEED_IDEAS = [
+    { id:'i1', cat:'founders', name:'Maya O.',  handle:'@mayabuilds · X',  text:'Most founders post too much — not too little. The ones who break out pick one contrarian take and stick to it.', tag:'12× outlier' },
+    { id:'i2', cat:'founders', name:'Lucas T.', handle:'@lucasgrows · in', text:'I deleted 80% of my todo list last month. Output went up 3×. Here\'s the framework I used.', tag:'8× outlier' },
+    { id:'i3', cat:'writers',  name:'Priya R.', handle:'@priyawrites · X', text:'Three questions I ask before writing anything. They\'ve saved me hundreds of bad drafts.', tag:'18× outlier' },
+    { id:'i4', cat:'creators', name:'Theo K.',  handle:'@theonotes · X',   text:'Stop optimizing your morning routine. Start optimizing what you do with the next 6 hours.', tag:'6× outlier' },
+    { id:'i5', cat:'creators', name:'Nadia S.', handle:'@nadiateaches · YT', text:'AI didn\'t kill writing. Lazy writing did. Here\'s how to use AI without losing your voice.', tag:'14× outlier' },
+    { id:'i6', cat:'writers',  name:'Ben H.',   handle:'@benessays · in',  text:'The one essay format that changed how I think about everything I publish.', tag:'9× outlier' },
+    { id:'i7', cat:'founders', name:'Alex M.',  handle:'@alexbuilds · X',  text:'Specific knowledge is found by pursuing your genuine curiosity, not by following whatever is trendy.', tag:'22× outlier' },
+    { id:'i8', cat:'creators', name:'Iris W.',  handle:'@iriswrites · in', text:'Stop chasing followers. Start chasing the right 100 people. Compound the rest.', tag:'7× outlier' },
+  ];
+  let currentFilter = 'all';
+  let saved = new Set();
+
+  // Theme — re-check clock every minute so /app flips at 7am / 7pm without refresh
+  setInterval(() => {
+    if ((localStorage.getItem('sona-theme') || 'auto') === 'auto') {
+      const h = new Date().getHours();
+      const night = h < 7 || h >= 19;
+      document.documentElement.setAttribute('data-theme', night ? 'dark' : 'light');
+    }
+  }, 60 * 1000);
+
+  async function initApp() {
+    try {
+      const res = await fetch('/api/auth-config', { cache: 'force-cache' });
+      const cfg = await res.json();
+      if (!cfg.configured) {
+        document.getElementById('gate-msg').textContent = 'Auth not configured yet. Add SUPABASE_ANON_KEY to your Vercel env vars.';
+        document.querySelector('.spinner').style.display = 'none';
+        return;
+      }
+      sb = window.supabase.createClient(cfg.url, cfg.anonKey, {
+        auth: { persistSession: true, autoRefreshToken: true },
+      });
+      const { data: { session } } = await sb.auth.getSession();
+      if (!session) {
+        window.location.href = '/?signin=1';
+        return;
+      }
+      user = session.user;
+      showApp();
+    } catch (e) {
+      console.error('App init failed', e);
+      document.getElementById('gate-msg').textContent = 'Could not load. Refresh to retry.';
+      document.querySelector('.spinner').style.display = 'none';
+    }
+  }
+
+  async function showApp() {
+    document.getElementById('gate').classList.add('hide');
+    document.getElementById('shell').style.display = 'grid';
+    const meta = user.user_metadata || {};
+    const name = meta.full_name || user.email.split('@')[0];
+    document.getElementById('user-name').textContent = name;
+    document.getElementById('user-email').textContent = user.email;
+    document.getElementById('user-av').textContent = (name[0] || '·').toUpperCase();
+    await loadSaved();
+    renderDiscover();
+    renderSaved();
+  }
+
+  async function loadSaved() {
+    try {
+      const { data } = await sb.from('saved_ideas').select('idea_id').eq('user_id', user.id);
+      saved = new Set((data || []).map(r => r.idea_id));
+    } catch (_) { saved = new Set(); }
+    document.getElementById('saved-count').textContent = saved.size;
+  }
+
+  function renderDiscover() {
+    const grid = document.getElementById('disc-grid');
+    const items = SEED_IDEAS.filter(i => currentFilter === 'all' || i.cat === currentFilter);
+    grid.innerHTML = items.map(i => `
+      <div class="disc-card">
+        <div class="disc-head"><span class="disc-av"></span><div><div class="disc-name">${i.name}</div><div class="disc-handle">${i.handle}</div></div></div>
+        <div class="disc-text">${i.text}</div>
+        <div class="disc-meta">
+          <span class="disc-tag">${i.tag}</span>
+          <div class="disc-actions">
+            <button class="disc-action ${saved.has(i.id) ? 'saved' : ''}" data-idea="${i.id}" onclick="toggleSave('${i.id}', this)">
+              <svg viewBox="0 0 24 24" fill="${saved.has(i.id) ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+              ${saved.has(i.id) ? 'Saved' : 'Save'}
+            </button>
+          </div>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  function renderSaved() {
+    const grid = document.getElementById('saved-grid');
+    const empty = document.getElementById('saved-empty');
+    const items = SEED_IDEAS.filter(i => saved.has(i.id));
+    if (items.length === 0) { empty.style.display = 'flex'; grid.innerHTML = ''; return; }
+    empty.style.display = 'none';
+    grid.innerHTML = items.map(i => `
+      <div class="disc-card">
+        <div class="disc-head"><span class="disc-av"></span><div><div class="disc-name">${i.name}</div><div class="disc-handle">${i.handle}</div></div></div>
+        <div class="disc-text">${i.text}</div>
+        <div class="disc-meta">
+          <span class="disc-tag">${i.tag}</span>
+          <div class="disc-actions">
+            <button class="disc-action saved" onclick="toggleSave('${i.id}', this)">
+              <svg viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+              Remove
+            </button>
+          </div>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  window.toggleSave = async function(ideaId, btn) {
+    if (!user) return;
+    if (saved.has(ideaId)) {
+      saved.delete(ideaId);
+      await sb.from('saved_ideas').delete().eq('user_id', user.id).eq('idea_id', ideaId);
+    } else {
+      saved.add(ideaId);
+      await sb.from('saved_ideas').insert({ user_id: user.id, idea_id: ideaId });
+    }
+    document.getElementById('saved-count').textContent = saved.size;
+    renderDiscover();
+    renderSaved();
+  };
+
+  window.switchView = function(v) {
+    document.querySelectorAll('.nav-item[data-view]').forEach(b => b.classList.toggle('active', b.dataset.view === v));
+    document.querySelectorAll('.view').forEach(view => view.classList.toggle('active', view.dataset.view === v));
+    const titles = { discover:['Discover','Founders · last 7 days'], studio:['Studio','Untitled draft'], voice:['Voice models','3 slots in your plan'], saved:['Saved ideas',`${saved.size} item${saved.size===1?'':'s'}`] };
+    const [t, s] = titles[v];
+    document.getElementById('view-title').textContent = t;
+    document.getElementById('view-sub').textContent = s;
+  };
+
+  document.querySelectorAll('.nav-item[data-view]').forEach(btn => btn.addEventListener('click', () => switchView(btn.dataset.view)));
+  document.querySelectorAll('.filter').forEach(btn => btn.addEventListener('click', () => {
+    document.querySelectorAll('.filter').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentFilter = btn.dataset.filter;
+    renderDiscover();
+  }));
+
+  // Load real founding-member count
+  fetch('/api/founding-count').then(r => r.json()).then(({ claimed, total }) => {
+    const n = document.getElementById('up-claimed');
+    const b = document.getElementById('up-bar');
+    if (n) n.textContent = claimed;
+    if (b) b.style.width = `${Math.min(100, (claimed / total) * 100)}%`;
+  }).catch(() => {});
+
+  // Founding upsell — dismiss + claim (Stripe Payment Link via /api/checkout)
+  if (localStorage.getItem('sona-upsell-dismissed') === '1') {
+    const el = document.getElementById('upsell');
+    if (el) el.classList.add('hide');
+  }
+  window.dismissUpsell = function() {
+    localStorage.setItem('sona-upsell-dismissed', '1');
+    const el = document.getElementById('upsell');
+    if (el) el.classList.add('hide');
+  };
+  window.claimSeat = async function(btn) {
+    btn.disabled = true; const orig = btn.innerHTML; btn.innerHTML = 'Opening checkout…';
+    try {
+      const r = await fetch('/api/checkout');
+      const j = await r.json();
+      if (j.ok && j.url) { location.href = j.url; return; }
+      btn.innerHTML = 'Coming soon';
+      setTimeout(() => { btn.innerHTML = orig; btn.disabled = false; }, 2500);
+    } catch (_) { btn.innerHTML = orig; btn.disabled = false; }
+  };
+
+  document.getElementById('user-row').addEventListener('click', async () => {
+    if (confirm('Sign out of Sona?')) {
+      await sb.auth.signOut();
+      window.location.href = '/';
+    }
+  });
+
+  initApp();
+</script>
+</body>
+</html>

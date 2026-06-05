@@ -1,0 +1,25 @@
+# Dependencies
+node_modules/
+
+# Vercel
+.vercel/
+
+# Env (NEVER commit real secrets)
+.env
+.env.local
+.env.*.local
+
+# OS / editor cruft
+.DS_Store
+.claude/
+*.swp
+*.log
+
+# Build artifacts
+dist/
+build/
+.next/
+
+# IDE
+.vscode/
+.idea/

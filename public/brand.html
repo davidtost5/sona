@@ -1,0 +1,1012 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Canopy — Brand Guidelines</title>
+<style>
+  @font-face { font-family: 'Aeonik Pro'; src: local('Aeonik Pro'), local('AeonikPro-Regular'); font-weight: 400; font-style: normal; }
+  @font-face { font-family: 'Aeonik Pro'; src: local('Aeonik Pro Medium'), local('AeonikPro-Medium'); font-weight: 500; font-style: normal; }
+  @font-face { font-family: 'Aeonik Pro'; src: local('Aeonik Pro Bold'), local('AeonikPro-Bold'); font-weight: 700; font-style: normal; }
+  @font-face { font-family: 'Aeonik Pro'; src: local('Aeonik Pro Bold'), local('AeonikPro-Bold'); font-weight: 800; font-style: normal; }
+</style>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --green-dark: #1a2e1a;
+    --green-deep: #0f1f0f;
+    --green-accent: #c8e64a;
+    --green-muted: #a3b858;
+    --off-white: #f5f4f0;
+    --light-grey: #eae9e4;
+    --text-dark: #1a1a1a;
+    --text-mid: #5a5a56;
+    --text-light: #8a8a84;
+    --border: #ddd9d0;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Aeonik Pro', -apple-system, sans-serif;
+    background: var(--off-white);
+    color: var(--text-dark);
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+
+  /* ─── SCROLL REVEAL ─── */
+  [data-reveal] {
+    opacity: 0;
+    transform: translateY(16px);
+    transition: opacity 0.6s cubic-bezier(0.25, 0.1, 0.25, 1),
+                transform 0.6s cubic-bezier(0.25, 0.1, 0.25, 1);
+    will-change: opacity, transform;
+  }
+  [data-reveal].revealed { opacity: 1; transform: translateY(0); }
+
+  [data-stagger] > * {
+    opacity: 0;
+    transform: translateY(12px);
+    transition: opacity 0.5s cubic-bezier(0.25, 0.1, 0.25, 1),
+                transform 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
+  }
+  [data-stagger].revealed > * { opacity: 1; transform: translateY(0); }
+
+  @media (prefers-reduced-motion: reduce) {
+    [data-reveal], [data-stagger] > * {
+      opacity: 1 !important;
+      transform: none !important;
+      transition: none !important;
+    }
+  }
+
+  /* ─── NAV ─── */
+  nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 48px;
+    background: rgba(245, 244, 240, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    transition: transform 0.4s cubic-bezier(0.25, 0.1, 0.25, 1);
+  }
+  nav.hidden { transform: translateY(-100%); }
+
+  .nav-logo {
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    color: var(--green-dark);
+    text-decoration: none;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 36px;
+    list-style: none;
+  }
+  .nav-links a {
+    font-size: 14px;
+    color: var(--text-mid);
+    text-decoration: none;
+    font-weight: 500;
+    position: relative;
+    transition: color 0.3s;
+  }
+  .nav-links a::after {
+    content: '';
+    position: absolute;
+    bottom: -4px; left: 0;
+    width: 0; height: 1.5px;
+    background: var(--green-dark);
+    transition: width 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .nav-links a:hover { color: var(--text-dark); }
+  .nav-links a:hover::after { width: 100%; }
+
+  .nav-right {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+  }
+  .nav-right > a:first-child {
+    font-size: 14px;
+    font-weight: 500;
+    text-decoration: none;
+    color: var(--text-mid);
+    transition: color 0.3s;
+  }
+  .nav-right > a:first-child:hover { color: var(--text-dark); }
+
+  .btn-primary {
+    display: inline-block;
+    padding: 10px 24px;
+    background: var(--green-dark);
+    color: var(--off-white);
+    border-radius: 100px;
+    font-size: 14px;
+    font-weight: 500;
+    text-decoration: none;
+    transition: background 0.3s, transform 0.3s;
+  }
+  .btn-primary:hover { background: var(--green-deep); }
+
+  /* ─── MOBILE MENU ─── */
+  .mobile-menu-btn {
+    display: none;
+    flex-direction: column;
+    gap: 6px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+    z-index: 2;
+  }
+  .mobile-menu-btn span {
+    display: block;
+    width: 24px;
+    height: 2px;
+    background: var(--text-dark);
+    transition: transform 0.3s, opacity 0.3s;
+  }
+  .mobile-menu-btn.open span:first-child { transform: translateY(4px) rotate(45deg); }
+  .mobile-menu-btn.open span:last-child { transform: translateY(-4px) rotate(-45deg); }
+
+  .mobile-menu {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: var(--off-white);
+    z-index: 99;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 32px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s;
+  }
+  .mobile-menu.open { opacity: 1; pointer-events: auto; }
+  .mobile-menu a {
+    font-size: 28px;
+    font-weight: 500;
+    color: var(--text-dark);
+    text-decoration: none;
+  }
+  .mobile-menu-cta {
+    padding: 14px 40px;
+    background: var(--green-dark);
+    color: var(--off-white) !important;
+    border-radius: 100px;
+    font-size: 18px !important;
+  }
+
+  /* ─── BRAND PAGE LAYOUT ─── */
+  .brand-hero {
+    padding: 160px 48px 80px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  .brand-hero h1 {
+    font-size: 56px;
+    font-weight: 700;
+    letter-spacing: -1.5px;
+    line-height: 1.1;
+    color: var(--green-dark);
+    margin-bottom: 20px;
+  }
+  .brand-hero p {
+    font-size: 20px;
+    color: var(--text-mid);
+    max-width: 600px;
+    line-height: 1.6;
+  }
+
+  .brand-section {
+    padding: 80px 48px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  .brand-section + .brand-section {
+    border-top: 1px solid var(--border);
+  }
+
+  .section-label {
+    font-size: 12px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--text-light);
+    margin-bottom: 12px;
+  }
+
+  .section-title {
+    font-size: 32px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    color: var(--green-dark);
+    margin-bottom: 16px;
+  }
+
+  .section-desc {
+    font-size: 16px;
+    color: var(--text-mid);
+    line-height: 1.7;
+    max-width: 640px;
+    margin-bottom: 48px;
+  }
+
+  /* ─── LOGO SECTION ─── */
+  .logo-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+  }
+  .logo-card {
+    border-radius: 16px;
+    padding: 64px 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--border);
+    position: relative;
+  }
+  .logo-card.light { background: var(--off-white); }
+  .logo-card.dark { background: var(--green-dark); }
+  .logo-card .logo-text {
+    font-size: 42px;
+    font-weight: 700;
+    letter-spacing: -1px;
+  }
+  .logo-card.light .logo-text { color: var(--green-dark); }
+  .logo-card.dark .logo-text { color: var(--off-white); }
+  .logo-card .logo-badge {
+    position: absolute;
+    top: 16px;
+    left: 20px;
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+  }
+  .logo-card.light .logo-badge { color: var(--text-light); }
+  .logo-card.dark .logo-badge { color: rgba(245, 244, 240, 0.5); }
+
+  .logo-mark {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .logo-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .logo-card.light .logo-icon { background: var(--green-dark); }
+  .logo-card.dark .logo-icon { background: var(--green-accent); }
+  .logo-icon svg { width: 22px; height: 22px; }
+
+  /* ─── COLOR PALETTE ─── */
+  .color-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 20px;
+  }
+  .color-swatch {
+    border-radius: 16px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    background: #fff;
+  }
+  .color-swatch-fill {
+    height: 120px;
+    width: 100%;
+  }
+  .color-swatch-info {
+    padding: 16px;
+  }
+  .color-swatch-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-dark);
+    margin-bottom: 4px;
+  }
+  .color-swatch-hex {
+    font-size: 13px;
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    color: var(--text-light);
+  }
+  .color-swatch-var {
+    font-size: 11px;
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    color: var(--text-light);
+    margin-top: 2px;
+  }
+
+  /* ─── TYPOGRAPHY ─── */
+  .type-specimens {
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+  }
+  .type-row {
+    display: flex;
+    align-items: baseline;
+    gap: 48px;
+    padding-bottom: 40px;
+    border-bottom: 1px solid var(--border);
+  }
+  .type-row:last-child { border-bottom: none; padding-bottom: 0; }
+  .type-meta {
+    min-width: 200px;
+    flex-shrink: 0;
+  }
+  .type-meta-label {
+    font-size: 12px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--text-light);
+    margin-bottom: 4px;
+  }
+  .type-meta-detail {
+    font-size: 13px;
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    color: var(--text-mid);
+  }
+  .type-sample { flex: 1; color: var(--text-dark); }
+  .type-sample.display {
+    font-size: 56px;
+    font-weight: 700;
+    letter-spacing: -1.5px;
+    line-height: 1.1;
+  }
+  .type-sample.heading {
+    font-size: 32px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    line-height: 1.2;
+  }
+  .type-sample.subheading {
+    font-size: 20px;
+    font-weight: 500;
+    line-height: 1.4;
+  }
+  .type-sample.body-text {
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 1.7;
+    color: var(--text-mid);
+  }
+  .type-sample.caption {
+    font-size: 13px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--text-light);
+  }
+
+  /* ─── VOICE & TONE ─── */
+  .voice-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+  }
+  .voice-card {
+    padding: 36px;
+    background: #fff;
+    border-radius: 16px;
+    border: 1px solid var(--border);
+  }
+  .voice-card h3 {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--green-dark);
+    margin-bottom: 12px;
+    letter-spacing: -0.3px;
+  }
+  .voice-card p {
+    font-size: 15px;
+    color: var(--text-mid);
+    line-height: 1.65;
+  }
+  .voice-do-dont {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin-top: 48px;
+  }
+  .voice-example {
+    padding: 32px;
+    border-radius: 16px;
+    border: 1px solid var(--border);
+  }
+  .voice-example.do { background: rgba(200, 230, 74, 0.08); border-color: rgba(200, 230, 74, 0.3); }
+  .voice-example.dont { background: rgba(200, 80, 80, 0.04); border-color: rgba(200, 80, 80, 0.2); }
+  .voice-example-label {
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-bottom: 16px;
+  }
+  .voice-example.do .voice-example-label { color: var(--green-muted); }
+  .voice-example.dont .voice-example-label { color: #c85050; }
+  .voice-example p {
+    font-size: 15px;
+    line-height: 1.7;
+    color: var(--text-mid);
+  }
+
+  /* ─── SPACING & COMPONENTS ─── */
+  .spacing-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+  }
+  .spacing-card {
+    padding: 32px;
+    background: #fff;
+    border-radius: 16px;
+    border: 1px solid var(--border);
+  }
+  .spacing-card h4 {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-dark);
+    margin-bottom: 8px;
+  }
+  .spacing-card p {
+    font-size: 13px;
+    color: var(--text-mid);
+    line-height: 1.5;
+  }
+  .spacing-card code {
+    display: inline-block;
+    margin-top: 8px;
+    padding: 4px 10px;
+    background: var(--light-grey);
+    border-radius: 6px;
+    font-size: 12px;
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    color: var(--green-dark);
+  }
+
+  /* ─── BUTTON EXAMPLES ─── */
+  .button-showcase {
+    display: flex;
+    gap: 24px;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-top: 32px;
+  }
+  .btn-showcase-primary {
+    display: inline-block;
+    padding: 14px 32px;
+    background: var(--green-dark);
+    color: var(--off-white);
+    border-radius: 100px;
+    font-size: 15px;
+    font-weight: 500;
+    text-decoration: none;
+    font-family: 'Aeonik Pro', sans-serif;
+    border: none;
+    cursor: pointer;
+    transition: background 0.3s;
+  }
+  .btn-showcase-primary:hover { background: var(--green-deep); }
+
+  .btn-showcase-secondary {
+    display: inline-block;
+    padding: 14px 32px;
+    background: transparent;
+    color: var(--text-dark);
+    border-radius: 100px;
+    font-size: 15px;
+    font-weight: 500;
+    text-decoration: none;
+    font-family: 'Aeonik Pro', sans-serif;
+    border: 1.5px solid var(--border);
+    cursor: pointer;
+    transition: border-color 0.3s, background 0.3s;
+  }
+  .btn-showcase-secondary:hover { border-color: var(--text-mid); background: rgba(0,0,0,0.02); }
+
+  .btn-showcase-accent {
+    display: inline-block;
+    padding: 14px 32px;
+    background: var(--green-accent);
+    color: var(--green-dark);
+    border-radius: 100px;
+    font-size: 15px;
+    font-weight: 600;
+    text-decoration: none;
+    font-family: 'Aeonik Pro', sans-serif;
+    border: none;
+    cursor: pointer;
+    transition: filter 0.3s;
+  }
+  .btn-showcase-accent:hover { filter: brightness(0.95); }
+
+  .btn-showcase-ghost {
+    display: inline-block;
+    padding: 14px 32px;
+    background: transparent;
+    color: var(--green-dark);
+    border-radius: 100px;
+    font-size: 15px;
+    font-weight: 500;
+    text-decoration: none;
+    font-family: 'Aeonik Pro', sans-serif;
+    border: none;
+    cursor: pointer;
+    transition: background 0.3s;
+  }
+  .btn-showcase-ghost:hover { background: rgba(26, 46, 26, 0.06); }
+
+  /* ─── FOOTER ─── */
+  footer {
+    background: var(--green-dark);
+    color: rgba(245, 244, 240, 0.6);
+    padding: 64px 48px 40px;
+    margin-top: 80px;
+  }
+  .footer-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .footer-logo {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--off-white);
+    letter-spacing: -0.5px;
+  }
+  .footer-copy {
+    font-size: 13px;
+    color: rgba(245, 244, 240, 0.4);
+  }
+
+  /* ─── RESPONSIVE ─── */
+  @media (max-width: 1024px) {
+    .brand-hero h1 { font-size: 44px; }
+    .color-grid { grid-template-columns: repeat(3, 1fr); }
+    .voice-grid { grid-template-columns: 1fr 1fr; }
+    .spacing-grid { grid-template-columns: 1fr 1fr; }
+    .type-sample.display { font-size: 44px; }
+  }
+
+  @media (max-width: 768px) {
+    nav { padding: 16px 24px; }
+    .nav-links { display: none; }
+    .nav-right { display: none; }
+    .mobile-menu-btn { display: flex; }
+    .mobile-menu { display: flex; }
+
+    .brand-hero { padding: 120px 24px 60px; }
+    .brand-hero h1 { font-size: 36px; }
+    .brand-hero p { font-size: 17px; }
+    .brand-section { padding: 60px 24px; }
+    .section-title { font-size: 26px; }
+
+    .logo-grid { grid-template-columns: 1fr; }
+    .color-grid { grid-template-columns: repeat(2, 1fr); }
+    .voice-grid { grid-template-columns: 1fr; }
+    .voice-do-dont { grid-template-columns: 1fr; }
+    .spacing-grid { grid-template-columns: 1fr; }
+    .type-row { flex-direction: column; gap: 16px; }
+    .type-meta { min-width: 0; }
+    .type-sample.display { font-size: 32px; }
+    .type-sample.heading { font-size: 24px; }
+
+    footer { padding: 48px 24px 32px; }
+    .footer-inner { flex-direction: column; gap: 16px; text-align: center; }
+  }
+
+  @media (max-width: 400px) {
+    .brand-hero h1 { font-size: 28px; }
+    .color-grid { grid-template-columns: 1fr; }
+    .button-showcase { flex-direction: column; align-items: stretch; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-logo">Canopy</a>
+  <ul class="nav-links">
+    <li><a href="resources.html">Resources</a></li>
+    <li><a href="company.html">Company</a></li>
+    <li><a href="changelog.html">Changelog</a></li>
+    <li><a href="docs.html">Docs</a></li>
+  </ul>
+  <div class="nav-right">
+    <a href="contact.html">Contact</a>
+    <a href="#" class="btn-primary">Log in</a>
+  </div>
+  <button class="mobile-menu-btn" aria-label="Menu">
+    <span></span><span></span>
+  </button>
+</nav>
+
+<div class="mobile-menu">
+  <a href="index.html">Home</a>
+  <a href="resources.html">Resources</a>
+  <a href="company.html">Company</a>
+  <a href="changelog.html">Changelog</a>
+  <a href="docs.html">Docs</a>
+  <a href="#" class="mobile-menu-cta">Log in</a>
+</div>
+
+<!-- ═══════════════════════════════════════ HERO ═══════════════════════════════════════ -->
+<section class="brand-hero">
+  <div data-reveal>
+    <p class="section-label">Brand Guidelines</p>
+    <h1>Canopy</h1>
+    <p>The visual identity system for Canopy — a data and AI platform built for modern finance. These guidelines ensure consistency across every touchpoint, from product UI to marketing.</p>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════ LOGO ═══════════════════════════════════════ -->
+<section class="brand-section" id="logo">
+  <div data-reveal>
+    <p class="section-label">01 — Logo</p>
+    <h2 class="section-title">Wordmark & Mark</h2>
+    <p class="section-desc">The Canopy wordmark is set in Aeonik Pro Bold at a tracked -1px. Use the full wordmark as the primary logo. Maintain generous clear space equal to the height of the "C" on all sides.</p>
+  </div>
+  <div class="logo-grid" data-stagger>
+    <div class="logo-card light">
+      <span class="logo-badge">Light mode</span>
+      <div class="logo-mark">
+        <div class="logo-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#f5f4f0" stroke-width="2" stroke-linecap="round"><path d="M12 3v18M12 3c-3 4-7 6-9 8h18c-2-2-6-4-9-8z"/><path d="M8 15c1.5 1 2.5 3 4 6M16 15c-1.5 1-2.5 3-4 6"/></svg>
+        </div>
+        <span class="logo-text">Canopy</span>
+      </div>
+    </div>
+    <div class="logo-card dark">
+      <span class="logo-badge">Dark mode</span>
+      <div class="logo-mark">
+        <div class="logo-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#1a2e1a" stroke-width="2" stroke-linecap="round"><path d="M12 3v18M12 3c-3 4-7 6-9 8h18c-2-2-6-4-9-8z"/><path d="M8 15c1.5 1 2.5 3 4 6M16 15c-1.5 1-2.5 3-4 6"/></svg>
+        </div>
+        <span class="logo-text">Canopy</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════ COLORS ═══════════════════════════════════════ -->
+<section class="brand-section" id="colors">
+  <div data-reveal>
+    <p class="section-label">02 — Color Palette</p>
+    <h2 class="section-title">Color System</h2>
+    <p class="section-desc">A nature-inspired palette anchored by deep forest greens and warm neutrals. The accent lime-green is used sparingly for CTAs, highlights, and interactive states.</p>
+  </div>
+  <div class="color-grid" data-stagger>
+    <div class="color-swatch">
+      <div class="color-swatch-fill" style="background: #1a2e1a;"></div>
+      <div class="color-swatch-info">
+        <div class="color-swatch-name">Forest Dark</div>
+        <div class="color-swatch-hex">#1A2E1A</div>
+        <div class="color-swatch-var">--green-dark</div>
+      </div>
+    </div>
+    <div class="color-swatch">
+      <div class="color-swatch-fill" style="background: #0f1f0f;"></div>
+      <div class="color-swatch-info">
+        <div class="color-swatch-name">Forest Deep</div>
+        <div class="color-swatch-hex">#0F1F0F</div>
+        <div class="color-swatch-var">--green-deep</div>
+      </div>
+    </div>
+    <div class="color-swatch">
+      <div class="color-swatch-fill" style="background: #c8e64a;"></div>
+      <div class="color-swatch-info">
+        <div class="color-swatch-name">Lime Accent</div>
+        <div class="color-swatch-hex">#C8E64A</div>
+        <div class="color-swatch-var">--green-accent</div>
+      </div>
+    </div>
+    <div class="color-swatch">
+      <div class="color-swatch-fill" style="background: #a3b858;"></div>
+      <div class="color-swatch-info">
+        <div class="color-swatch-name">Sage Muted</div>
+        <div class="color-swatch-hex">#A3B858</div>
+        <div class="color-swatch-var">--green-muted</div>
+      </div>
+    </div>
+    <div class="color-swatch">
+      <div class="color-swatch-fill" style="background: #f5f4f0;"></div>
+      <div class="color-swatch-info">
+        <div class="color-swatch-name">Parchment</div>
+        <div class="color-swatch-hex">#F5F4F0</div>
+        <div class="color-swatch-var">--off-white</div>
+      </div>
+    </div>
+    <div class="color-swatch">
+      <div class="color-swatch-fill" style="background: #eae9e4;"></div>
+      <div class="color-swatch-info">
+        <div class="color-swatch-name">Light Grey</div>
+        <div class="color-swatch-hex">#EAE9E4</div>
+        <div class="color-swatch-var">--light-grey</div>
+      </div>
+    </div>
+    <div class="color-swatch">
+      <div class="color-swatch-fill" style="background: #1a1a1a;"></div>
+      <div class="color-swatch-info">
+        <div class="color-swatch-name">Text Dark</div>
+        <div class="color-swatch-hex">#1A1A1A</div>
+        <div class="color-swatch-var">--text-dark</div>
+      </div>
+    </div>
+    <div class="color-swatch">
+      <div class="color-swatch-fill" style="background: #5a5a56;"></div>
+      <div class="color-swatch-info">
+        <div class="color-swatch-name">Text Mid</div>
+        <div class="color-swatch-hex">#5A5A56</div>
+        <div class="color-swatch-var">--text-mid</div>
+      </div>
+    </div>
+    <div class="color-swatch">
+      <div class="color-swatch-fill" style="background: #8a8a84;"></div>
+      <div class="color-swatch-info">
+        <div class="color-swatch-name">Text Light</div>
+        <div class="color-swatch-hex">#8A8A84</div>
+        <div class="color-swatch-var">--text-light</div>
+      </div>
+    </div>
+    <div class="color-swatch">
+      <div class="color-swatch-fill" style="background: #ddd9d0;"></div>
+      <div class="color-swatch-info">
+        <div class="color-swatch-name">Border</div>
+        <div class="color-swatch-hex">#DDD9D0</div>
+        <div class="color-swatch-var">--border</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════ TYPOGRAPHY ═══════════════════════════════════════ -->
+<section class="brand-section" id="typography">
+  <div data-reveal>
+    <p class="section-label">03 — Typography</p>
+    <h2 class="section-title">Type Scale</h2>
+    <p class="section-desc">Aeonik Pro is the sole typeface across all brand and product touchpoints. Its geometric clarity and humanist warmth match Canopy's balance of technical precision and approachability.</p>
+  </div>
+  <div class="type-specimens" data-reveal>
+    <div class="type-row">
+      <div class="type-meta">
+        <div class="type-meta-label">Display</div>
+        <div class="type-meta-detail">56px / 700 / -1.5px</div>
+      </div>
+      <div class="type-sample display">Financial clarity, delivered.</div>
+    </div>
+    <div class="type-row">
+      <div class="type-meta">
+        <div class="type-meta-label">Heading</div>
+        <div class="type-meta-detail">32px / 700 / -0.5px</div>
+      </div>
+      <div class="type-sample heading">Real-time intelligence for every decision</div>
+    </div>
+    <div class="type-row">
+      <div class="type-meta">
+        <div class="type-meta-label">Subheading</div>
+        <div class="type-meta-detail">20px / 500 / 0</div>
+      </div>
+      <div class="type-sample subheading">Connect your data sources and let Canopy surface the insights that matter most to your team.</div>
+    </div>
+    <div class="type-row">
+      <div class="type-meta">
+        <div class="type-meta-label">Body</div>
+        <div class="type-meta-detail">16px / 400 / 0</div>
+      </div>
+      <div class="type-sample body-text">Canopy aggregates financial data from hundreds of sources, normalizes it in real time, and presents actionable intelligence through a single pane of glass. Built for analysts, portfolio managers, and operations teams.</div>
+    </div>
+    <div class="type-row">
+      <div class="type-meta">
+        <div class="type-meta-label">Caption / Label</div>
+        <div class="type-meta-detail">13px / 500 / 2px</div>
+      </div>
+      <div class="type-sample caption">Enterprise-Grade Security</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════ VOICE & TONE ═══════════════════════════════════════ -->
+<section class="brand-section" id="voice">
+  <div data-reveal>
+    <p class="section-label">04 — Voice & Tone</p>
+    <h2 class="section-title">How Canopy Speaks</h2>
+    <p class="section-desc">Our voice is the same everywhere. Our tone adapts to context — more precise in docs, more approachable in marketing, more direct in product UI.</p>
+  </div>
+  <div class="voice-grid" data-stagger>
+    <div class="voice-card">
+      <h3>Clear</h3>
+      <p>We eliminate jargon unless it genuinely helps the reader. Every sentence earns its place. If it can be said in fewer words, it should be.</p>
+    </div>
+    <div class="voice-card">
+      <h3>Confident</h3>
+      <p>We know our product solves real problems. We state capabilities directly without hedging. No "might" or "helps to possibly" — just clear value.</p>
+    </div>
+    <div class="voice-card">
+      <h3>Warm</h3>
+      <p>Financial technology doesn't have to feel cold. We're approachable without being casual. Professional without being stiff. Human without being informal.</p>
+    </div>
+  </div>
+  <div class="voice-do-dont" data-reveal>
+    <div class="voice-example do">
+      <div class="voice-example-label">Do</div>
+      <p>"Canopy surfaces the signals that matter — so your team acts on insight, not instinct."</p>
+      <br>
+      <p>"Connect your data in minutes. See results immediately."</p>
+      <br>
+      <p>"Built for finance teams who move fast."</p>
+    </div>
+    <div class="voice-example dont">
+      <div class="voice-example-label">Don't</div>
+      <p>"Our revolutionary AI-powered platform leverages cutting-edge machine learning to disrupt the financial services paradigm."</p>
+      <br>
+      <p>"Get started on your transformative journey today!"</p>
+      <br>
+      <p>"We're super excited about this awesome new feature!!"</p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════ COMPONENTS ═══════════════════════════════════════ -->
+<section class="brand-section" id="components">
+  <div data-reveal>
+    <p class="section-label">05 — UI Components</p>
+    <h2 class="section-title">Buttons & Inputs</h2>
+    <p class="section-desc">All interactive elements use full-radius pill shapes. Transitions are smooth (0.3s ease) and feedback is immediate. Hover states shift subtly — never jump or flash.</p>
+  </div>
+  <div data-reveal>
+    <div class="button-showcase">
+      <button class="btn-showcase-primary">Primary Action</button>
+      <button class="btn-showcase-secondary">Secondary</button>
+      <button class="btn-showcase-accent">Accent CTA</button>
+      <button class="btn-showcase-ghost">Ghost Button</button>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════ SPACING ═══════════════════════════════════════ -->
+<section class="brand-section" id="spacing">
+  <div data-reveal>
+    <p class="section-label">06 — Spacing & Layout</p>
+    <h2 class="section-title">Design Tokens</h2>
+    <p class="section-desc">Consistent spacing creates visual rhythm. Use these values across all layouts — from marketing pages to product interfaces.</p>
+  </div>
+  <div class="spacing-grid" data-stagger>
+    <div class="spacing-card">
+      <h4>Border Radius</h4>
+      <p>Cards and containers use 16px radius. Buttons and pills use 100px (full radius). Small elements use 8px.</p>
+      <code>16px / 100px / 8px</code>
+    </div>
+    <div class="spacing-card">
+      <h4>Section Padding</h4>
+      <p>Main sections use 80px vertical padding on desktop, 60px on tablet, 48px on mobile.</p>
+      <code>80 / 60 / 48px</code>
+    </div>
+    <div class="spacing-card">
+      <h4>Grid Gap</h4>
+      <p>Card grids use 24px gap. Tighter component groups use 16px. Related text blocks use 12px.</p>
+      <code>24 / 16 / 12px</code>
+    </div>
+    <div class="spacing-card">
+      <h4>Max Width</h4>
+      <p>Content container caps at 1200px. Text blocks max at 640px for readability. Nav spans full width.</p>
+      <code>1200px / 640px</code>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════ MOTION ═══════════════════════════════════════ -->
+<section class="brand-section" id="motion">
+  <div data-reveal>
+    <p class="section-label">07 — Motion</p>
+    <h2 class="section-title">Animation Principles</h2>
+    <p class="section-desc">Motion should feel natural and purposeful. Every animation serves a function — guiding attention, confirming interaction, or smoothing transitions.</p>
+  </div>
+  <div class="spacing-grid" data-stagger>
+    <div class="spacing-card">
+      <h4>Reveal Entrance</h4>
+      <p>Elements fade in with a 16px upward translate. Duration 0.6s with ease-out curve. Stagger children by 80ms.</p>
+      <code>0.6s ease-out / 16px Y</code>
+    </div>
+    <div class="spacing-card">
+      <h4>Hover Transitions</h4>
+      <p>Interactive elements use 0.3s transitions. Cards lift 4px on hover. Buttons shift background color smoothly.</p>
+      <code>0.3s / translateY(-4px)</code>
+    </div>
+    <div class="spacing-card">
+      <h4>Easing Curves</h4>
+      <p>Standard: cubic-bezier(0.25, 0.1, 0.25, 1). Expressive: cubic-bezier(0.16, 1, 0.3, 1). Never use linear for UI.</p>
+      <code>ease-out / expressive</code>
+    </div>
+    <div class="spacing-card">
+      <h4>Reduced Motion</h4>
+      <p>Respect prefers-reduced-motion. Disable transforms and set transitions to none. Opacity changes are acceptable.</p>
+      <code>@media (prefers-reduced-motion)</code>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════ FOOTER ═══════════════════════════════════════ -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-logo">Canopy</div>
+    <div class="footer-copy">&copy; 2026 Canopy Inc. All rights reserved.</div>
+  </div>
+</footer>
+
+<script>
+  // ─── Mobile menu ───
+  const menuBtn = document.querySelector('.mobile-menu-btn');
+  const mobileMenu = document.querySelector('.mobile-menu');
+  if (menuBtn && mobileMenu) {
+    function toggleMenu() {
+      const opening = !mobileMenu.classList.contains('open');
+      menuBtn.classList.toggle('open', opening);
+      mobileMenu.classList.toggle('open', opening);
+      document.body.style.overflow = opening ? 'hidden' : '';
+    }
+    menuBtn.addEventListener('click', toggleMenu);
+    mobileMenu.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', () => {
+        menuBtn.classList.remove('open');
+        mobileMenu.classList.remove('open');
+        document.body.style.overflow = '';
+      });
+    });
+  }
+
+  // ─── Scroll reveal (single IntersectionObserver) ───
+  const revealObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const el = entry.target;
+        if (el.hasAttribute('data-stagger')) {
+          Array.from(el.children).forEach((child, i) => {
+            child.style.transitionDelay = `${i * 0.08}s`;
+          });
+        }
+        el.classList.add('revealed');
+        revealObserver.unobserve(el);
+      }
+    });
+  }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+
+  document.querySelectorAll('[data-reveal], [data-stagger]').forEach(el => revealObserver.observe(el));
+
+  // ─── Nav hide on scroll ───
+  let lastScroll = 0;
+  const navEl = document.querySelector('nav');
+  window.addEventListener('scroll', () => {
+    const current = window.scrollY;
+    if (current > 80) {
+      navEl.classList.toggle('hidden', current > lastScroll);
+    } else {
+      navEl.classList.remove('hidden');
+    }
+    lastScroll = current;
+  }, { passive: true });
+</script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="data.js"></script>
+<script src="auth.js"></script>
+</body>
+</html>
