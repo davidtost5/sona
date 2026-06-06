@@ -1,0 +1,16 @@
+<svg width="128" height="128" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Sona">
+  <defs>
+    <linearGradient id="sona-bg" x1="0" y1="0" x2="0.9" y2="1">
+      <stop offset="0%" stop-color="#34343c"/>
+      <stop offset="100%" stop-color="#131316"/>
+    </linearGradient>
+  </defs>
+  <!-- Dark squircle -->
+  <rect width="24" height="24" rx="6" fill="url(#sona-bg)"/>
+  <!-- Subtle inner top highlight -->
+  <rect x="0" y="0" width="24" height="1" rx="0" fill="rgba(255,255,255,0.06)"/>
+  <!-- S-wave mark in white -->
+  <path d="M5 15 Q8 9 12 12 Q16 15 19 9" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  <!-- Indigo sparkle accent -->
+  <path d="M19 3.6 C19.15 5.1 20.3 6.25 21.8 6.4 C20.3 6.55 19.15 7.7 19 9.2 C18.85 7.7 17.7 6.55 16.2 6.4 C17.7 6.25 18.85 5.1 19 3.6 Z" fill="#8b84ff"/>
+</svg>
