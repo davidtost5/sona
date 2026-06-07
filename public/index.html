@@ -73,6 +73,21 @@
   [data-r] { opacity: 0; transform: translate3d(0,18px,0); will-change: opacity, transform; transition: opacity .7s cubic-bezier(.2,.7,.2,1), transform .7s cubic-bezier(.2,.7,.2,1); }
   [data-r].in { opacity: 1; transform: none; }
 
+  /* Staggered children — grid items reveal one after another when parent enters view */
+  [data-stagger] > * { opacity: 0; transform: translate3d(0,22px,0); will-change: opacity, transform; transition: opacity .75s cubic-bezier(.2,.7,.2,1), transform .75s cubic-bezier(.2,.7,.2,1); }
+  [data-stagger].in > * { opacity: 1; transform: none; }
+  [data-stagger].in > *:nth-child(1) { transition-delay: 0s; }
+  [data-stagger].in > *:nth-child(2) { transition-delay: .07s; }
+  [data-stagger].in > *:nth-child(3) { transition-delay: .14s; }
+  [data-stagger].in > *:nth-child(4) { transition-delay: .21s; }
+  [data-stagger].in > *:nth-child(5) { transition-delay: .28s; }
+  [data-stagger].in > *:nth-child(6) { transition-delay: .35s; }
+  [data-stagger].in > *:nth-child(7) { transition-delay: .42s; }
+  [data-stagger].in > *:nth-child(8) { transition-delay: .49s; }
+  @media (prefers-reduced-motion: reduce) {
+    [data-stagger] > * { opacity: 1 !important; transform: none !important; transition: none !important; }
+  }
+
   /* ─── AWWWARDS-GRADE SCROLL TOUCHES ─── */
 
   /* 1. Hairline scroll-progress bar — top of viewport, fills as you scroll */
@@ -605,6 +620,15 @@
     .pc-thumb-title { font-size: 17px; }
   }
 
+  /* ─── AWWWARDS TOUCHES (small) ─── */
+  /* 3D tilt — cards get perspective on hover, JS drives the angle */
+  .bento .tile, .proof-card { transform-style: preserve-3d; will-change: transform; }
+  .bento .tile, .proof-card { transition: transform .25s cubic-bezier(.16,.86,.21,1), border-color .25s, box-shadow .25s; }
+  /* Disable on touch / coarse pointers */
+  @media (hover: none) or (pointer: coarse) {
+    .bento .tile, .proof-card { transform: none !important; }
+  }
+
   /* TIMELINE / 3 STEPS */
   .steps { max-width: 880px; margin: 0 auto; position: relative; }
   .step { display: grid; grid-template-columns: 56px 1fr; gap: 26px; padding: 30px 0; border-bottom: 1px solid var(--border); align-items: start; }
@@ -1018,7 +1042,7 @@
     <h2>Built for the way <span class="quiet">you actually create.</span></h2>
     <p>Whether you're scaling a personal brand or running content for a team, Sona fits the way you work — not the other way around.</p>
   </div>
-  <div class="personas" data-r>
+  <div class="personas" data-stagger>
     <div class="persona">
       <div class="role">Solo creators</div>
       <h3>Ship daily without burning out.</h3>
@@ -1048,7 +1072,7 @@
     <p>Six tools that quietly do the heavy lifting, so writing stays the only thing you think about.</p>
   </div>
 
-  <div class="bento" data-r>
+  <div class="bento" data-stagger>
 
     <!-- 1. VOICE MODELS (WIDE) -->
     <div class="tile t-wide">
@@ -1312,7 +1336,7 @@ and they stick with it for ninety days.
     <h2>One voice. <span class="quiet">Every format your audience reads in.</span></h2>
     <p>Threads, carousels, scripts, essays. Sona writes the format your audience reads — in your voice.</p>
   </div>
-  <div class="formats" data-r>
+  <div class="formats" data-stagger>
 
     <!-- X / Twitter thread -->
     <div class="fmt">
@@ -1395,7 +1419,7 @@ and they stick with it for ninety days.
       </div>
     </div>
 
-    <div class="proof-grid">
+    <div class="proof-grid" data-stagger>
       <!-- X / Twitter — Dan Koe -->
       <div class="proof-card pc-x">
         <div class="pc-thumb">
@@ -1455,7 +1479,7 @@ and they stick with it for ninety days.
     <span class="eyebrow accent line">The workflow</span>
     <h2>From blank page <span class="quiet">to published, in minutes.</span></h2>
   </div>
-  <div class="steps" data-r>
+  <div class="steps" data-stagger>
     <div class="step">
       <span class="num">01</span>
       <div>
@@ -1495,12 +1519,12 @@ and they stick with it for ninety days.
       <p class="lede">Skip the waitlist, lock in $99/year forever, and help shape the studio. When the founding cohort closes, the regular Creator plan kicks in at $29/mo.</p>
 
       <div class="founding-price">
-        <span class="big">$99</span>
+        <span class="big" id="founding-price-big" data-count="99" data-prefix="$">$99</span>
         <span class="per"><b>per year</b><br>for life</span>
         <span class="strike">vs $29/mo regular</span>
       </div>
 
-      <ul class="founding-feats">
+      <ul class="founding-feats" data-stagger>
         <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Skip the waitlist · instant access</li>
         <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Lifetime founding rate</li>
         <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Direct line to the team</li>
@@ -1627,11 +1651,11 @@ and they stick with it for ninety days.
     });
   });
 
-  // Reveal — single observer, no Lenis
+  // Reveal — single observer, no Lenis. Handles both single-block (data-r) and staggered children (data-stagger).
   const io = new IntersectionObserver(es => es.forEach(e => {
     if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
   }), { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
-  document.querySelectorAll('[data-r]').forEach(el => io.observe(el));
+  document.querySelectorAll('[data-r], [data-stagger]').forEach(el => io.observe(el));
 
   // Eyebrow line-draw — separate observer (eyebrows aren't always inside data-r containers)
   const lineIo = new IntersectionObserver(es => es.forEach(e => {
@@ -1668,6 +1692,28 @@ and they stick with it for ninety days.
       btn.innerHTML = orig; btn.disabled = false;
     }
   };
+
+  // Founding $99 — count up from $0 when scrolled into view (Awwwards delight, single moment)
+  (function foundingPriceCount() {
+    const el = document.getElementById('founding-price-big');
+    if (!el) return;
+    const target = parseInt(el.dataset.count, 10);
+    const prefix = el.dataset.prefix || '';
+    el.textContent = prefix + '0';
+    const ease = (t) => 1 - Math.pow(1 - t, 3);
+    const po = new IntersectionObserver((entries) => entries.forEach(e => {
+      if (!e.isIntersecting) return;
+      const dur = 1200; const start = performance.now();
+      function frame(t) {
+        const p = Math.min(1, (t - start) / dur);
+        el.textContent = prefix + Math.round(target * ease(p));
+        if (p < 1) requestAnimationFrame(frame);
+      }
+      requestAnimationFrame(frame);
+      po.unobserve(el);
+    }), { threshold: 0.5 });
+    po.observe(el);
+  })();
 
   // Seats bar — fetch the real count from Supabase (0 today, real once Stripe webhook is wired)
   (function loadFoundingCount() {
@@ -1706,6 +1752,60 @@ and they stick with it for ninety days.
         views.forEach(view => view.classList.toggle('active', view.dataset.view === v));
       });
     });
+  })();
+
+  // ─── AWWWARDS TOUCHES ─── tilt + magnetic. Restrained, fine-pointer only.
+  (function awwwards() {
+    const fine = window.matchMedia && matchMedia('(hover: hover) and (pointer: fine)').matches;
+    const reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (!fine || reduce) return;
+
+    // 3D tilt on key cards (the Stripe move) — max 3deg, subtle lift
+    function tilt(selector, maxDeg = 3) {
+      document.querySelectorAll(selector).forEach(el => {
+        let rect = null, ticking = false, hasEntered = false;
+        el.addEventListener('pointerenter', () => { rect = el.getBoundingClientRect(); hasEntered = true; });
+        el.addEventListener('pointermove', (e) => {
+          if (!rect || !hasEntered || ticking) return;
+          ticking = true;
+          requestAnimationFrame(() => {
+            const x = (e.clientX - rect.left) / rect.width;
+            const y = (e.clientY - rect.top) / rect.height;
+            const rx = (0.5 - y) * maxDeg;
+            const ry = (x - 0.5) * maxDeg;
+            el.style.transform = `perspective(900px) rotateX(${rx.toFixed(2)}deg) rotateY(${ry.toFixed(2)}deg) translateY(-2px)`;
+            ticking = false;
+          });
+        });
+        el.addEventListener('pointerleave', () => { rect = null; hasEntered = false; el.style.transform = ''; });
+      });
+    }
+    tilt('.bento .tile', 3);
+    tilt('.proof-card', 2.5);
+
+    // Magnetic primary CTAs (the Linear move) — gentle cursor attraction, max ~12px
+    function magnetic(selector, strength = 0.20) {
+      document.querySelectorAll(selector).forEach(el => {
+        let rect = null, ticking = false;
+        el.addEventListener('pointerenter', () => { rect = el.getBoundingClientRect(); });
+        el.addEventListener('pointermove', (e) => {
+          if (!rect || ticking) return;
+          ticking = true;
+          requestAnimationFrame(() => {
+            const cx = rect.left + rect.width / 2;
+            const cy = rect.top + rect.height / 2;
+            const dx = (e.clientX - cx) * strength;
+            const dy = (e.clientY - cy) * strength;
+            el.style.transform = `translate(${dx.toFixed(1)}px, ${dy.toFixed(1)}px)`;
+            ticking = false;
+          });
+        });
+        el.addEventListener('pointerleave', () => { rect = null; el.style.transform = ''; });
+      });
+    }
+    // Only on the highest-conversion buttons — not every pill on the page
+    magnetic('.hero-cta .btn-primary', 0.22);
+    magnetic('.founding-cta .btn-primary', 0.20);
   })();
 
   // Hero product panel — animate the real product mock when in view (no fake metrics, just visual life)
