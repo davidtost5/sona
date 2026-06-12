@@ -1,23 +1,14 @@
 // Shared Supabase client for serverless functions (server-side).
-// Fill these in (or set them as Vercel env vars) when you go live.
 //
-// In the Vercel dashboard → Project → Settings → Environment Variables, add:
+// Vercel → Project → Settings → Environment Variables:
 //   SUPABASE_URL              = https://xxxxx.supabase.co
-//   SUPABASE_SERVICE_ROLE_KEY = (the service_role secret key — server only, never the anon key)
+//   SUPABASE_SERVICE_ROLE_KEY = service_role secret (server only, never the anon key)
 //
-// Then run two SQL statements in Supabase (SQL Editor):
-//
-//   create table waitlist (
-//     id uuid primary key default gen_random_uuid(),
-//     name text, email text unique not null, company text,
-//     created_at timestamptz default now()
-//   );
-//   create table contacts (
-//     id uuid primary key default gen_random_uuid(),
-//     name text not null, email text not null, company text,
-//     subject text, message text not null,
-//     created_at timestamptz default now()
-//   );
+// Run schema.sql once in Supabase SQL Editor. Tables:
+//   waitlist, contacts          — public forms (service role, no RLS)
+//   saved_ideas                 — /app saved ideas (RLS per user)
+//   profiles                    — auto-created on signup (RLS per user)
+//   founding_members            — Stripe webhook seat counter (service role only)
 
 import { createClient } from '@supabase/supabase-js';
 
