@@ -136,6 +136,59 @@
   .disc-action.saved { color:var(--accent); border-color:var(--accent); background:var(--accent-soft); }
   .disc-action svg { width:11px; height:11px; }
 
+  /* Lists view */
+  .lists-head { display:flex; justify-content:space-between; align-items:flex-end; gap:18px; margin-bottom:20px; flex-wrap:wrap; }
+  .lists-chips { display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
+  .list-chip { padding:7px 14px; border-radius:100px; border:1px solid var(--border); background:transparent; color:var(--text-mid); font:inherit; font-size:13px; cursor:pointer; transition:.15s; display:inline-flex; align-items:center; gap:6px; }
+  .list-chip:hover { color:var(--text); border-color:var(--border-strong); }
+  .list-chip.active { background:var(--text); color:var(--bg); border-color:var(--text); }
+  .list-chip.new { border-style:dashed; }
+  .list-chip .x { opacity:.5; }
+  .list-chip:hover .x { opacity:1; }
+  .lists-actions { display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+  .sort-tabs { display:inline-flex; background:var(--bg-soft); border:1px solid var(--border); border-radius:100px; padding:3px; gap:2px; }
+  .sort-tab { background:transparent; border:0; padding:6px 14px; font:inherit; font-size:12px; color:var(--text-mid); cursor:pointer; border-radius:100px; transition:.15s; }
+  .sort-tab:hover { color:var(--text); }
+  .sort-tab.active { background:var(--bg); color:var(--text); box-shadow:0 1px 2px rgba(0,0,0,.15); }
+  .time-select { background:var(--bg-soft); border:1px solid var(--border); border-radius:100px; padding:6px 12px; font:inherit; font-size:12px; color:var(--text); cursor:pointer; }
+  .lists-empty { border:1px dashed var(--border); border-radius:14px; padding:60px 24px; text-align:center; color:var(--text-mid); }
+  .lists-empty p { margin:0 0 16px; }
+  .creators-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:12px; }
+  .creator-card { background:var(--bg-soft); border:1px solid var(--border); border-radius:12px; padding:14px; display:flex; gap:12px; align-items:flex-start; transition:.2s; }
+  .creator-card:hover { border-color:var(--border-strong); transform:translateY(-1px); }
+  .creator-av { width:44px; height:44px; border-radius:50%; background-size:cover; background-position:center; background-color:var(--accent-soft); flex-shrink:0; }
+  .creator-meta { flex:1; min-width:0; }
+  .creator-name { font-weight:600; font-size:14px; color:var(--text); }
+  .creator-handle { font-size:12px; color:var(--text-mid); font-family:'Geist Mono',monospace; margin-top:2px; }
+  .creator-stats { font-size:11px; color:var(--text-mid); margin-top:6px; display:flex; gap:10px; flex-wrap:wrap; }
+  .creator-stats b { color:var(--text); }
+  .creator-remove { background:transparent; border:1px solid var(--border); color:var(--text-mid); border-radius:7px; padding:4px 8px; font-size:11px; cursor:pointer; font-family:inherit; }
+  .creator-remove:hover { color:#ef4444; border-color:#ef4444; }
+  /* Add creators modal */
+  .ac-back { position:fixed; inset:0; background:rgba(8,8,12,.55); backdrop-filter:blur(6px); display:none; align-items:center; justify-content:center; z-index:200; padding:20px; }
+  .ac-back.show { display:flex; }
+  .ac { width:min(560px,100%); max-height:85vh; display:flex; flex-direction:column; background:var(--bg); border:1px solid var(--border-strong); border-radius:16px; box-shadow:0 30px 80px rgba(0,0,0,.4); }
+  .ac-head { padding:20px 22px 12px; border-bottom:1px solid var(--border); }
+  .ac-head-row { display:flex; justify-content:space-between; align-items:flex-start; gap:14px; }
+  .ac-title { margin:0; font-size:17px; letter-spacing:-.01em; }
+  .ac-to { font-size:12px; color:var(--text-mid); margin-top:8px; display:flex; align-items:center; gap:8px; }
+  .ac-to select { background:var(--bg-soft); border:1px solid var(--border); border-radius:8px; padding:5px 10px; font:inherit; font-size:12px; color:var(--text); cursor:pointer; }
+  .ac-search { padding:14px 22px; border-bottom:1px solid var(--border); }
+  .ac-search input { width:100%; background:var(--bg-soft); border:1px solid var(--border); border-radius:10px; padding:10px 14px 10px 38px; font:inherit; font-size:13px; color:var(--text); background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><circle cx='11' cy='11' r='8'/><path d='M21 21l-4.35-4.35'/></svg>"); background-repeat:no-repeat; background-position:12px center; background-size:14px; }
+  .ac-list { overflow-y:auto; padding:8px 14px; flex:1; min-height:200px; }
+  .ac-section-label { font-family:'Geist Mono',monospace; font-size:10px; letter-spacing:1px; color:var(--text-mid); text-transform:uppercase; padding:10px 8px 4px; }
+  .ac-row { display:flex; align-items:center; gap:12px; padding:10px 8px; border-radius:10px; }
+  .ac-row:hover { background:var(--bg-soft); }
+  .ac-av { width:36px; height:36px; border-radius:50%; background-size:cover; background-position:center; background-color:var(--accent-soft); flex-shrink:0; }
+  .ac-row-meta { flex:1; min-width:0; }
+  .ac-row-name { font-size:13px; font-weight:600; color:var(--text); }
+  .ac-row-handle { font-size:11px; color:var(--text-mid); font-family:'Geist Mono',monospace; }
+  .ac-row-add { background:var(--bg-soft); border:1px solid var(--border); color:var(--text); padding:5px 12px; border-radius:100px; font:inherit; font-size:12px; cursor:pointer; }
+  .ac-row-add:hover { border-color:var(--accent); color:var(--accent); }
+  .ac-row-add.added { background:var(--accent-soft); border-color:var(--accent); color:var(--accent); cursor:default; }
+  .ac-empty { padding:30px 16px; color:var(--text-mid); font-size:13px; text-align:center; }
+  .ac-foot { padding:14px 22px; border-top:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; gap:12px; }
+  .ac-foot small { font-size:11px; color:var(--text-mid); }
   /* Outlier decoder */
   .decoder-back { position:fixed; inset:0; background:rgba(8,8,12,.55); backdrop-filter:blur(6px); display:none; align-items:center; justify-content:center; z-index:200; padding:20px; }
   .decoder-back.show { display:flex; }
@@ -321,6 +374,10 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h2M7 8v8M11 5v14M15 8v8M19 12h2"/></svg>
         Style guide
       </button>
+      <button class="nav-item" data-view="lists">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/><circle cx="17" cy="7" r="3"/><path d="M21 21v-2a4 4 0 0 0-3-3.87"/></svg>
+        Lists<span class="pill-n" id="lists-count">0</span>
+      </button>
       <button class="nav-item" data-view="saved">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
         Saved<span class="pill-n" id="saved-count">0</span>
@@ -483,6 +540,42 @@
             <div class="tone-preview" id="style-preview">Add a few patterns and rules. They'll surface next to your draft.</div>
           </aside>
         </div>
+      </div>
+
+      <!-- LISTS -->
+      <div class="view" data-view="lists">
+        <div class="lists-head">
+          <div>
+            <h3 style="margin:0 0 4px 0;font-size:15px;letter-spacing:-.01em">My lists</h3>
+            <div class="lists-chips" id="lists-chips"></div>
+          </div>
+          <div class="lists-actions">
+            <div class="sort-tabs" id="sort-tabs">
+              <button class="sort-tab active" data-sort="recent">Recent</button>
+              <button class="sort-tab" data-sort="liked">Top liked</button>
+              <button class="sort-tab" data-sort="viewed">Top viewed</button>
+              <button class="sort-tab" data-sort="outlier">Top outlier</button>
+            </div>
+            <select id="lists-time" class="time-select">
+              <option value="all">All time</option>
+              <option value="7">Last 7 days</option>
+              <option value="30">Last 30 days</option>
+              <option value="90">Last 90 days</option>
+            </select>
+            <button class="btn btn-ghost" id="lists-add-btn" type="button">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;vertical-align:-2px;margin-right:6px"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M20 8v6M23 11h-6"/></svg>
+              Add creators
+            </button>
+          </div>
+        </div>
+        <div id="lists-empty" class="lists-empty">
+          <p>This list has no creators yet.</p>
+          <button class="btn" type="button" onclick="openAddCreators()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;vertical-align:-2px;margin-right:6px"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M20 8v6M23 11h-6"/></svg>
+            Add creators
+          </button>
+        </div>
+        <div class="creators-grid" id="creators-grid"></div>
       </div>
 
       <!-- SAVED -->
@@ -654,6 +747,35 @@
     { id:'i8', cat:'creators', name:'Jay Clouse',       av:AV('jayclouse'),    handle:'@jayclouse · in',    text:'Stop chasing followers. Start chasing the right 100 people. Compound the rest.', tag:'7× outlier',
       decoded:{ hook:'Stop / start + specific number', tension:'Attacks the vanity-metric reflex.', payoff:'A concrete, lower-stakes target the reader can act on tomorrow.', pattern:'Stop chasing [vanity metric]. Start chasing [the right small number]. [Compound verb] the rest.', why:'Three short imperatives. The "100" number is small enough to feel possible and specific enough to feel real.', apply:'Stop chasing [the vanity metric in your niche]. Start chasing [the right small number]. [Compound action] the rest.' } },
   ];
+  // Creator directory — searched in "Add creators" modal. Real handles + real avatars via unavatar.io.
+  // Stats are placeholders until we ingest real platform metrics.
+  const CREATORS_DIRECTORY = [
+    { id:'c_dankoe',       name:'Dan Koe',          handle:'@thedankoe',     platform:'Substack',  followers:314000, av:AV('thedankoe'),    liked:42100, viewed:1820000, outlier:18 },
+    { id:'c_ixcarus',      name:'ixcarus',          handle:'@ixcarus',       platform:'Substack',  followers:135000, av:AV('ixcarus'),      liked:11800, viewed:540000,  outlier:9  },
+    { id:'c_sahilbloom',   name:'Sahil Bloom',      handle:'@sahilbloom',    platform:'Substack',  followers:161000, av:AV('SahilBloom'),   liked:33400, viewed:1240000, outlier:14 },
+    { id:'c_justinwelsh',  name:'Justin Welsh',     handle:'@justinwelsh',   platform:'LinkedIn',  followers:859000, av:AV('thejustinwelsh'), liked:128000, viewed:6100000, outlier:25 },
+    { id:'c_laraacosta',   name:'Lara Acosta',      handle:'@laraacostaf',   platform:'LinkedIn',  followers:340000, av:AV('laraacostaf'),  liked:52000, viewed:2100000, outlier:16 },
+    { id:'c_sethgodin',    name:'Seth Godin',       handle:'@sethgodin',     platform:'LinkedIn',  followers:276000, av:AV('thisissethsblog'), liked:38400, viewed:1480000, outlier:11 },
+    { id:'c_hormozi',      name:'Alex Hormozi',     handle:'@AlexHormozi',   platform:'X',         followers:1080000, av:AV('AlexHormozi'),  liked:210000, viewed:8800000, outlier:28 },
+    { id:'c_halataha',     name:'Hala Taha',        handle:'@halataha',      platform:'LinkedIn',  followers:520000, av:AV('yapwithhala'),  liked:64000, viewed:2600000, outlier:13 },
+    { id:'c_naval',        name:'Naval',            handle:'@naval',         platform:'X',         followers:2400000, av:AV('naval'),       liked:380000, viewed:11200000, outlier:24 },
+    { id:'c_chriswillx',   name:'Chris Williamson', handle:'@chriswillx',    platform:'YouTube',   followers:1900000, av:AV('ChrisWillx'),  liked:142000, viewed:7300000, outlier:19 },
+    { id:'c_gregisenberg', name:'Greg Isenberg',    handle:'@gregisenberg',  platform:'LinkedIn',  followers:412000, av:AV('gregisenberg'), liked:46000, viewed:1900000, outlier:15 },
+    { id:'c_shl',          name:'Sahil Lavingia',   handle:'@shl',           platform:'X',         followers:380000, av:AV('shl'),          liked:41200, viewed:1600000, outlier:22 },
+    { id:'c_jayclouse',    name:'Jay Clouse',       handle:'@jayclouse',     platform:'LinkedIn',  followers:230000, av:AV('jayclouse'),    liked:28000, viewed:980000,  outlier:10 },
+    { id:'c_alextfinn',    name:'Alex Finn',        handle:'@AlexFinnX',     platform:'X',         followers:420000, av:AV('AlexFinnX'),    liked:58000, viewed:2300000, outlier:17 },
+    { id:'c_nicktalwar',   name:'Nick Talwar',      handle:'@NickTalwar',    platform:'X',         followers:88000,  av:AV('NickTalwar'),   liked:9400,  viewed:380000,  outlier:8  },
+    { id:'c_dickiebush',   name:'Dickie Bush',      handle:'@dickiebush',    platform:'X',         followers:330000, av:AV('dickiebush'),   liked:36000, viewed:1450000, outlier:12 },
+    { id:'c_nicolasol',    name:'Nicolas Cole',     handle:'@Nicolascole77', platform:'X',         followers:280000, av:AV('Nicolascole77'), liked:31000, viewed:1240000, outlier:11 },
+    { id:'c_shaanvp',      name:'Shaan Puri',       handle:'@ShaanVP',       platform:'X',         followers:540000, av:AV('ShaanVP'),      liked:72000, viewed:3000000, outlier:20 },
+    { id:'c_balajis',      name:'Balaji Srinivasan',handle:'@balajis',       platform:'X',         followers:1100000, av:AV('balajis'),     liked:188000, viewed:7800000, outlier:23 },
+    { id:'c_dharmesh',     name:'Dharmesh Shah',    handle:'@dharmesh',      platform:'LinkedIn',  followers:680000, av:AV('dharmesh'),     liked:84000, viewed:3400000, outlier:14 },
+    { id:'c_aliabdaal',    name:'Ali Abdaal',       handle:'@AliAbdaal',     platform:'YouTube',   followers:5600000, av:AV('AliAbdaal'),   liked:412000, viewed:18000000, outlier:21 },
+    { id:'c_codiesanchez', name:'Codie Sanchez',    handle:'@Codie_Sanchez', platform:'X',         followers:740000, av:AV('Codie_Sanchez'), liked:96000, viewed:3900000, outlier:18 },
+    { id:'c_thejustinwelsh', name:'Justin Welsh',   handle:'@JustinSaaS',    platform:'X',         followers:160000, av:AV('JustinSaaS'),   liked:21000, viewed:840000,  outlier:9  },
+    { id:'c_kpaxs',        name:'Kyla Scanlon',     handle:'@kylascan',      platform:'X',         followers:160000, av:AV('kylascan'),     liked:24000, viewed:980000,  outlier:13 },
+    { id:'c_packym',       name:'Packy McCormick',  handle:'@packym',        platform:'Substack',  followers:120000, av:AV('packym'),       liked:18000, viewed:720000,  outlier:11 },
+  ];
   let currentFilter = 'all';
   let searchTerm = '';
   function matchesSearch(i) {
@@ -666,6 +788,11 @@
   let drafts = [];
   let activeDraftId = null;
   let styleGuide = { hookPatterns:'', voiceRules:'', bannedPhrases:'' };
+  let lists = [];           // [{ id, name, creatorIds:[], customCreators:[] }]
+  let activeListId = null;
+  let creatorSort = 'recent';
+  let creatorTimeRange = 'all';
+  let acSearchTerm = '';
   let workspaceSettings = {};
   const DEFAULT_SETTINGS = {
     fullName: '',
@@ -822,11 +949,13 @@
     loadWorkspaceSettings();
     loadDrafts();
     loadStyleGuide();
+    loadLists();
     renderDiscover();
     renderSaved();
     renderSwipe();
     renderDrafts();
     renderStyleGuide();
+    renderLists();
   }
 
   // ─── Drafts ───
@@ -973,6 +1102,218 @@
     setTimeout(() => { const s = document.getElementById('style-status'); if (s) s.textContent = 'No unsaved changes.'; }, 1800);
   }
 
+  // ─── Lists ───
+  function loadLists() {
+    try { lists = JSON.parse(localStorage.getItem(storageKey('lists')) || '[]'); }
+    catch (_) { lists = []; }
+    if (!lists.length) {
+      lists = [
+        { id:'l_top',      name:'Top Creators', creatorIds:[], customCreators:[], createdAt:Date.now() },
+        { id:'l_creators', name:'creators',     creatorIds:[], customCreators:[], createdAt:Date.now()+1 },
+      ];
+      saveListsLocal();
+    }
+    activeListId = lists[0].id;
+  }
+  function saveListsLocal() {
+    localStorage.setItem(storageKey('lists'), JSON.stringify(lists));
+    document.getElementById('lists-count').textContent = lists.length;
+  }
+  function getActiveList() {
+    return lists.find(l => l.id === activeListId) || lists[0];
+  }
+  function getCreatorById(id) {
+    const fromDir = CREATORS_DIRECTORY.find(c => c.id === id);
+    if (fromDir) return fromDir;
+    for (const l of lists) {
+      const custom = (l.customCreators || []).find(c => c.id === id);
+      if (custom) return custom;
+    }
+    return null;
+  }
+  function renderLists() {
+    document.getElementById('lists-count').textContent = lists.length;
+    // Chips
+    const chipsEl = document.getElementById('lists-chips');
+    chipsEl.innerHTML = lists.map(l => `
+      <button type="button" class="list-chip${l.id===activeListId?' active':''}" data-list="${l.id}">
+        ${escapeHtml(l.name)}
+        ${lists.length > 1 ? `<span class="x" data-del="${l.id}" title="Delete list">×</span>` : ''}
+      </button>
+    `).join('') + `<button type="button" class="list-chip new" id="lists-new">+ New list</button>`;
+    chipsEl.querySelectorAll('[data-list]').forEach(b => b.addEventListener('click', (e) => {
+      if (e.target.dataset.del) {
+        if (!confirm('Delete this list?')) return;
+        lists = lists.filter(x => x.id !== e.target.dataset.del);
+        if (!lists.length) lists = [{ id:'l_top', name:'Top Creators', creatorIds:[], customCreators:[], createdAt:Date.now() }];
+        activeListId = lists[0].id;
+        saveListsLocal();
+        renderLists();
+        return;
+      }
+      activeListId = b.dataset.list;
+      renderLists();
+    }));
+    document.getElementById('lists-new').addEventListener('click', createNewList);
+
+    // Grid
+    const active = getActiveList();
+    const emptyEl = document.getElementById('lists-empty');
+    const gridEl = document.getElementById('creators-grid');
+    const ids = [...(active.creatorIds||[]), ...(active.customCreators||[]).map(c=>c.id)];
+    if (!ids.length) {
+      emptyEl.style.display = 'block';
+      gridEl.innerHTML = '';
+      return;
+    }
+    emptyEl.style.display = 'none';
+    let creators = ids.map(getCreatorById).filter(Boolean);
+    const sortBy = { recent:'createdAt', liked:'liked', viewed:'viewed', outlier:'outlier' }[creatorSort] || 'createdAt';
+    if (creatorSort === 'recent') {
+      const order = new Map(ids.map((id, i) => [id, i]));
+      creators.sort((a,b) => order.get(b.id) - order.get(a.id));
+    } else {
+      creators.sort((a,b) => (b[sortBy]||0) - (a[sortBy]||0));
+    }
+    const fmt = (n) => n >= 1e6 ? (n/1e6).toFixed(1)+'M' : n >= 1e3 ? (n/1e3).toFixed(0)+'K' : String(n||0);
+    gridEl.innerHTML = creators.map(c => `
+      <div class="creator-card">
+        <div class="creator-av" style="background-image:url('${c.av}')"></div>
+        <div class="creator-meta">
+          <div class="creator-name">${escapeHtml(c.name)}</div>
+          <div class="creator-handle">${escapeHtml(c.handle)} · ${escapeHtml(c.platform)} · ${fmt(c.followers)}</div>
+          <div class="creator-stats">
+            <span>♥ <b>${fmt(c.liked)}</b></span>
+            <span>👁 <b>${fmt(c.viewed)}</b></span>
+            <span>${c.outlier||0}× outlier</span>
+          </div>
+        </div>
+        <button class="creator-remove" data-remove="${c.id}" title="Remove from list">Remove</button>
+      </div>
+    `).join('');
+    gridEl.querySelectorAll('[data-remove]').forEach(b => b.addEventListener('click', () => removeCreatorFromList(b.dataset.remove)));
+  }
+  function createNewList() {
+    const name = prompt('Name your new list:', `List ${lists.length+1}`);
+    if (!name || !name.trim()) return;
+    const id = 'l_' + Date.now().toString(36);
+    lists.push({ id, name:name.trim(), creatorIds:[], customCreators:[], createdAt:Date.now() });
+    activeListId = id;
+    saveListsLocal();
+    renderLists();
+  }
+  function removeCreatorFromList(creatorId) {
+    const list = getActiveList();
+    list.creatorIds = (list.creatorIds||[]).filter(id => id !== creatorId);
+    list.customCreators = (list.customCreators||[]).filter(c => c.id !== creatorId);
+    saveListsLocal();
+    renderLists();
+  }
+  function parseHandle(input) {
+    let s = input.trim();
+    // Handle pasted URL — pull last path segment
+    const urlMatch = s.match(/^https?:\/\/[^\s]+/);
+    if (urlMatch) {
+      try {
+        const u = new URL(urlMatch[0]);
+        const parts = u.pathname.split('/').filter(Boolean);
+        s = parts[parts.length - 1] || s;
+      } catch (_) {}
+    }
+    s = s.replace(/^@+/, '').split('?')[0].trim();
+    return s;
+  }
+  function detectPlatformFromInput(input) {
+    const s = input.toLowerCase();
+    if (s.includes('linkedin.com')) return 'LinkedIn';
+    if (s.includes('substack.com')) return 'Substack';
+    if (s.includes('youtube.com') || s.includes('youtu.be')) return 'YouTube';
+    if (s.includes('twitter.com') || s.includes('x.com')) return 'X';
+    return 'X';
+  }
+  window.openAddCreators = function() {
+    if (!getActiveList()) return;
+    const select = document.getElementById('ac-target');
+    select.innerHTML = lists.map(l => `<option value="${l.id}"${l.id===activeListId?' selected':''}>${escapeHtml(l.name)}</option>`).join('');
+    document.getElementById('ac-search').value = '';
+    acSearchTerm = '';
+    renderACList();
+    document.getElementById('ac-back').classList.add('show');
+    setTimeout(() => document.getElementById('ac-search').focus(), 50);
+  };
+  window.closeAddCreators = function() {
+    document.getElementById('ac-back').classList.remove('show');
+    renderLists();
+  };
+  function renderACList() {
+    const targetId = document.getElementById('ac-target').value;
+    const target = lists.find(l => l.id === targetId) || getActiveList();
+    const inList = new Set([...(target.creatorIds||[]), ...(target.customCreators||[]).map(c=>c.id)]);
+    const term = acSearchTerm.toLowerCase().trim();
+    const matches = CREATORS_DIRECTORY.filter(c =>
+      !term || c.name.toLowerCase().includes(term) || c.handle.toLowerCase().includes(term) || c.platform.toLowerCase().includes(term)
+    );
+    const listEl = document.getElementById('ac-list');
+    const looksLikeUrl = /^https?:\/\//.test(acSearchTerm) || (term && !matches.length);
+    let html = '';
+    if (!term) html += '<div class="ac-section-label">Suggested</div>';
+    else html += `<div class="ac-section-label">${matches.length} match${matches.length===1?'':'es'}</div>`;
+    html += matches.slice(0, 50).map(c => `
+      <div class="ac-row">
+        <div class="ac-av" style="background-image:url('${c.av}')"></div>
+        <div class="ac-row-meta">
+          <div class="ac-row-name">${escapeHtml(c.name)}</div>
+          <div class="ac-row-handle">${escapeHtml(c.handle)} · ${escapeHtml(c.platform)} · ${c.followers >= 1000 ? Math.round(c.followers/1000)+'K' : c.followers}</div>
+        </div>
+        <button class="ac-row-add ${inList.has(c.id)?'added':''}" data-add="${c.id}" ${inList.has(c.id)?'disabled':''}>${inList.has(c.id)?'Added':'Add'}</button>
+      </div>`).join('');
+    if (looksLikeUrl && term) {
+      const handle = parseHandle(acSearchTerm);
+      const platform = detectPlatformFromInput(acSearchTerm);
+      html += `
+        <div class="ac-section-label">Custom</div>
+        <div class="ac-row">
+          <div class="ac-av" style="background-image:url('${AV(handle)}')"></div>
+          <div class="ac-row-meta">
+            <div class="ac-row-name">${escapeHtml(handle)}</div>
+            <div class="ac-row-handle">@${escapeHtml(handle)} · ${escapeHtml(platform)} · custom</div>
+          </div>
+          <button class="ac-row-add" data-add-custom="1">Add</button>
+        </div>`;
+    }
+    if (!matches.length && !looksLikeUrl) {
+      html += `<div class="ac-empty">No matches. Paste a profile URL or full handle to add it as a custom creator.</div>`;
+    }
+    listEl.innerHTML = html;
+    listEl.querySelectorAll('[data-add]').forEach(b => b.addEventListener('click', () => {
+      const id = b.dataset.add;
+      const tList = lists.find(l => l.id === document.getElementById('ac-target').value);
+      if (!tList) return;
+      if (!tList.creatorIds.includes(id)) tList.creatorIds.push(id);
+      saveListsLocal();
+      renderACList();
+    }));
+    const customBtn = listEl.querySelector('[data-add-custom]');
+    if (customBtn) {
+      customBtn.addEventListener('click', () => {
+        const handle = parseHandle(acSearchTerm);
+        const platform = detectPlatformFromInput(acSearchTerm);
+        const tList = lists.find(l => l.id === document.getElementById('ac-target').value);
+        if (!tList || !handle) return;
+        const id = 'cc_' + handle.toLowerCase().replace(/[^a-z0-9]/g,'') + '_' + Date.now().toString(36);
+        tList.customCreators = tList.customCreators || [];
+        tList.customCreators.push({
+          id, name:handle, handle:'@'+handle, platform, followers:0,
+          av: AV(handle), liked:0, viewed:0, outlier:0, custom:true,
+        });
+        saveListsLocal();
+        document.getElementById('ac-search').value = '';
+        acSearchTerm = '';
+        renderACList();
+      });
+    }
+  }
+
   async function loadSaved() {
     if (demoMode || !sb) {
       saved = new Set(JSON.parse(localStorage.getItem('sona-preview-saved') || '[]'));
@@ -1086,6 +1427,7 @@
     const titles = {
       discover:['Discover','Founders · last 7 days'],
       studio:['Drafts', drafts.length ? `${drafts.length} draft${drafts.length===1?'':'s'}` : 'Start a draft'],
+      lists:['My lists', lists.length ? `${lists.length} list${lists.length===1?'':'s'}` : 'No lists'],
       voice:['Style guide','Yours, no AI'],
       saved:['Saved ideas',`${saved.size} item${saved.size===1?'':'s'}`],
       brand:['Personal brand', workspaceSettings.workspaceName || 'Workspace'],
@@ -1186,16 +1528,40 @@
     document.getElementById(id).addEventListener('input', () => { document.getElementById('style-status').textContent = 'Unsaved changes.'; });
   });
 
+  // ─── Lists handlers ───
+  document.getElementById('lists-add-btn').addEventListener('click', openAddCreators);
+  document.getElementById('sort-tabs').addEventListener('click', (e) => {
+    const t = e.target.closest('.sort-tab'); if (!t) return;
+    document.querySelectorAll('.sort-tab').forEach(b => b.classList.remove('active'));
+    t.classList.add('active');
+    creatorSort = t.dataset.sort;
+    renderLists();
+  });
+  document.getElementById('lists-time').addEventListener('change', (e) => {
+    creatorTimeRange = e.target.value;
+    renderLists();
+  });
+  document.getElementById('ac-search').addEventListener('input', (e) => {
+    acSearchTerm = e.target.value;
+    renderACList();
+  });
+  document.getElementById('ac-target').addEventListener('change', renderACList);
+  document.getElementById('ac-back').addEventListener('click', (e) => {
+    if (e.target.id === 'ac-back') closeAddCreators();
+  });
+
   document.getElementById('clear-local').addEventListener('click', () => {
     if (!confirm('Clear local Sona settings and preview saves on this device?')) return;
     localStorage.removeItem(storageKey('workspace-settings'));
     localStorage.removeItem(storageKey('preview-saved'));
     localStorage.removeItem(storageKey('drafts'));
     localStorage.removeItem(storageKey('style-guide'));
+    localStorage.removeItem(storageKey('lists'));
     localStorage.removeItem('sona-preview-saved');
     if (demoMode) saved = new Set();
     loadWorkspaceSettings();
     loadDrafts();
+    loadLists();
     styleGuide = { hookPatterns:'', voiceRules:'', bannedPhrases:'' };
     document.getElementById('saved-count').textContent = saved.size;
     renderDiscover();
@@ -1203,6 +1569,7 @@
     renderSwipe();
     renderDrafts();
     renderStyleGuide();
+    renderLists();
   });
 
   // ─── Live search wiring ───
@@ -1314,6 +1681,7 @@
   });
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape' && document.getElementById('decoder-back').classList.contains('show')) closeDecoder();
+    if (e.key === 'Escape' && document.getElementById('ac-back').classList.contains('show')) closeAddCreators();
   });
 
   initApp().then(() => {
@@ -1321,6 +1689,27 @@
     if (initialView) switchView(initialView);
   });
 </script>
+
+<!-- Add creators modal -->
+<div class="ac-back" id="ac-back">
+  <div class="ac" role="dialog" aria-modal="true" aria-labelledby="ac-title">
+    <div class="ac-head">
+      <div class="ac-head-row">
+        <h3 class="ac-title" id="ac-title">Add creators</h3>
+        <button class="decoder-close" onclick="closeAddCreators()" aria-label="Close">×</button>
+      </div>
+      <div class="ac-to">to <select id="ac-target"></select></div>
+    </div>
+    <div class="ac-search">
+      <input id="ac-search" type="text" placeholder="Search a handle or paste a profile URL" autocomplete="off">
+    </div>
+    <div class="ac-list" id="ac-list"></div>
+    <div class="ac-foot">
+      <small>Stays open — add as many as you like</small>
+      <button class="btn" type="button" onclick="closeAddCreators()">Done</button>
+    </div>
+  </div>
+</div>
 
 <!-- Outlier decoder modal -->
 <div class="decoder-back" id="decoder-back">
