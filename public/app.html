@@ -300,7 +300,8 @@
     .nav-item { white-space: nowrap; padding: 9px 14px; font-size: 13px; flex-shrink: 0; }
     .nav-item .pill-n { margin-left: 6px; }
     .section-label { display: none; }
-    .side > div:not(.side-top):not(.side-bottom):not(.upsell) { display: none; } /* hide workspace section */
+    /* Workspace section: keep it visible, collapse the label, scroll horizontally */
+    .side > div:not(.side-top):not(.side-bottom):not(.upsell) { margin-top: 4px; }
     .upsell { margin: 6px 0 0; }
     .upsell-inner { padding: 12px; }
     .side-bottom { padding-top: 8px; }
