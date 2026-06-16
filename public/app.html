@@ -136,6 +136,25 @@
   .disc-action.saved { color:var(--accent); border-color:var(--accent); background:var(--accent-soft); }
   .disc-action svg { width:11px; height:11px; }
 
+  /* Outlier decoder */
+  .decoder-back { position:fixed; inset:0; background:rgba(8,8,12,.55); backdrop-filter:blur(6px); display:none; align-items:center; justify-content:center; z-index:200; padding:20px; }
+  .decoder-back.show { display:flex; }
+  .decoder { width:min(720px,100%); max-height:90vh; overflow:auto; background:var(--bg); border:1px solid var(--border-strong); border-radius:16px; padding:28px; box-shadow:0 30px 80px rgba(0,0,0,.4); }
+  .decoder-head { display:flex; align-items:flex-start; justify-content:space-between; gap:16px; margin-bottom:8px; }
+  .decoder-eye { font-family:'Geist Mono',monospace; font-size:11px; letter-spacing:1px; text-transform:uppercase; color:var(--accent); margin-bottom:6px; }
+  .decoder h2 { margin:0; font-size:22px; letter-spacing:-.01em; }
+  .decoder-close { background:transparent; border:1px solid var(--border); width:32px; height:32px; border-radius:50%; cursor:pointer; color:var(--text-mid); font-size:18px; line-height:1; flex-shrink:0; }
+  .decoder-close:hover { color:var(--text); border-color:var(--border-strong); }
+  .decoder-quote { margin:18px 0 22px; padding:14px 16px; border-left:3px solid var(--accent); background:var(--bg-soft); border-radius:0 8px 8px 0; font-size:15px; color:var(--text); }
+  .decoder-quote small { display:block; color:var(--text-mid); font-size:11px; margin-top:6px; font-family:'Geist Mono',monospace; }
+  .decoder-row { display:grid; grid-template-columns:120px 1fr; gap:14px; padding:14px 0; border-top:1px solid var(--border); }
+  .decoder-row:last-of-type { border-bottom:1px solid var(--border); }
+  .decoder-label { font-family:'Geist Mono',monospace; font-size:11px; letter-spacing:1px; text-transform:uppercase; color:var(--text-mid); padding-top:2px; }
+  .decoder-val { font-size:14px; color:var(--text); line-height:1.55; }
+  .decoder-pattern { font-family:'Geist Mono',monospace; font-size:13px; background:var(--bg-soft); padding:10px 12px; border-radius:6px; border:1px solid var(--border); display:inline-block; }
+  .decoder-foot { display:flex; gap:10px; margin-top:22px; flex-wrap:wrap; }
+  @media (max-width:560px) { .decoder { padding:20px; } .decoder-row { grid-template-columns:1fr; gap:4px; } }
+  .disc-action.decode:hover { color:var(--accent); border-color:var(--accent); }
   .coming-soon { display:inline-flex; align-items:center; gap:6px; font-family:'Geist Mono',monospace; font-size:11px; padding:5px 10px; background:var(--bg-soft); border:1px solid var(--border-strong); border-radius:100px; color:var(--text-mid); letter-spacing:.5px; text-transform:uppercase; }
   .filters { display:flex; gap:6px; margin-bottom:18px; flex-wrap:wrap; }
   .filter { padding:5px 11px; font-size:12px; font-family:inherit; background:var(--bg-soft); border:1px solid var(--border); border-radius:100px; color:var(--text-mid); cursor:pointer; transition:all .15s; }
@@ -618,14 +637,22 @@
   let demoMode = false;
   const AV = (h) => `https://unavatar.io/x/${h}`;
   const SEED_IDEAS = [
-    { id:'i1', cat:'founders', name:'Alex Hormozi',     av:AV('AlexHormozi'),  handle:'@AlexHormozi · X',   text:'Most founders post too much — not too little. The ones who break out pick one contrarian take and stick to it.', tag:'12× outlier' },
-    { id:'i2', cat:'founders', name:'Hala Taha',        av:AV('yapwithhala'),  handle:'@halataha · in',     text:'I deleted 80% of my todo list last month. Output went up 3×. Here\'s the framework I used.', tag:'8× outlier' },
-    { id:'i3', cat:'writers',  name:'Dan Koe',          av:AV('thedankoe'),    handle:'@thedankoe · X',     text:'Three questions I ask before writing anything. They\'ve saved me hundreds of bad drafts.', tag:'18× outlier' },
-    { id:'i4', cat:'creators', name:'Naval',            av:AV('naval'),        handle:'@naval · X',         text:'Stop optimizing your morning routine. Start optimizing what you do with the next 6 hours.', tag:'6× outlier' },
-    { id:'i5', cat:'creators', name:'Chris Williamson', av:AV('ChrisWillx'),   handle:'@chriswillx · YT',   text:'AI didn\'t kill writing. Lazy writing did. Here\'s how to use AI without losing your voice.', tag:'14× outlier' },
-    { id:'i6', cat:'writers',  name:'Greg Isenberg',    av:AV('gregisenberg'), handle:'@gregisenberg · in', text:'The one essay format that changed how I think about everything I publish.', tag:'9× outlier' },
-    { id:'i7', cat:'founders', name:'Sahil Lavingia',   av:AV('shl'),          handle:'@shl · X',           text:'Specific knowledge is found by pursuing your genuine curiosity, not by following whatever is trendy.', tag:'22× outlier' },
-    { id:'i8', cat:'creators', name:'Jay Clouse',       av:AV('jayclouse'),    handle:'@jayclouse · in',    text:'Stop chasing followers. Start chasing the right 100 people. Compound the rest.', tag:'7× outlier' },
+    { id:'i1', cat:'founders', name:'Alex Hormozi',     av:AV('AlexHormozi'),  handle:'@AlexHormozi · X',   text:'Most founders post too much — not too little. The ones who break out pick one contrarian take and stick to it.', tag:'12× outlier',
+      decoded:{ hook:'Contrarian counter', tension:'Reader expects "post more" — gets the opposite. Cognitive jolt.', payoff:'Single concrete strategy: pick one contrarian take, stick to it.', pattern:'Most [group] [common belief]. The ones who break out [contrarian action].', why:'Opens with a category most people belong to, then strips out 99% of them. The reader self-identifies into the elite 1%.', apply:'Most [your audience] [common belief in your niche]. The ones who break out [your differentiator — the unsexy thing that actually works].' } },
+    { id:'i2', cat:'founders', name:'Hala Taha',        av:AV('yapwithhala'),  handle:'@halataha · in',     text:'I deleted 80% of my todo list last month. Output went up 3×. Here\'s the framework I used.', tag:'8× outlier',
+      decoded:{ hook:'Specific number + counterintuitive outcome', tension:'Less work → more output. Breaks the work-harder reflex.', payoff:'Promise of a named framework — a takeaway, not a vibe.', pattern:'I [aggressive cut]. [Counterintuitive result] went up [number]×. Here\'s the framework.', why:'Two specific numbers (80%, 3×) anchor credibility. "Here\'s the framework" is a content debt the reader will collect.', apply:'I deleted [aggressive % of something you do]. [The thing that actually matters] went up [number]×. Here\'s the framework.' } },
+    { id:'i3', cat:'writers',  name:'Dan Koe',          av:AV('thedankoe'),    handle:'@thedankoe · X',     text:'Three questions I ask before writing anything. They\'ve saved me hundreds of bad drafts.', tag:'18× outlier',
+      decoded:{ hook:'Numbered list promise', tension:'Implies the reader is writing bad drafts and doesn\'t know it.', payoff:'A finite, copyable system (three questions).', pattern:'[Small number] [thing you do] before [important action]. They\'ve saved me [big specific cost].', why:'Small number = manageable. "Bad drafts" is the reader\'s private fear. The pattern works for any process the reader already does.', apply:'Three [things] I [do] before [creative act]. They\'ve saved me [pain you avoided].' } },
+    { id:'i4', cat:'creators', name:'Naval',            av:AV('naval'),        handle:'@naval · X',         text:'Stop optimizing your morning routine. Start optimizing what you do with the next 6 hours.', tag:'6× outlier',
+      decoded:{ hook:'Stop / start reframe', tension:'Attacks a creator-genre cliché (morning routine optimization).', payoff:'Redirects to something the reader can actually control today.', pattern:'Stop [thing the audience over-invests in]. Start [the thing that compounds].', why:'Two parallel imperatives. The first one liberates the reader from a guilt loop, the second points to the real lever.', apply:'Stop [the procrastination dressed as productivity]. Start [the thing that actually moves your number].' } },
+    { id:'i5', cat:'creators', name:'Chris Williamson', av:AV('ChrisWillx'),   handle:'@chriswillx · YT',   text:'AI didn\'t kill writing. Lazy writing did. Here\'s how to use AI without losing your voice.', tag:'14× outlier',
+      decoded:{ hook:'False blame reversal', tension:'Defuses the AI panic, then redirects blame to the reader.', payoff:'Practical promise — use the scary tool without losing identity.', pattern:'[Scapegoat] didn\'t kill [thing]. [Real cause] did. Here\'s how to [use scapegoat] without [losing the thing].', why:'Disagreeing with the loud crowd buys credibility. The "here\'s how" makes it actionable instead of just a take.', apply:'[Tool/trend] didn\'t kill [skill you care about]. [The real bad habit] did. Here\'s how to use [tool] without [losing the thing that matters].' } },
+    { id:'i6', cat:'writers',  name:'Greg Isenberg',    av:AV('gregisenberg'), handle:'@gregisenberg · in', text:'The one essay format that changed how I think about everything I publish.', tag:'9× outlier',
+      decoded:{ hook:'Singular-discovery promise', tension:'Implies a hidden frame the reader is missing.', payoff:'A reusable mental model, not a one-off tactic.', pattern:'The one [format / question / habit] that changed how I think about [broad activity].', why:'Singular + transformation. "Everything I publish" widens the relevance from this post to all the reader\'s future work.', apply:'The one [framework] that changed how I think about [the activity your audience repeats weekly].' } },
+    { id:'i7', cat:'founders', name:'Sahil Lavingia',   av:AV('shl'),          handle:'@shl · X',           text:'Specific knowledge is found by pursuing your genuine curiosity, not by following whatever is trendy.', tag:'22× outlier',
+      decoded:{ hook:'Quiet philosophical truth', tension:'Indicts trend-chasing without naming anyone.', payoff:'Permission to ignore the noise and follow what you actually care about.', pattern:'[Valuable thing] is found by [hard but authentic path], not by [easy but crowded path].', why:'Short, declarative, no exclamation. The contrast does the work. Naval-style: aphoristic, screenshot-able.', apply:'[The thing your audience wants] is found by [the unsexy authentic path], not by [the shiny crowded one].' } },
+    { id:'i8', cat:'creators', name:'Jay Clouse',       av:AV('jayclouse'),    handle:'@jayclouse · in',    text:'Stop chasing followers. Start chasing the right 100 people. Compound the rest.', tag:'7× outlier',
+      decoded:{ hook:'Stop / start + specific number', tension:'Attacks the vanity-metric reflex.', payoff:'A concrete, lower-stakes target the reader can act on tomorrow.', pattern:'Stop chasing [vanity metric]. Start chasing [the right small number]. [Compound verb] the rest.', why:'Three short imperatives. The "100" number is small enough to feel possible and specific enough to feel real.', apply:'Stop chasing [the vanity metric in your niche]. Start chasing [the right small number]. [Compound action] the rest.' } },
   ];
   let currentFilter = 'all';
   let searchTerm = '';
@@ -985,6 +1012,10 @@
         <div class="disc-meta">
           <span class="disc-tag">${i.tag}</span>
           <div class="disc-actions">
+            <button class="disc-action decode" onclick="openDecoder('${i.id}')" title="See why this post worked">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 1v6M12 17v6M4.22 4.22l4.24 4.24M15.54 15.54l4.24 4.24M1 12h6M17 12h6M4.22 19.78l4.24-4.24M15.54 8.46l4.24-4.24"/></svg>
+              Decode
+            </button>
             <button class="disc-action ${saved.has(i.id) ? 'saved' : ''}" data-idea="${i.id}" onclick="toggleSave('${i.id}', this)">
               <svg viewBox="0 0 24 24" fill="${saved.has(i.id) ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
               ${saved.has(i.id) ? 'Saved' : 'Save'}
@@ -1017,6 +1048,10 @@
         <div class="disc-meta">
           <span class="disc-tag">${i.tag}</span>
           <div class="disc-actions">
+            <button class="disc-action decode" onclick="openDecoder('${i.id}')" title="See why this post worked">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 1v6M12 17v6M4.22 4.22l4.24 4.24M15.54 15.54l4.24 4.24M1 12h6M17 12h6M4.22 19.78l4.24-4.24M15.54 8.46l4.24-4.24"/></svg>
+              Decode
+            </button>
             <button class="disc-action saved" onclick="toggleSave('${i.id}', this)">
               <svg viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
               Remove
@@ -1235,10 +1270,80 @@
     }
   });
 
+  // ─── Outlier decoder ───
+  window.openDecoder = function(id) {
+    const i = SEED_IDEAS.find(x => x.id === id);
+    if (!i || !i.decoded) return;
+    const d = i.decoded;
+    document.getElementById('decoder-back').dataset.idea = id;
+    document.getElementById('decoder-tag').textContent = `${i.tag} · ${i.cat}`;
+    document.getElementById('decoder-name').textContent = i.name;
+    document.getElementById('decoder-quote').innerHTML = `${escapeHtml(i.text)}<small>${escapeHtml(i.handle)}</small>`;
+    document.getElementById('decoder-hook').textContent = d.hook;
+    document.getElementById('decoder-tension').textContent = d.tension;
+    document.getElementById('decoder-payoff').textContent = d.payoff;
+    document.getElementById('decoder-pattern').textContent = d.pattern;
+    document.getElementById('decoder-why').textContent = d.why;
+    document.getElementById('decoder-apply').textContent = d.apply;
+    document.getElementById('decoder-back').classList.add('show');
+  };
+  window.closeDecoder = function() {
+    document.getElementById('decoder-back').classList.remove('show');
+  };
+  window.applyPatternToDraft = function() {
+    const id = document.getElementById('decoder-back').dataset.idea;
+    const i = SEED_IDEAS.find(x => x.id === id);
+    if (!i || !i.decoded) return;
+    const d = i.decoded;
+    activeDraftId = null;
+    document.getElementById('draft-title').value = `Draft from ${i.name} pattern`;
+    document.getElementById('draft-body').value =
+      `Pattern (from ${i.name}):\n${d.pattern}\n\n` +
+      `Why it worked:\n${d.why}\n\n` +
+      `Your version — fill the brackets in your voice:\n${d.apply}\n\n` +
+      `Original (for reference):\n"${i.text}"\n`;
+    document.getElementById('draft-heading').textContent = 'New draft';
+    document.getElementById('draft-meta').textContent = 'Unsaved';
+    document.getElementById('draft-status').textContent = 'Pattern loaded. Rewrite in your voice.';
+    closeDecoder();
+    switchView('studio');
+    setTimeout(() => document.getElementById('draft-body').focus(), 50);
+  };
+  document.getElementById('decoder-back').addEventListener('click', (e) => {
+    if (e.target.id === 'decoder-back') closeDecoder();
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && document.getElementById('decoder-back').classList.contains('show')) closeDecoder();
+  });
+
   initApp().then(() => {
     const initialView = location.hash.replace('#', '');
     if (initialView) switchView(initialView);
   });
 </script>
+
+<!-- Outlier decoder modal -->
+<div class="decoder-back" id="decoder-back">
+  <div class="decoder" role="dialog" aria-modal="true" aria-labelledby="decoder-name">
+    <div class="decoder-head">
+      <div>
+        <div class="decoder-eye" id="decoder-tag">12× outlier · founders</div>
+        <h2 id="decoder-name">Alex Hormozi</h2>
+      </div>
+      <button class="decoder-close" onclick="closeDecoder()" aria-label="Close">×</button>
+    </div>
+    <div class="decoder-quote" id="decoder-quote"></div>
+    <div class="decoder-row"><div class="decoder-label">Hook type</div><div class="decoder-val" id="decoder-hook"></div></div>
+    <div class="decoder-row"><div class="decoder-label">Tension</div><div class="decoder-val" id="decoder-tension"></div></div>
+    <div class="decoder-row"><div class="decoder-label">Payoff</div><div class="decoder-val" id="decoder-payoff"></div></div>
+    <div class="decoder-row"><div class="decoder-label">Pattern</div><div class="decoder-val"><span class="decoder-pattern" id="decoder-pattern"></span></div></div>
+    <div class="decoder-row"><div class="decoder-label">Why it worked</div><div class="decoder-val" id="decoder-why"></div></div>
+    <div class="decoder-row"><div class="decoder-label">Apply to you</div><div class="decoder-val" id="decoder-apply"></div></div>
+    <div class="decoder-foot">
+      <button class="btn" onclick="applyPatternToDraft()">Apply pattern to draft</button>
+      <button class="btn btn-ghost" onclick="closeDecoder()">Close</button>
+    </div>
+  </div>
+</div>
 </body>
 </html>
