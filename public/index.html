@@ -521,8 +521,27 @@
   .cal-post b { font-family: 'Geist Mono', monospace; font-size: 9px; font-weight: 600; letter-spacing: .4px; text-transform: uppercase; color: var(--text-dim); display: block; margin-bottom: 2px; }
   .cal-post.x b { color: #1d9bf0; } .cal-post.li b { color: #0a66c2; } .cal-post.yt b { color: #ff3838; }
 
+  /* STYLE GUIDE (mockup) */
+  .sg-lines { font-size: 11.5px; color: var(--text-mid); line-height: 1.7; }
+  .sg-lines b { color: var(--text); }
+  .voice-card .dot.warn { background: #e0a93c; }
+  /* LISTS (mockup) */
+  .list-chips { display: flex; gap: 7px; margin-bottom: 12px; flex-wrap: wrap; }
+  .list-chip { font-size: 12px; padding: 6px 12px; border-radius: 100px; border: 1px solid var(--border); color: var(--text-mid); background: transparent; }
+  .list-chip.active { background: var(--text); color: var(--bg); border-color: var(--text); }
+  .list-chip.dashed { border-style: dashed; }
+  .creators-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 9px; }
+  .creator-card { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 10px; padding: 11px 12px; display: flex; gap: 10px; align-items: center; }
+  .creator-av { width: 34px; height: 34px; border-radius: 50%; background-size: cover; background-position: center; flex-shrink: 0; }
+  .creator-meta { min-width: 0; flex: 1; }
+  .creator-name { font-size: 12.5px; font-weight: 600; color: var(--text); }
+  .creator-handle { font-family: 'Geist Mono', monospace; font-size: 10px; color: var(--text-dim); margin-top: 1px; }
+  .creator-stats { font-family: 'Geist Mono', monospace; font-size: 9.5px; color: var(--text-mid); margin-top: 4px; display: flex; gap: 9px; }
+  .creator-stats b { color: var(--text); }
+
   /* Responsive */
   @media (max-width: 880px) {
+    .creators-grid { grid-template-columns: 1fr; }
     .app-body { grid-template-columns: 1fr; }
     .app-side { flex-direction: row; gap: 8px; overflow-x: auto; padding: 12px; border-right: 0; border-bottom: 1px solid var(--border); }
     .app-side-top, .app-search, .app-section-label, .app-side-bottom, .app-user { display: none; }
@@ -1218,17 +1237,21 @@ and they stick with it for ninety days.
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m14.5 9.5-5 1.5 1.5 5 5-1.5z"/></svg>
             Discover<span class="pill-n">128</span>
           </button>
-          <button type="button" class="app-nav-item" data-view="studio">
+          <button type="button" class="app-nav-item" data-view="drafts">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 1 1 3 3L7 19l-4 1 1-4Z"/></svg>
-            Studio
+            Drafts<span class="pill-n">3</span>
           </button>
-          <button type="button" class="app-nav-item" data-view="voice">
+          <button type="button" class="app-nav-item" data-view="styleguide">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h2M7 8v8M11 5v14M15 8v8M19 12h2"/></svg>
-            Voice
+            Style guide
           </button>
-          <button type="button" class="app-nav-item" data-view="calendar">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>
-            Calendar<span class="pill-n">7</span>
+          <button type="button" class="app-nav-item" data-view="lists">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/><circle cx="17" cy="7" r="3"/><path d="M21 21v-2a4 4 0 0 0-3-3.87"/></svg>
+            Lists<span class="pill-n">2</span>
+          </button>
+          <button type="button" class="app-nav-item" data-view="saved">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+            Saved<span class="pill-n">2</span>
           </button>
         </div>
 
@@ -1236,16 +1259,12 @@ and they stick with it for ninety days.
           <div class="app-section-label">Workspace</div>
           <div class="app-nav">
             <button type="button" class="app-nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>Personal brand</button>
-            <button type="button" class="app-nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>Client · Acme</button>
             <button type="button" class="app-nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>Idea swipe</button>
+            <button type="button" class="app-nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>Settings</button>
           </div>
         </div>
 
         <div class="app-side-bottom">
-          <div class="app-nav">
-            <button type="button" class="app-nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>Settings</button>
-            <button type="button" class="app-nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3M12 17h.01"/></svg>Help</button>
-          </div>
           <div class="app-user">
             <span class="app-user-av" style="background:url('/david.jpg') center/cover no-repeat, linear-gradient(135deg,var(--accent),var(--accent-soft))"></span>
             <span class="app-user-text">
@@ -1278,14 +1297,14 @@ and they stick with it for ninety days.
           </div>
         </div>
 
-        <!-- STUDIO -->
-        <div class="app-view" data-view="studio">
+        <!-- DRAFTS -->
+        <div class="app-view" data-view="drafts">
           <div class="app-view-head">
             <div>
               <div class="app-view-title">Untitled draft</div>
-              <div class="app-view-sub">Voice · Personal · saved 12s ago</div>
+              <div class="app-view-sub">Draft · saved 12s ago</div>
             </div>
-            <span class="app-chip">Auto-save on</span>
+            <span class="app-chip">Saved locally</span>
           </div>
           <div class="studio-grid">
             <div class="studio-doc">
@@ -1294,61 +1313,78 @@ and they stick with it for ninety days.
               <p>Here's the framework I've been using to find mine<span class="cursor"></span></p>
             </div>
             <div class="studio-side">
-              <div class="studio-card"><div class="lbl">Voice match</div><div class="big acc">98%</div><div class="small">Sounds like you.</div></div>
-              <div class="studio-card"><div class="lbl">Predicted reach</div><div class="big">3.2×</div><div class="small">vs your baseline</div></div>
+              <div class="studio-card"><div class="lbl">Words</div><div class="big">48</div><div class="small">~18s read</div></div>
+              <div class="studio-card"><div class="lbl">Saved ideas</div><div class="big acc">6</div><div class="small">Ready to pull in</div></div>
               <div class="studio-card studio-actions" style="padding:8px;">
-                <div class="studio-act"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M21 12a9 9 0 1 1-9-9"/><path d="M21 4v5h-5"/></svg> Regenerate line</div>
-                <div class="studio-act"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 9 L19 9 M5 15 L13 15"/></svg> Tighten</div>
-                <div class="studio-act"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12 L19 12 M12 5 L19 12 L12 19"/></svg> Continue writing</div>
+                <div class="studio-act"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg> Insert saved idea</div>
+                <div class="studio-act"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg> Copy draft</div>
+                <div class="studio-act"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg> New draft</div>
               </div>
             </div>
           </div>
         </div>
 
-        <!-- VOICE -->
-        <div class="app-view" data-view="voice">
+        <!-- STYLE GUIDE -->
+        <div class="app-view" data-view="styleguide">
           <div class="app-view-head">
             <div>
-              <div class="app-view-title">Voice models</div>
-              <div class="app-view-sub">3 active · 1 training</div>
+              <div class="app-view-title">Style guide</div>
+              <div class="app-view-sub">Yours · surfaced beside your drafts</div>
             </div>
-            <span class="app-chip">Training in progress</span>
+            <span class="app-chip">No AI</span>
           </div>
           <div class="voice-list">
             <div class="voice-card">
-              <div class="row1"><span class="voice-card-name"><span class="dot"></span>Personal · David Tost</span><span class="voice-card-status">Ready</span></div>
-              <div class="voice-card-bar"><i style="width:98%"></i></div>
-              <div class="voice-card-meta"><span>247 posts · 3 days ago</span><span>98% match</span></div>
+              <div class="row1"><span class="voice-card-name"><span class="dot"></span>Hook patterns</span><span class="voice-card-status">4 saved</span></div>
+              <div class="sg-lines"><b>"Most people [X]. The 1% [Y]."</b><br>"I deleted [N]. [Result] went up [M]×."<br>"Stop [vanity metric]. Start [the real lever]."</div>
             </div>
             <div class="voice-card">
-              <div class="row1"><span class="voice-card-name"><span class="dot"></span>Professional · Sona</span><span class="voice-card-status">Ready</span></div>
-              <div class="voice-card-bar"><i style="width:92%"></i></div>
-              <div class="voice-card-meta"><span>89 posts · 1 week ago</span><span>92% match</span></div>
+              <div class="row1"><span class="voice-card-name"><span class="dot"></span>Voice rules</span><span class="voice-card-status">5 rules</span></div>
+              <div class="sg-lines">Short sentences. No buzzwords. Always one concrete number. Open with tension, end with a single ask.</div>
             </div>
-            <div class="voice-card training">
-              <div class="row1"><span class="voice-card-name"><span class="dot"></span>Client · Acme Inc.</span><span class="voice-card-status">Training · 64%</span></div>
-              <div class="voice-card-bar"><i style="width:64%"></i></div>
-              <div class="voice-card-meta"><span>52 posts · started 11 min ago</span><span>Est. 4 min left</span></div>
+            <div class="voice-card">
+              <div class="row1"><span class="voice-card-name"><span class="dot warn"></span>Banned phrases</span><span class="voice-card-status">avoid</span></div>
+              <div class="sg-lines">game-changer · leverage · unlock · in today's world · circle back · move the needle</div>
             </div>
-            <button type="button" class="voice-add"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg> New voice model</button>
           </div>
         </div>
 
-        <!-- CALENDAR -->
-        <div class="app-view" data-view="calendar">
+        <!-- LISTS -->
+        <div class="app-view" data-view="lists">
           <div class="app-view-head">
             <div>
-              <div class="app-view-title">This week</div>
-              <div class="app-view-sub">Jun 2 — Jun 6 · 7 posts queued</div>
+              <div class="app-view-title">My lists</div>
+              <div class="app-view-sub">Top Creators · 6 creators</div>
             </div>
-            <span class="app-chip">Auto-publish on</span>
+            <span class="app-chip">Add creators</span>
           </div>
-          <div class="cal-week">
-            <div class="cal-day"><div class="d-head"><span class="d-name">Mon</span><span class="d-num">2</span></div><div class="cal-post x"><b>X · 9am</b>Most founders post too much…</div><div class="cal-post li"><b>LinkedIn · 1pm</b>The 3-part framework that grew our brand 10×</div></div>
-            <div class="cal-day"><div class="d-head"><span class="d-name">Tue</span><span class="d-num">3</span></div><div class="cal-post x"><b>X · 10am</b>I deleted 80% of my todo list…</div></div>
-            <div class="cal-day today"><div class="d-head"><span class="d-name">Wed</span><span class="d-num">4</span></div><div class="cal-post yt"><b>YouTube · 11am</b>I tried 47 AI tools…</div><div class="cal-post li"><b>LinkedIn · 2pm</b>Three questions before writing</div></div>
-            <div class="cal-day"><div class="d-head"><span class="d-name">Thu</span><span class="d-num">5</span></div><div class="cal-post draft"><b>Draft</b>Hook needs work…</div></div>
-            <div class="cal-day"><div class="d-head"><span class="d-name">Fri</span><span class="d-num">6</span></div><div class="cal-post x"><b>X · 9am</b>The one essay format…</div></div>
+          <div class="list-chips">
+            <span class="list-chip active">Top Creators</span>
+            <span class="list-chip">creators</span>
+            <span class="list-chip dashed">+ New list</span>
+          </div>
+          <div class="creators-grid">
+            <div class="creator-card"><span class="creator-av" style="background-image:url('https://unavatar.io/x/thedankoe')"></span><div class="creator-meta"><div class="creator-name">Dan Koe</div><div class="creator-handle">@thedankoe · Substack</div><div class="creator-stats"><span>♥ <b>42K</b></span><span>👁 <b>1.8M</b></span><span>18× outlier</span></div></div></div>
+            <div class="creator-card"><span class="creator-av" style="background-image:url('https://unavatar.io/x/thejustinwelsh')"></span><div class="creator-meta"><div class="creator-name">Justin Welsh</div><div class="creator-handle">@justinwelsh · LinkedIn</div><div class="creator-stats"><span>♥ <b>128K</b></span><span>👁 <b>6.1M</b></span><span>25× outlier</span></div></div></div>
+            <div class="creator-card"><span class="creator-av" style="background-image:url('https://unavatar.io/x/SahilBloom')"></span><div class="creator-meta"><div class="creator-name">Sahil Bloom</div><div class="creator-handle">@sahilbloom · Substack</div><div class="creator-stats"><span>♥ <b>33K</b></span><span>👁 <b>1.2M</b></span><span>14× outlier</span></div></div></div>
+            <div class="creator-card"><span class="creator-av" style="background-image:url('https://unavatar.io/x/laraacostaf')"></span><div class="creator-meta"><div class="creator-name">Lara Acosta</div><div class="creator-handle">@laraacostaf · LinkedIn</div><div class="creator-stats"><span>♥ <b>52K</b></span><span>👁 <b>2.1M</b></span><span>16× outlier</span></div></div></div>
+            <div class="creator-card"><span class="creator-av" style="background-image:url('https://unavatar.io/x/AlexHormozi')"></span><div class="creator-meta"><div class="creator-name">Alex Hormozi</div><div class="creator-handle">@AlexHormozi · X</div><div class="creator-stats"><span>♥ <b>210K</b></span><span>👁 <b>8.8M</b></span><span>28× outlier</span></div></div></div>
+            <div class="creator-card"><span class="creator-av" style="background-image:url('https://unavatar.io/x/naval')"></span><div class="creator-meta"><div class="creator-name">Naval</div><div class="creator-handle">@naval · X</div><div class="creator-stats"><span>♥ <b>380K</b></span><span>👁 <b>11M</b></span><span>24× outlier</span></div></div></div>
+          </div>
+        </div>
+
+        <!-- SAVED -->
+        <div class="app-view" data-view="saved">
+          <div class="app-view-head">
+            <div>
+              <div class="app-view-title">Saved ideas</div>
+              <div class="app-view-sub">2 items · synced to your account</div>
+            </div>
+            <span class="app-chip">Synced</span>
+          </div>
+          <div class="disc-grid">
+            <div class="disc-card"><div class="head"><span class="disc-av" style="background:url('https://unavatar.io/x/thedankoe') center/cover no-repeat, linear-gradient(135deg,#5cd,#2b8)"></span><div><div class="disc-name">Dan Koe</div><div class="disc-handle">@thedankoe · X</div></div></div><div class="disc-text">Three questions I ask before writing anything. They've saved me hundreds of bad drafts.</div><div class="disc-meta"><span class="disc-tag">18× outlier</span><span class="disc-views">2.4M views</span></div></div>
+            <div class="disc-card"><div class="head"><span class="disc-av" style="background:url('https://unavatar.io/x/AlexHormozi') center/cover no-repeat, linear-gradient(135deg,var(--accent),var(--accent-soft))"></span><div><div class="disc-name">Alex Hormozi</div><div class="disc-handle">@AlexHormozi · X</div></div></div><div class="disc-text">Most founders post too much — not too little. The ones who break out pick one contrarian take and stick to it.</div><div class="disc-meta"><span class="disc-tag">12× outlier</span><span class="disc-views">1.2M views</span></div></div>
           </div>
         </div>
 
