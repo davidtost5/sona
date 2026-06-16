@@ -93,6 +93,38 @@ create trigger on_auth_user_created
   after insert on auth.users
   for each row execute function public.handle_new_user();
 
+-- ─── Drafts (Studio editor in /app) ───
+create table if not exists drafts (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null references auth.users(id) on delete cascade,
+  title text default '',
+  body text default '',
+  platform text default 'X',
+  created_at timestamptz default now(),
+  updated_at timestamptz default now()
+);
+
+create index if not exists drafts_user_updated_idx
+  on drafts (user_id, updated_at desc);
+
+alter table drafts enable row level security;
+
+drop policy if exists "users see own drafts" on drafts;
+create policy "users see own drafts"
+  on drafts for select using (auth.uid() = user_id);
+
+drop policy if exists "users insert own drafts" on drafts;
+create policy "users insert own drafts"
+  on drafts for insert with check (auth.uid() = user_id);
+
+drop policy if exists "users update own drafts" on drafts;
+create policy "users update own drafts"
+  on drafts for update using (auth.uid() = user_id);
+
+drop policy if exists "users delete own drafts" on drafts;
+create policy "users delete own drafts"
+  on drafts for delete using (auth.uid() = user_id);
+
 -- ─── Founding members (Stripe webhook → /api/founding-count) ───
 create table if not exists founding_members (
   id uuid primary key default gen_random_uuid(),

@@ -947,7 +947,7 @@
     document.getElementById('user-av').textContent = (name[0] || '·').toUpperCase();
     await loadSaved();
     loadWorkspaceSettings();
-    loadDrafts();
+    await loadDrafts();
     loadStyleGuide();
     loadLists();
     renderDiscover();
@@ -959,13 +959,54 @@
   }
 
   // ─── Drafts ───
-  function loadDrafts() {
-    try { drafts = JSON.parse(localStorage.getItem(storageKey('drafts')) || '[]'); }
-    catch (_) { drafts = []; }
+  function draftFromRow(r) {
+    return {
+      id: r.id,
+      title: r.title || '',
+      body: r.body || '',
+      platform: r.platform || 'X',
+      createdAt: r.created_at ? Date.parse(r.created_at) : Date.now(),
+      updatedAt: r.updated_at ? Date.parse(r.updated_at) : Date.now(),
+    };
+  }
+  function readLocalDrafts() {
+    try { return JSON.parse(localStorage.getItem(storageKey('drafts')) || '[]'); }
+    catch (_) { return []; }
+  }
+  async function loadDrafts() {
     activeDraftId = null;
+    if (demoMode || !sb || !user) {
+      drafts = readLocalDrafts();
+      return;
+    }
+    try {
+      const { data, error } = await sb.from('drafts')
+        .select('*').eq('user_id', user.id).order('updated_at', { ascending:false });
+      if (error) throw error;
+      drafts = (data || []).map(draftFromRow);
+      // First-time migration: push any localStorage drafts up
+      const local = readLocalDrafts();
+      if (!drafts.length && local.length) {
+        const rows = local.map(d => ({
+          user_id: user.id,
+          title: d.title || '', body: d.body || '', platform: d.platform || 'X',
+        }));
+        const { data: inserted } = await sb.from('drafts').insert(rows).select();
+        if (inserted && inserted.length) {
+          drafts = inserted.map(draftFromRow)
+            .sort((a,b) => b.updatedAt - a.updatedAt);
+          localStorage.removeItem(storageKey('drafts'));
+        }
+      }
+    } catch (e) {
+      console.warn('loadDrafts failed, using local fallback', e);
+      drafts = readLocalDrafts();
+    }
   }
   function saveDraftsLocal() {
-    localStorage.setItem(storageKey('drafts'), JSON.stringify(drafts));
+    if (demoMode || !sb || !user) {
+      localStorage.setItem(storageKey('drafts'), JSON.stringify(drafts));
+    }
     document.getElementById('drafts-count').textContent = drafts.length;
   }
   function renderDrafts() {
@@ -1024,31 +1065,68 @@
     document.getElementById('draft-status').textContent = 'No unsaved changes.';
     renderDrafts();
   }
-  function saveDraft() {
+  async function saveDraft() {
     const d = currentDraft();
     if (!d.title && !d.body) {
       document.getElementById('draft-status').textContent = 'Add a title or body first.';
       return;
     }
+    document.getElementById('draft-status').textContent = 'Saving…';
     const now = Date.now();
-    if (d.id) {
-      const idx = drafts.findIndex(x => x.id === d.id);
-      if (idx >= 0) drafts[idx] = { ...drafts[idx], ...d, updatedAt: now };
+    const cloud = !demoMode && sb && user;
+
+    if (!cloud) {
+      if (d.id) {
+        const idx = drafts.findIndex(x => x.id === d.id);
+        if (idx >= 0) drafts[idx] = { ...drafts[idx], ...d, updatedAt: now };
+      } else {
+        const id = 'd_' + now.toString(36);
+        drafts.push({ id, title: d.title, body: d.body, platform: d.platform, createdAt: now, updatedAt: now });
+        activeDraftId = id;
+      }
+      saveDraftsLocal();
     } else {
-      const id = 'd_' + now.toString(36);
-      drafts.push({ id, title: d.title, body: d.body, platform: d.platform, createdAt: now, updatedAt: now });
-      activeDraftId = id;
+      try {
+        if (d.id) {
+          const { data, error } = await sb.from('drafts').update({
+            title: d.title, body: d.body, platform: d.platform,
+            updated_at: new Date().toISOString(),
+          }).eq('id', d.id).eq('user_id', user.id).select().single();
+          if (error) throw error;
+          const idx = drafts.findIndex(x => x.id === d.id);
+          if (idx >= 0) drafts[idx] = draftFromRow(data);
+        } else {
+          const { data, error } = await sb.from('drafts').insert({
+            user_id: user.id, title: d.title, body: d.body, platform: d.platform,
+          }).select().single();
+          if (error) throw error;
+          drafts.unshift(draftFromRow(data));
+          activeDraftId = data.id;
+        }
+        document.getElementById('drafts-count').textContent = drafts.length;
+      } catch (e) {
+        console.warn('saveDraft failed', e);
+        document.getElementById('draft-status').textContent = 'Save failed — check connection.';
+        return;
+      }
     }
-    saveDraftsLocal();
+
     const updated = drafts.find(x => x.id === activeDraftId);
-    document.getElementById('draft-heading').textContent = updated.title || 'Untitled draft';
-    document.getElementById('draft-meta').textContent = `Saved ${new Date(updated.updatedAt).toLocaleString()}`;
+    if (updated) {
+      document.getElementById('draft-heading').textContent = updated.title || 'Untitled draft';
+      document.getElementById('draft-meta').textContent = `Saved ${new Date(updated.updatedAt).toLocaleString()}`;
+    }
     document.getElementById('draft-status').textContent = 'Saved.';
     renderDrafts();
   }
-  function deleteDraft() {
+  async function deleteDraft() {
     if (!activeDraftId) { newDraft(); return; }
     if (!confirm('Delete this draft?')) return;
+    const cloud = !demoMode && sb && user && !String(activeDraftId).startsWith('d_');
+    if (cloud) {
+      try { await sb.from('drafts').delete().eq('id', activeDraftId).eq('user_id', user.id); }
+      catch (e) { console.warn('deleteDraft failed', e); }
+    }
     drafts = drafts.filter(x => x.id !== activeDraftId);
     saveDraftsLocal();
     newDraft();
@@ -1550,8 +1628,8 @@
     if (e.target.id === 'ac-back') closeAddCreators();
   });
 
-  document.getElementById('clear-local').addEventListener('click', () => {
-    if (!confirm('Clear local Sona settings and preview saves on this device?')) return;
+  document.getElementById('clear-local').addEventListener('click', async () => {
+    if (!confirm('Clear local Sona settings and preview saves on this device? (Cloud-saved drafts are kept.)')) return;
     localStorage.removeItem(storageKey('workspace-settings'));
     localStorage.removeItem(storageKey('preview-saved'));
     localStorage.removeItem(storageKey('drafts'));
@@ -1560,7 +1638,7 @@
     localStorage.removeItem('sona-preview-saved');
     if (demoMode) saved = new Set();
     loadWorkspaceSettings();
-    loadDrafts();
+    await loadDrafts();
     loadLists();
     styleGuide = { hookPatterns:'', voiceRules:'', bannedPhrases:'' };
     document.getElementById('saved-count').textContent = saved.size;
