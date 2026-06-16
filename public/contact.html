@@ -11,14 +11,14 @@
 <title>Sona — Contact</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800&family=Geist+Mono:wght@500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800&family=Geist+Mono:wght@500&display=swap" rel="stylesheet" media="print" onload="this.media='all'"><noscript><link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800&family=Geist+Mono:wght@500&display=swap" rel="stylesheet"></noscript>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
   :root {
     --bg: #ffffff; --bg-soft: #f7f7f4; --surface: #ffffff;
     --border: rgba(20,20,28,0.08); --border-strong: rgba(20,20,28,0.16);
-    --text: #15151a; --text-mid: #57575f; --text-dim: #95959d;
+    --text: #15151a; --text-mid: #57575f; --text-dim: #6f6f78;
     --accent: #4f46e5; --accent-soft: rgba(79,70,229,0.08);
     --btn: #15151a; --btn-text: #ffffff;
     --shadow-sm: 0 1px 2px rgba(20,20,30,0.04); --shadow: 0 6px 30px rgba(20,20,30,0.07);
@@ -26,7 +26,7 @@
   html[data-theme="dark"] {
     --bg: #0c0c0f; --bg-soft: #121216; --surface: #15151a;
     --border: rgba(255,255,255,0.09); --border-strong: rgba(255,255,255,0.18);
-    --text: #f4f4f6; --text-mid: #a0a0aa; --text-dim: #6a6a74;
+    --text: #f4f4f6; --text-mid: #a0a0aa; --text-dim: #8a8a94;
     --accent: #8b84ff; --accent-soft: rgba(139,132,255,0.14);
     --btn: #f4f4f6; --btn-text: #15151a;
     --shadow-sm: 0 1px 2px rgba(0,0,0,0.4); --shadow: 0 6px 30px rgba(0,0,0,0.4);
@@ -55,7 +55,7 @@
   .nav-links a:hover, .nav-links a.active { color: var(--text); }
   .nav-right { display: flex; align-items: center; gap: 14px; }
   /* Theme is fully automatic — clock-based, no toggle */
-  .nav-signin { font-size: 14px; font-weight: 500; color: var(--text-mid); text-decoration: none; cursor: pointer; transition: color .2s; }
+  .nav-signin { font-size: 14px; font-weight: 500; color: var(--text-mid); text-decoration: none; cursor: pointer; transition: color .2s; background: none; border: 0; padding: 0; font-family: inherit; }
   .nav-signin:hover { color: var(--text); }
   .btn { display: inline-flex; align-items: center; gap: 9px; justify-content: center; font-family: inherit; font-size: 14px; font-weight: 500; border: none; border-radius: 999px; cursor: pointer; text-decoration: none; transition: transform .2s, box-shadow .3s, background .2s, border-color .2s, filter .2s, opacity .2s; white-space: nowrap; }
   .btn-primary {
@@ -64,11 +64,24 @@
     box-shadow: inset 0 1px 0 rgba(255,255,255,0.22), inset 0 -1px 0 rgba(0,0,0,0.18), 0 1px 2px rgba(40,30,140,0.18);
   }
   .btn-primary:hover { transform: translateY(-1px); filter: brightness(1.05); box-shadow: inset 0 1px 0 rgba(255,255,255,0.28), inset 0 -1px 0 rgba(0,0,0,0.22), 0 10px 24px rgba(79,70,229,0.32); }
-  .menu-btn { display: none; background: none; border: none; width: 26px; height: 18px; position: relative; cursor: pointer; z-index: 200; }
-  .menu-btn span { position: absolute; left: 0; width: 100%; height: 2px; background: var(--text); border-radius: 2px; transition: transform .3s; }
-  .menu-btn span:nth-child(1) { top: 2px; } .menu-btn span:nth-child(2) { bottom: 2px; }
-  .menu-btn.open span:nth-child(1) { top: 8px; transform: rotate(45deg); }
-  .menu-btn.open span:nth-child(2) { bottom: 8px; transform: rotate(-45deg); }
+  .menu-btn {
+    display: none; width: 40px; height: 40px; position: relative; padding: 0;
+    border: 1px solid var(--border-strong); background: var(--surface); border-radius: 50%;
+    cursor: pointer; z-index: 200;
+    transition: background .2s, border-color .2s, transform .15s;
+    -webkit-tap-highlight-color: transparent; -webkit-appearance: none; appearance: none;
+  }
+  .menu-btn:hover { background: var(--bg-soft); border-color: var(--text-mid); }
+  .menu-btn:active { transform: scale(0.94); }
+  .menu-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .menu-btn span {
+    position: absolute; left: calc(50% - 8px); width: 16px; height: 2px;
+    background: var(--text); border-radius: 2px;
+    transition: top .3s cubic-bezier(.16,.86,.21,1), transform .3s cubic-bezier(.16,.86,.21,1);
+  }
+  .menu-btn span:nth-child(1) { top: 15px; } .menu-btn span:nth-child(2) { top: 21px; }
+  .menu-btn.open span:nth-child(1) { top: 18px; transform: rotate(45deg); }
+  .menu-btn.open span:nth-child(2) { top: 18px; transform: rotate(-45deg); }
   .mobile-menu { display: none; position: fixed; inset: 0; z-index: 150; background: var(--bg); flex-direction: column; align-items: center; justify-content: center; gap: 26px; opacity: 0; transition: opacity .3s; pointer-events: none; }
   .mobile-menu.open { display: flex; opacity: 1; pointer-events: auto; }
   .mobile-menu a { font-size: 25px; font-weight: 600; color: var(--text); text-decoration: none; }
@@ -164,7 +177,7 @@
     <li><a href="contact.html" class="active">Contact</a></li>
   </ul>
   <div class="nav-right">
-    <a class="nav-signin" onclick="CanopyAuth.openLogin()">Sign in</a>
+    <button type="button" class="nav-signin" onclick="CanopyAuth.openLogin()">Sign in</button>
     <a href="#" class="btn btn-primary" onclick="event.preventDefault(); CanopyAuth.openSignup();">Get started</a>
   </div>
   <button class="menu-btn" aria-label="Menu"><span></span><span></span></button>
@@ -226,16 +239,11 @@
     </a>
     <span>&copy; 2026 Sona Labs Inc.</span>
   </div>
-  <div class="foot-credit">
-    <span class="label">Created by</span>
-    <a class="name foot-credit-name" href="https://www.linkedin.com/in/davidtost/" target="_blank" rel="noopener">David Tost</a>
-    <span class="role">Founder of Sona</span>
-  </div>
 </footer>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<script src="data.js"></script>
-<script src="auth.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script defer src="data.js"></script>
+<script defer src="auth.js"></script>
 <script>
   // Theme — fully automatic, follows the clock (head bootstrap set the initial state)
   setInterval(() => {

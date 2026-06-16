@@ -16,7 +16,7 @@
   // ═══ INIT SUPABASE ═══
   async function initSupabase() {
     try {
-      const res = await fetch('/api/auth-config', { cache: 'force-cache' });
+      const res = await fetch('/api/auth-config', { cache: 'no-store' });
       const cfg = await res.json();
       if (!cfg.configured || !cfg.url || !cfg.anonKey) {
         console.info('[Sona Auth] Supabase auth not configured — add SUPABASE_ANON_KEY to Vercel env to enable real signup.');
@@ -52,7 +52,7 @@
   }
 
   async function signUp(email, password, fullName) {
-    if (!supabase) return { error: { message: 'Auth not configured. Add your Supabase credentials to auth.js' } };
+    if (!supabase) return { error: { message: "Account creation is not open yet. Join the waitlist and we'll email you when your seat is ready." } };
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
@@ -62,7 +62,7 @@
   }
 
   async function signIn(email, password) {
-    if (!supabase) return { error: { message: 'Auth not configured. Add your Supabase credentials to auth.js' } };
+    if (!supabase) return { error: { message: "Sign in is not available until account access opens." } };
     const { data, error } = await supabase.auth.signInWithPassword({ email, password });
     return { data, error };
   }
@@ -72,6 +72,7 @@
     await supabase.auth.signOut();
     currentUser = null;
     updateUI(null);
+    if (window.location.pathname.endsWith('/app.html')) window.location.href = '/';
   }
 
   async function signInWithProvider(provider) {
@@ -116,6 +117,8 @@
         padding: 44px 40px 40px;
         width: 100%;
         max-width: 400px;
+        max-height: calc(100vh - 40px);
+        overflow-y: auto;
         position: relative;
         transform: translateY(16px) scale(0.98);
         transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
@@ -160,17 +163,17 @@
       }
       .auth-logo-icon svg { width: 18px; height: 18px; display: block; }
       .auth-logo-text {
-        font-family: 'Aeonik Pro', -apple-system, sans-serif;
-        font-size: 20px;
-        font-weight: 700;
+        font-family: 'Geist', -apple-system, sans-serif;
+        font-size: 19px;
+        font-weight: 600;
         letter-spacing: -0.5px;
-        color: #4f46e5;
+        color: #15151a;
       }
       .auth-modal-title {
-        font-family: 'Aeonik Pro', -apple-system, sans-serif;
-        font-size: 28px;
-        font-weight: 700;
-        color: #4f46e5;
+        font-family: 'Geist', -apple-system, sans-serif;
+        font-size: 26px;
+        font-weight: 600;
+        color: #15151a;
         letter-spacing: -1px;
         line-height: 1.1;
         margin-bottom: 10px;
@@ -276,10 +279,41 @@
       }
       .auth-social-btn:hover { border-color: #4f46e5; background: rgba(79,70,229,0.06); }
       .auth-social-btn svg { width: 18px; height: 18px; }
+      .settings-rows {
+        display: flex; flex-direction: column;
+        background: rgba(0,0,0,0.025);
+        border: 1px solid rgba(0,0,0,0.06);
+        border-radius: 12px;
+        margin-bottom: 18px; overflow: hidden;
+      }
+      .settings-row {
+        display: flex; justify-content: space-between; align-items: center;
+        padding: 13px 16px;
+        border-bottom: 1px solid rgba(0,0,0,0.06);
+        font-family: 'Geist', -apple-system, sans-serif;
+        font-size: 13.5px;
+      }
+      .settings-row:last-child { border-bottom: 0; }
+      .settings-row-key { color: #6a6a64; font-weight: 500; }
+      .settings-row-val { color: #15151a; font-weight: 500; }
+      .settings-actions { display: flex; flex-direction: column; gap: 9px; }
+      .settings-btn {
+        font-family: 'Geist', -apple-system, sans-serif;
+        font-size: 14px; font-weight: 500;
+        padding: 12px 16px;
+        background: #fff; color: #15151a;
+        border: 1px solid rgba(0,0,0,0.12);
+        border-radius: 10px; cursor: pointer;
+        transition: background 0.2s, border-color 0.2s;
+      }
+      .settings-btn:hover { background: rgba(0,0,0,0.03); border-color: rgba(0,0,0,0.2); }
+      .settings-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+      .settings-btn.danger { color: #c85050; border-color: rgba(200,80,80,0.25); }
+      .settings-btn.danger:hover { background: rgba(200,80,80,0.05); border-color: rgba(200,80,80,0.4); }
       .auth-toggle {
         text-align: center;
         margin-top: 16px;
-        font-family: 'Aeonik Pro', -apple-system, sans-serif;
+        font-family: 'Geist', -apple-system, sans-serif;
         font-size: 14px;
         color: #5a5a56;
       }
@@ -428,7 +462,7 @@
             </button>
           </div>
           <div class="auth-toggle">
-            Don't have an account? <a id="auth-show-signup">Request access</a>
+            Don't have an account? <a id="auth-show-signup">Create account</a>
           </div>
         </div>
 
@@ -479,7 +513,7 @@
             <span class="auth-logo-text">Sona</span>
           </div>
           <div class="auth-modal-title">Create your account</div>
-          <div class="auth-modal-sub">You'll be in the studio in 10 seconds. Browse outliers, save ideas to your account. Studio &amp; Voice models ship next week.</div>
+          <div class="auth-modal-sub">You'll be in the studio in 10 seconds. Browse outliers, save ideas to your swipe board, hooks library coming soon.</div>
           <div class="auth-error" id="auth-signup-error"></div>
           <div class="auth-success" id="auth-signup-success"></div>
           <form class="auth-form" id="auth-signup-form">
@@ -495,24 +529,40 @@
               <label for="signup-password">Password</label>
               <input type="password" id="signup-password" placeholder="Min 8 characters" required minlength="8" autocomplete="new-password">
             </div>
-            <button type="submit" class="auth-submit">Take me to the studio →</button>
+            <button type="submit" class="auth-submit">Create account</button>
           </form>
-          <div class="auth-toggle" style="margin-top:12px;font-size:12.5px;">
-            Not ready? <a id="auth-show-waitlist-from-signup" style="cursor:pointer;">Just join the waitlist instead →</a>
-          </div>
-          <div class="auth-divider">or</div>
-          <div class="auth-social">
-            <button class="auth-social-btn" data-provider="google">
-              <svg viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
-              Google
-            </button>
-            <button class="auth-social-btn" data-provider="github">
-              <svg viewBox="0 0 24 24" fill="#1a1a1a"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
-              GitHub
-            </button>
-          </div>
           <div class="auth-toggle">
             Already have an account? <a id="auth-show-login">Sign in</a>
+          </div>
+        </div>
+
+        <!-- SETTINGS VIEW -->
+        <div id="auth-settings-view" style="display:none">
+          <div class="auth-logo">
+            <span class="auth-logo-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M5 15 Q8 9 12 12 Q16 15 19 9" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M19 3.6 C19.15 5.1 20.3 6.25 21.8 6.4 C20.3 6.55 19.15 7.7 19 9.2 C18.85 7.7 17.7 6.55 16.2 6.4 C17.7 6.25 18.85 5.1 19 3.6 Z" fill="#8b84ff"/></svg></span>
+            <span class="auth-logo-text">Sona</span>
+          </div>
+          <div class="auth-modal-title">Account settings</div>
+          <div class="auth-modal-sub">Manage your Sona account.</div>
+          <div class="auth-error" id="auth-settings-error"></div>
+          <div class="auth-success" id="auth-settings-success"></div>
+          <div class="settings-rows">
+            <div class="settings-row">
+              <div class="settings-row-key">Email</div>
+              <div class="settings-row-val" id="settings-email">—</div>
+            </div>
+            <div class="settings-row">
+              <div class="settings-row-key">Plan</div>
+              <div class="settings-row-val">Beta · free</div>
+            </div>
+            <div class="settings-row">
+              <div class="settings-row-key">Member since</div>
+              <div class="settings-row-val" id="settings-since">—</div>
+            </div>
+          </div>
+          <div class="settings-actions">
+            <button type="button" class="settings-btn" id="settings-reset-pw">Send password reset email</button>
+            <button type="button" class="settings-btn danger" id="settings-signout">Sign out</button>
           </div>
         </div>
       </div>
@@ -525,9 +575,39 @@
 
     document.getElementById('auth-show-signup').addEventListener('click', () => switchView('signup'));
     document.getElementById('auth-show-login').addEventListener('click', () => switchView('login'));
-    const wlLink = document.getElementById('auth-show-waitlist-from-signup');
-    if (wlLink) wlLink.addEventListener('click', () => switchView('waitlist'));
 
+    // ── Settings view handlers ──
+    const resetBtn = document.getElementById('settings-reset-pw');
+    if (resetBtn) resetBtn.addEventListener('click', async () => {
+      if (!supabase || !currentUser?.email) return;
+      const errEl = document.getElementById('auth-settings-error');
+      const okEl = document.getElementById('auth-settings-success');
+      errEl.classList.remove('visible'); okEl.classList.remove('visible');
+      resetBtn.disabled = true; const orig = resetBtn.textContent;
+      resetBtn.textContent = 'Sending…';
+      try {
+        const { error } = await supabase.auth.resetPasswordForEmail(currentUser.email, {
+          redirectTo: window.location.origin + '/app.html'
+        });
+        if (error) {
+          errEl.textContent = error.message;
+          errEl.classList.add('visible');
+        } else {
+          okEl.textContent = `Reset link sent to ${currentUser.email}.`;
+          okEl.classList.add('visible');
+        }
+      } catch (e) {
+        errEl.textContent = 'Could not send reset email. Try again.';
+        errEl.classList.add('visible');
+      }
+      resetBtn.disabled = false; resetBtn.textContent = orig;
+    });
+    const settingsSignoutBtn = document.getElementById('settings-signout');
+    if (settingsSignoutBtn) settingsSignoutBtn.addEventListener('click', async () => {
+      closeAuthModal();
+      await signOut();
+      window.location.href = '/';
+    });
     // Login form
     document.getElementById('auth-login-form').addEventListener('submit', async (e) => {
       e.preventDefault();
@@ -571,7 +651,7 @@
         errEl.textContent = "Sign-up isn't open yet — join the waitlist and we'll email you the moment it is.";
         errEl.classList.add('visible');
         setTimeout(() => switchView('waitlist'), 1200);
-        btn.disabled = false; btn.textContent = 'Take me to the studio →';
+        btn.disabled = false; btn.textContent = 'Create account';
         return;
       }
 
@@ -655,15 +735,31 @@
     document.getElementById('auth-login-view').style.display = view === 'login' ? '' : 'none';
     document.getElementById('auth-signup-view').style.display = view === 'signup' ? '' : 'none';
     document.getElementById('auth-waitlist-view').style.display = view === 'waitlist' ? '' : 'none';
+    const settingsView = document.getElementById('auth-settings-view');
+    if (settingsView) settingsView.style.display = view === 'settings' ? '' : 'none';
     // Clear errors
     document.querySelectorAll('.auth-error, .auth-success').forEach(el => el.classList.remove('visible'));
+    // When opening settings, populate user data
+    if (view === 'settings' && currentUser) populateSettings();
+  }
+
+  function populateSettings() {
+    const emailEl = document.getElementById('settings-email');
+    const sinceEl = document.getElementById('settings-since');
+    if (emailEl) emailEl.textContent = currentUser.email || '—';
+    if (sinceEl && currentUser.created_at) {
+      const d = new Date(currentUser.created_at);
+      sinceEl.textContent = d.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
+    }
   }
 
   // ═══ OPEN / CLOSE ═══
   function openAuthModal(view = 'login') {
     createModal();
-    // Mock mode (no Supabase): every entry point becomes the waitlist
-    if (!supabase) view = 'waitlist';
+    // Settings is gated on being logged in
+    if (view === 'settings' && !currentUser) view = 'login';
+    // Mock mode (no Supabase): non-settings entry points become the waitlist
+    else if (view !== 'settings' && (!configured || !supabase)) view = 'waitlist';
     switchView(view);
     requestAnimationFrame(() => {
       document.getElementById('auth-overlay').classList.add('open');
@@ -682,6 +778,7 @@
   function updateUI(user) {
     // Update all nav-right sections
     document.querySelectorAll('.nav-right').forEach(navRight => {
+      if (!navRight.dataset.loggedOutHtml) navRight.dataset.loggedOutHtml = navRight.innerHTML;
       if (user) {
         const initials = (user.user_metadata?.full_name || user.email || 'U')
           .split(' ')
@@ -695,8 +792,8 @@
             <div class="user-avatar">${initials}</div>
             <div class="user-dropdown" id="user-dropdown">
               <div class="user-dropdown-email">${user.email}</div>
-              <button class="user-dropdown-item">Dashboard</button>
-              <button class="user-dropdown-item">Settings</button>
+              <button class="user-dropdown-item" id="auth-dashboard" type="button">Dashboard</button>
+              <button class="user-dropdown-item" id="auth-settings" type="button">Settings</button>
               <button class="user-dropdown-item danger" id="auth-signout">Sign out</button>
             </div>
           </div>
@@ -710,12 +807,23 @@
         });
         document.addEventListener('click', () => dropdown.classList.remove('open'));
 
-        navRight.querySelector('#auth-signout').addEventListener('click', signOut);
-      } else {
-        navRight.innerHTML = `
-          <a href="#" class="auth-trigger-contact" data-hover>Contact</a>
-          <span class="btn-magnetic"><a href="#" class="btn-primary auth-trigger-login">Log in</a></span>
-        `;
+        navRight.querySelector('#auth-dashboard').addEventListener('click', (e) => {
+          e.stopPropagation();
+          window.location.href = '/app.html';
+        });
+        navRight.querySelector('#auth-settings').addEventListener('click', (e) => {
+          e.stopPropagation();
+          dropdown.classList.remove('open');
+          openAuthModal('settings');
+        });
+        navRight.querySelector('#auth-signout').addEventListener('click', async (e) => {
+          e.stopPropagation();
+          await signOut();
+          // Guarantee a clean refresh so all UI state resets
+          window.location.href = '/';
+        });
+      } else if (navRight.dataset.loggedOutHtml) {
+        navRight.innerHTML = navRight.dataset.loggedOutHtml;
         bindAuthTriggers();
       }
     });
@@ -724,7 +832,7 @@
     document.querySelectorAll('.mobile-menu-cta').forEach(cta => {
       if (user) {
         cta.textContent = 'Dashboard';
-        cta.onclick = () => {};
+        cta.onclick = (e) => { e.preventDefault(); window.location.href = '/app.html'; };
       } else {
         cta.textContent = 'Log in';
         cta.onclick = (e) => { e.preventDefault(); openAuthModal('login'); };
@@ -775,9 +883,9 @@
   }
 
   // ═══ INIT ═══
-  function init() {
+  async function init() {
     injectStyles();
-    initSupabase();
+    await initSupabase();
 
     // Check existing session
     if (supabase) {
@@ -810,6 +918,7 @@
     openLogin: () => openAuthModal('login'),
     openSignup: () => openAuthModal('signup'),
     openWaitlist: () => openAuthModal('waitlist'),
+    openSettings: () => openAuthModal('settings'),
     close: closeAuthModal,
     getUser: () => currentUser,
     signOut,

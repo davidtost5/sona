@@ -12,20 +12,20 @@
 <title>Sona — Studio</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@500&display=swap" rel="stylesheet" media="print" onload="this.media='all'"><noscript><link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@500&display=swap" rel="stylesheet"></noscript>
 <style>
   * { margin:0; padding:0; box-sizing:border-box; }
   :root {
     --bg:#fff; --bg-soft:#f7f7f4; --surface:#fff;
     --border:rgba(20,20,28,0.08); --border-strong:rgba(20,20,28,0.16);
-    --text:#15151a; --text-mid:#5a5a62; --text-dim:#95959d;
+    --text:#15151a; --text-mid:#5a5a62; --text-dim:#6f6f78;
     --accent:#4f46e5; --accent-2:#6b63f5; --accent-soft:rgba(79,70,229,0.08);
     --shadow-sm:0 1px 2px rgba(20,20,30,.04);
   }
   html[data-theme="dark"] {
     --bg:#0c0c0f; --bg-soft:#131318; --surface:#16161b;
     --border:rgba(255,255,255,.09); --border-strong:rgba(255,255,255,.16);
-    --text:#f4f4f6; --text-mid:#a0a0aa; --text-dim:#6a6a74;
+    --text:#f4f4f6; --text-mid:#a0a0aa; --text-dim:#8a8a94;
     --accent:#8b84ff; --accent-soft:rgba(139,132,255,.14);
     --shadow-sm:0 1px 2px rgba(0,0,0,.4);
   }
@@ -49,8 +49,30 @@
   .name { font-size:14.5px; font-weight:600; letter-spacing:-.3px; }
   .badge { margin-left:auto; font-family:'Geist Mono',monospace; font-size:9.5px; color:var(--accent); background:var(--accent-soft); padding:2px 7px; border-radius:100px; letter-spacing:.5px; text-transform:uppercase; }
 
-  .search { display:flex; align-items:center; gap:8px; padding:8px 11px; background:var(--surface); border:1px solid var(--border); border-radius:8px; font-size:12.5px; color:var(--text-dim); cursor:text; }
-  .search svg { width:13px; height:13px; flex-shrink:0; }
+  .search { display:flex; align-items:center; gap:8px; padding:8px 11px; background:var(--surface); border:1px solid var(--border); border-radius:8px; cursor:text; transition: border-color .15s, box-shadow .15s; }
+  .search:focus-within { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+  .search svg { width:13px; height:13px; flex-shrink:0; color:var(--text-dim); }
+  .search input {
+    flex: 1; min-width: 0;
+    border: 0; outline: 0; background: transparent;
+    font-family: inherit; font-size: 12.5px;
+    color: var(--text);
+  }
+  .search input::placeholder { color: var(--text-dim); }
+  .search .clear {
+    display: none; background: transparent; border: 0; padding: 0;
+    width: 16px; height: 16px; border-radius: 50%;
+    color: var(--text-dim); cursor: pointer;
+    align-items: center; justify-content: center;
+    font-size: 11px; line-height: 1;
+  }
+  .search.has-text .clear { display: inline-flex; }
+  .search.has-text .kbd { display: none; }
+  .search .clear:hover { color: var(--text); background: var(--bg-soft); }
+  .empty-search { padding: 60px 16px; text-align: center; color: var(--text-mid); font-size: 14px; line-height: 1.5; }
+  .empty-search b { color: var(--text); font-weight: 600; }
+  .empty-search .reset { display: inline-block; margin-top: 8px; color: var(--accent); font-size: 13px; cursor: pointer; background: none; border: 0; padding: 4px 0; font-family: inherit; }
+  .empty-search .reset:hover { text-decoration: underline; }
   .kbd { margin-left:auto; font-family:'Geist Mono',monospace; font-size:9.5px; padding:1px 6px; background:var(--bg-soft); border:1px solid var(--border); border-radius:4px; color:var(--text-mid); }
 
   .nav { display:flex; flex-direction:column; gap:2px; }
@@ -68,6 +90,9 @@
   .user-text { display:flex; flex-direction:column; line-height:1.2; flex:1; min-width:0; }
   .user-name { font-size:12.5px; font-weight:500; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
   .user-email { font-size:11px; color:var(--text-dim); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .preview-note { display:none; margin:0 8px; padding:10px 11px; border:1px solid var(--border); border-radius:10px; background:var(--surface); color:var(--text-mid); font-size:11.5px; line-height:1.45; }
+  .preview-note.show { display:block; }
+  .preview-note b { color:var(--text); font-weight:600; }
 
   /* Main */
   .main { display:flex; flex-direction:column; overflow:hidden; }
@@ -102,6 +127,7 @@
   .disc-name { font-size:12px; font-weight:600; }
   .disc-handle { font-size:11px; color:var(--text-dim); }
   .disc-text { font-size:13px; color:var(--text); line-height:1.5; margin-bottom:12px; }
+  .disc-card mark { background: var(--accent-soft); color: var(--accent); padding: 1px 3px; border-radius: 3px; font-weight: 600; }
   .disc-meta { display:flex; justify-content:space-between; align-items:center; }
   .disc-tag { font-family:'Geist Mono',monospace; font-size:10.5px; color:var(--accent); background:var(--accent-soft); padding:3px 8px; border-radius:100px; font-weight:500; }
   .disc-actions { display:flex; gap:6px; }
@@ -115,6 +141,53 @@
   .filter { padding:5px 11px; font-size:12px; font-family:inherit; background:var(--bg-soft); border:1px solid var(--border); border-radius:100px; color:var(--text-mid); cursor:pointer; transition:all .15s; }
   .filter:hover { color:var(--text); border-color:var(--border-strong); }
   .filter.active { background:var(--accent); color:#fff; border-color:var(--accent); }
+
+  /* Workspace screens */
+  .work-grid { display:grid; grid-template-columns:minmax(0,1.35fr) minmax(260px,.65fr); gap:18px; align-items:start; }
+  .panel { background:var(--bg-soft); border:1px solid var(--border); border-radius:12px; padding:18px; }
+  .panel h2 { font-size:16px; line-height:1.25; letter-spacing:-.35px; margin-bottom:6px; }
+  .panel p { color:var(--text-mid); font-size:13px; line-height:1.55; }
+  .panel-head { display:flex; justify-content:space-between; align-items:flex-start; gap:14px; margin-bottom:16px; }
+  .form-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+  .field { display:flex; flex-direction:column; gap:7px; }
+  .field.full { grid-column:1/-1; }
+  .field label, .toggle-row span:first-child { font-family:'Geist Mono',monospace; font-size:10px; letter-spacing:.55px; text-transform:uppercase; color:var(--text-dim); }
+  .field input, .field textarea, .field select {
+    width:100%; border:1px solid var(--border); border-radius:9px; background:var(--surface);
+    color:var(--text); font:inherit; font-size:13px; padding:10px 11px; outline:none;
+    transition:border-color .15s, box-shadow .15s;
+  }
+  .field textarea { min-height:92px; resize:vertical; line-height:1.45; }
+  .field input:focus, .field textarea:focus, .field select:focus { border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-soft); }
+  .check-row { display:flex; flex-wrap:wrap; gap:8px; }
+  .check-pill { display:inline-flex; align-items:center; gap:7px; padding:7px 10px; border:1px solid var(--border); border-radius:999px; background:var(--surface); color:var(--text-mid); font-size:12px; cursor:pointer; }
+  .check-pill input { accent-color:var(--accent); }
+  .actions-row { display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-top:16px; }
+  .status-note { font-size:12px; color:var(--text-dim); }
+  .stat-list { display:flex; flex-direction:column; gap:10px; }
+  .stat-row { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:10px 0; border-bottom:1px solid var(--border); font-size:13px; }
+  .stat-row:last-child { border-bottom:0; }
+  .stat-row b { color:var(--text); font-weight:600; }
+  .stat-row span { color:var(--text-dim); }
+  .tone-preview { margin-top:14px; padding:13px; border:1px solid var(--border); border-radius:10px; background:var(--surface); font-size:13px; color:var(--text-mid); line-height:1.55; }
+  .swipe-layout { display:grid; grid-template-columns:minmax(0,1fr) 260px; gap:18px; align-items:start; }
+  .swipe-card { min-height:310px; display:flex; flex-direction:column; justify-content:space-between; background:var(--bg-soft); border:1px solid var(--border); border-radius:14px; padding:20px; }
+  .swipe-card .disc-head { margin-bottom:16px; }
+  .swipe-text { font-size:21px; line-height:1.35; letter-spacing:-.5px; color:var(--text); margin-bottom:18px; }
+  .swipe-actions { display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; }
+  .swipe-actions .btn { justify-content:center; border-radius:10px; padding:11px 12px; }
+  .queue-list { display:flex; flex-direction:column; gap:8px; }
+  .queue-item { border:1px solid var(--border); background:var(--surface); border-radius:10px; padding:10px; font-size:12px; color:var(--text-mid); cursor:pointer; }
+  .queue-item.active { border-color:var(--accent); color:var(--text); box-shadow:0 0 0 3px var(--accent-soft); }
+  .toggle-row { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:12px 0; border-bottom:1px solid var(--border); }
+  .toggle-row:last-child { border-bottom:0; }
+  .toggle-row small { display:block; color:var(--text-dim); font-size:12px; margin-top:2px; }
+  .switch { position:relative; width:38px; height:22px; flex-shrink:0; }
+  .switch input { position:absolute; opacity:0; inset:0; }
+  .switch i { position:absolute; inset:0; border-radius:999px; background:var(--border-strong); transition:background .18s; }
+  .switch i::after { content:''; position:absolute; width:18px; height:18px; top:2px; left:2px; border-radius:50%; background:#fff; transition:transform .18s; box-shadow:0 1px 2px rgba(0,0,0,.18); }
+  .switch input:checked + i { background:var(--accent); }
+  .switch input:checked + i::after { transform:translateX(16px); }
 
   /* ─── FOUNDING UPSELL (in-app sidebar — sleeker than Eden's countdown card) ─── */
   .upsell { position:relative; border-radius:14px; padding:1px; background:linear-gradient(160deg,var(--accent),var(--accent-2) 60%,transparent 100%); margin:14px 0 4px; box-shadow:0 8px 24px rgba(79,70,229,.15); }
@@ -176,6 +249,13 @@
     .empty { padding: 60px 16px; }
     .empty h3 { font-size: 17px; }
     .empty p { font-size: 13.5px; }
+    .work-grid, .swipe-layout { grid-template-columns: 1fr; gap: 12px; }
+    .form-grid { grid-template-columns: 1fr; }
+    .panel { padding: 15px; }
+    .panel-head { flex-direction: column; align-items: flex-start; }
+    .swipe-card { min-height: auto; padding: 16px; }
+    .swipe-text { font-size: 18px; }
+    .swipe-actions { grid-template-columns: 1fr; }
   }
   /* Tap-up reset */
   @media (hover: none) and (pointer: coarse) {
@@ -202,7 +282,12 @@
       <span class="badge">Beta</span>
     </div>
 
-    <div class="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg><span>Find ideas</span><span class="kbd">⌘K</span></div>
+    <label class="search" id="search-box">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+      <input type="search" id="search-input" placeholder="Find ideas" autocomplete="off" spellcheck="false">
+      <button type="button" class="clear" id="search-clear" aria-label="Clear search">✕</button>
+      <span class="kbd">⌘K</span>
+    </label>
 
     <nav class="nav">
       <button class="nav-item active" data-view="discover">
@@ -211,11 +296,11 @@
       </button>
       <button class="nav-item" data-view="studio">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 1 1 3 3L7 19l-4 1 1-4Z"/></svg>
-        Studio
+        Drafts<span class="pill-n" id="drafts-count">0</span>
       </button>
       <button class="nav-item" data-view="voice">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h2M7 8v8M11 5v14M15 8v8M19 12h2"/></svg>
-        Voice
+        Style guide
       </button>
       <button class="nav-item" data-view="saved">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
@@ -226,10 +311,13 @@
     <div>
       <div class="section-label">Workspace</div>
       <nav class="nav">
-        <button class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>Personal brand</button>
-        <button class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>Idea swipe</button>
+        <button class="nav-item" data-view="brand"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>Personal brand</button>
+        <button class="nav-item" data-view="swipe"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>Idea swipe</button>
+        <button class="nav-item" data-view="settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>Settings</button>
       </nav>
     </div>
+
+    <div class="preview-note" id="preview-note"><b>Preview mode.</b> Supabase auth is not configured yet, so saved ideas stay on this device.</div>
 
     <!-- Founding upsell — dismissible, premium, NOT a panic timer -->
     <div class="upsell" id="upsell">
@@ -280,23 +368,101 @@
         <div class="disc-grid" id="disc-grid"><!-- rendered by JS --></div>
       </div>
 
-      <!-- STUDIO -->
+      <!-- DRAFTS (formerly Studio) -->
       <div class="view" data-view="studio">
-        <div class="empty">
-          <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:24px;height:24px;"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 1 1 3 3L7 19l-4 1 1-4Z"/></svg></div>
-          <h3>The Studio is rolling out this week.</h3>
-          <p>You'll be able to draft a post and have Sona finish it in your voice — with a real voice model trained on your writing. Saved ideas already work below.</p>
-          <span class="coming-soon">● Connecting AI · ETA this week</span>
+        <div class="work-grid">
+          <section class="panel">
+            <div class="panel-head">
+              <div>
+                <h2 id="draft-heading">New draft</h2>
+                <p>Write in your voice. Drafts save to this device.</p>
+              </div>
+              <span class="coming-soon" id="draft-meta">Unsaved</span>
+            </div>
+            <form id="draft-form">
+              <div class="form-grid">
+                <div class="field full">
+                  <label for="draft-title">Title</label>
+                  <input id="draft-title" name="title" placeholder="Hook or working title" autocomplete="off">
+                </div>
+                <div class="field full">
+                  <label for="draft-body">Body</label>
+                  <textarea id="draft-body" name="body" rows="14" placeholder="Drop a saved idea here, then rewrite it in your own words."></textarea>
+                </div>
+                <div class="field">
+                  <label for="draft-platform">Platform</label>
+                  <select id="draft-platform" name="platform" style="width:100%;padding:10px;border:1px solid var(--line);border-radius:8px;background:transparent;color:inherit;font:inherit;">
+                    <option>X</option>
+                    <option>LinkedIn</option>
+                    <option>YouTube</option>
+                    <option>Blog</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label for="draft-insert">Insert saved idea</label>
+                  <select id="draft-insert" style="width:100%;padding:10px;border:1px solid var(--line);border-radius:8px;background:transparent;color:inherit;font:inherit;">
+                    <option value="">— pick a saved idea —</option>
+                  </select>
+                </div>
+              </div>
+              <div class="actions-row">
+                <button class="btn" type="submit">Save draft</button>
+                <button class="btn btn-ghost" type="button" id="draft-new">New</button>
+                <button class="btn btn-ghost" type="button" id="draft-copy">Copy</button>
+                <button class="btn btn-ghost" type="button" id="draft-delete">Delete</button>
+                <span class="status-note" id="draft-status">No unsaved changes.</span>
+              </div>
+            </form>
+          </section>
+          <aside class="panel">
+            <h2>Your drafts</h2>
+            <p>Tap a draft to keep editing.</p>
+            <div class="queue-list" id="drafts-list" style="margin-top:14px"></div>
+          </aside>
         </div>
       </div>
 
-      <!-- VOICE -->
+      <!-- STYLE GUIDE (formerly Voice) -->
       <div class="view" data-view="voice">
-        <div class="empty">
-          <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:24px;height:24px;"><path d="M3 12h2M7 8v8M11 5v14M15 8v8M19 12h2"/></svg></div>
-          <h3>Voice training opens next.</h3>
-          <p>Upload your existing posts (X, LinkedIn, blog) and we'll train your custom voice model. 98% match average within a week of publishing.</p>
-          <span class="coming-soon">● Training pipeline launching soon</span>
+        <div class="work-grid">
+          <section class="panel">
+            <div class="panel-head">
+              <div>
+                <h2>Style guide</h2>
+                <p>Rules Sona will surface beside your drafts. Stored on your account.</p>
+              </div>
+              <span class="coming-soon">Yours, no AI</span>
+            </div>
+            <form id="style-form">
+              <div class="form-grid">
+                <div class="field full">
+                  <label for="style-hooks">Hook patterns that work for you</label>
+                  <textarea id="style-hooks" name="hookPatterns" rows="5" placeholder="One per line. e.g. &quot;Most people [X]. The 1% [Y].&quot;"></textarea>
+                </div>
+                <div class="field full">
+                  <label for="style-voice">Voice rules</label>
+                  <textarea id="style-voice" name="voiceRules" rows="5" placeholder="Short sentences. No buzzwords. Always one concrete number."></textarea>
+                </div>
+                <div class="field full">
+                  <label for="style-banned">Banned phrases</label>
+                  <textarea id="style-banned" name="bannedPhrases" rows="3" placeholder="game-changer, leverage, unlock, in today's world…"></textarea>
+                </div>
+              </div>
+              <div class="actions-row">
+                <button class="btn" type="submit">Save style guide</button>
+                <span class="status-note" id="style-status">No unsaved changes.</span>
+              </div>
+            </form>
+          </section>
+          <aside class="panel">
+            <h2>How it shows up</h2>
+            <div class="stat-list">
+              <div class="stat-row"><span>Hook patterns</span><b id="stat-hooks">0</b></div>
+              <div class="stat-row"><span>Voice rules</span><b id="stat-rules">0</b></div>
+              <div class="stat-row"><span>Banned phrases</span><b id="stat-banned">0</b></div>
+            </div>
+            <div class="tone-preview" id="style-preview">Add a few patterns and rules. They'll surface next to your draft.</div>
+          </aside>
         </div>
       </div>
 
@@ -310,6 +476,137 @@
         </div>
         <div class="disc-grid" id="saved-grid"></div>
       </div>
+
+      <!-- PERSONAL BRAND -->
+      <div class="view" data-view="brand">
+        <div class="work-grid">
+          <section class="panel">
+            <div class="panel-head">
+              <div>
+                <h2>Personal brand workspace</h2>
+                <p>Define the voice and audience Sona should use when saving ideas and drafting posts.</p>
+              </div>
+              <span class="coming-soon">Live profile</span>
+            </div>
+            <form id="brand-form">
+              <div class="form-grid">
+                <div class="field">
+                  <label for="brand-name">Display name</label>
+                  <input id="brand-name" name="fullName" autocomplete="name">
+                </div>
+                <div class="field">
+                  <label for="workspace-name">Workspace</label>
+                  <input id="workspace-name" name="workspaceName">
+                </div>
+                <div class="field full">
+                  <label for="brand-bio">Positioning</label>
+                  <textarea id="brand-bio" name="bio" placeholder="What should people know you for?"></textarea>
+                </div>
+                <div class="field">
+                  <label for="brand-audience">Audience</label>
+                  <input id="brand-audience" name="audience" placeholder="Founders, creators, operators">
+                </div>
+                <div class="field">
+                  <label for="brand-tone">Voice</label>
+                  <input id="brand-tone" name="brandTone" placeholder="Clear, contrarian, practical">
+                </div>
+                <div class="field full">
+                  <label>Platforms</label>
+                  <div class="check-row">
+                    <label class="check-pill"><input type="checkbox" name="platforms" value="X"> X</label>
+                    <label class="check-pill"><input type="checkbox" name="platforms" value="LinkedIn"> LinkedIn</label>
+                    <label class="check-pill"><input type="checkbox" name="platforms" value="YouTube"> YouTube</label>
+                    <label class="check-pill"><input type="checkbox" name="platforms" value="Blog"> Blog</label>
+                  </div>
+                </div>
+              </div>
+              <div class="actions-row">
+                <button class="btn" type="submit">Save brand profile</button>
+                <span class="status-note" id="brand-status">Saved locally and ready for drafts.</span>
+              </div>
+            </form>
+          </section>
+          <aside class="panel">
+            <h2>Profile health</h2>
+            <div class="stat-list">
+              <div class="stat-row"><span>Saved ideas</span><b id="stat-saved">0</b></div>
+              <div class="stat-row"><span>Platforms</span><b id="stat-platforms">0</b></div>
+              <div class="stat-row"><span>Voice words</span><b id="stat-voice">0</b></div>
+            </div>
+            <div class="tone-preview" id="tone-preview">Add your positioning and voice to make Sona drafts feel less generic.</div>
+          </aside>
+        </div>
+      </div>
+
+      <!-- IDEA SWIPE -->
+      <div class="view" data-view="swipe">
+        <div class="swipe-layout">
+          <section class="swipe-card" id="swipe-card"></section>
+          <aside class="panel">
+            <h2>Swipe queue</h2>
+            <p>Review outlier ideas one by one. Saved ideas move into your account and feed the Studio.</p>
+            <div class="queue-list" id="queue-list" style="margin-top:14px"></div>
+          </aside>
+        </div>
+      </div>
+
+      <!-- SETTINGS -->
+      <div class="view" data-view="settings">
+        <div class="work-grid">
+          <section class="panel">
+            <div class="panel-head">
+              <div>
+                <h2>Settings</h2>
+                <p>Control account, workspace, and local app preferences.</p>
+              </div>
+              <span class="coming-soon" id="settings-mode">Account</span>
+            </div>
+            <form id="settings-form">
+              <div class="form-grid">
+                <div class="field">
+                  <label for="settings-email">Email</label>
+                  <input id="settings-email" disabled>
+                </div>
+                <div class="field">
+                  <label for="settings-timezone">Timezone</label>
+                  <input id="settings-timezone" name="timezone">
+                </div>
+                <div class="field full">
+                  <label for="settings-goal">Content goal</label>
+                  <input id="settings-goal" name="contentGoal" placeholder="Grow a sharper founder voice">
+                </div>
+              </div>
+              <div class="panel" style="margin-top:16px;padding:4px 16px">
+                <label class="toggle-row">
+                  <span>Email digest<small>Weekly idea recap and product updates.</small></span>
+                  <span class="switch"><input type="checkbox" id="settings-digest" name="emailDigest"><i></i></span>
+                </label>
+                <label class="toggle-row">
+                  <span>Public profile<small>Reserve the setting now; public pages ship later.</small></span>
+                  <span class="switch"><input type="checkbox" id="settings-public" name="publicProfile"><i></i></span>
+                </label>
+              </div>
+              <div class="actions-row">
+                <button class="btn" type="submit">Save settings</button>
+                <button class="btn btn-ghost" type="button" id="export-data">Export data</button>
+                <span class="status-note" id="settings-status">No unsaved changes.</span>
+              </div>
+            </form>
+          </section>
+          <aside class="panel">
+            <h2>Account</h2>
+            <div class="stat-list">
+              <div class="stat-row"><span>Status</span><b id="account-status">Beta</b></div>
+              <div class="stat-row"><span>Storage</span><b id="account-storage">Local + Supabase</b></div>
+              <div class="stat-row"><span>Workspace</span><b id="account-workspace">Personal brand</b></div>
+            </div>
+            <div class="actions-row">
+              <button class="btn btn-ghost" type="button" onclick="switchView('brand')">Edit brand</button>
+              <button class="btn btn-ghost" type="button" id="clear-local">Clear local data</button>
+            </div>
+          </aside>
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -318,18 +615,128 @@
 <script>
   let sb = null;
   let user = null;
+  let demoMode = false;
+  const AV = (h) => `https://unavatar.io/x/${h}`;
   const SEED_IDEAS = [
-    { id:'i1', cat:'founders', name:'Maya O.',  handle:'@mayabuilds · X',  text:'Most founders post too much — not too little. The ones who break out pick one contrarian take and stick to it.', tag:'12× outlier' },
-    { id:'i2', cat:'founders', name:'Lucas T.', handle:'@lucasgrows · in', text:'I deleted 80% of my todo list last month. Output went up 3×. Here\'s the framework I used.', tag:'8× outlier' },
-    { id:'i3', cat:'writers',  name:'Priya R.', handle:'@priyawrites · X', text:'Three questions I ask before writing anything. They\'ve saved me hundreds of bad drafts.', tag:'18× outlier' },
-    { id:'i4', cat:'creators', name:'Theo K.',  handle:'@theonotes · X',   text:'Stop optimizing your morning routine. Start optimizing what you do with the next 6 hours.', tag:'6× outlier' },
-    { id:'i5', cat:'creators', name:'Nadia S.', handle:'@nadiateaches · YT', text:'AI didn\'t kill writing. Lazy writing did. Here\'s how to use AI without losing your voice.', tag:'14× outlier' },
-    { id:'i6', cat:'writers',  name:'Ben H.',   handle:'@benessays · in',  text:'The one essay format that changed how I think about everything I publish.', tag:'9× outlier' },
-    { id:'i7', cat:'founders', name:'Alex M.',  handle:'@alexbuilds · X',  text:'Specific knowledge is found by pursuing your genuine curiosity, not by following whatever is trendy.', tag:'22× outlier' },
-    { id:'i8', cat:'creators', name:'Iris W.',  handle:'@iriswrites · in', text:'Stop chasing followers. Start chasing the right 100 people. Compound the rest.', tag:'7× outlier' },
+    { id:'i1', cat:'founders', name:'Alex Hormozi',     av:AV('AlexHormozi'),  handle:'@AlexHormozi · X',   text:'Most founders post too much — not too little. The ones who break out pick one contrarian take and stick to it.', tag:'12× outlier' },
+    { id:'i2', cat:'founders', name:'Hala Taha',        av:AV('yapwithhala'),  handle:'@halataha · in',     text:'I deleted 80% of my todo list last month. Output went up 3×. Here\'s the framework I used.', tag:'8× outlier' },
+    { id:'i3', cat:'writers',  name:'Dan Koe',          av:AV('thedankoe'),    handle:'@thedankoe · X',     text:'Three questions I ask before writing anything. They\'ve saved me hundreds of bad drafts.', tag:'18× outlier' },
+    { id:'i4', cat:'creators', name:'Naval',            av:AV('naval'),        handle:'@naval · X',         text:'Stop optimizing your morning routine. Start optimizing what you do with the next 6 hours.', tag:'6× outlier' },
+    { id:'i5', cat:'creators', name:'Chris Williamson', av:AV('ChrisWillx'),   handle:'@chriswillx · YT',   text:'AI didn\'t kill writing. Lazy writing did. Here\'s how to use AI without losing your voice.', tag:'14× outlier' },
+    { id:'i6', cat:'writers',  name:'Greg Isenberg',    av:AV('gregisenberg'), handle:'@gregisenberg · in', text:'The one essay format that changed how I think about everything I publish.', tag:'9× outlier' },
+    { id:'i7', cat:'founders', name:'Sahil Lavingia',   av:AV('shl'),          handle:'@shl · X',           text:'Specific knowledge is found by pursuing your genuine curiosity, not by following whatever is trendy.', tag:'22× outlier' },
+    { id:'i8', cat:'creators', name:'Jay Clouse',       av:AV('jayclouse'),    handle:'@jayclouse · in',    text:'Stop chasing followers. Start chasing the right 100 people. Compound the rest.', tag:'7× outlier' },
   ];
   let currentFilter = 'all';
+  let searchTerm = '';
+  function matchesSearch(i) {
+    if (!searchTerm) return true;
+    const hay = (i.name + ' ' + i.handle + ' ' + i.text + ' ' + i.tag).toLowerCase();
+    return hay.includes(searchTerm);
+  }
   let saved = new Set();
+  let swipeIndex = 0;
+  let drafts = [];
+  let activeDraftId = null;
+  let styleGuide = { hookPatterns:'', voiceRules:'', bannedPhrases:'' };
+  let workspaceSettings = {};
+  const DEFAULT_SETTINGS = {
+    fullName: '',
+    workspaceName: 'Personal brand',
+    bio: 'Building Sona in public: sharper ideas, cleaner systems, practical creator workflows.',
+    audience: 'Founders, creators, operators',
+    brandTone: 'Clear, contrarian, practical',
+    platforms: ['X', 'LinkedIn'],
+    timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || 'Europe/Amsterdam',
+    contentGoal: 'Turn saved outlier ideas into credible founder content.',
+    emailDigest: true,
+    publicProfile: false,
+  };
+
+  function storageKey(name) {
+    return `sona-${name}-${user?.id || 'preview'}`;
+  }
+
+  function loadWorkspaceSettings() {
+    const fromUser = user?.user_metadata?.full_name || user?.email?.split('@')[0] || '';
+    const stored = JSON.parse(localStorage.getItem(storageKey('workspace-settings')) || '{}');
+    workspaceSettings = { ...DEFAULT_SETTINGS, fullName: fromUser, ...stored };
+    hydrateForms();
+    updateWorkspaceUI();
+  }
+
+  function saveWorkspaceSettings(next, statusId = 'settings-status') {
+    workspaceSettings = { ...workspaceSettings, ...next };
+    localStorage.setItem(storageKey('workspace-settings'), JSON.stringify(workspaceSettings));
+    hydrateForms();
+    updateWorkspaceUI();
+    const status = document.getElementById(statusId);
+    if (status) {
+      status.textContent = 'Saved.';
+      setTimeout(() => { status.textContent = statusId === 'brand-status' ? 'Saved locally and ready for drafts.' : 'No unsaved changes.'; }, 1800);
+    }
+  }
+
+  function hydrateForms() {
+    const s = workspaceSettings;
+    const set = (id, value) => { const el = document.getElementById(id); if (el) el.value = value || ''; };
+    set('brand-name', s.fullName);
+    set('workspace-name', s.workspaceName);
+    set('brand-bio', s.bio);
+    set('brand-audience', s.audience);
+    set('brand-tone', s.brandTone);
+    set('settings-email', user?.email || '');
+    set('settings-timezone', s.timezone);
+    set('settings-goal', s.contentGoal);
+    document.querySelectorAll('input[name="platforms"]').forEach(input => {
+      input.checked = (s.platforms || []).includes(input.value);
+    });
+    const digest = document.getElementById('settings-digest');
+    const pub = document.getElementById('settings-public');
+    if (digest) digest.checked = !!s.emailDigest;
+    if (pub) pub.checked = !!s.publicProfile;
+  }
+
+  function updateWorkspaceUI() {
+    const s = workspaceSettings;
+    const name = s.fullName || user?.email?.split('@')[0] || 'User';
+    document.getElementById('user-name').textContent = name;
+    document.getElementById('user-av').textContent = (name[0] || '·').toUpperCase();
+    const setText = (id, value) => { const el = document.getElementById(id); if (el) el.textContent = value; };
+    setText('stat-saved', saved.size);
+    setText('stat-platforms', (s.platforms || []).length);
+    setText('stat-voice', (s.brandTone || '').split(/\s+/).filter(Boolean).length);
+    setText('account-storage', demoMode ? 'Local preview' : 'Local + Supabase');
+    setText('account-workspace', s.workspaceName || 'Personal brand');
+    setText('settings-mode', demoMode ? 'Preview' : 'Account');
+    const tone = document.getElementById('tone-preview');
+    if (tone) tone.textContent = `${s.workspaceName}: writing for ${s.audience}. Voice should feel ${s.brandTone}. ${s.bio}`;
+  }
+
+  function collectBrandForm() {
+    return {
+      fullName: document.getElementById('brand-name').value.trim(),
+      workspaceName: document.getElementById('workspace-name').value.trim() || 'Personal brand',
+      bio: document.getElementById('brand-bio').value.trim(),
+      audience: document.getElementById('brand-audience').value.trim(),
+      brandTone: document.getElementById('brand-tone').value.trim(),
+      platforms: [...document.querySelectorAll('input[name="platforms"]:checked')].map(input => input.value),
+    };
+  }
+
+  function collectSettingsForm() {
+    return {
+      timezone: document.getElementById('settings-timezone').value.trim(),
+      contentGoal: document.getElementById('settings-goal').value.trim(),
+      emailDigest: document.getElementById('settings-digest').checked,
+      publicProfile: document.getElementById('settings-public').checked,
+    };
+  }
+
+  async function persistProfileToSupabase() {
+    if (demoMode || !sb || !user?.id) return;
+    await sb.from('profiles').upsert({ id: user.id, full_name: workspaceSettings.fullName || null });
+  }
 
   // Theme — re-check clock every minute so /app flips at 7am / 7pm without refresh
   setInterval(() => {
@@ -340,13 +747,22 @@
     }
   }, 60 * 1000);
 
+  async function enterPreviewMode() {
+    demoMode = true;
+    user = {
+      id: 'preview',
+      email: 'preview@sona.so',
+      user_metadata: { full_name: 'Preview workspace' },
+    };
+    await showApp();
+  }
+
   async function initApp() {
     try {
-      const res = await fetch('/api/auth-config', { cache: 'force-cache' });
+      const res = await fetch('/api/auth-config', { cache: 'no-store' });
       const cfg = await res.json();
       if (!cfg.configured) {
-        document.getElementById('gate-msg').textContent = 'Auth not configured yet. Add SUPABASE_ANON_KEY to your Vercel env vars.';
-        document.querySelector('.spinner').style.display = 'none';
+        await enterPreviewMode();
         return;
       }
       sb = window.supabase.createClient(cfg.url, cfg.anonKey, {
@@ -358,28 +774,184 @@
         return;
       }
       user = session.user;
-      showApp();
+      await showApp();
     } catch (e) {
       console.error('App init failed', e);
-      document.getElementById('gate-msg').textContent = 'Could not load. Refresh to retry.';
-      document.querySelector('.spinner').style.display = 'none';
+      await enterPreviewMode();
     }
   }
 
   async function showApp() {
     document.getElementById('gate').classList.add('hide');
     document.getElementById('shell').style.display = 'grid';
+    document.getElementById('preview-note').classList.toggle('show', demoMode);
+    document.getElementById('view-chip').textContent = demoMode ? 'Preview mode' : 'Refreshed just now';
     const meta = user.user_metadata || {};
     const name = meta.full_name || user.email.split('@')[0];
     document.getElementById('user-name').textContent = name;
     document.getElementById('user-email').textContent = user.email;
     document.getElementById('user-av').textContent = (name[0] || '·').toUpperCase();
     await loadSaved();
+    loadWorkspaceSettings();
+    loadDrafts();
+    loadStyleGuide();
     renderDiscover();
     renderSaved();
+    renderSwipe();
+    renderDrafts();
+    renderStyleGuide();
+  }
+
+  // ─── Drafts ───
+  function loadDrafts() {
+    try { drafts = JSON.parse(localStorage.getItem(storageKey('drafts')) || '[]'); }
+    catch (_) { drafts = []; }
+    activeDraftId = null;
+  }
+  function saveDraftsLocal() {
+    localStorage.setItem(storageKey('drafts'), JSON.stringify(drafts));
+    document.getElementById('drafts-count').textContent = drafts.length;
+  }
+  function renderDrafts() {
+    document.getElementById('drafts-count').textContent = drafts.length;
+    const list = document.getElementById('drafts-list');
+    if (!list) return;
+    if (!drafts.length) {
+      list.innerHTML = '<p class="status-note" style="padding:8px 0">No drafts yet. Start writing on the left.</p>';
+    } else {
+      list.innerHTML = drafts.slice().reverse().map(d => `
+        <button type="button" class="queue-item${d.id===activeDraftId?' active':''}" data-draft="${d.id}">
+          <b>${escapeHtml(d.title || 'Untitled')}</b>
+          <span>${escapeHtml((d.body || '').slice(0,80))}${(d.body||'').length>80?'…':''}</span>
+          <small>${d.platform || 'X'} · ${new Date(d.updatedAt).toLocaleDateString()}</small>
+        </button>`).join('');
+      list.querySelectorAll('[data-draft]').forEach(b => b.addEventListener('click', () => loadDraft(b.dataset.draft)));
+    }
+    // refresh "insert saved idea" dropdown
+    const sel = document.getElementById('draft-insert');
+    if (sel) {
+      const savedIdeas = SEED_IDEAS.filter(i => saved.has(i.id));
+      sel.innerHTML = '<option value="">— pick a saved idea —</option>' +
+        savedIdeas.map(i => `<option value="${i.id}">${escapeHtml(i.name)} — ${escapeHtml(i.text.slice(0,60))}…</option>`).join('');
+    }
+  }
+  function escapeHtml(s) {
+    return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  }
+  function currentDraft() {
+    return {
+      id: activeDraftId,
+      title: document.getElementById('draft-title').value.trim(),
+      body: document.getElementById('draft-body').value,
+      platform: document.getElementById('draft-platform').value,
+    };
+  }
+  function loadDraft(id) {
+    const d = drafts.find(x => x.id === id);
+    if (!d) return;
+    activeDraftId = id;
+    document.getElementById('draft-title').value = d.title || '';
+    document.getElementById('draft-body').value = d.body || '';
+    document.getElementById('draft-platform').value = d.platform || 'X';
+    document.getElementById('draft-heading').textContent = d.title || 'Untitled draft';
+    document.getElementById('draft-meta').textContent = `Saved ${new Date(d.updatedAt).toLocaleString()}`;
+    document.getElementById('draft-status').textContent = 'Loaded.';
+    renderDrafts();
+  }
+  function newDraft() {
+    activeDraftId = null;
+    document.getElementById('draft-title').value = '';
+    document.getElementById('draft-body').value = '';
+    document.getElementById('draft-platform').value = 'X';
+    document.getElementById('draft-heading').textContent = 'New draft';
+    document.getElementById('draft-meta').textContent = 'Unsaved';
+    document.getElementById('draft-status').textContent = 'No unsaved changes.';
+    renderDrafts();
+  }
+  function saveDraft() {
+    const d = currentDraft();
+    if (!d.title && !d.body) {
+      document.getElementById('draft-status').textContent = 'Add a title or body first.';
+      return;
+    }
+    const now = Date.now();
+    if (d.id) {
+      const idx = drafts.findIndex(x => x.id === d.id);
+      if (idx >= 0) drafts[idx] = { ...drafts[idx], ...d, updatedAt: now };
+    } else {
+      const id = 'd_' + now.toString(36);
+      drafts.push({ id, title: d.title, body: d.body, platform: d.platform, createdAt: now, updatedAt: now });
+      activeDraftId = id;
+    }
+    saveDraftsLocal();
+    const updated = drafts.find(x => x.id === activeDraftId);
+    document.getElementById('draft-heading').textContent = updated.title || 'Untitled draft';
+    document.getElementById('draft-meta').textContent = `Saved ${new Date(updated.updatedAt).toLocaleString()}`;
+    document.getElementById('draft-status').textContent = 'Saved.';
+    renderDrafts();
+  }
+  function deleteDraft() {
+    if (!activeDraftId) { newDraft(); return; }
+    if (!confirm('Delete this draft?')) return;
+    drafts = drafts.filter(x => x.id !== activeDraftId);
+    saveDraftsLocal();
+    newDraft();
+  }
+  async function copyDraft() {
+    const d = currentDraft();
+    const text = (d.title ? d.title + '\n\n' : '') + (d.body || '');
+    try { await navigator.clipboard.writeText(text); document.getElementById('draft-status').textContent = 'Copied to clipboard.'; }
+    catch (_) { document.getElementById('draft-status').textContent = 'Copy failed.'; }
+  }
+  function insertSavedIdea(id) {
+    const i = SEED_IDEAS.find(x => x.id === id);
+    if (!i) return;
+    const body = document.getElementById('draft-body');
+    const prefix = body.value && !body.value.endsWith('\n') ? '\n\n' : '';
+    body.value += `${prefix}From ${i.name} (${i.handle}):\n"${i.text}"\n\n— rewrite in your voice —\n`;
+    body.focus();
+  }
+
+  // ─── Style guide ───
+  function loadStyleGuide() {
+    try { styleGuide = { ...styleGuide, ...JSON.parse(localStorage.getItem(storageKey('style-guide')) || '{}') }; }
+    catch (_) {}
+  }
+  function renderStyleGuide() {
+    const set = (id, v) => { const el = document.getElementById(id); if (el) el.value = v || ''; };
+    set('style-hooks', styleGuide.hookPatterns);
+    set('style-voice', styleGuide.voiceRules);
+    set('style-banned', styleGuide.bannedPhrases);
+    const lines = (s) => (s || '').split('\n').map(x => x.trim()).filter(Boolean).length;
+    const csv = (s) => (s || '').split(',').map(x => x.trim()).filter(Boolean).length;
+    const setText2 = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
+    setText2('stat-hooks', lines(styleGuide.hookPatterns));
+    setText2('stat-rules', lines(styleGuide.voiceRules));
+    setText2('stat-banned', csv(styleGuide.bannedPhrases));
+    const preview = document.getElementById('style-preview');
+    if (preview) {
+      const firstHook = (styleGuide.hookPatterns || '').split('\n').find(x => x.trim());
+      preview.textContent = firstHook ? `Try this hook: ${firstHook.trim()}` : 'Add a few patterns and rules. They\'ll surface next to your draft.';
+    }
+  }
+  function saveStyleGuide() {
+    styleGuide = {
+      hookPatterns: document.getElementById('style-hooks').value,
+      voiceRules: document.getElementById('style-voice').value,
+      bannedPhrases: document.getElementById('style-banned').value,
+    };
+    localStorage.setItem(storageKey('style-guide'), JSON.stringify(styleGuide));
+    document.getElementById('style-status').textContent = 'Saved.';
+    renderStyleGuide();
+    setTimeout(() => { const s = document.getElementById('style-status'); if (s) s.textContent = 'No unsaved changes.'; }, 1800);
   }
 
   async function loadSaved() {
+    if (demoMode || !sb) {
+      saved = new Set(JSON.parse(localStorage.getItem('sona-preview-saved') || '[]'));
+      document.getElementById('saved-count').textContent = saved.size;
+      return;
+    }
     try {
       const { data } = await sb.from('saved_ideas').select('idea_id').eq('user_id', user.id);
       saved = new Set((data || []).map(r => r.idea_id));
@@ -387,13 +959,29 @@
     document.getElementById('saved-count').textContent = saved.size;
   }
 
+  function highlight(text) {
+    if (!searchTerm) return text;
+    const escaped = searchTerm.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    return text.replace(new RegExp(`(${escaped})`, 'gi'), '<mark>$1</mark>');
+  }
+
   function renderDiscover() {
     const grid = document.getElementById('disc-grid');
-    const items = SEED_IDEAS.filter(i => currentFilter === 'all' || i.cat === currentFilter);
+    const items = SEED_IDEAS
+      .filter(i => currentFilter === 'all' || i.cat === currentFilter)
+      .filter(matchesSearch);
+    if (items.length === 0) {
+      grid.innerHTML = `
+        <div class="empty-search" style="grid-column:1/-1">
+          ${searchTerm ? `No ideas match <b>"${searchTerm}"</b>.` : 'No ideas in this filter.'}
+          <br><button type="button" class="reset" onclick="clearSearch()">${searchTerm ? 'Clear search' : 'Show all'}</button>
+        </div>`;
+      return;
+    }
     grid.innerHTML = items.map(i => `
       <div class="disc-card">
-        <div class="disc-head"><span class="disc-av"></span><div><div class="disc-name">${i.name}</div><div class="disc-handle">${i.handle}</div></div></div>
-        <div class="disc-text">${i.text}</div>
+        <div class="disc-head"><span class="disc-av" style="background:url('${i.av}') center/cover no-repeat, linear-gradient(135deg,var(--accent),var(--accent-soft))"></span><div><div class="disc-name">${highlight(i.name)}</div><div class="disc-handle">${highlight(i.handle)}</div></div></div>
+        <div class="disc-text">${highlight(i.text)}</div>
         <div class="disc-meta">
           <span class="disc-tag">${i.tag}</span>
           <div class="disc-actions">
@@ -410,13 +998,22 @@
   function renderSaved() {
     const grid = document.getElementById('saved-grid');
     const empty = document.getElementById('saved-empty');
-    const items = SEED_IDEAS.filter(i => saved.has(i.id));
-    if (items.length === 0) { empty.style.display = 'flex'; grid.innerHTML = ''; return; }
+    const savedItems = SEED_IDEAS.filter(i => saved.has(i.id));
+    const items = savedItems.filter(matchesSearch);
+    if (savedItems.length === 0) { empty.style.display = 'flex'; grid.innerHTML = ''; return; }
     empty.style.display = 'none';
+    if (items.length === 0) {
+      grid.innerHTML = `
+        <div class="empty-search" style="grid-column:1/-1">
+          No saved ideas match <b>"${searchTerm}"</b>.
+          <br><button type="button" class="reset" onclick="clearSearch()">Clear search</button>
+        </div>`;
+      return;
+    }
     grid.innerHTML = items.map(i => `
       <div class="disc-card">
-        <div class="disc-head"><span class="disc-av"></span><div><div class="disc-name">${i.name}</div><div class="disc-handle">${i.handle}</div></div></div>
-        <div class="disc-text">${i.text}</div>
+        <div class="disc-head"><span class="disc-av" style="background:url('${i.av}') center/cover no-repeat, linear-gradient(135deg,var(--accent),var(--accent-soft))"></span><div><div class="disc-name">${highlight(i.name)}</div><div class="disc-handle">${highlight(i.handle)}</div></div></div>
+        <div class="disc-text">${highlight(i.text)}</div>
         <div class="disc-meta">
           <span class="disc-tag">${i.tag}</span>
           <div class="disc-actions">
@@ -434,23 +1031,75 @@
     if (!user) return;
     if (saved.has(ideaId)) {
       saved.delete(ideaId);
-      await sb.from('saved_ideas').delete().eq('user_id', user.id).eq('idea_id', ideaId);
+      if (!demoMode && sb) await sb.from('saved_ideas').delete().eq('user_id', user.id).eq('idea_id', ideaId);
     } else {
       saved.add(ideaId);
-      await sb.from('saved_ideas').insert({ user_id: user.id, idea_id: ideaId });
+      if (!demoMode && sb) await sb.from('saved_ideas').insert({ user_id: user.id, idea_id: ideaId });
     }
+    if (demoMode || !sb) localStorage.setItem('sona-preview-saved', JSON.stringify([...saved]));
     document.getElementById('saved-count').textContent = saved.size;
+    updateWorkspaceUI();
     renderDiscover();
     renderSaved();
+    renderSwipe();
+    renderDrafts();
   };
 
   window.switchView = function(v) {
     document.querySelectorAll('.nav-item[data-view]').forEach(b => b.classList.toggle('active', b.dataset.view === v));
     document.querySelectorAll('.view').forEach(view => view.classList.toggle('active', view.dataset.view === v));
-    const titles = { discover:['Discover','Founders · last 7 days'], studio:['Studio','Untitled draft'], voice:['Voice models','3 slots in your plan'], saved:['Saved ideas',`${saved.size} item${saved.size===1?'':'s'}`] };
-    const [t, s] = titles[v];
+    const titles = {
+      discover:['Discover','Founders · last 7 days'],
+      studio:['Drafts', drafts.length ? `${drafts.length} draft${drafts.length===1?'':'s'}` : 'Start a draft'],
+      voice:['Style guide','Yours, no AI'],
+      saved:['Saved ideas',`${saved.size} item${saved.size===1?'':'s'}`],
+      brand:['Personal brand', workspaceSettings.workspaceName || 'Workspace'],
+      swipe:['Idea swipe','Review and save outliers'],
+      settings:['Settings','Account and workspace'],
+    };
+    const title = titles[v];
+    if (!title) return;
+    const [t, s] = title;
     document.getElementById('view-title').textContent = t;
     document.getElementById('view-sub').textContent = s;
+    if (location.hash !== `#${v}`) history.replaceState(null, '', `#${v}`);
+  };
+
+  function renderSwipe() {
+    const card = document.getElementById('swipe-card');
+    const queue = document.getElementById('queue-list');
+    if (!card || !queue) return;
+    const item = SEED_IDEAS[swipeIndex % SEED_IDEAS.length];
+    const isSaved = saved.has(item.id);
+    card.innerHTML = `
+      <div>
+        <div class="disc-head">
+          <span class="disc-av" style="background:url('${item.av}') center/cover no-repeat, linear-gradient(135deg,var(--accent),var(--accent-soft))"></span>
+          <div><div class="disc-name">${item.name}</div><div class="disc-handle">${item.handle}</div></div>
+        </div>
+        <div class="swipe-text">${item.text}</div>
+        <span class="disc-tag">${item.tag}</span>
+      </div>
+      <div class="swipe-actions">
+        <button class="btn btn-ghost" type="button" onclick="prevSwipe()">Back</button>
+        <button class="btn btn-ghost" type="button" onclick="nextSwipe()">Skip</button>
+        <button class="btn" type="button" onclick="saveSwipe()">${isSaved ? 'Saved' : 'Save'}</button>
+      </div>
+    `;
+    queue.innerHTML = SEED_IDEAS.map((idea, idx) => `
+      <button class="queue-item ${idx === swipeIndex ? 'active' : ''}" type="button" onclick="goSwipe(${idx})">
+        <b>${idea.name}</b><br>${idea.text.slice(0, 74)}${idea.text.length > 74 ? '…' : ''}
+      </button>
+    `).join('');
+  }
+
+  window.goSwipe = (idx) => { swipeIndex = idx; renderSwipe(); };
+  window.nextSwipe = () => { swipeIndex = (swipeIndex + 1) % SEED_IDEAS.length; renderSwipe(); };
+  window.prevSwipe = () => { swipeIndex = (swipeIndex - 1 + SEED_IDEAS.length) % SEED_IDEAS.length; renderSwipe(); };
+  window.saveSwipe = async () => {
+    const item = SEED_IDEAS[swipeIndex % SEED_IDEAS.length];
+    if (!saved.has(item.id)) await window.toggleSave(item.id);
+    nextSwipe();
   };
 
   document.querySelectorAll('.nav-item[data-view]').forEach(btn => btn.addEventListener('click', () => switchView(btn.dataset.view)));
@@ -460,6 +1109,91 @@
     currentFilter = btn.dataset.filter;
     renderDiscover();
   }));
+
+  document.getElementById('brand-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    saveWorkspaceSettings(collectBrandForm(), 'brand-status');
+    try { await persistProfileToSupabase(); } catch (_) {}
+  });
+
+  document.getElementById('settings-form').addEventListener('submit', (e) => {
+    e.preventDefault();
+    saveWorkspaceSettings(collectSettingsForm(), 'settings-status');
+  });
+
+  document.getElementById('export-data').addEventListener('click', () => {
+    const payload = {
+      exportedAt: new Date().toISOString(),
+      user: { id: user?.id, email: user?.email },
+      settings: workspaceSettings,
+      savedIdeas: SEED_IDEAS.filter(i => saved.has(i.id)),
+    };
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'sona-workspace-export.json';
+    a.click();
+    URL.revokeObjectURL(url);
+  });
+
+  document.getElementById('draft-form').addEventListener('submit', (e) => { e.preventDefault(); saveDraft(); });
+  document.getElementById('draft-new').addEventListener('click', newDraft);
+  document.getElementById('draft-delete').addEventListener('click', deleteDraft);
+  document.getElementById('draft-copy').addEventListener('click', copyDraft);
+  document.getElementById('draft-insert').addEventListener('change', (e) => {
+    if (e.target.value) { insertSavedIdea(e.target.value); e.target.value = ''; }
+  });
+  document.getElementById('draft-title').addEventListener('input', () => { document.getElementById('draft-status').textContent = 'Unsaved changes.'; });
+  document.getElementById('draft-body').addEventListener('input', () => { document.getElementById('draft-status').textContent = 'Unsaved changes.'; });
+  document.getElementById('style-form').addEventListener('submit', (e) => { e.preventDefault(); saveStyleGuide(); });
+  ['style-hooks','style-voice','style-banned'].forEach(id => {
+    document.getElementById(id).addEventListener('input', () => { document.getElementById('style-status').textContent = 'Unsaved changes.'; });
+  });
+
+  document.getElementById('clear-local').addEventListener('click', () => {
+    if (!confirm('Clear local Sona settings and preview saves on this device?')) return;
+    localStorage.removeItem(storageKey('workspace-settings'));
+    localStorage.removeItem(storageKey('preview-saved'));
+    localStorage.removeItem(storageKey('drafts'));
+    localStorage.removeItem(storageKey('style-guide'));
+    localStorage.removeItem('sona-preview-saved');
+    if (demoMode) saved = new Set();
+    loadWorkspaceSettings();
+    loadDrafts();
+    styleGuide = { hookPatterns:'', voiceRules:'', bannedPhrases:'' };
+    document.getElementById('saved-count').textContent = saved.size;
+    renderDiscover();
+    renderSaved();
+    renderSwipe();
+    renderDrafts();
+    renderStyleGuide();
+  });
+
+  // ─── Live search wiring ───
+  const searchBox = document.getElementById('search-box');
+  const searchInput = document.getElementById('search-input');
+  const searchClear = document.getElementById('search-clear');
+  function applySearch(v) {
+    searchTerm = (v || '').trim().toLowerCase();
+    searchBox.classList.toggle('has-text', searchTerm.length > 0);
+    renderDiscover();
+    renderSaved();
+  }
+  searchInput.addEventListener('input', (e) => applySearch(e.target.value));
+  searchClear.addEventListener('click', () => { searchInput.value = ''; applySearch(''); searchInput.focus(); });
+  window.clearSearch = () => { searchInput.value = ''; applySearch(''); };
+  // ⌘K / Ctrl+K to focus, Esc to clear
+  document.addEventListener('keydown', (e) => {
+    if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+      e.preventDefault();
+      searchInput.focus();
+      searchInput.select();
+    } else if (e.key === 'Escape' && document.activeElement === searchInput) {
+      searchInput.value = ''; applySearch('');
+      searchInput.blur();
+    }
+  });
 
   // Load real founding-member count
   fetch('/api/founding-count').then(r => r.json()).then(({ claimed, total }) => {
@@ -491,13 +1225,20 @@
   };
 
   document.getElementById('user-row').addEventListener('click', async () => {
+    if (demoMode || !sb) {
+      window.location.href = '/';
+      return;
+    }
     if (confirm('Sign out of Sona?')) {
       await sb.auth.signOut();
       window.location.href = '/';
     }
   });
 
-  initApp();
+  initApp().then(() => {
+    const initialView = location.hash.replace('#', '');
+    if (initialView) switchView(initialView);
+  });
 </script>
 </body>
 </html>

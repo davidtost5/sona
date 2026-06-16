@@ -6,7 +6,9 @@
 // (Supabase dashboard → Project Settings → API → "anon public" key).
 
 export default function handler(req, res) {
-  res.setHeader('Cache-Control', 'public, max-age=300, s-maxage=300');
+  // Don't cache — env vars can change behind this and we need every page load
+  // to see the current truth. The payload is tiny (~150 bytes), no CDN savings worth a stale-config bug.
+  res.setHeader('Cache-Control', 'no-store, max-age=0');
 
   const url = process.env.SUPABASE_URL || '';
   const anonKey = process.env.SUPABASE_ANON_KEY || '';
