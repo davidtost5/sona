@@ -128,9 +128,11 @@
   .disc-handle { font-size:11px; color:var(--text-dim); }
   .disc-text { font-size:13px; color:var(--text); line-height:1.5; margin-bottom:12px; }
   .disc-card mark { background: var(--accent-soft); color: var(--accent); padding: 1px 3px; border-radius: 3px; font-weight: 600; }
-  .disc-meta { display:flex; justify-content:space-between; align-items:center; }
-  .disc-tag { font-family:'Geist Mono',monospace; font-size:10.5px; color:var(--accent); background:var(--accent-soft); padding:3px 8px; border-radius:100px; font-weight:500; }
-  .disc-actions { display:flex; gap:6px; }
+  .disc-meta { display:flex; justify-content:space-between; align-items:center; gap:8px; }
+  .disc-meta-left { display:flex; align-items:center; gap:9px; min-width:0; }
+  .disc-tag { font-family:'Geist Mono',monospace; font-size:10.5px; color:var(--accent); background:var(--accent-soft); padding:3px 8px; border-radius:100px; font-weight:500; white-space:nowrap; }
+  .disc-views { font-family:'Geist Mono',monospace; font-size:10px; color:var(--text-dim); white-space:nowrap; }
+  .disc-actions { display:flex; gap:6px; flex-shrink:0; }
   .disc-action { background:transparent; border:1px solid var(--border); border-radius:7px; padding:4px 8px; color:var(--text-mid); cursor:pointer; font-size:11px; font-family:inherit; display:inline-flex; align-items:center; gap:4px; transition:border-color .15s, color .15s; }
   .disc-action:hover { color:var(--accent); border-color:var(--accent); }
   .disc-action.saved { color:var(--accent); border-color:var(--accent); background:var(--accent-soft); }
@@ -428,7 +430,7 @@
     <header class="topbar">
       <div class="topbar-left">
         <h1 id="view-title">Discover</h1>
-        <span class="topbar-sub" id="view-sub">Founders · last 7 days</span>
+        <span class="topbar-sub" id="view-sub">Founders · last 7 days · sorted by outlier</span>
       </div>
       <span class="chip" id="view-chip">Refreshed just now</span>
     </header>
@@ -731,21 +733,21 @@
   let demoMode = false;
   const AV = (h) => `https://unavatar.io/x/${h}`;
   const SEED_IDEAS = [
-    { id:'i1', cat:'founders', name:'Alex Hormozi',     av:AV('AlexHormozi'),  handle:'@AlexHormozi · X',   text:'Most founders post too much — not too little. The ones who break out pick one contrarian take and stick to it.', tag:'12× outlier',
+    { id:'i1', cat:'founders', name:'Alex Hormozi',     av:AV('AlexHormozi'),  handle:'@AlexHormozi · X',   text:'Most founders post too much — not too little. The ones who break out pick one contrarian take and stick to it.', tag:'12× outlier', views:'1.2M views',
       decoded:{ hook:'Contrarian counter', tension:'Reader expects "post more" — gets the opposite. Cognitive jolt.', payoff:'Single concrete strategy: pick one contrarian take, stick to it.', pattern:'Most [group] [common belief]. The ones who break out [contrarian action].', why:'Opens with a category most people belong to, then strips out 99% of them. The reader self-identifies into the elite 1%.', apply:'Most [your audience] [common belief in your niche]. The ones who break out [your differentiator — the unsexy thing that actually works].' } },
-    { id:'i2', cat:'founders', name:'Hala Taha',        av:AV('yapwithhala'),  handle:'@halataha · in',     text:'I deleted 80% of my todo list last month. Output went up 3×. Here\'s the framework I used.', tag:'8× outlier',
+    { id:'i2', cat:'founders', name:'Hala Taha',        av:AV('yapwithhala'),  handle:'@halataha · in',     text:'I deleted 80% of my todo list last month. Output went up 3×. Here\'s the framework I used.', tag:'8× outlier', views:'840K views',
       decoded:{ hook:'Specific number + counterintuitive outcome', tension:'Less work → more output. Breaks the work-harder reflex.', payoff:'Promise of a named framework — a takeaway, not a vibe.', pattern:'I [aggressive cut]. [Counterintuitive result] went up [number]×. Here\'s the framework.', why:'Two specific numbers (80%, 3×) anchor credibility. "Here\'s the framework" is a content debt the reader will collect.', apply:'I deleted [aggressive % of something you do]. [The thing that actually matters] went up [number]×. Here\'s the framework.' } },
-    { id:'i3', cat:'writers',  name:'Dan Koe',          av:AV('thedankoe'),    handle:'@thedankoe · X',     text:'Three questions I ask before writing anything. They\'ve saved me hundreds of bad drafts.', tag:'18× outlier',
+    { id:'i3', cat:'writers',  name:'Dan Koe',          av:AV('thedankoe'),    handle:'@thedankoe · X',     text:'Three questions I ask before writing anything. They\'ve saved me hundreds of bad drafts.', tag:'18× outlier', views:'2.4M views',
       decoded:{ hook:'Numbered list promise', tension:'Implies the reader is writing bad drafts and doesn\'t know it.', payoff:'A finite, copyable system (three questions).', pattern:'[Small number] [thing you do] before [important action]. They\'ve saved me [big specific cost].', why:'Small number = manageable. "Bad drafts" is the reader\'s private fear. The pattern works for any process the reader already does.', apply:'Three [things] I [do] before [creative act]. They\'ve saved me [pain you avoided].' } },
-    { id:'i4', cat:'creators', name:'Naval',            av:AV('naval'),        handle:'@naval · X',         text:'Stop optimizing your morning routine. Start optimizing what you do with the next 6 hours.', tag:'6× outlier',
+    { id:'i4', cat:'creators', name:'Naval',            av:AV('naval'),        handle:'@naval · X',         text:'Stop optimizing your morning routine. Start optimizing what you do with the next 6 hours.', tag:'6× outlier', views:'510K views',
       decoded:{ hook:'Stop / start reframe', tension:'Attacks a creator-genre cliché (morning routine optimization).', payoff:'Redirects to something the reader can actually control today.', pattern:'Stop [thing the audience over-invests in]. Start [the thing that compounds].', why:'Two parallel imperatives. The first one liberates the reader from a guilt loop, the second points to the real lever.', apply:'Stop [the procrastination dressed as productivity]. Start [the thing that actually moves your number].' } },
-    { id:'i5', cat:'creators', name:'Chris Williamson', av:AV('ChrisWillx'),   handle:'@chriswillx · YT',   text:'AI didn\'t kill writing. Lazy writing did. Here\'s how to use AI without losing your voice.', tag:'14× outlier',
+    { id:'i5', cat:'creators', name:'Chris Williamson', av:AV('ChrisWillx'),   handle:'@chriswillx · YT',   text:'AI didn\'t kill writing. Lazy writing did. Here\'s how to use AI without losing your voice.', tag:'14× outlier', views:'1.8M views',
       decoded:{ hook:'False blame reversal', tension:'Defuses the AI panic, then redirects blame to the reader.', payoff:'Practical promise — use the scary tool without losing identity.', pattern:'[Scapegoat] didn\'t kill [thing]. [Real cause] did. Here\'s how to [use scapegoat] without [losing the thing].', why:'Disagreeing with the loud crowd buys credibility. The "here\'s how" makes it actionable instead of just a take.', apply:'[Tool/trend] didn\'t kill [skill you care about]. [The real bad habit] did. Here\'s how to use [tool] without [losing the thing that matters].' } },
-    { id:'i6', cat:'writers',  name:'Greg Isenberg',    av:AV('gregisenberg'), handle:'@gregisenberg · in', text:'The one essay format that changed how I think about everything I publish.', tag:'9× outlier',
+    { id:'i6', cat:'writers',  name:'Greg Isenberg',    av:AV('gregisenberg'), handle:'@gregisenberg · in', text:'The one essay format that changed how I think about everything I publish.', tag:'9× outlier', views:'690K views',
       decoded:{ hook:'Singular-discovery promise', tension:'Implies a hidden frame the reader is missing.', payoff:'A reusable mental model, not a one-off tactic.', pattern:'The one [format / question / habit] that changed how I think about [broad activity].', why:'Singular + transformation. "Everything I publish" widens the relevance from this post to all the reader\'s future work.', apply:'The one [framework] that changed how I think about [the activity your audience repeats weekly].' } },
-    { id:'i7', cat:'founders', name:'Sahil Lavingia',   av:AV('shl'),          handle:'@shl · X',           text:'Specific knowledge is found by pursuing your genuine curiosity, not by following whatever is trendy.', tag:'22× outlier',
+    { id:'i7', cat:'founders', name:'Sahil Lavingia',   av:AV('shl'),          handle:'@shl · X',           text:'Specific knowledge is found by pursuing your genuine curiosity, not by following whatever is trendy.', tag:'22× outlier', views:'1.5M views',
       decoded:{ hook:'Quiet philosophical truth', tension:'Indicts trend-chasing without naming anyone.', payoff:'Permission to ignore the noise and follow what you actually care about.', pattern:'[Valuable thing] is found by [hard but authentic path], not by [easy but crowded path].', why:'Short, declarative, no exclamation. The contrast does the work. Naval-style: aphoristic, screenshot-able.', apply:'[The thing your audience wants] is found by [the unsexy authentic path], not by [the shiny crowded one].' } },
-    { id:'i8', cat:'creators', name:'Jay Clouse',       av:AV('jayclouse'),    handle:'@jayclouse · in',    text:'Stop chasing followers. Start chasing the right 100 people. Compound the rest.', tag:'7× outlier',
+    { id:'i8', cat:'creators', name:'Jay Clouse',       av:AV('jayclouse'),    handle:'@jayclouse · in',    text:'Stop chasing followers. Start chasing the right 100 people. Compound the rest.', tag:'7× outlier', views:'420K views',
       decoded:{ hook:'Stop / start + specific number', tension:'Attacks the vanity-metric reflex.', payoff:'A concrete, lower-stakes target the reader can act on tomorrow.', pattern:'Stop chasing [vanity metric]. Start chasing [the right small number]. [Compound verb] the rest.', why:'Three short imperatives. The "100" number is small enough to feel possible and specific enough to feel real.', apply:'Stop chasing [the vanity metric in your niche]. Start chasing [the right small number]. [Compound action] the rest.' } },
   ];
   // Creator directory — searched in "Add creators" modal. Real handles + real avatars via unavatar.io.
@@ -1430,7 +1432,10 @@
         <div class="disc-head"><span class="disc-av" style="background:url('${i.av}') center/cover no-repeat, linear-gradient(135deg,var(--accent),var(--accent-soft))"></span><div><div class="disc-name">${highlight(i.name)}</div><div class="disc-handle">${highlight(i.handle)}</div></div></div>
         <div class="disc-text">${highlight(i.text)}</div>
         <div class="disc-meta">
-          <span class="disc-tag">${i.tag}</span>
+          <div class="disc-meta-left">
+            <span class="disc-tag">${i.tag}</span>
+            ${i.views ? `<span class="disc-views">${i.views}</span>` : ''}
+          </div>
           <div class="disc-actions">
             <button class="disc-action decode" onclick="openDecoder('${i.id}')" title="See why this post worked">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 1v6M12 17v6M4.22 4.22l4.24 4.24M15.54 15.54l4.24 4.24M1 12h6M17 12h6M4.22 19.78l4.24-4.24M15.54 8.46l4.24-4.24"/></svg>
@@ -1466,7 +1471,10 @@
         <div class="disc-head"><span class="disc-av" style="background:url('${i.av}') center/cover no-repeat, linear-gradient(135deg,var(--accent),var(--accent-soft))"></span><div><div class="disc-name">${highlight(i.name)}</div><div class="disc-handle">${highlight(i.handle)}</div></div></div>
         <div class="disc-text">${highlight(i.text)}</div>
         <div class="disc-meta">
-          <span class="disc-tag">${i.tag}</span>
+          <div class="disc-meta-left">
+            <span class="disc-tag">${i.tag}</span>
+            ${i.views ? `<span class="disc-views">${i.views}</span>` : ''}
+          </div>
           <div class="disc-actions">
             <button class="disc-action decode" onclick="openDecoder('${i.id}')" title="See why this post worked">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 1v6M12 17v6M4.22 4.22l4.24 4.24M15.54 15.54l4.24 4.24M1 12h6M17 12h6M4.22 19.78l4.24-4.24M15.54 8.46l4.24-4.24"/></svg>
@@ -1504,7 +1512,7 @@
     document.querySelectorAll('.nav-item[data-view]').forEach(b => b.classList.toggle('active', b.dataset.view === v));
     document.querySelectorAll('.view').forEach(view => view.classList.toggle('active', view.dataset.view === v));
     const titles = {
-      discover:['Discover','Founders · last 7 days'],
+      discover:['Discover','Founders · last 7 days · sorted by outlier'],
       studio:['Drafts', drafts.length ? `${drafts.length} draft${drafts.length===1?'':'s'}` : 'Start a draft'],
       lists:['My lists', lists.length ? `${lists.length} list${lists.length===1?'':'s'}` : 'No lists'],
       voice:['Style guide','Yours, no AI'],
