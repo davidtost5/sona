@@ -125,6 +125,69 @@ drop policy if exists "users delete own drafts" on drafts;
 create policy "users delete own drafts"
   on drafts for delete using (auth.uid() = user_id);
 
+-- ─── Lists + creators (Lists view in /app) ───
+create table if not exists lists (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null references auth.users(id) on delete cascade,
+  name text not null default 'Untitled list',
+  created_at timestamptz default now()
+);
+
+create index if not exists lists_user_created_idx on lists (user_id, created_at);
+
+alter table lists enable row level security;
+drop policy if exists "users see own lists" on lists;
+create policy "users see own lists" on lists for select using (auth.uid() = user_id);
+drop policy if exists "users insert own lists" on lists;
+create policy "users insert own lists" on lists for insert with check (auth.uid() = user_id);
+drop policy if exists "users update own lists" on lists;
+create policy "users update own lists" on lists for update using (auth.uid() = user_id);
+drop policy if exists "users delete own lists" on lists;
+create policy "users delete own lists" on lists for delete using (auth.uid() = user_id);
+
+-- Custom creators a user pasted in (outside the built-in directory)
+create table if not exists custom_creators (
+  id text primary key,                 -- e.g. cc_handle_abc123
+  user_id uuid not null references auth.users(id) on delete cascade,
+  name text,
+  handle text,
+  platform text,
+  av text,
+  created_at timestamptz default now()
+);
+
+alter table custom_creators enable row level security;
+drop policy if exists "users see own custom creators" on custom_creators;
+create policy "users see own custom creators" on custom_creators for select using (auth.uid() = user_id);
+drop policy if exists "users insert own custom creators" on custom_creators;
+create policy "users insert own custom creators" on custom_creators for insert with check (auth.uid() = user_id);
+drop policy if exists "users delete own custom creators" on custom_creators;
+create policy "users delete own custom creators" on custom_creators for delete using (auth.uid() = user_id);
+
+-- Membership: which creators belong to which list (creator_id = directory id 'c_…' or custom 'cc_…')
+create table if not exists list_creators (
+  id uuid primary key default gen_random_uuid(),
+  list_id uuid not null references lists(id) on delete cascade,
+  creator_id text not null,
+  position int default 0,
+  added_at timestamptz default now(),
+  unique (list_id, creator_id)
+);
+
+create index if not exists list_creators_list_idx on list_creators (list_id, position);
+
+alter table list_creators enable row level security;
+-- Scope through the parent list's owner
+drop policy if exists "users see own list_creators" on list_creators;
+create policy "users see own list_creators" on list_creators for select
+  using (exists (select 1 from lists l where l.id = list_id and l.user_id = auth.uid()));
+drop policy if exists "users insert own list_creators" on list_creators;
+create policy "users insert own list_creators" on list_creators for insert
+  with check (exists (select 1 from lists l where l.id = list_id and l.user_id = auth.uid()));
+drop policy if exists "users delete own list_creators" on list_creators;
+create policy "users delete own list_creators" on list_creators for delete
+  using (exists (select 1 from lists l where l.id = list_id and l.user_id = auth.uid()));
+
 -- ─── Founding members (Stripe webhook → /api/founding-count) ───
 create table if not exists founding_members (
   id uuid primary key default gen_random_uuid(),

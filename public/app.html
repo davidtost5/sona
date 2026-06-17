@@ -952,7 +952,7 @@
     loadWorkspaceSettings();
     await loadDrafts();
     loadStyleGuide();
-    loadLists();
+    await loadLists();
     renderDiscover();
     renderSaved();
     renderSwipe();
@@ -1184,20 +1184,81 @@
   }
 
   // ─── Lists ───
-  function loadLists() {
-    try { lists = JSON.parse(localStorage.getItem(storageKey('lists')) || '[]'); }
-    catch (_) { lists = []; }
-    if (!lists.length) {
-      lists = [
-        { id:'l_top',      name:'Top Creators', creatorIds:[], customCreators:[], createdAt:Date.now() },
-        { id:'l_creators', name:'creators',     creatorIds:[], customCreators:[], createdAt:Date.now()+1 },
-      ];
-      saveListsLocal();
+  const cloudLists = () => !demoMode && sb && user;
+  const isCloudListId = (id) => cloudLists() && !String(id).startsWith('l_');
+  function readLocalLists() {
+    try { return JSON.parse(localStorage.getItem(storageKey('lists')) || '[]'); }
+    catch (_) { return []; }
+  }
+  function defaultLists() {
+    return [
+      { id:'l_top',      name:'Top Creators', creatorIds:[], customCreators:[], createdAt:Date.now() },
+      { id:'l_creators', name:'creators',     creatorIds:[], customCreators:[], createdAt:Date.now()+1 },
+    ];
+  }
+  function customFromRow(c) {
+    return { id:c.id, name:c.name || c.handle, handle:c.handle || ('@'+(c.name||'')), platform:c.platform || 'X',
+             followers:0, av:c.av || AV(String(c.handle||c.name||'').replace(/^@/,'')), liked:0, viewed:0, outlier:0, custom:true };
+  }
+  async function loadLists() {
+    if (!cloudLists()) {
+      lists = readLocalLists();
+      if (!lists.length) { lists = defaultLists(); saveListsLocal(); }
+      activeListId = lists[0].id;
+      return;
     }
-    activeListId = lists[0].id;
+    try {
+      let { data: listRows, error } = await sb.from('lists').select('*').eq('user_id', user.id).order('created_at');
+      if (error) throw error;
+      listRows = listRows || [];
+      if (!listRows.length) listRows = await seedListsCloud();
+      const ids = listRows.map(r => r.id);
+      const [{ data: lcRows }, { data: customRows }] = await Promise.all([
+        sb.from('list_creators').select('*').in('list_id', ids.length ? ids : ['00000000-0000-0000-0000-000000000000']),
+        sb.from('custom_creators').select('*').eq('user_id', user.id),
+      ]);
+      const customMap = {};
+      (customRows || []).forEach(c => { customMap[c.id] = customFromRow(c); });
+      lists = listRows.map(r => {
+        const rows = (lcRows || []).filter(x => x.list_id === r.id).sort((a, b) => (a.position || 0) - (b.position || 0));
+        const creatorIds = [], customCreators = [];
+        rows.forEach(x => {
+          if (String(x.creator_id).startsWith('cc_')) { if (customMap[x.creator_id]) customCreators.push(customMap[x.creator_id]); }
+          else creatorIds.push(x.creator_id);
+        });
+        return { id: r.id, name: r.name, creatorIds, customCreators, createdAt: Date.parse(r.created_at) || Date.now() };
+      });
+      activeListId = lists[0]?.id;
+    } catch (e) {
+      console.warn('loadLists failed, using local fallback', e);
+      lists = readLocalLists();
+      if (!lists.length) lists = defaultLists();
+      activeListId = lists[0]?.id;
+    }
+  }
+  // Seed the cloud with default lists, migrating any local lists first.
+  async function seedListsCloud() {
+    const local = readLocalLists();
+    const seed = local.length ? local : defaultLists();
+    const inserted = [];
+    for (const l of seed) {
+      const { data: row, error } = await sb.from('lists').insert({ user_id: user.id, name: l.name }).select().single();
+      if (error || !row) continue;
+      inserted.push(row);
+      const customs = l.customCreators || [];
+      for (const c of customs) {
+        await sb.from('custom_creators').upsert({ id: c.id, user_id: user.id, name: c.name, handle: c.handle, platform: c.platform, av: c.av });
+      }
+      const allIds = [...(l.creatorIds || []), ...customs.map(c => c.id)];
+      if (allIds.length) {
+        await sb.from('list_creators').insert(allIds.map((cid, i) => ({ list_id: row.id, creator_id: cid, position: i })));
+      }
+    }
+    if (local.length) localStorage.removeItem(storageKey('lists'));
+    return inserted;
   }
   function saveListsLocal() {
-    localStorage.setItem(storageKey('lists'), JSON.stringify(lists));
+    if (!cloudLists()) localStorage.setItem(storageKey('lists'), JSON.stringify(lists));
     document.getElementById('lists-count').textContent = lists.length;
   }
   function getActiveList() {
@@ -1223,15 +1284,7 @@
       </button>
     `).join('') + `<button type="button" class="list-chip new" id="lists-new">+ New list</button>`;
     chipsEl.querySelectorAll('[data-list]').forEach(b => b.addEventListener('click', (e) => {
-      if (e.target.dataset.del) {
-        if (!confirm('Delete this list?')) return;
-        lists = lists.filter(x => x.id !== e.target.dataset.del);
-        if (!lists.length) lists = [{ id:'l_top', name:'Top Creators', creatorIds:[], customCreators:[], createdAt:Date.now() }];
-        activeListId = lists[0].id;
-        saveListsLocal();
-        renderLists();
-        return;
-      }
+      if (e.target.dataset.del) { deleteList(e.target.dataset.del); return; }
       activeListId = b.dataset.list;
       renderLists();
     }));
@@ -1274,17 +1327,40 @@
     `).join('');
     gridEl.querySelectorAll('[data-remove]').forEach(b => b.addEventListener('click', () => removeCreatorFromList(b.dataset.remove)));
   }
-  function createNewList() {
+  async function createNewList() {
     const name = prompt('Name your new list:', `List ${lists.length+1}`);
     if (!name || !name.trim()) return;
-    const id = 'l_' + Date.now().toString(36);
+    let id = 'l_' + Date.now().toString(36);
+    if (cloudLists()) {
+      try {
+        const { data, error } = await sb.from('lists').insert({ user_id: user.id, name: name.trim() }).select().single();
+        if (error) throw error;
+        id = data.id;
+      } catch (e) { console.warn('createNewList failed', e); }
+    }
     lists.push({ id, name:name.trim(), creatorIds:[], customCreators:[], createdAt:Date.now() });
     activeListId = id;
     saveListsLocal();
     renderLists();
   }
-  function removeCreatorFromList(creatorId) {
+  async function deleteList(listId) {
+    if (lists.length <= 1) return;            // always keep at least one
+    if (!confirm('Delete this list?')) return;
+    if (isCloudListId(listId)) {
+      try { await sb.from('lists').delete().eq('id', listId).eq('user_id', user.id); }
+      catch (e) { console.warn('deleteList failed', e); }
+    }
+    lists = lists.filter(x => x.id !== listId);
+    activeListId = lists[0].id;
+    saveListsLocal();
+    renderLists();
+  }
+  async function removeCreatorFromList(creatorId) {
     const list = getActiveList();
+    if (isCloudListId(list.id)) {
+      try { await sb.from('list_creators').delete().eq('list_id', list.id).eq('creator_id', creatorId); }
+      catch (e) { console.warn('removeCreatorFromList failed', e); }
+    }
     list.creatorIds = (list.creatorIds||[]).filter(id => id !== creatorId);
     list.customCreators = (list.customCreators||[]).filter(c => c.id !== creatorId);
     saveListsLocal();
@@ -1366,27 +1442,38 @@
       html += `<div class="ac-empty">No matches. Paste a profile URL or full handle to add it as a custom creator.</div>`;
     }
     listEl.innerHTML = html;
-    listEl.querySelectorAll('[data-add]').forEach(b => b.addEventListener('click', () => {
+    listEl.querySelectorAll('[data-add]').forEach(b => b.addEventListener('click', async () => {
       const id = b.dataset.add;
       const tList = lists.find(l => l.id === document.getElementById('ac-target').value);
-      if (!tList) return;
-      if (!tList.creatorIds.includes(id)) tList.creatorIds.push(id);
+      if (!tList || tList.creatorIds.includes(id)) return;
+      const pos = (tList.creatorIds.length + (tList.customCreators||[]).length);
+      if (isCloudListId(tList.id)) {
+        try { await sb.from('list_creators').insert({ list_id: tList.id, creator_id: id, position: pos }); }
+        catch (e) { console.warn('add creator failed', e); }
+      }
+      tList.creatorIds.push(id);
       saveListsLocal();
       renderACList();
     }));
     const customBtn = listEl.querySelector('[data-add-custom]');
     if (customBtn) {
-      customBtn.addEventListener('click', () => {
+      customBtn.addEventListener('click', async () => {
         const handle = parseHandle(acSearchTerm);
         const platform = detectPlatformFromInput(acSearchTerm);
         const tList = lists.find(l => l.id === document.getElementById('ac-target').value);
         if (!tList || !handle) return;
         const id = 'cc_' + handle.toLowerCase().replace(/[^a-z0-9]/g,'') + '_' + Date.now().toString(36);
+        const creator = { id, name:handle, handle:'@'+handle, platform, followers:0,
+          av: AV(handle), liked:0, viewed:0, outlier:0, custom:true };
+        const pos = (tList.creatorIds.length + (tList.customCreators||[]).length);
+        if (isCloudListId(tList.id)) {
+          try {
+            await sb.from('custom_creators').upsert({ id, user_id: user.id, name: handle, handle: '@'+handle, platform, av: AV(handle) });
+            await sb.from('list_creators').insert({ list_id: tList.id, creator_id: id, position: pos });
+          } catch (e) { console.warn('add custom creator failed', e); }
+        }
         tList.customCreators = tList.customCreators || [];
-        tList.customCreators.push({
-          id, name:handle, handle:'@'+handle, platform, followers:0,
-          av: AV(handle), liked:0, viewed:0, outlier:0, custom:true,
-        });
+        tList.customCreators.push(creator);
         saveListsLocal();
         document.getElementById('ac-search').value = '';
         acSearchTerm = '';
@@ -1648,7 +1735,7 @@
     if (demoMode) saved = new Set();
     loadWorkspaceSettings();
     await loadDrafts();
-    loadLists();
+    await loadLists();
     styleGuide = { hookPatterns:'', voiceRules:'', bannedPhrases:'' };
     document.getElementById('saved-count').textContent = saved.size;
     renderDiscover();
