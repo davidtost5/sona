@@ -951,7 +951,7 @@
     await loadSaved();
     loadWorkspaceSettings();
     await loadDrafts();
-    loadStyleGuide();
+    await loadStyleGuide();
     await loadLists();
     renderDiscover();
     renderSaved();
@@ -1150,9 +1150,36 @@
   }
 
   // ─── Style guide ───
-  function loadStyleGuide() {
-    try { styleGuide = { ...styleGuide, ...JSON.parse(localStorage.getItem(storageKey('style-guide')) || '{}') }; }
-    catch (_) {}
+  const cloudProfile = () => !demoMode && sb && user?.id;
+  function readLocalStyleGuide() {
+    try { return JSON.parse(localStorage.getItem(storageKey('style-guide')) || '{}'); }
+    catch (_) { return {}; }
+  }
+  async function loadStyleGuide() {
+    if (!cloudProfile()) {
+      styleGuide = { ...styleGuide, ...readLocalStyleGuide() };
+      return;
+    }
+    try {
+      const { data, error } = await sb.from('profiles').select('style_guide').eq('id', user.id).maybeSingle();
+      if (error) throw error;
+      const cloud = (data && data.style_guide) || {};
+      const hasCloud = cloud.hookPatterns || cloud.voiceRules || cloud.bannedPhrases;
+      if (hasCloud) {
+        styleGuide = { ...styleGuide, ...cloud };
+      } else {
+        // First run: migrate any local style guide up, then clear local.
+        const local = readLocalStyleGuide();
+        if (local.hookPatterns || local.voiceRules || local.bannedPhrases) {
+          styleGuide = { ...styleGuide, ...local };
+          await sb.from('profiles').upsert({ id: user.id, style_guide: styleGuide });
+          localStorage.removeItem(storageKey('style-guide'));
+        }
+      }
+    } catch (e) {
+      console.warn('loadStyleGuide failed, using local', e);
+      styleGuide = { ...styleGuide, ...readLocalStyleGuide() };
+    }
   }
   function renderStyleGuide() {
     const set = (id, v) => { const el = document.getElementById(id); if (el) el.value = v || ''; };
@@ -1171,14 +1198,27 @@
       preview.textContent = firstHook ? `Try this hook: ${firstHook.trim()}` : 'Add a few patterns and rules. They\'ll surface next to your draft.';
     }
   }
-  function saveStyleGuide() {
+  async function saveStyleGuide() {
     styleGuide = {
       hookPatterns: document.getElementById('style-hooks').value,
       voiceRules: document.getElementById('style-voice').value,
       bannedPhrases: document.getElementById('style-banned').value,
     };
-    localStorage.setItem(storageKey('style-guide'), JSON.stringify(styleGuide));
-    document.getElementById('style-status').textContent = 'Saved.';
+    const status = document.getElementById('style-status');
+    if (cloudProfile()) {
+      status.textContent = 'Saving…';
+      try {
+        const { error } = await sb.from('profiles').upsert({ id: user.id, style_guide: styleGuide });
+        if (error) throw error;
+      } catch (e) {
+        console.warn('saveStyleGuide failed', e);
+        status.textContent = 'Save failed — check connection.';
+        return;
+      }
+    } else {
+      localStorage.setItem(storageKey('style-guide'), JSON.stringify(styleGuide));
+    }
+    status.textContent = 'Saved.';
     renderStyleGuide();
     setTimeout(() => { const s = document.getElementById('style-status'); if (s) s.textContent = 'No unsaved changes.'; }, 1800);
   }
@@ -1734,9 +1774,10 @@
     localStorage.removeItem('sona-preview-saved');
     if (demoMode) saved = new Set();
     loadWorkspaceSettings();
+    styleGuide = { hookPatterns:'', voiceRules:'', bannedPhrases:'' };
     await loadDrafts();
     await loadLists();
-    styleGuide = { hookPatterns:'', voiceRules:'', bannedPhrases:'' };
+    await loadStyleGuide();   // cloud copy kept; only the local copy was cleared
     document.getElementById('saved-count').textContent = saved.size;
     renderDiscover();
     renderSaved();

@@ -50,8 +50,12 @@ create policy "users delete their own saves"
 create table if not exists profiles (
   id uuid primary key references auth.users(id) on delete cascade,
   full_name text,
+  style_guide jsonb default '{}'::jsonb,
   created_at timestamptz default now()
 );
+
+-- Add style_guide to pre-existing profiles tables (idempotent)
+alter table profiles add column if not exists style_guide jsonb default '{}'::jsonb;
 
 alter table profiles enable row level security;
 
