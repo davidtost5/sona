@@ -726,6 +726,51 @@
   </div>
 </div>
 
+<!-- Add creators modal (must precede the app script — its bindings reference these ids) -->
+<div class="ac-back" id="ac-back">
+  <div class="ac" role="dialog" aria-modal="true" aria-labelledby="ac-title">
+    <div class="ac-head">
+      <div class="ac-head-row">
+        <h3 class="ac-title" id="ac-title">Add creators</h3>
+        <button class="decoder-close" onclick="closeAddCreators()" aria-label="Close">×</button>
+      </div>
+      <div class="ac-to">to <select id="ac-target"></select></div>
+    </div>
+    <div class="ac-search">
+      <input id="ac-search" type="text" placeholder="Search a handle or paste a profile URL" autocomplete="off">
+    </div>
+    <div class="ac-list" id="ac-list"></div>
+    <div class="ac-foot">
+      <small>Stays open — add as many as you like</small>
+      <button class="btn" type="button" onclick="closeAddCreators()">Done</button>
+    </div>
+  </div>
+</div>
+
+<!-- Outlier decoder modal -->
+<div class="decoder-back" id="decoder-back">
+  <div class="decoder" role="dialog" aria-modal="true" aria-labelledby="decoder-name">
+    <div class="decoder-head">
+      <div>
+        <div class="decoder-eye" id="decoder-tag">12× outlier · founders</div>
+        <h2 id="decoder-name">Alex Hormozi</h2>
+      </div>
+      <button class="decoder-close" onclick="closeDecoder()" aria-label="Close">×</button>
+    </div>
+    <div class="decoder-quote" id="decoder-quote"></div>
+    <div class="decoder-row"><div class="decoder-label">Hook type</div><div class="decoder-val" id="decoder-hook"></div></div>
+    <div class="decoder-row"><div class="decoder-label">Tension</div><div class="decoder-val" id="decoder-tension"></div></div>
+    <div class="decoder-row"><div class="decoder-label">Payoff</div><div class="decoder-val" id="decoder-payoff"></div></div>
+    <div class="decoder-row"><div class="decoder-label">Pattern</div><div class="decoder-val"><span class="decoder-pattern" id="decoder-pattern"></span></div></div>
+    <div class="decoder-row"><div class="decoder-label">Why it worked</div><div class="decoder-val" id="decoder-why"></div></div>
+    <div class="decoder-row"><div class="decoder-label">Apply to you</div><div class="decoder-val" id="decoder-apply"></div></div>
+    <div class="decoder-foot">
+      <button class="btn" onclick="applyPatternToDraft()">Apply pattern to draft</button>
+      <button class="btn btn-ghost" onclick="closeDecoder()">Close</button>
+    </div>
+  </div>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script>
   let sb = null;
@@ -1853,21 +1898,53 @@
   });
 
   // ─── Outlier decoder ───
-  window.openDecoder = function(id) {
+  function fillDecoder(d) {
+    document.getElementById('decoder-hook').textContent = d.hook || '';
+    document.getElementById('decoder-tension').textContent = d.tension || '';
+    document.getElementById('decoder-payoff').textContent = d.payoff || '';
+    document.getElementById('decoder-pattern').textContent = d.pattern || '';
+    document.getElementById('decoder-why').textContent = d.why || '';
+    document.getElementById('decoder-apply').textContent = d.apply || '';
+  }
+  const LOADING_DECODE = { hook:'…', tension:'Decoding why this broke out…', payoff:'…', pattern:'…', why:'…', apply:'…' };
+
+  window.openDecoder = async function(id) {
     const i = SEED_IDEAS.find(x => x.id === id);
-    if (!i || !i.decoded) return;
-    const d = i.decoded;
+    if (!i) return;
     document.getElementById('decoder-back').dataset.idea = id;
     document.getElementById('decoder-tag').textContent = `${i.tag} · ${i.cat}`;
     document.getElementById('decoder-name').textContent = i.name;
     document.getElementById('decoder-quote').innerHTML = `${escapeHtml(i.text)}<small>${escapeHtml(i.handle)}</small>`;
-    document.getElementById('decoder-hook').textContent = d.hook;
-    document.getElementById('decoder-tension').textContent = d.tension;
-    document.getElementById('decoder-payoff').textContent = d.payoff;
-    document.getElementById('decoder-pattern').textContent = d.pattern;
-    document.getElementById('decoder-why').textContent = d.why;
-    document.getElementById('decoder-apply').textContent = d.apply;
+
+    // Static decode (the 8 seed posts) — instant, free, no API call.
+    if (i.decoded) {
+      fillDecoder(i.decoded);
+      document.getElementById('decoder-back').classList.add('show');
+      return;
+    }
+
+    // Real/new post (e.g. from the ingest pipeline) — call the cached Claude endpoint.
+    fillDecoder(LOADING_DECODE);
     document.getElementById('decoder-back').classList.add('show');
+    try {
+      const res = await fetch('/api/decode', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text: i.text, author: i.name, platform: (i.handle || '').split('·').pop().trim() }),
+      });
+      const json = await res.json();
+      // Still on the same post? (user may have closed/switched)
+      if (document.getElementById('decoder-back').dataset.idea !== id) return;
+      if (json.decoded) {
+        i.decoded = json.decoded; // memoize so re-opening is instant
+        fillDecoder(json.decoded);
+      } else {
+        fillDecoder({ hook:'Unavailable', tension:'Couldn\'t decode this one right now.', payoff:'—', pattern:'—', why:'Try again shortly.', apply:'—' });
+      }
+    } catch (_) {
+      if (document.getElementById('decoder-back').dataset.idea !== id) return;
+      fillDecoder({ hook:'Offline', tension:'Decoder is unavailable right now.', payoff:'—', pattern:'—', why:'Check your connection.', apply:'—' });
+    }
   };
   window.closeDecoder = function() {
     document.getElementById('decoder-back').classList.remove('show');
@@ -1904,50 +1981,5 @@
     if (initialView) switchView(initialView);
   });
 </script>
-
-<!-- Add creators modal -->
-<div class="ac-back" id="ac-back">
-  <div class="ac" role="dialog" aria-modal="true" aria-labelledby="ac-title">
-    <div class="ac-head">
-      <div class="ac-head-row">
-        <h3 class="ac-title" id="ac-title">Add creators</h3>
-        <button class="decoder-close" onclick="closeAddCreators()" aria-label="Close">×</button>
-      </div>
-      <div class="ac-to">to <select id="ac-target"></select></div>
-    </div>
-    <div class="ac-search">
-      <input id="ac-search" type="text" placeholder="Search a handle or paste a profile URL" autocomplete="off">
-    </div>
-    <div class="ac-list" id="ac-list"></div>
-    <div class="ac-foot">
-      <small>Stays open — add as many as you like</small>
-      <button class="btn" type="button" onclick="closeAddCreators()">Done</button>
-    </div>
-  </div>
-</div>
-
-<!-- Outlier decoder modal -->
-<div class="decoder-back" id="decoder-back">
-  <div class="decoder" role="dialog" aria-modal="true" aria-labelledby="decoder-name">
-    <div class="decoder-head">
-      <div>
-        <div class="decoder-eye" id="decoder-tag">12× outlier · founders</div>
-        <h2 id="decoder-name">Alex Hormozi</h2>
-      </div>
-      <button class="decoder-close" onclick="closeDecoder()" aria-label="Close">×</button>
-    </div>
-    <div class="decoder-quote" id="decoder-quote"></div>
-    <div class="decoder-row"><div class="decoder-label">Hook type</div><div class="decoder-val" id="decoder-hook"></div></div>
-    <div class="decoder-row"><div class="decoder-label">Tension</div><div class="decoder-val" id="decoder-tension"></div></div>
-    <div class="decoder-row"><div class="decoder-label">Payoff</div><div class="decoder-val" id="decoder-payoff"></div></div>
-    <div class="decoder-row"><div class="decoder-label">Pattern</div><div class="decoder-val"><span class="decoder-pattern" id="decoder-pattern"></span></div></div>
-    <div class="decoder-row"><div class="decoder-label">Why it worked</div><div class="decoder-val" id="decoder-why"></div></div>
-    <div class="decoder-row"><div class="decoder-label">Apply to you</div><div class="decoder-val" id="decoder-apply"></div></div>
-    <div class="decoder-foot">
-      <button class="btn" onclick="applyPatternToDraft()">Apply pattern to draft</button>
-      <button class="btn btn-ghost" onclick="closeDecoder()">Close</button>
-    </div>
-  </div>
-</div>
 </body>
 </html>

@@ -192,6 +192,20 @@ drop policy if exists "users delete own list_creators" on list_creators;
 create policy "users delete own list_creators" on list_creators for delete
   using (exists (select 1 from lists l where l.id = list_id and l.user_id = auth.uid()));
 
+-- ─── Outlier decode cache (/api/decode → Claude Haiku) ───
+-- Keyed by sha256 of the post text so the SAME post is paid for once across all users.
+-- Service-role only (the API writes through it); no RLS policies needed since the anon
+-- client never touches this table directly.
+create table if not exists post_decodes (
+  id text primary key,                 -- sha256(post text)
+  decoded jsonb not null,              -- { hook, tension, payoff, pattern, why, apply }
+  model text,
+  created_at timestamptz default now()
+);
+
+alter table post_decodes enable row level security;
+-- No policies: only the service role (api/decode.js) reads/writes this table.
+
 -- ─── Founding members (Stripe webhook → /api/founding-count) ───
 create table if not exists founding_members (
   id uuid primary key default gen_random_uuid(),

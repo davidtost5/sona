@@ -6,6 +6,7 @@
     { "source": "/api/auth-config", "destination": "/api/auth-config.js" },
     { "source": "/api/checkout", "destination": "/api/checkout.js" },
     { "source": "/api/founding-count", "destination": "/api/founding-count.js" },
+    { "source": "/api/decode", "destination": "/api/decode.js" },
     { "source": "/app", "destination": "/app.html" }
   ],
   "headers": [
