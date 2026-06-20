@@ -192,6 +192,32 @@ drop policy if exists "users delete own list_creators" on list_creators;
 create policy "users delete own list_creators" on list_creators for delete
   using (exists (select 1 from lists l where l.id = list_id and l.user_id = auth.uid()));
 
+-- ─── Outliers (Discover feed) ───
+-- The real, curated outlier posts the Discover feed reads from. This is the
+-- storage the ingest pipeline writes to. For v1 it's hand-curated (free, honest)
+-- — automated scraping (X API / LinkedIn) is deferred until revenue justifies it.
+-- Public read (it's a shared catalog, not user data); writes are service-role only.
+create table if not exists outliers (
+  id text primary key,                 -- stable slug, e.g. 'o_hormozi_contrarian'
+  cat text default 'founders',         -- founders | writers | creators (Discover filter)
+  creator_name text not null,
+  handle text not null,                -- '@AlexHormozi · X'
+  avatar_handle text,                  -- bare handle for unavatar.io (e.g. 'AlexHormozi')
+  text text not null,
+  outlier_tag text,                    -- '12× outlier'
+  views text,                          -- '1.2M views'
+  source_url text,
+  position int default 0,              -- display order (lower first)
+  captured_at timestamptz default now()
+);
+
+create index if not exists outliers_position_idx on outliers (position, captured_at desc);
+
+alter table outliers enable row level security;
+drop policy if exists "anyone can read outliers" on outliers;
+create policy "anyone can read outliers" on outliers for select using (true);
+-- No insert/update/delete policies: only the service role curates this table.
+
 -- ─── Outlier decode cache (/api/decode → Claude Haiku) ───
 -- Keyed by sha256 of the post text so the SAME post is paid for once across all users.
 -- Service-role only (the API writes through it); no RLS policies needed since the anon

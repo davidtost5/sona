@@ -795,6 +795,41 @@
     { id:'i8', cat:'creators', name:'Jay Clouse',       av:AV('jayclouse'),    handle:'@jayclouse · in',    text:'Stop chasing followers. Start chasing the right 100 people. Compound the rest.', tag:'7× outlier', views:'420K views',
       decoded:{ hook:'Stop / start + specific number', tension:'Attacks the vanity-metric reflex.', payoff:'A concrete, lower-stakes target the reader can act on tomorrow.', pattern:'Stop chasing [vanity metric]. Start chasing [the right small number]. [Compound verb] the rest.', why:'Three short imperatives. The "100" number is small enough to feel possible and specific enough to feel real.', apply:'Stop chasing [the vanity metric in your niche]. Start chasing [the right small number]. [Compound action] the rest.' } },
   ];
+
+  // ─── Outliers (Discover feed) ───
+  // If the `outliers` table has curated rows, the Discover feed uses them instead
+  // of the static seed above. We mutate SEED_IDEAS in place so every downstream
+  // reference (Discover, Saved, Swipe, decoder, drafts insert) keeps working
+  // unchanged. DB rows carry no static `decoded`, so they use the live /api/decode
+  // path (which itself falls back gracefully when no API key is set).
+  async function loadOutliers() {
+    if (!sb) return; // demo / no Supabase → keep the static seed
+    try {
+      const { data, error } = await sb
+        .from('outliers')
+        .select('*')
+        .order('position', { ascending: true })
+        .order('captured_at', { ascending: false });
+      if (error) throw error;
+      if (data && data.length) {
+        const mapped = data.map(r => ({
+          id: r.id,
+          cat: r.cat || 'founders',
+          name: r.creator_name,
+          av: r.avatar_handle ? AV(r.avatar_handle) : AV((r.handle || '').replace(/^@/, '').split(' ')[0]),
+          handle: r.handle,
+          text: r.text,
+          tag: r.outlier_tag || '',
+          views: r.views || '',
+          // no `decoded` → live decode path
+        }));
+        SEED_IDEAS.splice(0, SEED_IDEAS.length, ...mapped);
+      }
+    } catch (e) {
+      console.warn('loadOutliers failed, using static seed', e);
+    }
+  }
+
   // Creator directory — searched in "Add creators" modal. Real handles + real avatars via unavatar.io.
   // Stats are placeholders until we ingest real platform metrics.
   const CREATORS_DIRECTORY = [
@@ -993,6 +1028,7 @@
     document.getElementById('user-name').textContent = name;
     document.getElementById('user-email').textContent = user.email;
     document.getElementById('user-av').textContent = (name[0] || '·').toUpperCase();
+    await loadOutliers();
     await loadSaved();
     loadWorkspaceSettings();
     await loadDrafts();
