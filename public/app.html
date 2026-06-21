@@ -133,6 +133,7 @@
   .disc-tag { font-family:'Geist Mono',monospace; font-size:10.5px; color:var(--accent); background:var(--accent-soft); padding:3px 8px; border-radius:100px; font-weight:500; white-space:nowrap; }
   .disc-views { font-family:'Geist Mono',monospace; font-size:10px; color:var(--text-dim); white-space:nowrap; }
   .disc-actions { display:flex; gap:6px; flex-shrink:0; }
+  .disc-disclaimer { margin:18px 2px 0; font-size:11px; line-height:1.5; color:var(--text-dim); max-width:640px; }
   .disc-action { background:transparent; border:1px solid var(--border); border-radius:7px; padding:4px 8px; color:var(--text-mid); cursor:pointer; font-size:11px; font-family:inherit; display:inline-flex; align-items:center; gap:4px; transition:border-color .15s, color .15s; }
   .disc-action:hover { color:var(--accent); border-color:var(--accent); }
   .disc-action.saved { color:var(--accent); border-color:var(--accent); background:var(--accent-soft); }
@@ -445,6 +446,7 @@
           <button class="filter" data-filter="creators">Creators</button>
         </div>
         <div class="disc-grid" id="disc-grid"><!-- rendered by JS --></div>
+        <p class="disc-disclaimer">Posts are public examples shown for educational pattern analysis. Creators are not affiliated with or endorsing Sona.</p>
       </div>
 
       <!-- DRAFTS (formerly Studio) -->
