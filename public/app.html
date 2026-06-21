@@ -123,6 +123,7 @@
   .disc-card { background:var(--bg-soft); border:1px solid var(--border); border-radius:12px; padding:14px; transition:border-color .2s, transform .2s; }
   .disc-card:hover { border-color:var(--border-strong); transform:translateY(-1px); }
   .disc-head { display:flex; align-items:center; gap:8px; margin-bottom:10px; }
+  .disc-head .disc-views { margin-left:auto; flex-shrink:0; }
   .disc-av { width:24px; height:24px; border-radius:50%; background:linear-gradient(135deg,var(--accent),var(--accent-soft)); flex-shrink:0; }
   .disc-name { font-size:12px; font-weight:600; }
   .disc-handle { font-size:11px; color:var(--text-dim); }
@@ -1673,13 +1674,10 @@
     }
     grid.innerHTML = items.map(i => `
       <div class="disc-card">
-        <div class="disc-head"><span class="disc-av" style="background:url('${i.av}') center/cover no-repeat, linear-gradient(135deg,var(--accent),var(--accent-soft))"></span><div><div class="disc-name">${highlight(i.name)}</div><div class="disc-handle">${highlight(i.handle)}</div></div></div>
+        <div class="disc-head"><span class="disc-av" style="background:url('${i.av}') center/cover no-repeat, linear-gradient(135deg,var(--accent),var(--accent-soft))"></span><div><div class="disc-name">${highlight(i.name)}</div><div class="disc-handle">${highlight(i.handle)}</div></div>${i.views ? `<span class="disc-views">${i.views}</span>` : ''}</div>
         <div class="disc-text">${highlight(i.text)}</div>
         <div class="disc-meta">
-          <div class="disc-meta-left">
-            <span class="disc-tag">${i.tag}</span>
-            ${i.views ? `<span class="disc-views">${i.views}</span>` : ''}
-          </div>
+          <span class="disc-tag">${i.tag}</span>
           <div class="disc-actions">
             <button class="disc-action decode" onclick="openDecoder('${i.id}')" title="See why this post worked">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 1v6M12 17v6M4.22 4.22l4.24 4.24M15.54 15.54l4.24 4.24M1 12h6M17 12h6M4.22 19.78l4.24-4.24M15.54 8.46l4.24-4.24"/></svg>
@@ -1712,13 +1710,10 @@
     }
     grid.innerHTML = items.map(i => `
       <div class="disc-card">
-        <div class="disc-head"><span class="disc-av" style="background:url('${i.av}') center/cover no-repeat, linear-gradient(135deg,var(--accent),var(--accent-soft))"></span><div><div class="disc-name">${highlight(i.name)}</div><div class="disc-handle">${highlight(i.handle)}</div></div></div>
+        <div class="disc-head"><span class="disc-av" style="background:url('${i.av}') center/cover no-repeat, linear-gradient(135deg,var(--accent),var(--accent-soft))"></span><div><div class="disc-name">${highlight(i.name)}</div><div class="disc-handle">${highlight(i.handle)}</div></div>${i.views ? `<span class="disc-views">${i.views}</span>` : ''}</div>
         <div class="disc-text">${highlight(i.text)}</div>
         <div class="disc-meta">
-          <div class="disc-meta-left">
-            <span class="disc-tag">${i.tag}</span>
-            ${i.views ? `<span class="disc-views">${i.views}</span>` : ''}
-          </div>
+          <span class="disc-tag">${i.tag}</span>
           <div class="disc-actions">
             <button class="disc-action decode" onclick="openDecoder('${i.id}')" title="See why this post worked">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 1v6M12 17v6M4.22 4.22l4.24 4.24M15.54 15.54l4.24 4.24M1 12h6M17 12h6M4.22 19.78l4.24-4.24M15.54 8.46l4.24-4.24"/></svg>
