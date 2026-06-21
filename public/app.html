@@ -376,8 +376,8 @@
         Drafts<span class="pill-n" id="drafts-count">0</span>
       </button>
       <button class="nav-item" data-view="voice">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h2M7 8v8M11 5v14M15 8v8M19 12h2"/></svg>
-        Style guide
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+        Playbook
       </button>
       <button class="nav-item" data-view="lists">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/><circle cx="17" cy="7" r="3"/><path d="M21 21v-2a4 4 0 0 0-3-3.87"/></svg>
@@ -510,40 +510,45 @@
           <section class="panel">
             <div class="panel-head">
               <div>
-                <h2>Style guide</h2>
-                <p>Rules Sona will surface beside your drafts. Stored on your account.</p>
+                <h2>Your playbook</h2>
+                <p>The hooks, rules, and lines that make a post sound like you. Pinned beside every draft.</p>
               </div>
-              <span class="coming-soon">Yours, no AI</span>
+              <span class="coming-soon">Yours — never AI</span>
             </div>
             <form id="style-form">
               <div class="form-grid">
                 <div class="field full">
-                  <label for="style-hooks">Hook patterns that work for you</label>
-                  <textarea id="style-hooks" name="hookPatterns" rows="5" placeholder="One per line. e.g. &quot;Most people [X]. The 1% [Y].&quot;"></textarea>
+                  <label for="style-hooks">Winning hooks</label>
+                  <textarea id="style-hooks" name="hookPatterns" rows="5" placeholder="Hooks that work for you — one per line. e.g. &quot;Most people [X]. The 1% [Y].&quot;"></textarea>
                 </div>
                 <div class="field full">
-                  <label for="style-voice">Voice rules</label>
-                  <textarea id="style-voice" name="voiceRules" rows="5" placeholder="Short sentences. No buzzwords. Always one concrete number."></textarea>
+                  <label for="style-voice">How you sound</label>
+                  <textarea id="style-voice" name="voiceRules" rows="5" placeholder="Your voice rules. e.g. Short sentences. No buzzwords. Always one concrete number."></textarea>
                 </div>
                 <div class="field full">
-                  <label for="style-banned">Banned phrases</label>
-                  <textarea id="style-banned" name="bannedPhrases" rows="3" placeholder="game-changer, leverage, unlock, in today's world…"></textarea>
+                  <label for="style-signature">Signature lines</label>
+                  <textarea id="style-signature" name="signatureLines" rows="3" placeholder="Your go-to opener, sign-off, or CTA. e.g. &quot;Here's the breakdown ↓&quot; · &quot;Save this for later.&quot;"></textarea>
+                </div>
+                <div class="field full">
+                  <label for="style-banned">Never say</label>
+                  <textarea id="style-banned" name="bannedPhrases" rows="3" placeholder="Phrases to avoid — comma separated. e.g. game-changer, leverage, unlock, in today's world"></textarea>
                 </div>
               </div>
               <div class="actions-row">
-                <button class="btn" type="submit">Save style guide</button>
+                <button class="btn" type="submit">Save playbook</button>
                 <span class="status-note" id="style-status">No unsaved changes.</span>
               </div>
             </form>
           </section>
           <aside class="panel">
-            <h2>How it shows up</h2>
+            <h2>Playbook health</h2>
             <div class="stat-list">
-              <div class="stat-row"><span>Hook patterns</span><b id="stat-hooks">0</b></div>
+              <div class="stat-row"><span>Winning hooks</span><b id="stat-hooks">0</b></div>
               <div class="stat-row"><span>Voice rules</span><b id="stat-rules">0</b></div>
-              <div class="stat-row"><span>Banned phrases</span><b id="stat-banned">0</b></div>
+              <div class="stat-row"><span>Signature lines</span><b id="stat-signature">0</b></div>
+              <div class="stat-row"><span>Never say</span><b id="stat-banned">0</b></div>
             </div>
-            <div class="tone-preview" id="style-preview">Add a few patterns and rules. They'll surface next to your draft.</div>
+            <div class="tone-preview" id="style-preview">Fill your playbook — it surfaces next to every draft so each post sounds unmistakably you.</div>
           </aside>
         </div>
       </div>
@@ -905,7 +910,7 @@
   let swipeIndex = 0;
   let drafts = [];
   let activeDraftId = null;
-  let styleGuide = { hookPatterns:'', voiceRules:'', bannedPhrases:'' };
+  let styleGuide = { hookPatterns:'', voiceRules:'', bannedPhrases:'', signatureLines:'' };
   let lists = [];           // [{ id, name, creatorIds:[], customCreators:[] }]
   let activeListId = null;
   let creatorSort = 'recent';
@@ -1280,13 +1285,13 @@
       const { data, error } = await sb.from('profiles').select('style_guide').eq('id', user.id).maybeSingle();
       if (error) throw error;
       const cloud = (data && data.style_guide) || {};
-      const hasCloud = cloud.hookPatterns || cloud.voiceRules || cloud.bannedPhrases;
+      const hasCloud = cloud.hookPatterns || cloud.voiceRules || cloud.bannedPhrases || cloud.signatureLines;
       if (hasCloud) {
         styleGuide = { ...styleGuide, ...cloud };
       } else {
         // First run: migrate any local style guide up, then clear local.
         const local = readLocalStyleGuide();
-        if (local.hookPatterns || local.voiceRules || local.bannedPhrases) {
+        if (local.hookPatterns || local.voiceRules || local.bannedPhrases || local.signatureLines) {
           styleGuide = { ...styleGuide, ...local };
           await sb.from('profiles').upsert({ id: user.id, style_guide: styleGuide });
           localStorage.removeItem(storageKey('style-guide'));
@@ -1301,23 +1306,26 @@
     const set = (id, v) => { const el = document.getElementById(id); if (el) el.value = v || ''; };
     set('style-hooks', styleGuide.hookPatterns);
     set('style-voice', styleGuide.voiceRules);
+    set('style-signature', styleGuide.signatureLines);
     set('style-banned', styleGuide.bannedPhrases);
     const lines = (s) => (s || '').split('\n').map(x => x.trim()).filter(Boolean).length;
     const csv = (s) => (s || '').split(',').map(x => x.trim()).filter(Boolean).length;
     const setText2 = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
     setText2('stat-hooks', lines(styleGuide.hookPatterns));
     setText2('stat-rules', lines(styleGuide.voiceRules));
+    setText2('stat-signature', lines(styleGuide.signatureLines));
     setText2('stat-banned', csv(styleGuide.bannedPhrases));
     const preview = document.getElementById('style-preview');
     if (preview) {
       const firstHook = (styleGuide.hookPatterns || '').split('\n').find(x => x.trim());
-      preview.textContent = firstHook ? `Try this hook: ${firstHook.trim()}` : 'Add a few patterns and rules. They\'ll surface next to your draft.';
+      preview.textContent = firstHook ? `Try this hook: ${firstHook.trim()}` : 'Fill your playbook — it surfaces next to every draft so each post sounds unmistakably you.';
     }
   }
   async function saveStyleGuide() {
     styleGuide = {
       hookPatterns: document.getElementById('style-hooks').value,
       voiceRules: document.getElementById('style-voice').value,
+      signatureLines: document.getElementById('style-signature').value,
       bannedPhrases: document.getElementById('style-banned').value,
     };
     const status = document.getElementById('style-status');
@@ -1754,7 +1762,7 @@
       discover:['Discover','Founders · last 7 days · sorted by outlier'],
       studio:['Drafts', drafts.length ? `${drafts.length} draft${drafts.length===1?'':'s'}` : 'Start a draft'],
       lists:['My lists', lists.length ? `${lists.length} list${lists.length===1?'':'s'}` : 'No lists'],
-      voice:['Style guide','Yours, no AI'],
+      voice:['Playbook','Yours — never AI'],
       saved:['Saved ideas',`${saved.size} item${saved.size===1?'':'s'}`],
       brand:['Personal brand', workspaceSettings.workspaceName || 'Workspace'],
       swipe:['Idea swipe','Review and save outliers'],
@@ -1850,7 +1858,7 @@
   document.getElementById('draft-title').addEventListener('input', () => { document.getElementById('draft-status').textContent = 'Unsaved changes.'; });
   document.getElementById('draft-body').addEventListener('input', () => { document.getElementById('draft-status').textContent = 'Unsaved changes.'; });
   document.getElementById('style-form').addEventListener('submit', (e) => { e.preventDefault(); saveStyleGuide(); });
-  ['style-hooks','style-voice','style-banned'].forEach(id => {
+  ['style-hooks','style-voice','style-signature','style-banned'].forEach(id => {
     document.getElementById(id).addEventListener('input', () => { document.getElementById('style-status').textContent = 'Unsaved changes.'; });
   });
 
