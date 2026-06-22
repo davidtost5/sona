@@ -111,8 +111,8 @@
         pointer-events: auto;
       }
       .auth-modal {
-        background: #fdfdfb;
-        border: 1px solid #eae9e4;
+        background: var(--bg);
+        border: 1px solid var(--border);
         border-radius: 24px;
         padding: 44px 40px 40px;
         width: 100%;
@@ -122,7 +122,7 @@
         position: relative;
         transform: translateY(16px) scale(0.98);
         transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
-        box-shadow: 0 30px 90px rgba(15, 31, 15, 0.12);
+        box-shadow: var(--shadow-lg);
       }
       .auth-overlay.open .auth-modal {
         transform: translateY(0) scale(1);
@@ -141,11 +141,11 @@
         justify-content: center;
         border-radius: 50%;
         transition: background 0.2s, color 0.2s;
-        color: #b5b5ae;
+        color: var(--text-dim);
         font-size: 22px;
         line-height: 1;
       }
-      .auth-close:hover { background: rgba(0,0,0,0.05); color: #1a1a1a; }
+      .auth-close:hover { background: var(--bg-soft); color: var(--text); }
       .auth-logo {
         display: inline-flex;
         align-items: center;
@@ -155,7 +155,7 @@
       .auth-logo-icon {
         width: 32px; height: 32px;
         border-radius: 8px;
-        background: linear-gradient(150deg, #34343c, #131316); border: 1px solid rgba(255,255,255,0.09);
+        background: linear-gradient(150deg, var(--text), var(--bg)); border: 1px solid rgba(255,255,255,0.09);
         display: inline-flex;
         align-items: center;
         justify-content: center;
@@ -167,21 +167,21 @@
         font-size: 19px;
         font-weight: 600;
         letter-spacing: -0.5px;
-        color: #15151a;
+        color: var(--text);
       }
       .auth-modal-title {
         font-family: 'Geist', -apple-system, sans-serif;
         font-size: 26px;
         font-weight: 600;
-        color: #15151a;
+        color: var(--text);
         letter-spacing: -1px;
         line-height: 1.1;
         margin-bottom: 10px;
       }
       .auth-modal-sub {
-        font-family: 'Aeonik Pro', -apple-system, sans-serif;
+        font-family: 'Geist', -apple-system, sans-serif;
         font-size: 14.5px;
-        color: #6a6a64;
+        color: var(--text-mid);
         margin-bottom: 30px;
         line-height: 1.55;
       }
@@ -200,61 +200,61 @@
         text-transform: uppercase;
       }
       .auth-field input {
-        font-family: 'Aeonik Pro', -apple-system, sans-serif;
+        font-family: 'Geist', -apple-system, sans-serif;
         font-size: 15px;
         padding: 13px 0;
         border: none;
-        border-bottom: 1.5px solid #e2e0d9;
+        border-bottom: 1.5px solid var(--border);
         border-radius: 0;
         background: transparent;
-        color: #1a1a1a;
+        color: var(--text);
         outline: none;
         transition: border-color 0.25s;
       }
-      .auth-field input:focus { border-bottom-color: #4f46e5; }
-      .auth-field input::placeholder { color: #b5b5ae; }
+      .auth-field input:focus { border-bottom-color: var(--accent); }
+      .auth-field input::placeholder { color: var(--text-dim); }
       .auth-submit {
         font-family: 'Geist', -apple-system, sans-serif;
         font-size: 15px;
         font-weight: 500;
         padding: 14px;
-        background: linear-gradient(180deg, #6b63f5 0%, #3d36c2 100%);
+        background: linear-gradient(180deg, var(--accent-2) 0%, var(--accent) 100%);
         color: #ffffff;
         border: none;
         border-radius: 999px;
         cursor: pointer;
-        box-shadow: inset 0 1px 0 rgba(255,255,255,0.22), inset 0 -1px 0 rgba(0,0,0,0.18), 0 1px 2px rgba(40,30,140,0.18);
-        transition: filter 0.2s, transform 0.15s, box-shadow 0.3s;
+        box-shadow: var(--shadow);
+        transition: transform 0.2s, box-shadow 0.3s, filter 0.2s;
         margin-top: 18px;
       }
-      .auth-submit:hover { filter: brightness(1.05); transform: translateY(-1px); box-shadow: inset 0 1px 0 rgba(255,255,255,0.28), inset 0 -1px 0 rgba(0,0,0,0.22), 0 10px 24px rgba(79,70,229,0.32); }
-      .auth-submit:active { transform: translateY(0); filter: brightness(0.97); }
+      .auth-submit:hover { transform: translateY(-1px); box-shadow: var(--shadow-lg); filter: brightness(1.05); }
+      .auth-submit:active { transform: translateY(0); filter: brightness(0.96); }
       .auth-submit:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
       /* Waitlist success card */
-      .wl-position { text-align: center; padding: 24px 16px; background: linear-gradient(180deg, rgba(107,99,245,0.08), transparent); border: 1px solid rgba(107,99,245,0.18); border-radius: 16px; margin-bottom: 20px; }
-      .wl-rank-eyebrow { font-family: 'Geist Mono', monospace; font-size: 10.5px; letter-spacing: 1px; color: #6b63f5; text-transform: uppercase; }
-      .wl-rank { font-size: 52px; font-weight: 700; letter-spacing: -2px; line-height: 1.05; margin: 6px 0; color: #15151a; font-variant-numeric: tabular-nums; }
-      .wl-rank-sub { font-size: 13px; color: #6a6a64; }
+      .wl-position { text-align: center; padding: 24px 16px; background: linear-gradient(180deg, var(--accent-soft), transparent); border: 1px solid rgba(107,99,245,0.18); border-radius: 16px; margin-bottom: 20px; }
+      .wl-rank-eyebrow { font-family: 'Geist Mono', monospace; font-size: 10.5px; letter-spacing: 1px; color: var(--accent-2); text-transform: uppercase; }
+      .wl-rank { font-size: 52px; font-weight: 700; letter-spacing: -2px; line-height: 1.05; margin: 6px 0; color: var(--text); font-variant-numeric: tabular-nums; }
+      .wl-rank-sub { font-size: 13px; color: var(--text-mid); }
       .wl-next { display: flex; flex-direction: column; gap: 14px; padding: 6px 4px; }
       .wl-step { display: flex; gap: 12px; align-items: flex-start; }
-      .wl-step .wl-tick { width: 22px; height: 22px; border-radius: 50%; background: rgba(107,99,245,0.12); color: #6b63f5; display: inline-flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 600; flex-shrink: 0; }
-      .wl-step b { display: block; font-size: 14px; font-weight: 600; color: #15151a; margin-bottom: 3px; }
-      .wl-step span { font-size: 13px; color: #6a6a64; line-height: 1.5; }
-      .wl-step span span { color: #15151a; font-weight: 500; }
+      .wl-step .wl-tick { width: 22px; height: 22px; border-radius: 50%; background: var(--accent-soft); color: var(--accent-2); display: inline-flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 600; flex-shrink: 0; }
+      .wl-step b { display: block; font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 3px; }
+      .wl-step span { font-size: 13px; color: var(--text-mid); line-height: 1.5; }
+      .wl-step span span { color: var(--text); font-weight: 500; }
       .auth-divider {
         display: flex;
         align-items: center;
         gap: 16px;
         margin: 8px 0;
-        color: #8a8a84;
+        color: var(--text-dim);
         font-size: 13px;
-        font-family: 'Aeonik Pro', -apple-system, sans-serif;
+        font-family: 'Geist', -apple-system, sans-serif;
       }
       .auth-divider::before, .auth-divider::after {
         content: '';
         flex: 1;
         height: 1px;
-        background: #ddd9d0;
+        background: var(--border);
       }
       .auth-social {
         display: flex;
@@ -263,39 +263,39 @@
       .auth-social-btn {
         flex: 1;
         padding: 12px;
-        border: 1.5px solid #ddd9d0;
+        border: 1.5px solid var(--border);
         border-radius: 10px;
-        background: #fff;
+        background: var(--bg);
         cursor: pointer;
         display: flex;
         align-items: center;
         justify-content: center;
         gap: 8px;
-        font-family: 'Aeonik Pro', -apple-system, sans-serif;
+        font-family: 'Geist', -apple-system, sans-serif;
         font-size: 14px;
         font-weight: 500;
-        color: #1a1a1a;
+        color: var(--text);
         transition: border-color 0.2s, background 0.2s;
       }
-      .auth-social-btn:hover { border-color: #4f46e5; background: rgba(79,70,229,0.06); }
+      .auth-social-btn:hover { border-color: var(--accent); background: var(--accent-soft); }
       .auth-social-btn svg { width: 18px; height: 18px; }
       .settings-rows {
         display: flex; flex-direction: column;
-        background: rgba(0,0,0,0.025);
-        border: 1px solid rgba(0,0,0,0.06);
+        background: var(--bg-soft);
+        border: 1px solid var(--border);
         border-radius: 12px;
         margin-bottom: 18px; overflow: hidden;
       }
       .settings-row {
         display: flex; justify-content: space-between; align-items: center;
         padding: 13px 16px;
-        border-bottom: 1px solid rgba(0,0,0,0.06);
+        border-bottom: 1px solid var(--border);
         font-family: 'Geist', -apple-system, sans-serif;
         font-size: 13.5px;
       }
       .settings-row:last-child { border-bottom: 0; }
-      .settings-row-key { color: #6a6a64; font-weight: 500; }
-      .settings-row-val { color: #15151a; font-weight: 500; }
+      .settings-row-key { color: var(--text-mid); font-weight: 500; }
+      .settings-row-val { color: var(--text); font-weight: 500; }
       .settings-actions { display: flex; flex-direction: column; gap: 9px; }
       .settings-btn {
         font-family: 'Geist', -apple-system, sans-serif;
@@ -389,26 +389,26 @@
       .user-dropdown-item {
         display: block;
         width: 100%;
-        padding: 10px 14px;
+        padding: 8px 12px;
         border: none;
-        background: none;
+        background: transparent;
         text-align: left;
-        font-family: 'Aeonik Pro', sans-serif;
-        font-size: 14px;
-        color: #1a1a1a;
         cursor: pointer;
-        border-radius: 8px;
+        font-family: 'Geist', -apple-system, sans-serif;
+        font-size: 13px;
+        color: var(--text-mid);
+        border-radius: 6px;
         transition: background 0.15s;
       }
-      .user-dropdown-item:hover { background: rgba(0,0,0,0.04); }
+      .user-dropdown-item:hover { background: var(--bg-soft); }
       .user-dropdown-item.danger { color: #c85050; }
       .user-dropdown-email {
         padding: 10px 14px 8px;
         font-size: 12px;
-        color: #8a8a84;
-        border-bottom: 1px solid #ddd9d0;
+        color: var(--text-dim);
+        border-bottom: 1px solid var(--border);
         margin-bottom: 4px;
-        font-family: 'Aeonik Pro', sans-serif;
+        font-family: 'Geist Mono', monospace;
       }
 
       @media (max-width: 480px) {
@@ -433,7 +433,7 @@
         <!-- LOGIN VIEW -->
         <div id="auth-login-view">
           <div class="auth-logo">
-            <span class="auth-logo-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M5 15 Q8 9 12 12 Q16 15 19 9" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M19 3.6 C19.15 5.1 20.3 6.25 21.8 6.4 C20.3 6.55 19.15 7.7 19 9.2 C18.85 7.7 17.7 6.55 16.2 6.4 C17.7 6.25 18.85 5.1 19 3.6 Z" fill="#8b84ff"/></svg></span>
+            <span class="auth-logo-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M5 15 Q8 9 12 12 Q16 15 19 9" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M19 3.6 C19.15 5.1 20.3 6.25 21.8 6.4 C20.3 6.55 19.15 7.7 19 9.2 C18.85 7.7 17.7 6.55 16.2 6.4 C17.7 6.25 18.85 5.1 19 3.6 Z" fill="var(--accent-2)"/></svg></span>
             <span class="auth-logo-text">Sona</span>
           </div>
           <div class="auth-modal-title">Welcome back</div>
@@ -469,7 +469,7 @@
         <!-- WAITLIST VIEW (mock mode — no Supabase configured) -->
         <div id="auth-waitlist-view" style="display:none">
           <div class="auth-logo">
-            <span class="auth-logo-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M5 15 Q8 9 12 12 Q16 15 19 9" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M19 3.6 C19.15 5.1 20.3 6.25 21.8 6.4 C20.3 6.55 19.15 7.7 19 9.2 C18.85 7.7 17.7 6.55 16.2 6.4 C17.7 6.25 18.85 5.1 19 3.6 Z" fill="#8b84ff"/></svg></span>
+            <span class="auth-logo-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M5 15 Q8 9 12 12 Q16 15 19 9" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M19 3.6 C19.15 5.1 20.3 6.25 21.8 6.4 C20.3 6.55 19.15 7.7 19 9.2 C18.85 7.7 17.7 6.55 16.2 6.4 C17.7 6.25 18.85 5.1 19 3.6 Z" fill="var(--accent-2)"/></svg></span>
             <span class="auth-logo-text">Sona</span>
           </div>
           <div class="auth-modal-title">Request early access</div>
