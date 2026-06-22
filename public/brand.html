@@ -1004,9 +1004,54 @@
     }
     lastScroll = current;
   }, { passive: true });
+<script src="data.js" defer></script>
+<script>
+  // Lazy load Sona Auth & Supabase
+  window.CanopyAuth = window.CanopyAuth || {
+    _queue: [],
+    openLogin: function() { this._queue.push(['openLogin']); window.loadAuthScripts && window.loadAuthScripts(); },
+    openSignup: function() { this._queue.push(['openSignup']); window.loadAuthScripts && window.loadAuthScripts(); },
+    openWaitlist: function() { this._queue.push(['openWaitlist']); window.loadAuthScripts && window.loadAuthScripts(); },
+    openSettings: function() { this._queue.push(['openSettings']); window.loadAuthScripts && window.loadAuthScripts(); },
+    getUser: function() { return null; },
+    signOut: function() { this._queue.push(['signOut']); window.loadAuthScripts && window.loadAuthScripts(); }
+  };
+
+  (function() {
+    window.loadAuthScripts = function() {
+      if (window.__authScriptsLoaded) return;
+      window.__authScriptsLoaded = true;
+      const authScript = document.createElement('script');
+      authScript.src = "auth.js";
+      authScript.defer = true;
+      document.head.appendChild(authScript);
+    };
+
+    // Auto-load if user has a cached session in localStorage
+    let hasSession = false;
+    try {
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key && key.startsWith('sb-') && key.endsWith('-auth-token')) {
+          hasSession = true;
+          break;
+        }
+      }
+    } catch(e) {}
+
+    if (hasSession) {
+      window.loadAuthScripts();
+    } else {
+      // Lazy load after page is fully loaded to maximize LCP/FCP
+      window.addEventListener('load', () => {
+        if (window.requestIdleCallback) {
+          requestIdleCallback(() => setTimeout(window.loadAuthScripts, 1000));
+        } else {
+          setTimeout(window.loadAuthScripts, 2000);
+        }
+      });
+    }
+  })();
 </script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<script src="data.js"></script>
-<script src="auth.js"></script>
 </body>
 </html>

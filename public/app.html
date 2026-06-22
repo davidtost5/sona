@@ -236,8 +236,12 @@
   .field textarea { min-height:92px; resize:vertical; line-height:1.45; }
   .field input:focus, .field textarea:focus, .field select:focus { border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-soft); }
   .check-row { display:flex; flex-wrap:wrap; gap:8px; }
-  .check-pill { display:inline-flex; align-items:center; gap:7px; padding:7px 10px; border:1px solid var(--border); border-radius:999px; background:var(--surface); color:var(--text-mid); font-size:12px; cursor:pointer; }
-  .check-pill input { accent-color:var(--accent); }
+  .check-pill { position:relative; display:inline-flex; align-items:center; gap:8px; padding:8px 14px; border:1px solid var(--border); border-radius:999px; background:var(--surface); color:var(--text-mid); font-size:13px; cursor:pointer; user-select:none; transition:border-color .15s, color .15s, background .15s; }
+  .check-pill:hover { border-color:var(--border-strong); color:var(--text); }
+  .check-pill input { position:absolute; opacity:0; pointer-events:none; width:0; height:0; }
+  .check-pill::before { content:''; width:16px; height:16px; border-radius:5px; border:1.6px solid var(--border-strong); flex-shrink:0; background-position:center; background-repeat:no-repeat; background-size:11px; transition:background .15s, border-color .15s; }
+  .check-pill:has(input:checked) { border-color:var(--accent); background:var(--accent-soft); color:var(--accent); }
+  .check-pill:has(input:checked)::before { background-color:var(--accent); border-color:var(--accent); background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'><path d='M20 6 9 17l-5-5'/></svg>"); }
   .actions-row { display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-top:16px; }
   .status-note { font-size:12px; color:var(--text-dim); }
   .stat-list { display:flex; flex-direction:column; gap:10px; }
@@ -801,8 +805,6 @@
     </div>
   </div>
 </div>
-
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script>
   let sb = null;
   let user = null;
@@ -1134,6 +1136,18 @@
         await enterPreviewMode();
         return;
       }
+      
+      // Lazily load Supabase script from CDN if not already loaded
+      if (typeof window.supabase === 'undefined' || !window.supabase.createClient) {
+        await new Promise((resolve, reject) => {
+          const script = document.createElement('script');
+          script.src = "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js";
+          script.onload = resolve;
+          script.onerror = () => reject(new Error("Supabase script failed to load"));
+          document.head.appendChild(script);
+        });
+      }
+
       sb = window.supabase.createClient(cfg.url, cfg.anonKey, {
         auth: { persistSession: true, autoRefreshToken: true },
       });
@@ -1917,6 +1931,8 @@
     e.preventDefault();
     await saveWorkspaceSettings(collectBrandForm(), 'brand-status');
   });
+  // Live brand-strength ring — fills as you type / toggle platforms
+  document.getElementById('brand-form').addEventListener('input', renderBrandStrength);
 
   document.getElementById('settings-form').addEventListener('submit', async (e) => {
     e.preventDefault();

@@ -12,6 +12,14 @@
   let supabase = null;
   let currentUser = null;
   let configured = false;
+  let initPromise = null;
+
+  function ensureInitialized() {
+    if (!initPromise) {
+      initPromise = initSupabase();
+    }
+    return initPromise;
+  }
 
   // ═══ INIT SUPABASE ═══
   async function initSupabase() {
@@ -22,6 +30,18 @@
         console.info('[Sona Auth] Supabase auth not configured — add SUPABASE_ANON_KEY to Vercel env to enable real signup.');
         return false;
       }
+      
+      // Lazily load Supabase script from CDN if not already loaded
+      if (typeof window.supabase === 'undefined' || !window.supabase.createClient) {
+        await new Promise((resolve, reject) => {
+          const script = document.createElement('script');
+          script.src = "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js";
+          script.onload = resolve;
+          script.onerror = () => reject(new Error("Supabase script failed to load"));
+          document.head.appendChild(script);
+        });
+      }
+
       if (typeof window.supabase !== 'undefined' && window.supabase.createClient) {
         supabase = window.supabase.createClient(cfg.url, cfg.anonKey, {
           auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true },
@@ -754,8 +774,9 @@
   }
 
   // ═══ OPEN / CLOSE ═══
-  function openAuthModal(view = 'login') {
+  async function openAuthModal(view = 'login') {
     createModal();
+    await ensureInitialized();
     // Settings is gated on being logged in
     if (view === 'settings' && !currentUser) view = 'login';
     // Mock mode (no Supabase): non-settings entry points become the waitlist
@@ -885,35 +906,43 @@
   // ═══ INIT ═══
   async function init() {
     injectStyles();
-    await initSupabase();
 
-    // Check existing session
-    if (supabase) {
-      getSession().then(session => {
-        if (session?.user) {
-          currentUser = session.user;
-          updateUI(session.user);
-        } else {
+    let hasSession = false;
+    try {
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key && key.startsWith('sb-') && key.endsWith('-auth-token')) {
+          hasSession = true;
+          break;
+        }
+      }
+    } catch (e) {}
+
+    if (hasSession) {
+      await ensureInitialized();
+      if (supabase) {
+        try {
+          const session = await getSession();
+          if (session?.user) {
+            currentUser = session.user;
+            updateUI(session.user);
+          } else {
+            bindAuthTriggers();
+          }
+        } catch (e) {
           bindAuthTriggers();
         }
-      }).catch(() => {
-        // Supabase not configured or network error — still bind triggers
+      } else {
         bindAuthTriggers();
-      });
-
-      // Listen for auth state changes
-      try {
-        supabase.auth.onAuthStateChange((event, session) => {
-          currentUser = session?.user || null;
-          updateUI(currentUser);
-        });
-      } catch (e) { /* Supabase not configured */ }
+      }
     } else {
       bindAuthTriggers();
     }
   }
 
   // ═══ EXPOSE GLOBALLY ═══
+  const queue = (window.CanopyAuth && window.CanopyAuth._queue) || [];
+
   window.CanopyAuth = {
     openLogin: () => openAuthModal('login'),
     openSignup: () => openAuthModal('signup'),
@@ -921,8 +950,15 @@
     openSettings: () => openAuthModal('settings'),
     close: closeAuthModal,
     getUser: () => currentUser,
-    signOut,
+    signOut: () => signOut().then(() => { window.location.href = '/'; }),
   };
+
+  // Replay queued actions
+  for (const [action] of queue) {
+    if (typeof window.CanopyAuth[action] === 'function') {
+      window.CanopyAuth[action]();
+    }
+  }
 
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);
