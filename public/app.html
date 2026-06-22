@@ -193,24 +193,24 @@
   .ac-empty { padding:30px 16px; color:var(--text-mid); font-size:13px; text-align:center; }
   .ac-foot { padding:14px 22px; border-top:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; gap:12px; }
   .ac-foot small { font-size:11px; color:var(--text-mid); }
-  /* Outlier decoder */
-  .decoder-back { position:fixed; inset:0; background:rgba(8,8,12,.55); backdrop-filter:blur(6px); display:none; align-items:center; justify-content:center; z-index:200; padding:20px; }
-  .decoder-back.show { display:flex; }
-  .decoder { width:min(720px,100%); max-height:90vh; overflow:auto; background:var(--bg); border:1px solid var(--border-strong); border-radius:16px; padding:28px; box-shadow:0 30px 80px rgba(0,0,0,.4); }
-  .decoder-head { display:flex; align-items:flex-start; justify-content:space-between; gap:16px; margin-bottom:8px; }
-  .decoder-eye { font-family:'Geist Mono',monospace; font-size:11px; letter-spacing:1px; text-transform:uppercase; color:var(--accent); margin-bottom:6px; }
-  .decoder h2 { margin:0; font-size:22px; letter-spacing:-.01em; }
-  .decoder-close { background:transparent; border:1px solid var(--border); width:32px; height:32px; border-radius:50%; cursor:pointer; color:var(--text-mid); font-size:18px; line-height:1; flex-shrink:0; }
-  .decoder-close:hover { color:var(--text); border-color:var(--border-strong); }
-  .decoder-quote { margin:18px 0 22px; padding:14px 16px; border-left:3px solid var(--accent); background:var(--bg-soft); border-radius:0 8px 8px 0; font-size:15px; color:var(--text); }
-  .decoder-quote small { display:block; color:var(--text-mid); font-size:11px; margin-top:6px; font-family:'Geist Mono',monospace; }
-  .decoder-row { display:grid; grid-template-columns:120px 1fr; gap:14px; padding:14px 0; border-top:1px solid var(--border); }
-  .decoder-row:last-of-type { border-bottom:1px solid var(--border); }
-  .decoder-label { font-family:'Geist Mono',monospace; font-size:11px; letter-spacing:1px; text-transform:uppercase; color:var(--text-mid); padding-top:2px; }
-  .decoder-val { font-size:14px; color:var(--text); line-height:1.55; }
-  .decoder-pattern { font-family:'Geist Mono',monospace; font-size:13px; background:var(--bg-soft); padding:10px 12px; border-radius:6px; border:1px solid var(--border); display:inline-block; }
-  .decoder-foot { display:flex; gap:10px; margin-top:22px; flex-wrap:wrap; }
-  @media (max-width:560px) { .decoder { padding:20px; } .decoder-row { grid-template-columns:1fr; gap:4px; } }
+   /* Outlier decoder */
+   .decoder-back { position:fixed; inset:0; background:color-mix(in srgb, var(--bg) 82%, transparent); backdrop-filter:blur(12px); display:none; align-items:center; justify-content:center; z-index:200; padding:20px; }
+   .decoder-back.show { display:flex; }
+   .decoder { width:min(720px,100%); max-height:90vh; overflow:auto; background:var(--bg); border:1px solid var(--border); border-radius:16px; padding:28px; box-shadow:var(--shadow-lg); }
+   .decoder-head { display:flex; align-items:flex-start; justify-content:space-between; gap:16px; margin-bottom:8px; }
+   .decoder-eye { font-family:'Geist Mono',monospace; font-size:11px; letter-spacing:1px; text-transform:uppercase; color:var(--accent); margin-bottom:6px; }
+   .decoder h2 { margin:0; font-size:22px; letter-spacing:-.01em; }
+   .decoder-close { background:transparent; border:1px solid var(--border); width:32px; height:32px; border-radius:50%; cursor:pointer; color:var(--text-mid); font-size:18px; line-height:1; flex-shrink:0; transition:border-color .15s, color .15s; }
+   .decoder-close:hover { color:var(--text); border-color:var(--border-strong); }
+   .decoder-quote { margin:18px 0 22px; padding:14px 16px; border-left:3px solid var(--accent); background:var(--bg-soft); border-radius:0 8px 8px 0; font-size:15px; color:var(--text); }
+   .decoder-quote small { display:block; color:var(--text-mid); font-size:11px; margin-top:6px; font-family:'Geist Mono',monospace; }
+   .decoder-row { display:grid; grid-template-columns:120px 1fr; gap:14px; padding:14px 0; border-top:1px solid var(--border); }
+   .decoder-row:last-of-type { border-bottom:1px solid var(--border); }
+   .decoder-label { font-family:'Geist Mono',monospace; font-size:11px; letter-spacing:1px; text-transform:uppercase; color:var(--text-mid); padding-top:2px; }
+   .decoder-val { font-size:14px; color:var(--text); line-height:1.55; }
+   .decoder-pattern { font-family:'Geist Mono',monospace; font-size:13px; background:var(--bg-soft); padding:10px 12px; border-radius:6px; border:1px solid var(--border); display:inline-block; }
+   .decoder-foot { display:flex; gap:10px; margin-top:22px; flex-wrap:wrap; }
+   @media (max-width:560px) { .decoder { padding:20px; } .decoder-row { grid-template-columns:1fr; gap:4px; } }
   .disc-action.decode:hover { color:var(--accent); border-color:var(--accent); }
   .coming-soon { display:inline-flex; align-items:center; gap:6px; font-family:'Geist Mono',monospace; font-size:11px; padding:5px 10px; background:var(--bg-soft); border:1px solid var(--border-strong); border-radius:100px; color:var(--text-mid); letter-spacing:.5px; text-transform:uppercase; }
   .filters { display:flex; gap:6px; margin-bottom:18px; flex-wrap:wrap; }
@@ -246,6 +246,24 @@
   .stat-row b { color:var(--text); font-weight:600; }
   .stat-row span { color:var(--text-dim); }
   .tone-preview { margin-top:14px; padding:13px; border:1px solid var(--border); border-radius:10px; background:var(--surface); font-size:13px; color:var(--text-mid); line-height:1.55; }
+  /* Brand strength (Eden-style) */
+  .brand-strength { display:flex; align-items:center; gap:16px; margin-bottom:18px; }
+  .brand-ring { --pct:0; width:84px; height:84px; border-radius:50%; flex-shrink:0; background:conic-gradient(var(--accent) calc(var(--pct)*1%), var(--border) 0); display:flex; align-items:center; justify-content:center; transition:background .5s cubic-bezier(.2,.7,.2,1); }
+  .brand-ring-inner { width:64px; height:64px; border-radius:50%; background:var(--bg); display:flex; align-items:center; justify-content:center; }
+  .brand-ring-inner b { font-size:18px; font-weight:600; letter-spacing:-.02em; color:var(--text); font-variant-numeric:tabular-nums; }
+  .brand-strength-note { font-size:12px; color:var(--text-mid); line-height:1.5; }
+  .brand-checklist { display:flex; flex-direction:column; }
+  .brand-check-item { display:flex; align-items:center; gap:9px; padding:9px 0; font-size:13px; color:var(--text-mid); border-top:1px solid var(--border); cursor:pointer; transition:color .15s; }
+  .brand-check-item:first-child { border-top:0; }
+  .brand-check-item:hover { color:var(--text); }
+  .brand-check-item.done { color:var(--text); }
+  .brand-check-dot { width:17px; height:17px; border-radius:50%; border:1.5px solid var(--border-strong); flex-shrink:0; display:flex; align-items:center; justify-content:center; transition:background .2s, border-color .2s; }
+  .brand-check-item.done .brand-check-dot { background:var(--accent); border-color:var(--accent); }
+  .brand-check-dot svg { width:9px; height:9px; color:#fff; opacity:0; transition:opacity .2s; }
+  .brand-check-item.done .brand-check-dot svg { opacity:1; }
+  .brand-check-item .lbl { flex:1; }
+  .brand-check-item .arr { color:var(--text-dim); opacity:0; transition:opacity .15s; }
+  .brand-check-item:not(.done):hover .arr { opacity:1; }
   .swipe-layout { display:grid; grid-template-columns:minmax(0,1fr) 260px; gap:18px; align-items:start; }
   .swipe-card { min-height:310px; display:flex; flex-direction:column; justify-content:space-between; background:var(--bg-soft); border:1px solid var(--border); border-radius:14px; padding:20px; }
   .swipe-card .disc-head { margin-bottom:16px; }
@@ -606,24 +624,28 @@
           <section class="panel">
             <div class="panel-head">
               <div>
-                <h2>Personal brand workspace</h2>
-                <p>Define the voice and audience Sona should use when saving ideas and drafting posts.</p>
+                <h2>Set up your brand</h2>
+                <p>Build the voice, angle, and audience Sona uses across every draft. The fuller this is, the less generic your drafts feel.</p>
               </div>
-              <span class="coming-soon">Live profile</span>
+              <span class="coming-soon">Synced</span>
             </div>
             <form id="brand-form">
               <div class="form-grid">
                 <div class="field">
                   <label for="brand-name">Display name</label>
-                  <input id="brand-name" name="fullName" autocomplete="name">
+                  <input id="brand-name" name="fullName" autocomplete="name" placeholder="David Tost">
                 </div>
                 <div class="field">
                   <label for="workspace-name">Workspace</label>
-                  <input id="workspace-name" name="workspaceName">
+                  <input id="workspace-name" name="workspaceName" placeholder="Personal brand">
                 </div>
                 <div class="field full">
-                  <label for="brand-bio">Positioning</label>
-                  <textarea id="brand-bio" name="bio" placeholder="What should people know you for?"></textarea>
+                  <label for="brand-bio">Positioning <small>What you want to be known for</small></label>
+                  <textarea id="brand-bio" name="bio" placeholder="e.g. I help solo founders ship a sharper personal brand without burning out."></textarea>
+                </div>
+                <div class="field full">
+                  <label for="brand-pillars">Content pillars <small>The 3–5 topics you post about</small></label>
+                  <input id="brand-pillars" name="pillars" placeholder="SaaS · building in public · productivity · creator economy">
                 </div>
                 <div class="field">
                   <label for="brand-audience">Audience</label>
@@ -644,19 +666,20 @@
                 </div>
               </div>
               <div class="actions-row">
-                <button class="btn" type="submit">Save brand profile</button>
+                <button class="btn" type="submit">Save brand</button>
                 <span class="status-note" id="brand-status">Saved to your account.</span>
               </div>
             </form>
           </section>
           <aside class="panel">
-            <h2>Profile health</h2>
-            <div class="stat-list">
-              <div class="stat-row"><span>Saved ideas</span><b id="stat-saved">0</b></div>
-              <div class="stat-row"><span>Platforms</span><b id="stat-platforms">0</b></div>
-              <div class="stat-row"><span>Voice words</span><b id="stat-voice">0</b></div>
+            <h2>Brand strength</h2>
+            <div class="brand-strength">
+              <div class="brand-ring" id="brand-ring" style="--pct:0">
+                <div class="brand-ring-inner"><b id="brand-ring-pct">0%</b></div>
+              </div>
+              <div class="brand-strength-note" id="brand-strength-note">Fill these in so Sona's drafts sound like you — not like everyone else.</div>
             </div>
-            <div class="tone-preview" id="tone-preview">Add your positioning and voice to make Sona drafts feel less generic.</div>
+            <div class="brand-checklist" id="brand-checklist"><!-- rendered by JS --></div>
           </aside>
         </div>
       </div>
@@ -921,6 +944,7 @@
     fullName: '',
     workspaceName: 'Personal brand',
     bio: 'Building Sona in public: sharper ideas, cleaner systems, practical creator workflows.',
+    pillars: 'Building in public · creator tools · productivity',
     audience: 'Founders, creators, operators',
     brandTone: 'Clear, contrarian, practical',
     platforms: ['X', 'LinkedIn'],
@@ -996,6 +1020,7 @@
     set('brand-name', s.fullName);
     set('workspace-name', s.workspaceName);
     set('brand-bio', s.bio);
+    set('brand-pillars', s.pillars);
     set('brand-audience', s.audience);
     set('brand-tone', s.brandTone);
     set('settings-email', user?.email || '');
@@ -1016,14 +1041,49 @@
     document.getElementById('user-name').textContent = name;
     document.getElementById('user-av').textContent = (name[0] || '·').toUpperCase();
     const setText = (id, value) => { const el = document.getElementById(id); if (el) el.textContent = value; };
-    setText('stat-saved', saved.size);
-    setText('stat-platforms', (s.platforms || []).length);
-    setText('stat-voice', (s.brandTone || '').split(/\s+/).filter(Boolean).length);
     setText('account-storage', demoMode ? 'Local preview' : 'Local + Supabase');
     setText('account-workspace', s.workspaceName || 'Personal brand');
     setText('settings-mode', demoMode ? 'Preview' : 'Account');
-    const tone = document.getElementById('tone-preview');
-    if (tone) tone.textContent = `${s.workspaceName}: writing for ${s.audience}. Voice should feel ${s.brandTone}. ${s.bio}`;
+    renderBrandStrength();
+  }
+
+  // Eden-style brand-strength ring + checklist (reads the live form so it fills as you type)
+  function renderBrandStrength() {
+    const ring = document.getElementById('brand-ring');
+    if (!ring) return;
+    const val = (id) => (document.getElementById(id)?.value || '').trim();
+    const checks = [
+      { id: 'brand-name',     label: 'Display name',    done: !!val('brand-name') },
+      { id: 'brand-bio',      label: 'Positioning',     done: !!val('brand-bio') },
+      { id: 'brand-pillars',  label: 'Content pillars', done: !!val('brand-pillars') },
+      { id: 'brand-audience', label: 'Audience',        done: !!val('brand-audience') },
+      { id: 'brand-tone',     label: 'Voice',           done: !!val('brand-tone') },
+      { id: '__platforms',    label: 'Platforms',       done: document.querySelectorAll('input[name="platforms"]:checked').length > 0 },
+    ];
+    const doneCount = checks.filter(c => c.done).length;
+    const pct = Math.round((doneCount / checks.length) * 100);
+    ring.style.setProperty('--pct', pct);
+    document.getElementById('brand-ring-pct').textContent = pct + '%';
+    const note = document.getElementById('brand-strength-note');
+    if (note) {
+      note.textContent = pct === 100
+        ? 'Your brand is fully set — every draft has your voice to lean on.'
+        : `${checks.length - doneCount} ${checks.length - doneCount === 1 ? 'thing' : 'things'} left. The fuller this is, the less generic your drafts feel.`;
+    }
+    const list = document.getElementById('brand-checklist');
+    if (list) {
+      list.innerHTML = checks.map(c => `
+        <div class="brand-check-item ${c.done ? 'done' : ''}" data-focus="${c.id}">
+          <span class="brand-check-dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>
+          <span class="lbl">${c.label}</span>
+          <span class="arr">→</span>
+        </div>`).join('');
+      list.querySelectorAll('[data-focus]').forEach(item => item.addEventListener('click', () => {
+        const id = item.dataset.focus;
+        const el = id === '__platforms' ? document.querySelector('input[name="platforms"]') : document.getElementById(id);
+        if (el) { el.focus(); el.scrollIntoView({ block: 'center', behavior: 'smooth' }); }
+      }));
+    }
   }
 
   function collectBrandForm() {
@@ -1033,6 +1093,7 @@
       bio: document.getElementById('brand-bio').value.trim(),
       audience: document.getElementById('brand-audience').value.trim(),
       brandTone: document.getElementById('brand-tone').value.trim(),
+      pillars: document.getElementById('brand-pillars').value.trim(),
       platforms: [...document.querySelectorAll('input[name="platforms"]:checked')].map(input => input.value),
     };
   }
@@ -2025,12 +2086,16 @@
     if (i.decoded) {
       fillDecoder(i.decoded);
       document.getElementById('decoder-back').classList.add('show');
+      // Initialize focus trap after modal is shown
+      requestAnimationFrame(() => trapDecoderFocus());
       return;
     }
 
     // Real/new post (e.g. from the ingest pipeline) — call the cached Claude endpoint.
     fillDecoder(LOADING_DECODE);
     document.getElementById('decoder-back').classList.add('show');
+    // Initialize focus trap after modal is shown
+    requestAnimationFrame(() => trapDecoderFocus());
     try {
       const res = await fetch('/api/decode', {
         method: 'POST',
@@ -2051,35 +2116,69 @@
       fillDecoder({ hook:'Offline', tension:'Decoder is unavailable right now.', payoff:'—', pattern:'—', why:'Check your connection.', apply:'—' });
     }
   };
-  window.closeDecoder = function() {
-    document.getElementById('decoder-back').classList.remove('show');
-  };
-  window.applyPatternToDraft = function() {
-    const id = document.getElementById('decoder-back').dataset.idea;
-    const i = SEED_IDEAS.find(x => x.id === id);
-    if (!i || !i.decoded) return;
-    const d = i.decoded;
-    activeDraftId = null;
-    document.getElementById('draft-title').value = `Draft from ${i.name} pattern`;
-    document.getElementById('draft-body').value =
-      `Pattern (from ${i.name}):\n${d.pattern}\n\n` +
-      `Why it worked:\n${d.why}\n\n` +
-      `Your version — fill the brackets in your voice:\n${d.apply}\n\n` +
-      `Original (for reference):\n"${i.text}"\n`;
-    document.getElementById('draft-heading').textContent = 'New draft';
-    document.getElementById('draft-meta').textContent = 'Unsaved';
-    document.getElementById('draft-status').textContent = 'Pattern loaded. Rewrite in your voice.';
-    closeDecoder();
-    switchView('studio');
-    setTimeout(() => document.getElementById('draft-body').focus(), 50);
-  };
-  document.getElementById('decoder-back').addEventListener('click', (e) => {
-    if (e.target.id === 'decoder-back') closeDecoder();
-  });
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && document.getElementById('decoder-back').classList.contains('show')) closeDecoder();
-    if (e.key === 'Escape' && document.getElementById('ac-back').classList.contains('show')) closeAddCreators();
-  });
+   window.closeDecoder = function() {
+     document.getElementById('decoder-back').classList.remove('show');
+     // Focus management for accessibility
+     const activeElement = document.activeElement;
+     if (activeElement && activeElement.closest('.decoder')) {
+       activeElement.blur();
+     }
+     // Return focus to the button that opened the decoder
+     const decoderButton = document.querySelector('.disc-action.decode');
+     if (decoderButton) decoderButton.focus();
+   };
+   
+   // Focus trap for decoder modal
+   function trapDecoderFocus() {
+     const decoder = document.getElementById('decoder-back');
+     if (!decoder.classList.contains('show')) return;
+     
+     const focusableElements = decoder.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+     const firstElement = focusableElements[0];
+     const lastElement = focusableElements[focusableElements.length - 1];
+     
+     decoder.addEventListener('keydown', (e) => {
+       if (e.key === 'Tab') {
+         if (e.shiftKey) {
+           if (document.activeElement === firstElement) {
+             e.preventDefault();
+             lastElement.focus();
+           }
+         } else {
+           if (document.activeElement === lastElement) {
+             e.preventDefault();
+             firstElement.focus();
+           }
+         }
+       }
+     });
+   }
+   window.applyPatternToDraft = function() {
+     const id = document.getElementById('decoder-back').dataset.idea;
+     const i = SEED_IDEAS.find(x => x.id === id);
+     if (!i || !i.decoded) return;
+     const d = i.decoded;
+     activeDraftId = null;
+     document.getElementById('draft-title').value = `Draft from ${i.name} pattern`;
+     document.getElementById('draft-body').value =
+       `Pattern (from ${i.name}):\n${d.pattern}\n\n` +
+       `Why it worked:\n${d.why}\n\n` +
+       `Your version — fill the brackets in your voice:\n${d.apply}\n\n` +
+       `Original (for reference):\n"${i.text}"\n`;
+     document.getElementById('draft-heading').textContent = 'New draft';
+     document.getElementById('draft-meta').textContent = 'Unsaved';
+     document.getElementById('draft-status').textContent = 'Pattern loaded. Rewrite in your voice.';
+     closeDecoder();
+     switchView('studio');
+     setTimeout(() => document.getElementById('draft-body').focus(), 50);
+   };
+   document.getElementById('decoder-back').addEventListener('click', (e) => {
+     if (e.target.id === 'decoder-back') closeDecoder();
+   });
+   document.addEventListener('keydown', (e) => {
+     if (e.key === 'Escape' && document.getElementById('decoder-back').classList.contains('show')) closeDecoder();
+     if (e.key === 'Escape' && document.getElementById('ac-back').classList.contains('show')) closeAddCreators();
+   });
 
   initApp().then(() => {
     const initialView = location.hash.replace('#', '');
