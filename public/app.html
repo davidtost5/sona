@@ -645,7 +645,7 @@
               </div>
               <div class="actions-row">
                 <button class="btn" type="submit">Save brand profile</button>
-                <span class="status-note" id="brand-status">Saved locally and ready for drafts.</span>
+                <span class="status-note" id="brand-status">Saved to your account.</span>
               </div>
             </form>
           </section>
@@ -934,23 +934,59 @@
     return `sona-${name}-${user?.id || 'preview'}`;
   }
 
-  function loadWorkspaceSettings() {
+  function readLocalWorkspace() {
+    try { return JSON.parse(localStorage.getItem(storageKey('workspace-settings')) || '{}'); }
+    catch (_) { return {}; }
+  }
+  async function loadWorkspaceSettings() {
     const fromUser = user?.user_metadata?.full_name || user?.email?.split('@')[0] || '';
-    const stored = JSON.parse(localStorage.getItem(storageKey('workspace-settings')) || '{}');
-    workspaceSettings = { ...DEFAULT_SETTINGS, fullName: fromUser, ...stored };
+    const local = readLocalWorkspace();
+    let cloud = {};
+    if (cloudProfile()) {
+      try {
+        const { data } = await sb.from('profiles').select('workspace').eq('id', user.id).maybeSingle();
+        cloud = (data && data.workspace) || {};
+      } catch (e) { console.warn('loadWorkspaceSettings cloud read failed', e); }
+    }
+    const hasCloud = cloud && Object.keys(cloud).length > 0;
+    workspaceSettings = { ...DEFAULT_SETTINGS, fullName: fromUser, ...(hasCloud ? cloud : local) };
+    // First-run migration: push existing local settings up, then clear local.
+    if (cloudProfile() && !hasCloud && Object.keys(local).length > 0) {
+      try {
+        await sb.from('profiles').upsert({ id: user.id, workspace: workspaceSettings, full_name: workspaceSettings.fullName || null });
+        localStorage.removeItem(storageKey('workspace-settings'));
+      } catch (_) {}
+    }
     hydrateForms();
     updateWorkspaceUI();
   }
 
-  function saveWorkspaceSettings(next, statusId = 'settings-status') {
+  async function saveWorkspaceSettings(next, statusId = 'settings-status') {
     workspaceSettings = { ...workspaceSettings, ...next };
-    localStorage.setItem(storageKey('workspace-settings'), JSON.stringify(workspaceSettings));
+    const status = document.getElementById(statusId);
+    if (cloudProfile()) {
+      if (status) status.textContent = 'Saving…';
+      try {
+        const { error } = await sb.from('profiles').upsert({
+          id: user.id,
+          workspace: workspaceSettings,
+          full_name: workspaceSettings.fullName || null,
+        });
+        if (error) throw error;
+      } catch (e) {
+        console.warn('saveWorkspaceSettings failed', e);
+        if (status) status.textContent = 'Save failed — check connection.';
+        hydrateForms(); updateWorkspaceUI();
+        return;
+      }
+    } else {
+      localStorage.setItem(storageKey('workspace-settings'), JSON.stringify(workspaceSettings));
+    }
     hydrateForms();
     updateWorkspaceUI();
-    const status = document.getElementById(statusId);
     if (status) {
       status.textContent = 'Saved.';
-      setTimeout(() => { status.textContent = statusId === 'brand-status' ? 'Saved locally and ready for drafts.' : 'No unsaved changes.'; }, 1800);
+      setTimeout(() => { status.textContent = statusId === 'brand-status' ? 'Saved to your account.' : 'No unsaved changes.'; }, 1800);
     }
   }
 
@@ -1010,11 +1046,6 @@
     };
   }
 
-  async function persistProfileToSupabase() {
-    if (demoMode || !sb || !user?.id) return;
-    await sb.from('profiles').upsert({ id: user.id, full_name: workspaceSettings.fullName || null });
-  }
-
   // Theme — re-check clock every minute so /app flips at 7am / 7pm without refresh
   setInterval(() => {
     if ((localStorage.getItem('sona-theme') || 'auto') === 'auto') {
@@ -1070,7 +1101,7 @@
     document.getElementById('user-av').textContent = (name[0] || '·').toUpperCase();
     await loadOutliers();
     await loadSaved();
-    loadWorkspaceSettings();
+    await loadWorkspaceSettings();
     await loadDrafts();
     await loadStyleGuide();
     await loadLists();
@@ -1823,13 +1854,12 @@
 
   document.getElementById('brand-form').addEventListener('submit', async (e) => {
     e.preventDefault();
-    saveWorkspaceSettings(collectBrandForm(), 'brand-status');
-    try { await persistProfileToSupabase(); } catch (_) {}
+    await saveWorkspaceSettings(collectBrandForm(), 'brand-status');
   });
 
-  document.getElementById('settings-form').addEventListener('submit', (e) => {
+  document.getElementById('settings-form').addEventListener('submit', async (e) => {
     e.preventDefault();
-    saveWorkspaceSettings(collectSettingsForm(), 'settings-status');
+    await saveWorkspaceSettings(collectSettingsForm(), 'settings-status');
   });
 
   document.getElementById('export-data').addEventListener('click', () => {
@@ -1893,7 +1923,7 @@
     localStorage.removeItem(storageKey('lists'));
     localStorage.removeItem('sona-preview-saved');
     if (demoMode) saved = new Set();
-    loadWorkspaceSettings();
+    await loadWorkspaceSettings();
     styleGuide = { hookPatterns:'', voiceRules:'', bannedPhrases:'' };
     await loadDrafts();
     await loadLists();
