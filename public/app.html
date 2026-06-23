@@ -2062,7 +2062,14 @@
     try {
       const r = await fetch('/api/checkout');
       const j = await r.json();
-      if (j.ok && j.url) { location.href = j.url; return; }
+      if (j.ok && j.url) {
+        const u = new URL(j.url);
+        // Prefill email + tag the Supabase user so the webhook can attribute the payment.
+        if (user?.email && !demoMode) u.searchParams.set('prefilled_email', user.email);
+        if (user?.id && !demoMode) u.searchParams.set('client_reference_id', user.id);
+        location.href = u.toString();
+        return;
+      }
       btn.innerHTML = 'Coming soon';
       setTimeout(() => { btn.innerHTML = orig; btn.disabled = false; }, 2500);
     } catch (_) { btn.innerHTML = orig; btn.disabled = false; }
