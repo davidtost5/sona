@@ -175,7 +175,7 @@
       .auth-logo-icon {
         width: 32px; height: 32px;
         border-radius: 8px;
-        background: linear-gradient(150deg, var(--text), var(--bg)); border: 1px solid rgba(255,255,255,0.09);
+        background: linear-gradient(150deg, #34343c, #131316); border: 1px solid rgba(255,255,255,0.09);
         display: inline-flex;
         align-items: center;
         justify-content: center;
@@ -453,7 +453,7 @@
         <!-- LOGIN VIEW -->
         <div id="auth-login-view">
           <div class="auth-logo">
-            <span class="auth-logo-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M5 15 Q8 9 12 12 Q16 15 19 9" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M19 3.6 C19.15 5.1 20.3 6.25 21.8 6.4 C20.3 6.55 19.15 7.7 19 9.2 C18.85 7.7 17.7 6.55 16.2 6.4 C17.7 6.25 18.85 5.1 19 3.6 Z" fill="var(--accent-2)"/></svg></span>
+            <span class="auth-logo-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M5 15 Q8 9 12 12 Q16 15 19 9" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M19 3.6 C19.15 5.1 20.3 6.25 21.8 6.4 C20.3 6.55 19.15 7.7 19 9.2 C18.85 7.7 17.7 6.55 16.2 6.4 C17.7 6.25 18.85 5.1 19 3.6 Z" fill="#8b84ff"/></svg></span>
             <span class="auth-logo-text">Sona</span>
           </div>
           <div class="auth-modal-title">Welcome back</div>
@@ -489,7 +489,7 @@
         <!-- WAITLIST VIEW (mock mode — no Supabase configured) -->
         <div id="auth-waitlist-view" style="display:none">
           <div class="auth-logo">
-            <span class="auth-logo-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M5 15 Q8 9 12 12 Q16 15 19 9" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M19 3.6 C19.15 5.1 20.3 6.25 21.8 6.4 C20.3 6.55 19.15 7.7 19 9.2 C18.85 7.7 17.7 6.55 16.2 6.4 C17.7 6.25 18.85 5.1 19 3.6 Z" fill="var(--accent-2)"/></svg></span>
+            <span class="auth-logo-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M5 15 Q8 9 12 12 Q16 15 19 9" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M19 3.6 C19.15 5.1 20.3 6.25 21.8 6.4 C20.3 6.55 19.15 7.7 19 9.2 C18.85 7.7 17.7 6.55 16.2 6.4 C17.7 6.25 18.85 5.1 19 3.6 Z" fill="#8b84ff"/></svg></span>
             <span class="auth-logo-text">Sona</span>
           </div>
           <div class="auth-modal-title">Request early access</div>
