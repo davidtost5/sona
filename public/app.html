@@ -135,6 +135,18 @@
   .disc-views { font-family:'Geist Mono',monospace; font-size:10px; color:var(--text-dim); white-space:nowrap; }
   .disc-actions { display:flex; gap:6px; flex-shrink:0; }
   .disc-disclaimer { margin:18px 2px 0; font-size:11px; line-height:1.5; color:var(--text-dim); max-width:640px; }
+  /* Hooks library */
+  .hooks-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(300px,1fr)); gap:12px; }
+  .hook-card { background:var(--bg-soft); border:1px solid var(--border); border-radius:12px; padding:16px; display:flex; flex-direction:column; gap:11px; transition:border-color .2s, transform .2s; }
+  .hook-card:hover { border-color:var(--border-strong); transform:translateY(-1px); }
+  .hook-cat { font-family:'Geist Mono',monospace; font-size:10px; letter-spacing:1px; text-transform:uppercase; color:var(--accent); }
+  .hook-pattern { font-size:14px; line-height:1.55; color:var(--text); font-weight:500; }
+  .hook-pattern .slot { color:var(--accent); background:var(--accent-soft); padding:0 4px; border-radius:4px; font-weight:600; }
+  .hook-eg { font-size:12px; line-height:1.5; color:var(--text-mid); border-left:2px solid var(--border-strong); padding-left:10px; }
+  .hook-foot { display:flex; align-items:center; justify-content:space-between; margin-top:2px; }
+  .hook-use { background:transparent; border:1px solid var(--border); border-radius:8px; padding:6px 12px; color:var(--text); cursor:pointer; font-size:12px; font-family:inherit; display:inline-flex; align-items:center; gap:6px; transition:border-color .15s, color .15s, background .15s; }
+  .hook-use:hover { border-color:var(--accent); color:var(--accent); background:var(--accent-soft); }
+  .hook-use svg { width:12px; height:12px; }
   .disc-action { background:transparent; border:1px solid var(--border); border-radius:7px; padding:4px 8px; color:var(--text-mid); cursor:pointer; font-size:11px; font-family:inherit; display:inline-flex; align-items:center; gap:4px; transition:border-color .15s, color .15s; }
   .disc-action:hover { color:var(--accent); border-color:var(--accent); }
   .disc-action.saved { color:var(--accent); border-color:var(--accent); background:var(--accent-soft); }
@@ -401,6 +413,10 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
         Playbook
       </button>
+      <button class="nav-item" data-view="hooks">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z"/></svg>
+        Hooks<span class="pill-n" id="hooks-count">0</span>
+      </button>
       <button class="nav-item" data-view="lists">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/><circle cx="17" cy="7" r="3"/><path d="M21 21v-2a4 4 0 0 0-3-3.87"/></svg>
         Lists<span class="pill-n" id="lists-count">0</span>
@@ -573,6 +589,21 @@
             <div class="tone-preview" id="style-preview">Fill your playbook — it surfaces next to every draft so each post sounds unmistakably you.</div>
           </aside>
         </div>
+      </div>
+
+      <!-- HOOKS LIBRARY -->
+      <div class="view" data-view="hooks">
+        <div class="filters" id="hook-filters">
+          <button class="filter active" data-hookcat="all">All</button>
+          <button class="filter" data-hookcat="contrarian">Contrarian</button>
+          <button class="filter" data-hookcat="list">Listicle</button>
+          <button class="filter" data-hookcat="story">Story</button>
+          <button class="filter" data-hookcat="mistake">Mistake</button>
+          <button class="filter" data-hookcat="framework">Framework</button>
+          <button class="filter" data-hookcat="question">Question</button>
+          <button class="filter" data-hookcat="curiosity">Curiosity</button>
+        </div>
+        <div class="hooks-grid" id="hooks-grid"><!-- rendered by JS --></div>
       </div>
 
       <!-- LISTS -->
@@ -925,7 +956,48 @@
     { id:'c_packym',       name:'Packy McCormick',  handle:'@packym',        platform:'Substack',  followers:120000, av:AV('packym'),       liked:18000, viewed:720000,  outlier:11 },
   ];
   let currentFilter = 'all';
+  let hookFilter = 'all';
   let searchTerm = '';
+
+  // ─── Hooks library ─── curated, proven hook patterns. Free, static. You write the post.
+  const HOOKS_LIBRARY = [
+    { id:'h1',  cat:'contrarian', pattern:'Most [group] [common belief]. The ones who break out [contrarian move].', eg:'Most founders post more. The ones who break out pick one take and repeat it.' },
+    { id:'h2',  cat:'contrarian', pattern:'[Popular thing] isn\'t the problem. [Unexpected thing] is.', eg:'Your funnel isn\'t the problem. Your offer is.' },
+    { id:'h3',  cat:'contrarian', pattern:'Everyone tells you to [common advice]. Here\'s why that\'s backwards.', eg:'Everyone tells you to niche down. Here\'s why that\'s backwards at first.' },
+    { id:'h4',  cat:'contrarian', pattern:'Stop [thing they over-invest in]. Start [the thing that compounds].', eg:'Stop optimizing your morning. Start optimizing your next 6 hours.' },
+    { id:'h5',  cat:'contrarian', pattern:'[Scapegoat] didn\'t kill [thing]. [Real cause] did.', eg:'AI didn\'t kill writing. Lazy writing did.' },
+    { id:'h6',  cat:'list',       pattern:'[N] [things] I [do] before [important action]:', eg:'3 questions I ask before writing anything:' },
+    { id:'h7',  cat:'list',       pattern:'[N] signs you\'re [state] (and what to do about each):', eg:'5 signs you\'re about to burn out (and the fix for each):' },
+    { id:'h8',  cat:'list',       pattern:'[N] [tools/habits/ideas] that [outcome] — ranked:', eg:'7 habits that doubled my output — ranked:' },
+    { id:'h9',  cat:'list',       pattern:'I [did X] for [time]. Here are the [N] lessons that actually mattered:', eg:'I posted daily for a year. Here are the 5 lessons that actually mattered:' },
+    { id:'h10', cat:'story',      pattern:'[Time] ago I [low point]. Today I [result]. Here\'s what changed:', eg:'Two years ago I had 200 followers. Today I have 50k. Here\'s what changed:' },
+    { id:'h11', cat:'story',      pattern:'I almost [gave up / quit] [thing]. Then [small shift]. Now [result].', eg:'I almost deleted my account. Then I changed one thing. Now it\'s my best channel.' },
+    { id:'h12', cat:'story',      pattern:'The [post/decision/move] that changed everything took me [absurdly small effort].', eg:'The post that changed everything took me 4 minutes to write.' },
+    { id:'h13', cat:'story',      pattern:'Nobody talks about [hard truth of a journey]. Here\'s mine:', eg:'Nobody talks about the lonely middle of building. Here\'s mine:' },
+    { id:'h14', cat:'mistake',    pattern:'I wasted [time/money] on [thing] so you don\'t have to. Do [this] instead.', eg:'I wasted 2 years optimizing my system. Just start instead.' },
+    { id:'h15', cat:'mistake',    pattern:'The biggest mistake [group] make: [mistake]. Fix: [fix].', eg:'The biggest mistake new writers make: writing for everyone. Fix: write for one person.' },
+    { id:'h16', cat:'mistake',    pattern:'You don\'t have [the problem they name]. You have [the real problem].', eg:'You don\'t have writer\'s block. You have input block.' },
+    { id:'h17', cat:'mistake',    pattern:'If I started [thing] today, I\'d skip [common mistake] and [do this] first.', eg:'If I started today, I\'d skip the logo and find 10 customers first.' },
+    { id:'h18', cat:'framework',  pattern:'The [name] framework for [outcome]: [step 1] → [step 2] → [step 3].', eg:'The 3-A framework for ideas: Absorb → Angle → Assemble.' },
+    { id:'h19', cat:'framework',  pattern:'Every [winning output] follows the same shape: [a], [b], [c]. That\'s it.', eg:'Every viral post: bold claim, surprising reason, concrete example. That\'s it.' },
+    { id:'h20', cat:'framework',  pattern:'How to [outcome] in [N] steps (steal this):', eg:'How to turn any idea into a thread in 4 steps (steal this):' },
+    { id:'h21', cat:'framework',  pattern:'[Outcome] = [input 1] + [input 2] − [common trap].', eg:'Audience growth = consistency + a clear angle − chasing trends.' },
+    { id:'h22', cat:'question',   pattern:'What if [common assumption] is the exact thing holding you back?', eg:'What if "more content" is the exact thing holding you back?' },
+    { id:'h23', cat:'question',   pattern:'Why do [group] keep [behavior] when [contradiction]?', eg:'Why do founders keep posting daily when one great post a week wins?' },
+    { id:'h24', cat:'question',   pattern:'Ever notice how [observation]? Here\'s what\'s really going on:', eg:'Ever notice the best posts feel effortless? Here\'s what\'s really going on:' },
+    { id:'h25', cat:'curiosity',  pattern:'The one [thing] that changed how I think about [broad activity]:', eg:'The one essay format that changed how I think about everything I publish.' },
+    { id:'h26', cat:'curiosity',  pattern:'Here\'s the part of [popular topic] nobody tells you:', eg:'Here\'s the part of "build in public" nobody tells you:' },
+    { id:'h27', cat:'curiosity',  pattern:'I found a [pattern] hiding in [N] [examples]. It explains [outcome].', eg:'I found a pattern hiding in 100 viral posts. It explains why they spread.' },
+    { id:'h28', cat:'curiosity',  pattern:'[Specific number] changed my mind about [topic]:', eg:'One number changed my mind about posting frequency:' },
+    { id:'h29', cat:'contrarian', pattern:'Unpopular opinion: [stance most disagree with]. Here\'s the case:', eg:'Unpopular opinion: consistency is overrated without an angle. Here\'s the case:' },
+    { id:'h30', cat:'list',       pattern:'Save this: [N] [things] for [outcome].', eg:'Save this: 8 hooks for your next 8 posts.' },
+    { id:'h31', cat:'story',      pattern:'[Authority figure] told me [advice]. They were [right/wrong]. Here\'s why:', eg:'A mentor told me to post less. They were right. Here\'s why:' },
+    { id:'h32', cat:'framework',  pattern:'Before you [action], run this [N]-question check:', eg:'Before you hit publish, run this 3-question check:' },
+    { id:'h33', cat:'mistake',    pattern:'Stop chasing [vanity metric]. Start chasing [the real thing].', eg:'Stop chasing followers. Start chasing the right 100 people.' },
+    { id:'h34', cat:'curiosity',  pattern:'[Big result] came from [tiny, boring habit]. Let me explain:', eg:'My best month came from one boring 15-minute habit. Let me explain:' },
+    { id:'h35', cat:'question',   pattern:'How much of your [thing] is actually [reframed cause]?', eg:'How much of your "time problem" is actually a courage problem?' },
+    { id:'h36', cat:'contrarian', pattern:'The best [group] aren\'t the [expected trait]. They\'re the most [unexpected trait].', eg:'The best founders aren\'t the smartest. They\'re the most shameless.' },
+  ];
   function matchesSearch(i) {
     if (!searchTerm) return true;
     const hay = (i.name + ' ' + i.handle + ' ' + i.text + ' ' + i.tag).toLowerCase();
@@ -1186,6 +1258,7 @@
     renderDrafts();
     renderStyleGuide();
     renderLists();
+    renderHooks();
   }
 
   // ─── Drafts ───
@@ -1771,6 +1844,43 @@
     return text.replace(new RegExp(`(${escaped})`, 'gi'), '<mark>$1</mark>');
   }
 
+  function hookSlots(pattern) {
+    return escapeHtml(pattern).replace(/\[([^\]]+)\]/g, '<span class="slot">[$1]</span>');
+  }
+  function renderHooks() {
+    const grid = document.getElementById('hooks-grid');
+    if (!grid) return;
+    const items = HOOKS_LIBRARY.filter(h => hookFilter === 'all' || h.cat === hookFilter);
+    const countEl = document.getElementById('hooks-count');
+    if (countEl) countEl.textContent = HOOKS_LIBRARY.length;
+    const catLabel = { contrarian:'Contrarian', list:'Listicle', story:'Story', mistake:'Mistake', framework:'Framework', question:'Question', curiosity:'Curiosity' };
+    grid.innerHTML = items.map(h => `
+      <div class="hook-card">
+        <div class="hook-cat">${catLabel[h.cat] || h.cat}</div>
+        <div class="hook-pattern">${hookSlots(h.pattern)}</div>
+        <div class="hook-eg">${escapeHtml(h.eg)}</div>
+        <div class="hook-foot">
+          <button class="hook-use" onclick="useHook('${h.id}')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 1 1 3 3L7 19l-4 1 1-4Z"/></svg>
+            Use in a draft
+          </button>
+        </div>
+      </div>`).join('');
+  }
+  window.useHook = function(id) {
+    const h = HOOKS_LIBRARY.find(x => x.id === id);
+    if (!h) return;
+    activeDraftId = null;
+    document.getElementById('draft-title').value = '';
+    const body = document.getElementById('draft-body');
+    body.value = `${h.pattern}\n\nExample: ${h.eg}\n\n— your version (fill the brackets in your voice) —\n`;
+    document.getElementById('draft-heading').textContent = 'New draft';
+    document.getElementById('draft-meta').textContent = 'Unsaved';
+    document.getElementById('draft-status').textContent = 'Hook loaded. Make it yours.';
+    switchView('studio');
+    setTimeout(() => body.focus(), 50);
+  };
+
   function renderDiscover() {
     const grid = document.getElementById('disc-grid');
     const countEl = document.getElementById('discover-count');
@@ -1869,6 +1979,7 @@
       studio:['Drafts', drafts.length ? `${drafts.length} draft${drafts.length===1?'':'s'}` : 'Start a draft'],
       lists:['My lists', lists.length ? `${lists.length} list${lists.length===1?'':'s'}` : 'No lists'],
       voice:['Playbook','Yours — never AI'],
+      hooks:['Hooks library', `${HOOKS_LIBRARY.length} proven patterns`],
       saved:['Saved ideas',`${saved.size} item${saved.size===1?'':'s'}`],
       brand:['Personal brand', workspaceSettings.workspaceName || 'Workspace'],
       swipe:['Idea swipe','Review and save outliers'],
@@ -1920,11 +2031,17 @@
   };
 
   document.querySelectorAll('.nav-item[data-view]').forEach(btn => btn.addEventListener('click', () => switchView(btn.dataset.view)));
-  document.querySelectorAll('.filter').forEach(btn => btn.addEventListener('click', () => {
-    document.querySelectorAll('.filter').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.filter[data-filter]').forEach(btn => btn.addEventListener('click', () => {
+    document.querySelectorAll('.filter[data-filter]').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
     currentFilter = btn.dataset.filter;
     renderDiscover();
+  }));
+  document.querySelectorAll('.filter[data-hookcat]').forEach(btn => btn.addEventListener('click', () => {
+    document.querySelectorAll('.filter[data-hookcat]').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    hookFilter = btn.dataset.hookcat;
+    renderHooks();
   }));
 
   document.getElementById('brand-form').addEventListener('submit', async (e) => {
