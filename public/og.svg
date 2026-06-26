@@ -1,0 +1,67 @@
+<svg viewBox="0 0 1200 630" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="ogt ogd">
+  <title id="ogt">Sona social share image</title>
+  <desc id="ogd">Dark branded card: Sona logo, headline "Surrounded by what's working. Always in your voice." and trysona.studio.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#141317"/>
+      <stop offset="1" stop-color="#0d0c0e"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#6b63f5" stop-opacity="0.42"/>
+      <stop offset="1" stop-color="#6b63f5" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="sq" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#3a3a44"/>
+      <stop offset="1" stop-color="#131316"/>
+    </linearGradient>
+    <linearGradient id="card" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#1b1a1f"/>
+      <stop offset="1" stop-color="#151419"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <ellipse cx="1080" cy="80" rx="520" ry="380" fill="url(#glow)"/>
+  <rect x="1" y="1" width="1198" height="628" rx="0" fill="none" stroke="#ffffff" stroke-opacity="0.06"/>
+
+  <g transform="translate(80,74)">
+    <rect width="56" height="56" rx="15" fill="url(#sq)" stroke="#ffffff" stroke-opacity="0.1"/>
+    <g transform="translate(13,13) scale(1.25)">
+      <path d="M5 15 Q8 9 12 12 Q16 15 19 9" stroke="#fff" stroke-width="2.6" stroke-linecap="round" fill="none"/>
+      <path d="M19 3.6 C19.15 5.1 20.3 6.25 21.8 6.4 C20.3 6.55 19.15 7.7 19 9.2 C18.85 7.7 17.7 6.55 16.2 6.4 C17.7 6.25 18.85 5.1 19 3.6 Z" fill="#8b84ff"/>
+    </g>
+    <text x="74" y="38" font-family="Geist, Inter, -apple-system, sans-serif" font-size="30" font-weight="600" fill="#f4f3f1" letter-spacing="-0.5">Sona</text>
+    <g transform="translate(158,12)">
+      <rect width="62" height="26" rx="13" fill="#6b63f5" fill-opacity="0.18" stroke="#8b84ff" stroke-opacity="0.5"/>
+      <text x="31" y="18" text-anchor="middle" font-family="'Geist Mono', monospace" font-size="12" letter-spacing="1.5" fill="#b9b2ff">BETA</text>
+    </g>
+  </g>
+
+  <g transform="translate(742,196)" opacity="0.96">
+    <rect width="388" height="250" rx="18" fill="url(#card)" stroke="#ffffff" stroke-opacity="0.08"/>
+    <circle cx="34" cy="40" r="16" fill="#2a2a31"/>
+    <text x="60" y="36" font-family="Geist, sans-serif" font-size="15" font-weight="600" fill="#e9e7ee">Alex Hormozi</text>
+    <text x="60" y="55" font-family="'Geist Mono', monospace" font-size="11" fill="#7c7a85">@AlexHormozi · X</text>
+    <text x="320" y="44" text-anchor="end" font-family="'Geist Mono', monospace" font-size="11" fill="#6f6d77">1.2M views</text>
+    <text x="28" y="98" font-family="Geist, sans-serif" font-size="14.5" fill="#cfcdd6"><tspan x="28" dy="0">Most founders post too much — not</tspan><tspan x="28" dy="22">too little. The ones who break out</tspan><tspan x="28" dy="22">pick one contrarian take.</tspan></text>
+    <rect x="28" y="186" width="96" height="30" rx="100" fill="#6b63f5" fill-opacity="0.16"/>
+    <text x="76" y="206" text-anchor="middle" font-family="'Geist Mono', monospace" font-size="11" fill="#b9b2ff">12× outlier</text>
+    <g transform="translate(232,186)">
+      <rect width="60" height="30" rx="8" fill="none" stroke="#ffffff" stroke-opacity="0.14"/>
+      <text x="30" y="20" text-anchor="middle" font-family="Geist, sans-serif" font-size="12" fill="#cfcdd6">Decode</text>
+    </g>
+    <g transform="translate(300,186)">
+      <rect width="56" height="30" rx="8" fill="none" stroke="#ffffff" stroke-opacity="0.14"/>
+      <text x="28" y="20" text-anchor="middle" font-family="Geist, sans-serif" font-size="12" fill="#cfcdd6">Save</text>
+    </g>
+  </g>
+
+  <text x="80" y="320" font-family="Geist, Inter, sans-serif" font-size="62" font-weight="600" fill="#f6f5f3" letter-spacing="-2.2">Surrounded by</text>
+  <text x="80" y="392" font-family="Geist, Inter, sans-serif" font-size="62" font-weight="600" fill="#f6f5f3" letter-spacing="-2.2">what's working.</text>
+  <text x="80" y="462" font-family="Geist, Inter, sans-serif" font-size="62" font-weight="600" fill="#a59bff" letter-spacing="-2.2">Always in your voice.</text>
+
+  <text x="82" y="520" font-family="Geist, sans-serif" font-size="21" fill="#9b99a4" letter-spacing="-0.2">Find proven outliers · decode why they worked · write them in your voice.</text>
+
+  <text x="80" y="585" font-family="'Geist Mono', monospace" font-size="19" fill="#cfcdd6" letter-spacing="0.5">trysona.studio</text>
+  <text x="1120" y="585" text-anchor="end" font-family="Geist, sans-serif" font-size="16" fill="#6f6d77">No AI writes for you. You write.</text>
+</svg>
