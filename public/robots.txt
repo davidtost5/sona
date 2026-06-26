@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /app
+Disallow: /admin.html
+
+Sitemap: https://trysona.studio/sitemap.xml
