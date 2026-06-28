@@ -373,11 +373,10 @@
   .persona .role { font-family: 'Geist Mono', monospace; font-size: 11px; letter-spacing: 1px; text-transform: uppercase; color: var(--accent); margin-bottom: 16px; }
   .persona h3 { font-size: 20px; font-weight: 600; letter-spacing: -.4px; margin-bottom: 10px; line-height: 1.2; }
   .persona p { font-size: 14.5px; color: var(--text-mid); line-height: 1.6; margin-bottom: 24px; flex-grow: 1; }
-  /* Outcome — same skeleton on every card: big number, metric, mono qualifier */
-  .persona .out { padding-top: 22px; border-top: 1px solid var(--border-strong); display: flex; flex-direction: column; }
-  .persona .out-num { font-size: 38px; font-weight: 600; letter-spacing: -1.6px; line-height: 1; color: var(--accent); font-variant-numeric: tabular-nums; margin-bottom: 8px; }
-  .persona .out-metric { font-size: 15px; font-weight: 600; color: var(--text); line-height: 1.2; margin-bottom: 4px; }
-  .persona .out-qual { font-family: 'Geist Mono', monospace; font-size: 10.5px; letter-spacing: .8px; text-transform: uppercase; color: var(--text-dim); }
+  /* What you get — same skeleton on every card: concrete capabilities, no vanity metrics */
+  .persona .out { padding-top: 22px; border-top: 1px solid var(--border-strong); display: flex; flex-direction: column; gap: 11px; }
+  .persona .out-feat { display: flex; align-items: flex-start; gap: 10px; font-size: 14px; color: var(--text); line-height: 1.45; }
+  .persona .out-feat svg { flex: none; width: 16px; height: 16px; margin-top: 1px; color: var(--accent); }
 
   /* ─── BENTO GRID ─── */
   .bento { display: grid; grid-template-columns: repeat(3, 1fr); grid-auto-rows: minmax(240px, auto); gap: 18px; max-width: 1140px; margin: 0 auto; }
@@ -441,6 +440,11 @@
   .app-search { display: flex; align-items: center; gap: 8px; padding: 7px 10px; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; font-size: 12px; color: var(--text-dim); }
   .app-search svg { width: 12px; height: 12px; flex-shrink: 0; }
   .app-search .kbd { margin-left: auto; font-family: 'Geist Mono', monospace; font-size: 9.5px; padding: 1px 6px; background: var(--bg-soft); border: 1px solid var(--border); border-radius: 4px; color: var(--text-mid); }
+  .app-search-input { flex: 1; min-width: 0; border: none; background: transparent; outline: none; font: inherit; font-size: 12px; color: var(--text); padding: 0; }
+  .app-search-input::placeholder { color: var(--text-dim); }
+  .app-search:focus-within { border-color: var(--accent); }
+  .disc-card[hidden] { display: none; }
+  .disc-empty { padding: 18px; font-size: 13px; color: var(--text-dim); text-align: center; }
   .app-nav { display: flex; flex-direction: column; gap: 2px; }
   .app-nav-item { display: flex; align-items: center; gap: 9px; padding: 7px 9px; border-radius: 7px; cursor: pointer; font-size: 12.5px; color: var(--text-mid); transition: background .2s, color .2s; user-select: none; border: 0; background: transparent; font-family: inherit; text-align: left; }
   .app-nav-item:hover { color: var(--text); background: var(--surface); }
@@ -1095,9 +1099,9 @@
       <h3>Ship daily without burning out.</h3>
       <p>Turn one idea into a week of content across every platform — all in the voice your audience already trusts.</p>
       <div class="out">
-        <div class="out-num">10×</div>
-        <div class="out-metric">output</div>
-        <div class="out-qual">Same hours</div>
+        <div class="out-feat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>See what's outperforming in your niche</div>
+        <div class="out-feat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Decode why it actually worked</div>
+        <div class="out-feat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Draft it in your own voice</div>
       </div>
     </div>
     <div class="persona">
@@ -1105,9 +1109,9 @@
       <h3>Build in public, on autopilot.</h3>
       <p>Distill product updates and learnings into thought leadership without taking time away from building.</p>
       <div class="out">
-        <div class="out-num">2×</div>
-        <div class="out-metric">pipeline</div>
-        <div class="out-qual">Owned audience</div>
+        <div class="out-feat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Turn updates into posts that land</div>
+        <div class="out-feat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Save proven hooks to reuse</div>
+        <div class="out-feat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Write fast, still sound like you</div>
       </div>
     </div>
     <div class="persona">
@@ -1115,9 +1119,9 @@
       <h3>Scale client content, keep voice.</h3>
       <p>Keep a separate playbook and swipe board per client. Draft, review, and ship at the speed your accounts need.</p>
       <div class="out">
-        <div class="out-num">3×</div>
-        <div class="out-metric">clients</div>
-        <div class="out-qual">No new hires</div>
+        <div class="out-feat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>A separate playbook per client</div>
+        <div class="out-feat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Own swipe board for each account</div>
+        <div class="out-feat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Stay on-brand for every voice</div>
       </div>
     </div>
   </div>
@@ -1241,7 +1245,7 @@ and they stick with it for ninety days.
 
         <div class="app-search">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
-          <span>Find ideas</span>
+          <input type="text" id="preview-search" class="app-search-input" placeholder="Find ideas" aria-label="Find ideas">
           <span class="kbd">⌘K</span>
         </div>
 
@@ -1655,7 +1659,7 @@ and they stick with it for ninety days.
       </a>
       <p>The creator studio that finds proven ideas and writes them in your voice.</p>
       <form class="foot-sub" id="sub-form" onsubmit="return false;">
-        <input type="email" placeholder="your@email.com" id="sub-email" required>
+        <input type="email" placeholder="your@email.com" id="sub-email" aria-label="Email address" required>
         <button type="submit">Subscribe</button>
       </form>
       <div class="foot-status"><span class="dot"></span> All systems normal</div>
@@ -1914,15 +1918,62 @@ and they stick with it for ninety days.
     const items = document.querySelectorAll('.app-side .app-nav-item[data-view]');
     const views = document.querySelectorAll('.app-main .app-view[data-view]');
     if (!items.length) return;
+
+    function showView(v) {
+      items.forEach(i => i.classList.toggle('active', i.dataset.view === v));
+      views.forEach(view => view.classList.toggle('active', view.dataset.view === v));
+    }
+
     items.forEach(item => {
       item.addEventListener('click', (e) => {
         e.preventDefault();
-        const v = item.dataset.view;
-        items.forEach(i => i.classList.remove('active'));
-        item.classList.add('active');
-        views.forEach(view => view.classList.toggle('active', view.dataset.view === v));
+        showView(item.dataset.view);
       });
     });
+
+    // Workspace items have no preview view — route them to sign-up (the real studio)
+    document.querySelectorAll('.app-side .app-nav-item:not([data-view])').forEach(item => {
+      item.addEventListener('click', (e) => {
+        e.preventDefault();
+        if (window.CanopyAuth && window.CanopyAuth.openSignup) window.CanopyAuth.openSignup();
+      });
+    });
+
+    // Search — live-filter the Discover cards (bug: was a dead affordance)
+    const search = document.getElementById('preview-search');
+    if (search) {
+      const grid = document.querySelector('.app-view[data-view="discover"] .disc-grid');
+      const cards = grid ? Array.from(grid.querySelectorAll('.disc-card')) : [];
+      let emptyEl = null;
+      const runFilter = () => {
+        const q = search.value.trim().toLowerCase();
+        if (q) showView('discover');
+        let shown = 0;
+        cards.forEach(card => {
+          const match = !q || card.textContent.toLowerCase().includes(q);
+          card.hidden = !match;
+          if (match) shown++;
+        });
+        if (grid) {
+          if (!shown && q) {
+            if (!emptyEl) { emptyEl = document.createElement('div'); emptyEl.className = 'disc-empty'; grid.appendChild(emptyEl); }
+            emptyEl.textContent = `No ideas match "${search.value.trim()}"`;
+            emptyEl.hidden = false;
+          } else if (emptyEl) {
+            emptyEl.hidden = true;
+          }
+        }
+      };
+      search.addEventListener('input', runFilter);
+      // ⌘K / Ctrl+K focuses the search
+      document.addEventListener('keydown', (e) => {
+        if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+          e.preventDefault();
+          search.focus();
+          search.select();
+        }
+      });
+    }
   })();
 
   // ─── AWWWARDS TOUCHES ─── tilt + magnetic. Restrained, fine-pointer only.
