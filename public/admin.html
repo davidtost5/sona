@@ -127,6 +127,7 @@
   <div class="tabs">
     <button class="tab active" data-pane="waitlist">Waitlist <span class="count" id="count-waitlist">0</span></button>
     <button class="tab" data-pane="contacts">Messages <span class="count" id="count-contacts">0</span></button>
+    <button class="tab" data-pane="outliers">Discover feed <span class="count" id="count-outliers">0</span></button>
   </div>
 
   <!-- WAITLIST PANE -->
@@ -147,6 +148,39 @@
       <button class="btn btn-danger" id="clear-contacts">Clear all</button>
     </div>
     <div class="table-card" id="table-contacts"></div>
+  </div>
+
+  <!-- OUTLIERS PANE (curate the Discover feed) -->
+  <div class="pane" id="pane-outliers">
+    <div class="mode-banner" style="margin-bottom:20px">
+      <b>Daily refresh.</b> Paste today's outliers below and Publish — this becomes the live Discover feed in the app.
+      Curation is yours: real posts you picked, no scraping, no AI writing. If the feed is empty, the app falls back to the built-in seed.
+    </div>
+
+    <div style="display:flex; gap:10px; align-items:center; margin-bottom:16px; flex-wrap:wrap;">
+      <input class="search" id="admin-key" type="password" placeholder="Admin key (ADMIN_KEY)" style="max-width:280px; flex:none;">
+      <button class="btn" id="ol-remember">Remember on this device</button>
+      <span id="ol-key-state" style="font-size:13px;color:var(--text-light)"></span>
+    </div>
+
+    <p style="font-size:13px;color:var(--text-mid);line-height:1.7;margin-bottom:10px">
+      One per line, fields separated by <code>|</code>:<br>
+      <code>creator | @handle · X | avatarHandle | post text | 12× outlier | 1.2M views | founders</code><br>
+      Required: <b>creator</b>, <b>handle</b>, <b>text</b>. <code>cat</code> = founders / writers / creators. <code>avatarHandle</code> blank = derived from handle. Lines starting with <code>#</code> are ignored.
+    </p>
+    <textarea id="ol-input" spellcheck="false" placeholder="Paste today's outliers here…" style="width:100%;min-height:220px;font-family:'Geist Mono',ui-monospace,monospace;font-size:13px;line-height:1.6;padding:14px 16px;border:1.5px solid var(--border);border-radius:12px;background:#fff;outline:none;resize:vertical;color:var(--text-dark);"></textarea>
+
+    <div class="toolbar" style="margin-top:14px">
+      <label style="font-size:14px;display:flex;align-items:center;gap:6px;cursor:pointer"><input type="radio" name="ol-mode" value="replace" checked> Replace feed</label>
+      <label style="font-size:14px;display:flex;align-items:center;gap:6px;cursor:pointer"><input type="radio" name="ol-mode" value="append"> Append</label>
+      <button class="btn" id="ol-example">Load example</button>
+      <button class="btn btn-primary" id="ol-publish">Publish to feed</button>
+      <span id="ol-status" style="font-size:13px"></span>
+    </div>
+
+    <h3 style="font-size:14px;font-weight:600;margin:30px 0 12px;color:var(--text-mid)">Currently live
+      <button class="btn" id="ol-reload" style="padding:5px 12px;font-size:13px;margin-left:8px">Reload</button></h3>
+    <div class="table-card" id="table-outliers"></div>
   </div>
 </div>
 
@@ -265,8 +299,94 @@
     if (confirm('Delete all messages? This cannot be undone.')) { D.clearContacts(); renderContacts(); }
   });
 
+  // ─── OUTLIERS (Discover feed curation) ───
+  const keyInput = document.getElementById('admin-key');
+  const savedKey = localStorage.getItem('sona_admin_key') || '';
+  if (savedKey) { keyInput.value = savedKey; document.getElementById('ol-key-state').textContent = 'Loaded saved key.'; }
+  const adminKey = () => keyInput.value.trim();
+
+  document.getElementById('ol-remember').addEventListener('click', () => {
+    if (adminKey()) { localStorage.setItem('sona_admin_key', adminKey()); document.getElementById('ol-key-state').textContent = 'Saved on this device.'; }
+    else { localStorage.removeItem('sona_admin_key'); document.getElementById('ol-key-state').textContent = 'Cleared.'; }
+  });
+
+  function parseOutliers(raw) {
+    const items = [];
+    raw.split('\n').forEach(line => {
+      const t = line.trim();
+      if (!t || t.startsWith('#')) return;
+      const p = t.split('|').map(s => s.trim());
+      const [creator_name, handle, avatar_handle, text, outlier_tag, views, cat] = p;
+      if (!creator_name || !handle || !text) return; // skip malformed lines
+      items.push({ creator_name, handle, avatar_handle, text, outlier_tag, views, cat });
+    });
+    return items;
+  }
+
+  const OL_EXAMPLE = `# creator | @handle · X | avatarHandle | post text | tag | views | cat
+Alex Hormozi | @AlexHormozi · X | AlexHormozi | Most founders post too much — not too little. The ones who break out pick one contrarian take and stick to it. | 12× outlier | 1.2M views | founders
+Dan Koe | @thedankoe · X | thedankoe | Three questions I ask before writing anything. They've saved me hundreds of bad drafts. | 18× outlier | 2.4M views | writers`;
+
+  document.getElementById('ol-example').addEventListener('click', () => { document.getElementById('ol-input').value = OL_EXAMPLE; });
+
+  document.getElementById('ol-publish').addEventListener('click', async () => {
+    const status = document.getElementById('ol-status');
+    if (!adminKey()) { status.style.color = '#c85050'; status.textContent = 'Enter your admin key first.'; return; }
+    const items = parseOutliers(document.getElementById('ol-input').value);
+    if (!items.length) { status.style.color = '#c85050'; status.textContent = 'No valid lines to publish.'; return; }
+    const mode = document.querySelector('input[name="ol-mode"]:checked').value;
+    if (mode === 'replace' && !confirm(`Replace the entire live feed with these ${items.length} outliers?`)) return;
+    status.style.color = 'var(--text-mid)'; status.textContent = 'Publishing…';
+    try {
+      const r = await fetch('/api/outliers', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'x-admin-key': adminKey() },
+        body: JSON.stringify({ mode, items }),
+      });
+      const j = await r.json();
+      if (!r.ok) throw new Error(j.error || 'Publish failed.');
+      status.style.color = 'var(--green-muted)';
+      status.textContent = `✓ ${j.mode === 'replace' ? 'Replaced feed with' : 'Added'} ${j.count} outliers — live in the app now.`;
+      loadLiveOutliers();
+    } catch (e) {
+      status.style.color = '#c85050'; status.textContent = e.message;
+    }
+  });
+
+  async function loadLiveOutliers() {
+    const el = document.getElementById('table-outliers');
+    try {
+      const r = await fetch('/api/outliers');
+      const j = await r.json();
+      const rows = j.items || [];
+      document.getElementById('count-outliers').textContent = rows.length;
+      if (!rows.length) {
+        el.innerHTML = `<div class="empty"><h3>Feed is empty</h3><p>The app falls back to the built-in seed until you publish a set.</p></div>`;
+        return;
+      }
+      el.innerHTML = `
+        <table>
+          <thead><tr><th>Creator</th><th>Post</th><th>Tag</th><th>Views</th><th>Cat</th></tr></thead>
+          <tbody>
+            ${rows.map(r => `
+              <tr>
+                <td class="cell-name">${esc(r.creator_name)}<div style="font-size:12px;color:var(--text-light)">${esc(r.handle)}</div></td>
+                <td class="cell-msg">${esc(r.text)}</td>
+                <td><span class="tag">${esc(r.outlier_tag || '')}</span></td>
+                <td class="cell-date">${esc(r.views || '')}</td>
+                <td>${esc(r.cat)}</td>
+              </tr>`).join('')}
+          </tbody>
+        </table>`;
+    } catch (e) {
+      el.innerHTML = `<div class="empty"><h3>Couldn't load feed</h3><p>${esc(e.message)}</p></div>`;
+    }
+  }
+  document.getElementById('ol-reload').addEventListener('click', loadLiveOutliers);
+
   renderWaitlist();
   renderContacts();
+  loadLiveOutliers();
 </script>
 </body>
 </html>
