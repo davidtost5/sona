@@ -1,4 +1,4 @@
-// ─── Canopy Data Layer ───
+// ─── Sona Data Layer ───
 // The ONLY place forms touch storage. Swap MODE to move from mock → real backend.
 //
 //   MODE = 'mock' → saves to the browser (localStorage). Works instantly, no setup.
@@ -13,8 +13,8 @@
   const MODE = 'api'; // 'mock' | 'api'
 
   const KEYS = {
-    waitlist: 'canopy_waitlist',
-    contacts: 'canopy_contacts',
+    waitlist: 'sona_waitlist',
+    contacts: 'sona_contacts',
   };
 
   // ─── localStorage helpers ───
@@ -116,7 +116,7 @@
     return header + '\n' + body;
   }
 
-  window.CanopyData = {
+  window.SonaData = {
     MODE,
     submitWaitlist,
     submitContact,

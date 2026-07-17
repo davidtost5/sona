@@ -1,4 +1,4 @@
-// ─── Canopy Auth Module ───
+// ─── Sona Auth Module ───
 // Supabase-powered auth with modal UI
 // Usage: <script src="auth.js"></script> — auto-initializes on DOMContentLoaded
 
@@ -120,10 +120,10 @@
 
   // ═══ AUTH MODAL STYLES ═══
   function injectStyles() {
-    if (document.getElementById('canopy-auth-styles')) return;
+    if (document.getElementById('sona-auth-styles')) return;
 
     const style = document.createElement('style');
-    style.id = 'canopy-auth-styles';
+    style.id = 'sona-auth-styles';
     style.textContent = `
       .auth-overlay {
         position: fixed;
@@ -719,7 +719,7 @@
       errEl.classList.remove('visible');
 
       const email = document.getElementById('wl-email').value;
-      const result = await window.CanopyData.submitWaitlist({
+      const result = await window.SonaData.submitWaitlist({
         name: document.getElementById('wl-name').value,
         email,
         company: document.getElementById('wl-role').value,
@@ -954,9 +954,9 @@
   }
 
   // ═══ EXPOSE GLOBALLY ═══
-  const queue = (window.CanopyAuth && window.CanopyAuth._queue) || [];
+  const queue = (window.SonaAuth && window.SonaAuth._queue) || [];
 
-  window.CanopyAuth = {
+  window.SonaAuth = {
     openLogin: () => openAuthModal('login'),
     openSignup: () => openAuthModal('signup'),
     openWaitlist: () => openAuthModal('waitlist'),
@@ -968,8 +968,8 @@
 
   // Replay queued actions
   for (const [action] of queue) {
-    if (typeof window.CanopyAuth[action] === 'function') {
-      window.CanopyAuth[action]();
+    if (typeof window.SonaAuth[action] === 'function') {
+      window.SonaAuth[action]();
     }
   }
 

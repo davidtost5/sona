@@ -3,4 +3,4 @@ Allow: /
 Disallow: /app
 Disallow: /admin.html
 
-Sitemap: https://trysona.studio/sitemap.xml
+Sitemap: https://buildwithsona.com/sitemap.xml

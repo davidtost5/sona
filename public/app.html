@@ -12,7 +12,7 @@
 <title>Sona — Studio</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@500&display=swap" rel="stylesheet" media="print" onload="this.media='all'"><noscript><link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@500&display=swap" rel="stylesheet"></noscript>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@500&family=Caveat:wght@500;600&display=swap" rel="stylesheet" media="print" onload="this.media='all'"><noscript><link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@500&family=Caveat:wght@500;600&display=swap" rel="stylesheet"></noscript>
 <style>
   * { margin:0; padding:0; box-sizing:border-box; }
   :root {
@@ -34,7 +34,7 @@
   /* ─── Auth gate / loading state ─── */
   .gate { position:fixed; inset:0; display:flex; align-items:center; justify-content:center; flex-direction:column; gap:14px; background:var(--bg); z-index:50; }
   .gate.hide { display:none; }
-  .gate .lm { width:44px; height:44px; border-radius:11px; background:linear-gradient(150deg,#34343c,#131316); border:1px solid rgba(255,255,255,.09); display:flex; align-items:center; justify-content:center; }
+  .gate .lm { width:44px; height:44px; border-radius:11px; background:var(--surface); border:1px solid var(--border-strong); display:flex; align-items:center; justify-content:center; }
   .gate .lm svg { width:28px; height:28px; }
   .gate p { font-size:14px; color:var(--text-mid); }
   .gate .spinner { width:18px; height:18px; border:2px solid var(--border); border-top-color:var(--accent); border-radius:50%; animation:spin .8s linear infinite; }
@@ -44,7 +44,7 @@
   .shell { display:grid; grid-template-columns:260px 1fr; height:100vh; }
   .side { background:var(--bg-soft); border-right:1px solid var(--border); padding:18px 14px; display:flex; flex-direction:column; gap:18px; overflow-y:auto; }
   .side-top { display:flex; align-items:center; gap:9px; padding:4px 8px; }
-  .lm { width:26px; height:26px; border-radius:7px; background:linear-gradient(150deg,#34343c,#131316); border:1px solid rgba(255,255,255,.09); display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .lm { width:26px; height:26px; border-radius:7px; background:var(--surface); border:1px solid var(--border-strong); display:flex; align-items:center; justify-content:center; flex-shrink:0; }
   .lm svg { width:16px; height:16px; }
   .name { font-size:14.5px; font-weight:600; letter-spacing:-.3px; }
   .badge { margin-left:auto; font-family:'Geist Mono',monospace; font-size:9.5px; color:var(--accent); background:var(--accent-soft); padding:2px 7px; border-radius:100px; letter-spacing:.5px; text-transform:uppercase; }
@@ -225,6 +225,62 @@
    @media (max-width:560px) { .decoder { padding:20px; } .decoder-row { grid-template-columns:1fr; gap:4px; } }
   .disc-action.decode:hover { color:var(--accent); border-color:var(--accent); }
   .coming-soon { display:inline-flex; align-items:center; gap:6px; font-family:'Geist Mono',monospace; font-size:11px; padding:5px 10px; background:var(--bg-soft); border:1px solid var(--border-strong); border-radius:100px; color:var(--text-mid); letter-spacing:.5px; text-transform:uppercase; }
+
+  /* SCRIPTS */
+  .script-form { max-width:460px; margin-bottom:26px; }
+  .script-form .field { margin-bottom:14px; }
+  .script-form label { font-size:12px; color:var(--text-mid); margin-bottom:6px; display:block; }
+  .script-form input { width:100%; padding:10px 12px; border:1px solid var(--border); border-radius:8px; background:var(--surface); color:var(--text); font-family:inherit; font-size:13.5px; }
+  .script-form input:focus { outline:none; border-color:var(--accent); }
+  .script-card { background:var(--bg-soft); border:1px solid var(--border); border-radius:12px; padding:16px 18px; margin-bottom:14px; }
+  .script-card h4 { font-size:14px; font-weight:600; margin-bottom:3px; }
+  .script-card .fmt-note { font-size:12px; color:var(--text-dim); margin-bottom:12px; }
+  .script-card pre { white-space:pre-wrap; font-family:inherit; font-size:13px; line-height:1.65; color:var(--text); margin-bottom:12px; }
+  .script-results { display:none; }
+  .script-results.show { display:block; }
+
+  /* DIGEST — Eden-style weekly strategist sweep */
+  .digest-section { margin-bottom:30px; }
+  .digest-section-head { display:flex; align-items:baseline; gap:10px; margin-bottom:4px; }
+  .digest-section-head h3 { font-size:16px; letter-spacing:-.2px; text-transform:capitalize; }
+  .digest-section-head span { font-family:'Geist Mono',monospace; font-size:11px; color:var(--text-dim); }
+  .digest-throughline { font-size:13px; color:var(--text-mid); line-height:1.55; margin:6px 0 14px; padding:10px 12px; background:var(--bg-soft); border:1px solid var(--border); border-left:3px solid var(--accent); border-radius:0 8px 8px 0; }
+  .digest-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:14px; }
+  .digest-empty { color:var(--text-dim); font-size:13px; padding:16px 2px; }
+
+  /* CANVAS — Eden-style intelligent canvas */
+  .canvas-toolbar { display:flex; align-items:center; gap:10px; margin-bottom:14px; flex-wrap:wrap; }
+  .canvas-toolbar .btn-ghost.active { color:var(--accent); border-color:var(--accent); }
+  .canvas-hint { font-size:12px; color:var(--text-dim); }
+  .canvas-board-wrap { position:relative; border:1px solid var(--border); border-radius:12px; overflow:auto; background:var(--bg-soft); height:calc(100vh - 230px); min-height:420px; }
+  .canvas-board { position:relative; width:2200px; height:1500px; }
+  .canvas-edges { position:absolute; inset:0; width:100%; height:100%; pointer-events:none; overflow:visible; }
+  .canvas-edges line { stroke:var(--border-strong); stroke-width:2; }
+  .canvas-edges line.hot { stroke:var(--accent); }
+  .canvas-node { position:absolute; width:230px; background:var(--surface); border:1px solid var(--border); border-radius:10px; box-shadow:var(--shadow); cursor:default; }
+  .canvas-node.connecting { border-color:var(--accent); box-shadow:0 0 0 2px var(--accent-soft); }
+  .canvas-node.is-note { transition:transform .15s ease; }
+  .canvas-node.is-note:focus-within { transform:rotate(0deg) !important; z-index:2; }
+  .canvas-node.is-note .canvas-node-body textarea { font-family:'Caveat',cursive; font-size:21px; line-height:1.35; color:var(--text); }
+  .canvas-node.is-note .canvas-node-body textarea::placeholder { font-family:'Geist',-apple-system,sans-serif; font-size:13px; }
+  .canvas-node-head { display:flex; align-items:center; justify-content:space-between; gap:6px; padding:8px 10px; border-bottom:1px solid var(--border); cursor:grab; font-family:'Geist Mono',monospace; font-size:10.5px; letter-spacing:.4px; text-transform:uppercase; color:var(--text-dim); }
+  .canvas-node-head:active { cursor:grabbing; }
+  .canvas-node-x { background:transparent; border:none; color:var(--text-dim); cursor:pointer; font-size:15px; line-height:1; padding:2px 4px; }
+  .canvas-node-x:hover { color:var(--text); }
+  .canvas-node-body { padding:10px 12px; font-size:13px; line-height:1.5; color:var(--text); }
+  .canvas-node-body textarea { width:100%; min-height:70px; border:none; background:transparent; resize:vertical; font:inherit; color:inherit; outline:none; }
+  .canvas-node-idea-meta { font-size:11px; color:var(--text-dim); margin-top:6px; }
+  .canvas-node-foot { display:flex; gap:6px; padding:0 12px 10px; }
+  .canvas-node-foot button { font-family:'Geist Mono',monospace; font-size:10.5px; letter-spacing:.3px; text-transform:uppercase; background:transparent; border:1px solid var(--border); border-radius:6px; padding:4px 8px; color:var(--text-mid); cursor:pointer; }
+  .canvas-node-foot button:hover { color:var(--accent); border-color:var(--accent); }
+  .canvas-empty { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; gap:4px; color:var(--text-dim); font-size:13px; pointer-events:none; }
+  .canvas-empty p.dim { max-width:320px; font-size:12px; }
+  .canvas-idea-list { max-height:50vh; overflow-y:auto; display:flex; flex-direction:column; gap:8px; margin:16px 0; }
+  .canvas-idea-row { display:flex; align-items:center; justify-content:space-between; gap:10px; padding:10px 12px; border:1px solid var(--border); border-radius:8px; font-size:13px; }
+  .canvas-idea-row .txt { color:var(--text-mid); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .canvas-idea-row button { flex-shrink:0; font-family:'Geist Mono',monospace; font-size:11px; background:transparent; border:1px solid var(--border-strong); border-radius:6px; padding:5px 9px; color:var(--text); cursor:pointer; }
+  .canvas-idea-row button:hover { color:var(--accent); border-color:var(--accent); }
+  .canvas-idea-row button:disabled { opacity:.5; cursor:default; }
   .filters { display:flex; gap:6px; margin-bottom:18px; flex-wrap:wrap; }
   .filter { padding:5px 11px; font-size:12px; font-family:inherit; background:var(--bg-soft); border:1px solid var(--border); border-radius:100px; color:var(--text-mid); cursor:pointer; transition:all .15s; }
   .filter:hover { color:var(--text); border-color:var(--border-strong); }
@@ -372,13 +428,18 @@
   @media (hover: none) and (pointer: coarse) {
     .disc-card:hover, .nav-item:hover { transform: none !important; }
   }
+
+  .lg-wave { stroke: #28775c; }
+  .lg-spark { fill: #28775c; }
+  html[data-theme="dark"] .lg-wave { stroke: #5fb896; }
+  html[data-theme="dark"] .lg-spark { fill: #5fb896; }
 </style>
 </head>
 <body>
 
 <!-- Auth gate (shown until session is verified) -->
 <div class="gate" id="gate">
-  <div class="lm"><svg viewBox="0 0 24 24" fill="none"><path d="M5 15 Q8 9 12 12 Q16 15 19 9" stroke="#fff" stroke-width="2.6" stroke-linecap="round" fill="none"/><path d="M19 3.6 C19.15 5.1 20.3 6.25 21.8 6.4 C20.3 6.55 19.15 7.7 19 9.2 C18.85 7.7 17.7 6.55 16.2 6.4 C17.7 6.25 18.85 5.1 19 3.6 Z" fill="#8b84ff"/></svg></div>
+  <div class="lm"><svg viewBox="0 0 24 24" fill="none"><path class="lg-wave" d="M5 15 Q8 9 12 12 Q16 15 19 9" stroke="#28775c" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path class="lg-spark" d="M19 3.6 C19.15 5.1 20.3 6.25 21.8 6.4 C20.3 6.55 19.15 7.7 19 9.2 C18.85 7.7 17.7 6.55 16.2 6.4 C17.7 6.25 18.85 5.1 19 3.6 Z" fill="#28775c"/></svg></div>
   <div class="spinner"></div>
   <p id="gate-msg">Checking your session…</p>
 </div>
@@ -388,7 +449,7 @@
   <!-- SIDEBAR -->
   <aside class="side">
     <div class="side-top">
-      <span class="lm"><svg viewBox="0 0 24 24" fill="none"><path d="M5 15 Q8 9 12 12 Q16 15 19 9" stroke="#fff" stroke-width="2.6" stroke-linecap="round" fill="none"/><path d="M19 3.6 C19.15 5.1 20.3 6.25 21.8 6.4 C20.3 6.55 19.15 7.7 19 9.2 C18.85 7.7 17.7 6.55 16.2 6.4 C17.7 6.25 18.85 5.1 19 3.6 Z" fill="#8b84ff"/></svg></span>
+      <span class="lm"><svg viewBox="0 0 24 24" fill="none"><path class="lg-wave" d="M5 15 Q8 9 12 12 Q16 15 19 9" stroke="#28775c" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path class="lg-spark" d="M19 3.6 C19.15 5.1 20.3 6.25 21.8 6.4 C20.3 6.55 19.15 7.7 19 9.2 C18.85 7.7 17.7 6.55 16.2 6.4 C17.7 6.25 18.85 5.1 19 3.6 Z" fill="#28775c"/></svg></span>
       <span class="name">Sona</span>
       <span class="badge">Beta</span>
     </div>
@@ -405,6 +466,10 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m14.5 9.5-5 1.5 1.5 5 5-1.5z"/></svg>
         Discover<span class="pill-n" id="discover-count">24</span>
       </button>
+      <button class="nav-item" data-view="digest">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5V4.5A2.5 2.5 0 0 1 6.5 2H18a2 2 0 0 1 2 2v18l-3-1.5-3 1.5-3-1.5-3 1.5-3-1.5Z"/><path d="M8 7h8M8 11h8M8 15h5"/></svg>
+        Digest
+      </button>
       <button class="nav-item" data-view="studio">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 1 1 3 3L7 19l-4 1 1-4Z"/></svg>
         Drafts<span class="pill-n" id="drafts-count">0</span>
@@ -413,6 +478,10 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
         Playbook
       </button>
+      <button class="nav-item" data-view="scripts">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="14" height="12" rx="2"/><path d="M16 10l6-4v12l-6-4"/></svg>
+        Scripts
+      </button>
       <button class="nav-item" data-view="hooks">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z"/></svg>
         Hooks<span class="pill-n" id="hooks-count">0</span>
@@ -420,6 +489,10 @@
       <button class="nav-item" data-view="lists">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/><circle cx="17" cy="7" r="3"/><path d="M21 21v-2a4 4 0 0 0-3-3.87"/></svg>
         Lists<span class="pill-n" id="lists-count">0</span>
+      </button>
+      <button class="nav-item" data-view="canvas">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><path d="M6.5 10v4a2 2 0 0 0 2 2H10"/><path d="M17.5 10v2"/></svg>
+        Canvas
       </button>
       <button class="nav-item" data-view="saved">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
@@ -486,6 +559,17 @@
         </div>
         <div class="disc-grid" id="disc-grid"><!-- rendered by JS --></div>
         <p class="disc-disclaimer">Posts are public examples shown for educational pattern analysis. Creators are not affiliated with or endorsing Sona.</p>
+      </div>
+
+      <!-- DIGEST — Eden-style weekly "strategist sweep" of the breakout posts in your niche -->
+      <div class="view" data-view="digest">
+        <div class="filters" id="digest-filters">
+          <button class="filter active" data-digestcat="all">All</button>
+          <button class="filter" data-digestcat="founders">Founders</button>
+          <button class="filter" data-digestcat="writers">Writers</button>
+          <button class="filter" data-digestcat="creators">Creators</button>
+        </div>
+        <div id="digest-body"><!-- rendered by JS --></div>
       </div>
 
       <!-- DRAFTS (formerly Studio) -->
@@ -592,6 +676,25 @@
       </div>
 
       <!-- HOOKS LIBRARY -->
+      <!-- SCRIPTS -->
+      <div class="view" data-view="scripts">
+        <div class="script-form">
+          <div class="field">
+            <label for="script-product">What's the product or service?</label>
+            <input type="text" id="script-product" placeholder="e.g. a skincare serum for sensitive skin">
+          </div>
+          <div class="field">
+            <label for="script-audience">Who's the target audience?</label>
+            <input type="text" id="script-audience" placeholder="e.g. women 25-40 with sensitive skin">
+          </div>
+          <button class="btn" onclick="generateScripts()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;"><rect x="2" y="6" width="14" height="12" rx="2"/><path d="M16 10l6-4v12l-6-4"/></svg>
+            Generate 3 scripts
+          </button>
+        </div>
+        <div id="script-results" class="script-results"></div>
+      </div>
+
       <div class="view" data-view="hooks">
         <div class="filters" id="hook-filters">
           <button class="filter active" data-hookcat="all">All</button>
@@ -640,6 +743,35 @@
           </button>
         </div>
         <div class="creators-grid" id="creators-grid"></div>
+      </div>
+
+      <!-- CANVAS — Eden-style intelligent canvas: connect saved ideas + notes visually -->
+      <div class="view" data-view="canvas">
+        <div class="canvas-toolbar">
+          <button class="btn btn-ghost" type="button" onclick="addCanvasNote()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;vertical-align:-2px;margin-right:6px"><path d="M12 5v14M5 12h14"/></svg>
+            Note
+          </button>
+          <button class="btn btn-ghost" type="button" onclick="openCanvasIdeaPicker()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;vertical-align:-2px;margin-right:6px"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+            Saved idea
+          </button>
+          <button class="btn btn-ghost" type="button" id="canvas-connect-btn" onclick="toggleConnectMode()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;vertical-align:-2px;margin-right:6px"><circle cx="6" cy="6" r="3"/><circle cx="18" cy="18" r="3"/><path d="M8.5 8.5 15.5 15.5"/></svg>
+            Connect
+          </button>
+          <span class="canvas-hint" id="canvas-hint">Drag cards to arrange. Click Connect, then click two cards to link them.</span>
+        </div>
+        <div class="canvas-board-wrap">
+          <div class="canvas-board" id="canvas-board">
+            <svg class="canvas-edges" id="canvas-edges"></svg>
+            <div id="canvas-nodes"></div>
+          </div>
+          <div class="canvas-empty" id="canvas-empty">
+            <p>Your canvas is empty.</p>
+            <p class="dim">Add a note or drop in a saved idea, then drag them next to each other and connect the ones that belong together.</p>
+          </div>
+        </div>
       </div>
 
       <!-- SAVED -->
@@ -836,6 +968,20 @@
     </div>
   </div>
 </div>
+
+<!-- Canvas: add-saved-idea picker -->
+<div class="decoder-back" id="canvas-idea-back">
+  <div class="decoder" role="dialog" aria-modal="true" aria-labelledby="canvas-idea-title">
+    <div class="decoder-head">
+      <div><h2 id="canvas-idea-title">Add a saved idea to canvas</h2></div>
+      <button class="decoder-close" onclick="closeCanvasIdeaPicker()" aria-label="Close">×</button>
+    </div>
+    <div class="canvas-idea-list" id="canvas-idea-list"><!-- rendered by JS --></div>
+    <div class="decoder-foot">
+      <button class="btn btn-ghost" onclick="closeCanvasIdeaPicker()">Close</button>
+    </div>
+  </div>
+</div>
 <script>
   let sb = null;
   let user = null;
@@ -1016,6 +1162,11 @@
     return hay.includes(searchTerm);
   }
   let saved = new Set();
+  let canvasState = { nodes: [], edges: [] }; // [{id,type:'note'|'idea',x,y,text?,ideaId?}], [{a,b}]
+  let connectMode = false;
+  let connectFrom = null;
+  let canvasDrag = null;
+  let canvasSaveTimer = null;
   let swipeIndex = 0;
   let drafts = [];
   let activeDraftId = null;
@@ -1098,6 +1249,17 @@
       status.textContent = 'Saved.';
       setTimeout(() => { status.textContent = statusId === 'brand-status' ? 'Saved to your account.' : 'No unsaved changes.'; }, 1800);
     }
+  }
+
+  // ─── Canvas state — piggybacks on workspaceSettings (profiles.workspace jsonb,
+  // same sync path as brand/settings) so it needs no new table or API route. ───
+  function loadCanvasState() {
+    const c = workspaceSettings.canvas;
+    canvasState = (c && Array.isArray(c.nodes) && Array.isArray(c.edges)) ? c : { nodes: [], edges: [] };
+  }
+  function saveCanvasState() {
+    clearTimeout(canvasSaveTimer);
+    canvasSaveTimer = setTimeout(() => { saveWorkspaceSettings({ canvas: canvasState }, 'canvas-status'); }, 600);
   }
 
   function hydrateForms() {
@@ -1206,7 +1368,7 @@
     demoMode = true;
     user = {
       id: 'preview',
-      email: 'preview@trysona.studio',
+      email: 'preview@buildwithsona.com',
       user_metadata: { full_name: 'Preview workspace' },
     };
     await showApp();
@@ -1271,6 +1433,9 @@
     renderStyleGuide();
     renderLists();
     renderHooks();
+    renderDigest();
+    loadCanvasState();
+    renderCanvas();
   }
 
   // ─── Drafts ───
@@ -1983,15 +2148,330 @@
     renderDrafts();
   };
 
+  // ─── SCRIPTS — 3 free formats, template-based (no AI, zero cost) ───
+  function buildScripts(product, audience) {
+    const p = product || 'your product';
+    const a = audience || 'your audience';
+    return [
+      {
+        name: 'Hook-driven story',
+        note: 'Personal problem → discovery → result. The classic UGC arc.',
+        text: `HOOK (0-3s): "I used to struggle with this — until I found ${p}."\n\nBODY:\n- Open on the relatable problem ${a} deals with\n- The moment you discovered ${p}\n- What changed after using it\n\nCTA: "If you're dealing with the same thing, this might help."`
+      },
+      {
+        name: 'Pattern-interrupt',
+        note: 'A bold opening line that stops the scroll, then delivers value.',
+        text: `HOOK (0-3s): "Nobody tells ${a} this about [the problem ${p} solves]."\n\nBODY:\n- Deliver one surprising or contrarian fact\n- Explain why it matters to ${a}\n- Show how ${p} addresses it directly\n\nCTA: "Try it and see for yourself."`
+      },
+      {
+        name: 'Before / after',
+        note: 'Visual or narrative contrast — proof-heavy, builds trust fast.',
+        text: `HOOK (0-3s): "This is what changed after 2 weeks of ${p}."\n\nBODY:\n- Show/describe the "before" state for ${a}\n- Show/describe the "after" state\n- One specific, credible detail that proves it's real\n\nCTA: "Want the same result? Link in bio."`
+      },
+    ];
+  }
+
+  window.generateScripts = function() {
+    const product = document.getElementById('script-product').value.trim();
+    const audience = document.getElementById('script-audience').value.trim();
+    const scripts = buildScripts(product, audience);
+    const results = document.getElementById('script-results');
+    results.innerHTML = scripts.map((s, i) => `
+      <div class="script-card">
+        <h4>${i + 1}. ${s.name}</h4>
+        <div class="fmt-note">${s.note}</div>
+        <pre>${s.text}</pre>
+        <button class="disc-action" onclick="copyScript(this)" data-text="${encodeURIComponent(s.text)}">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+          Copy
+        </button>
+      </div>
+    `).join('');
+    results.classList.add('show');
+  };
+
+  window.copyScript = function(btn) {
+    const text = decodeURIComponent(btn.dataset.text);
+    const orig = btn.innerHTML;
+    const flash = (label) => { btn.innerHTML = label; setTimeout(() => { btn.innerHTML = orig; }, 1500); };
+    navigator.clipboard.writeText(text).then(() => flash('Copied')).catch(() => flash('Copy failed — select manually'));
+  };
+
+  // ─── DIGEST — Eden-style weekly "strategist sweep" of the top posts in your niche.
+  // Heuristic + zero-cost: reads the same outliers already loaded for Discover,
+  // no extra API call. The "throughline" is pattern-matched, not AI-generated —
+  // consistent with Scripts (template-based, no AI) elsewhere in this app.
+  let digestFilter = 'all';
+
+  function outlierMultiple(tag) {
+    const m = /(\d+(?:\.\d+)?)\s*[x×]/i.exec(tag || '');
+    return m ? parseFloat(m[1]) : 0;
+  }
+
+  function digestThroughline(items) {
+    if (!items.length) return 'Nothing here yet.';
+    const text = items.map(i => i.text.toLowerCase()).join(' ');
+    const signals = [
+      { test: /\bnobody\b|\beveryone (thinks|assumes)\b|\bmost (people|founders|creators|writers)\b/, note: 'Contrarian reframes — open with the common belief, then flip it.' },
+      { test: /\?\s*(<|$)/m, note: 'Open-loop questions — the hook is a question the comments answer for you.' },
+      { test: /\bi (used to|struggled|wasted|spent|learned|built|left|deleted|posted)\b/, note: 'Personal-story arcs — a specific "I did X" moment, not generic advice.' },
+      { test: /\d+(\s|-)?(year|month|week|day|hour)s?\b/, note: 'Concrete timeframes — a number anchors the claim in something real, not a vibe.' },
+      { test: /\bstop\b|\bnever\b|\bdon'?t\b/, note: 'Direct commands — telling the reader what to stop or never do outperforms suggestions.' },
+    ];
+    const hit = signals.find(s => s.test.test(text));
+    return hit ? hit.note : 'No single dominant pattern this week — mix formats rather than copying one shape.';
+  }
+
+  function digestCard(i) {
+    return `
+      <div class="disc-card">
+        <div class="disc-head"><span class="disc-av" style="background:url('${i.av}') center/cover no-repeat, linear-gradient(135deg,var(--accent),var(--accent-soft))"></span><div><div class="disc-name">${escapeHtml(i.name)}</div><div class="disc-handle">${escapeHtml(i.handle)}</div></div>${i.views ? `<span class="disc-views">${escapeHtml(i.views)}</span>` : ''}</div>
+        <div class="disc-text">${escapeHtml(i.text)}</div>
+        <div class="disc-meta">
+          <span class="disc-tag">${escapeHtml(i.tag || '')}</span>
+          <div class="disc-actions">
+            <button class="disc-action decode" onclick="openDecoder('${i.id}')" title="See why this post worked">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 1v6M12 17v6M4.22 4.22l4.24 4.24M15.54 15.54l4.24 4.24M1 12h6M17 12h6M4.22 19.78l4.24-4.24M15.54 8.46l4.24-4.24"/></svg>
+              Decode
+            </button>
+            <button class="disc-action ${saved.has(i.id) ? 'saved' : ''}" onclick="toggleSave('${i.id}', this)">
+              <svg viewBox="0 0 24 24" fill="${saved.has(i.id) ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+              ${saved.has(i.id) ? 'Saved' : 'Save'}
+            </button>
+          </div>
+        </div>
+      </div>`;
+  }
+
+  function renderDigest() {
+    const body = document.getElementById('digest-body');
+    if (!body) return;
+    const cats = digestFilter === 'all' ? ['founders', 'writers', 'creators'] : [digestFilter];
+    const sections = cats.map(cat => {
+      const items = SEED_IDEAS
+        .filter(i => i.cat === cat)
+        .slice()
+        .sort((a, b) => outlierMultiple(b.tag) - outlierMultiple(a.tag))
+        .slice(0, 3);
+      if (!items.length) return '';
+      return `
+        <div class="digest-section">
+          <div class="digest-section-head"><h3>${escapeHtml(cat)}</h3><span>Top ${items.length} this week</span></div>
+          <div class="digest-throughline">${escapeHtml(digestThroughline(items))}</div>
+          <div class="digest-grid">${items.map(digestCard).join('')}</div>
+        </div>`;
+    }).join('');
+    body.innerHTML = sections || `<div class="digest-empty">No outliers in this category yet.</div>`;
+  }
+
+  document.querySelectorAll('.filter[data-digestcat]').forEach(btn => btn.addEventListener('click', () => {
+    document.querySelectorAll('.filter[data-digestcat]').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    digestFilter = btn.dataset.digestcat;
+    renderDigest();
+  }));
+
+  // ─── CANVAS — Eden-style board: drag notes + saved ideas, connect the ones that belong together ───
+  const CANVAS_W = 2200, CANVAS_H = 1500, NODE_W = 230;
+
+  function canvasNodeId() { return 'n_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
+  function nextCanvasPos() {
+    const n = canvasState.nodes.length;
+    return { x: 40 + (n % 7) * 70, y: 40 + (n % 5) * 60 };
+  }
+
+  window.addCanvasNote = function() {
+    const pos = nextCanvasPos();
+    const tilt = Math.round((Math.random() * 6 - 3) * 10) / 10; // -3..3deg, pinned-note feel
+    canvasState.nodes.push({ id: canvasNodeId(), type: 'note', x: pos.x, y: pos.y, text: '', tilt });
+    renderCanvas();
+    saveCanvasState();
+  };
+
+  window.openCanvasIdeaPicker = function() {
+    const list = document.getElementById('canvas-idea-list');
+    const savedItems = SEED_IDEAS.filter(i => saved.has(i.id));
+    list.innerHTML = savedItems.length
+      ? savedItems.map(i => {
+          const already = canvasState.nodes.some(n => n.type === 'idea' && n.ideaId === i.id);
+          return `<div class="canvas-idea-row"><span class="txt">${escapeHtml(i.name)} — ${escapeHtml(i.text)}</span><button ${already ? 'disabled' : ''} onclick="addCanvasIdea('${i.id}')">${already ? 'Added' : 'Add'}</button></div>`;
+        }).join('')
+      : `<p style="font-size:13px;color:var(--text-dim)">You haven't saved any ideas yet — save one from Discover or Digest first.</p>`;
+    document.getElementById('canvas-idea-back').classList.add('show');
+  };
+  window.closeCanvasIdeaPicker = function() {
+    document.getElementById('canvas-idea-back').classList.remove('show');
+  };
+  window.addCanvasIdea = function(ideaId) {
+    if (canvasState.nodes.some(n => n.type === 'idea' && n.ideaId === ideaId)) return;
+    const pos = nextCanvasPos();
+    canvasState.nodes.push({ id: canvasNodeId(), type: 'idea', ideaId, x: pos.x, y: pos.y });
+    renderCanvas();
+    saveCanvasState();
+    closeCanvasIdeaPicker();
+  };
+  document.getElementById('canvas-idea-back').addEventListener('click', (e) => {
+    if (e.target.id === 'canvas-idea-back') closeCanvasIdeaPicker();
+  });
+
+  window.removeCanvasNode = function(id) {
+    canvasState.nodes = canvasState.nodes.filter(n => n.id !== id);
+    canvasState.edges = canvasState.edges.filter(e => e.a !== id && e.b !== id);
+    if (connectFrom === id) connectFrom = null;
+    renderCanvas();
+    saveCanvasState();
+  };
+
+  window.updateCanvasNoteText = function(id, value) {
+    const n = canvasState.nodes.find(x => x.id === id);
+    if (n) n.text = value;
+    saveCanvasState();
+  };
+
+  window.sendCanvasNoteToDraft = function(id) {
+    const n = canvasState.nodes.find(x => x.id === id);
+    if (!n) return;
+    activeDraftId = null;
+    document.getElementById('draft-title').value = 'From canvas note';
+    document.getElementById('draft-body').value = n.text || '';
+    document.getElementById('draft-heading').textContent = 'New draft';
+    document.getElementById('draft-meta').textContent = 'Unsaved';
+    document.getElementById('draft-status').textContent = 'Loaded from canvas. Rewrite in your voice.';
+    switchView('studio');
+    setTimeout(() => document.getElementById('draft-body').focus(), 50);
+  };
+
+  window.toggleConnectMode = function() {
+    connectMode = !connectMode;
+    connectFrom = null;
+    document.getElementById('canvas-connect-btn').classList.toggle('active', connectMode);
+    document.getElementById('canvas-hint').textContent = connectMode
+      ? 'Click a card, then click a second card to link them. Click a line to remove it.'
+      : 'Drag cards to arrange. Click Connect, then click two cards to link them.';
+    renderCanvas();
+  };
+
+  window.canvasNodeClicked = function(id) {
+    if (!connectMode) return;
+    if (!connectFrom) { connectFrom = id; renderCanvas(); return; }
+    if (connectFrom === id) { connectFrom = null; renderCanvas(); return; }
+    const exists = canvasState.edges.some(e => (e.a === connectFrom && e.b === id) || (e.a === id && e.b === connectFrom));
+    if (!exists) canvasState.edges.push({ a: connectFrom, b: id });
+    connectFrom = null;
+    renderCanvas();
+    saveCanvasState();
+  };
+
+  window.removeCanvasEdge = function(a, b) {
+    canvasState.edges = canvasState.edges.filter(e => !((e.a === a && e.b === b) || (e.a === b && e.b === a)));
+    renderCanvas();
+    saveCanvasState();
+  };
+
+  window.startCanvasDrag = function(evt, id) {
+    if (connectMode) return;
+    evt.preventDefault();
+    const board = document.getElementById('canvas-board');
+    const node = canvasState.nodes.find(n => n.id === id);
+    if (!board || !node) return;
+    const r = board.getBoundingClientRect();
+    canvasDrag = { id, offX: (evt.clientX - r.left) - node.x, offY: (evt.clientY - r.top) - node.y };
+    document.addEventListener('mousemove', onCanvasDragMove);
+    document.addEventListener('mouseup', onCanvasDragEnd);
+  };
+  function onCanvasDragMove(evt) {
+    if (!canvasDrag) return;
+    const board = document.getElementById('canvas-board');
+    const node = canvasState.nodes.find(n => n.id === canvasDrag.id);
+    if (!board || !node) return;
+    const r = board.getBoundingClientRect();
+    node.x = Math.max(0, Math.min(CANVAS_W - NODE_W, (evt.clientX - r.left) - canvasDrag.offX));
+    node.y = Math.max(0, Math.min(CANVAS_H - 60, (evt.clientY - r.top) - canvasDrag.offY));
+    const el = board.querySelector(`.canvas-node[data-node="${node.id}"]`);
+    if (el) { el.style.left = node.x + 'px'; el.style.top = node.y + 'px'; }
+    drawCanvasEdges();
+  }
+  function onCanvasDragEnd() {
+    document.removeEventListener('mousemove', onCanvasDragMove);
+    document.removeEventListener('mouseup', onCanvasDragEnd);
+    if (canvasDrag) saveCanvasState();
+    canvasDrag = null;
+  }
+
+  function drawCanvasEdges() {
+    const board = document.getElementById('canvas-board');
+    const edgesEl = document.getElementById('canvas-edges');
+    if (!board || !edgesEl) return;
+    const boardRect = board.getBoundingClientRect();
+    const centerOf = (id) => {
+      const el = board.querySelector(`.canvas-node[data-node="${id}"]`);
+      if (!el) return null;
+      const r = el.getBoundingClientRect();
+      return { x: r.left - boardRect.left + r.width / 2, y: r.top - boardRect.top + r.height / 2 };
+    };
+    edgesEl.innerHTML = canvasState.edges.map(e => {
+      const p1 = centerOf(e.a), p2 = centerOf(e.b);
+      if (!p1 || !p2) return '';
+      return `<line x1="${p1.x}" y1="${p1.y}" x2="${p2.x}" y2="${p2.y}" style="pointer-events:stroke;cursor:pointer" onclick="removeCanvasEdge('${e.a}','${e.b}')"><title>Click to remove connection</title></line>`;
+    }).join('');
+  }
+
+  function renderCanvas() {
+    const nodesEl = document.getElementById('canvas-nodes');
+    const emptyEl = document.getElementById('canvas-empty');
+    if (!nodesEl) return;
+    if (emptyEl) emptyEl.style.display = canvasState.nodes.length ? 'none' : 'flex';
+
+    nodesEl.innerHTML = canvasState.nodes.map(n => {
+      const hot = connectFrom === n.id;
+      if (n.type === 'idea') {
+        const idea = SEED_IDEAS.find(x => x.id === n.ideaId);
+        if (!idea) return '';
+        return `
+          <div class="canvas-node ${hot ? 'connecting' : ''}" style="left:${n.x}px;top:${n.y}px" data-node="${n.id}">
+            <div class="canvas-node-head" onmousedown="startCanvasDrag(event,'${n.id}')" onclick="canvasNodeClicked('${n.id}')">
+              <span>Saved idea</span>
+              <button class="canvas-node-x" onmousedown="event.stopPropagation()" onclick="event.stopPropagation(); removeCanvasNode('${n.id}')" aria-label="Remove">×</button>
+            </div>
+            <div class="canvas-node-body" onclick="canvasNodeClicked('${n.id}')">
+              ${escapeHtml(idea.text)}
+              <div class="canvas-node-idea-meta">${escapeHtml(idea.name)} · ${escapeHtml(idea.tag || '')}</div>
+            </div>
+            <div class="canvas-node-foot">
+              <button onclick="event.stopPropagation(); openDecoder('${idea.id}')">Decode</button>
+            </div>
+          </div>`;
+      }
+      return `
+        <div class="canvas-node is-note ${hot ? 'connecting' : ''}" style="left:${n.x}px;top:${n.y}px;transform:rotate(${n.tilt || 0}deg)" data-node="${n.id}">
+          <div class="canvas-node-head" onmousedown="startCanvasDrag(event,'${n.id}')" onclick="canvasNodeClicked('${n.id}')">
+            <span>Note</span>
+            <button class="canvas-node-x" onmousedown="event.stopPropagation()" onclick="event.stopPropagation(); removeCanvasNode('${n.id}')" aria-label="Remove">×</button>
+          </div>
+          <div class="canvas-node-body">
+            <textarea placeholder="Write an idea…" onmousedown="event.stopPropagation()" oninput="updateCanvasNoteText('${n.id}', this.value)">${escapeHtml(n.text || '')}</textarea>
+          </div>
+          <div class="canvas-node-foot">
+            <button onclick="sendCanvasNoteToDraft('${n.id}')">To draft</button>
+          </div>
+        </div>`;
+    }).join('');
+
+    requestAnimationFrame(drawCanvasEdges);
+  }
+
   window.switchView = function(v) {
     document.querySelectorAll('.nav-item[data-view]').forEach(b => b.classList.toggle('active', b.dataset.view === v));
     document.querySelectorAll('.view').forEach(view => view.classList.toggle('active', view.dataset.view === v));
     const titles = {
       discover:['Discover','Founders · last 7 days · sorted by outlier'],
+      digest:['Digest', 'This week’s breakout posts, by niche'],
       studio:['Drafts', drafts.length ? `${drafts.length} draft${drafts.length===1?'':'s'}` : 'Start a draft'],
       lists:['My lists', lists.length ? `${lists.length} list${lists.length===1?'':'s'}` : 'No lists'],
+      scripts:['Scripts','3 free formats, no obligation'],
       voice:['Playbook','Yours — never AI'],
       hooks:['Hooks library', `${HOOKS_LIBRARY.length} proven patterns`],
+      canvas:['Canvas', canvasState.nodes.length ? `${canvasState.nodes.length} card${canvasState.nodes.length===1?'':'s'}` : 'Connect your ideas visually'],
       saved:['Saved ideas',`${saved.size} item${saved.size===1?'':'s'}`],
       brand:['Personal brand', workspaceSettings.workspaceName || 'Workspace'],
       swipe:['Idea swipe','Review and save outliers'],
@@ -2003,6 +2483,8 @@
     document.getElementById('view-title').textContent = t;
     document.getElementById('view-sub').textContent = s;
     if (location.hash !== `#${v}`) history.replaceState(null, '', `#${v}`);
+    // Hidden views report zero-size rects, so edges drawn while off-screen land at (0,0). Redraw on entry.
+    if (v === 'canvas') requestAnimationFrame(drawCanvasEdges);
   };
 
   function renderSwipe() {

@@ -11,29 +11,29 @@
 <title>Sona — Contact</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800&family=Geist+Mono:wght@500&display=swap" rel="stylesheet" media="print" onload="this.media='all'"><noscript><link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800&family=Geist+Mono:wght@500&display=swap" rel="stylesheet"></noscript>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700;9..40,800&family=Geist+Mono:wght@500&display=swap" rel="stylesheet" media="print" onload="this.media='all'"><noscript><link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700;9..40,800&family=Geist+Mono:wght@500&display=swap" rel="stylesheet"></noscript>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
   :root {
-    --bg: #ffffff; --bg-soft: #f7f7f4; --surface: #ffffff;
-    --border: rgba(20,20,28,0.08); --border-strong: rgba(20,20,28,0.16);
-    --text: #15151a; --text-mid: #57575f; --text-dim: #6f6f78;
-    --accent: #4f46e5; --accent-soft: rgba(79,70,229,0.08);
-    --btn: #15151a; --btn-text: #ffffff;
+    --bg: #f3f3f0; --bg-soft: #ecebe6; --surface: #fcfcfa;
+    --border: rgba(26,26,26,0.09); --border-strong: rgba(26,26,26,0.16);
+    --text: #1a1a1a; --text-mid: #55554f; --text-dim: #71716a;
+    --accent: #28775c; --accent-soft: rgba(40,119,92,0.09);
+    --btn: #1a1a1a; --btn-text: #f3f3f0;
     --shadow-sm: 0 1px 2px rgba(20,20,30,0.04); --shadow: 0 6px 30px rgba(20,20,30,0.07);
   }
   html[data-theme="dark"] {
-    --bg: #0c0c0f; --bg-soft: #121216; --surface: #15151a;
+    --bg: #111312; --bg-soft: #171918; --surface: #1b1e1c;
     --border: rgba(255,255,255,0.09); --border-strong: rgba(255,255,255,0.18);
-    --text: #f4f4f6; --text-mid: #a0a0aa; --text-dim: #8a8a94;
-    --accent: #8b84ff; --accent-soft: rgba(139,132,255,0.14);
-    --btn: #f4f4f6; --btn-text: #15151a;
+    --text: #f3f3f0; --text-mid: #a5a59e; --text-dim: #8b8b84;
+    --accent: #5fb896; --accent-soft: rgba(95,184,150,0.13);
+    --btn: #f3f3f0; --btn-text: #1a1a1a;
     --shadow-sm: 0 1px 2px rgba(0,0,0,0.4); --shadow: 0 6px 30px rgba(0,0,0,0.4);
   }
 
   body {
-    font-family: 'Geist', -apple-system, sans-serif; background: var(--bg); color: var(--text);
+    font-family: 'Aeonik Pro', 'Aeonik', 'DM Sans', -apple-system, sans-serif; background: var(--bg); color: var(--text);
     -webkit-font-smoothing: antialiased; overflow-x: hidden; line-height: 1.5; min-height: 100vh;
     display: flex; flex-direction: column; transition: background .5s, color .5s;
   }
@@ -47,7 +47,7 @@
   nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; display: flex; align-items: center; justify-content: space-between; padding: 16px 36px; background: color-mix(in srgb, var(--bg) 80%, transparent); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); border-bottom: 1px solid transparent; transition: border-color .3s; }
   nav.scrolled { border-bottom-color: var(--border); }
   .logo { display: inline-flex; align-items: center; gap: 10px; text-decoration: none; }
-  .logo-mark { width: 32px; height: 32px; border-radius: 9px; background: linear-gradient(150deg,#34343c,#131316); border: 1px solid rgba(255,255,255,.09); box-shadow: var(--shadow-sm), inset 0 1px 0 rgba(255,255,255,.08); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .logo-mark { width: 32px; height: 32px; border-radius: 9px; background: var(--surface); border: 1px solid var(--border-strong); box-shadow: var(--shadow-sm); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
   .logo-mark svg { width: 20px; height: 20px; }
   .logo-word { font-size: 19px; font-weight: 600; letter-spacing: -.5px; color: var(--text); }
   .nav-links { display: flex; gap: 30px; list-style: none; }
@@ -59,11 +59,11 @@
   .nav-signin:hover { color: var(--text); }
   .btn { display: inline-flex; align-items: center; gap: 9px; justify-content: center; font-family: inherit; font-size: 14px; font-weight: 500; border: none; border-radius: 999px; cursor: pointer; text-decoration: none; transition: transform .2s, box-shadow .3s, background .2s, border-color .2s, filter .2s, opacity .2s; white-space: nowrap; }
   .btn-primary {
-    padding: 10px 18px; color: #fff;
-    background: linear-gradient(180deg, #6b63f5 0%, #3d36c2 100%);
-    box-shadow: inset 0 1px 0 rgba(255,255,255,0.22), inset 0 -1px 0 rgba(0,0,0,0.18), 0 1px 2px rgba(40,30,140,0.18);
+    padding: 10px 18px; color: var(--btn-text);
+    background: var(--btn);
+    box-shadow: 0 1px 2px rgba(26,26,26,0.16);
   }
-  .btn-primary:hover { transform: translateY(-1px); filter: brightness(1.05); box-shadow: inset 0 1px 0 rgba(255,255,255,0.28), inset 0 -1px 0 rgba(0,0,0,0.22), 0 10px 24px rgba(79,70,229,0.32); }
+  .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 10px 24px rgba(26,26,26,0.22); }
   .menu-btn {
     display: none; width: 40px; height: 40px; position: relative; padding: 0;
     border: 1px solid var(--border-strong); background: var(--surface); border-radius: 50%;
@@ -106,7 +106,7 @@
   .field { display: flex; flex-direction: column; gap: 7px; }
   .field label { font-size: 12px; font-weight: 600; letter-spacing: .3px; color: var(--text-mid); text-transform: uppercase; font-family: 'Geist Mono', monospace; }
   .field input, .field textarea, .field select {
-    font-family: 'Geist', sans-serif; font-size: 15px; padding: 13px 15px;
+    font-family: inherit; font-size: 15px; padding: 13px 15px;
     border: 1px solid var(--border-strong); border-radius: 11px; background: var(--bg);
     color: var(--text); outline: none; transition: border-color .2s, box-shadow .2s; -webkit-appearance: none; appearance: none;
   }
@@ -115,10 +115,10 @@
   .field input:focus, .field textarea:focus, .field select:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
   .field input::placeholder, .field textarea::placeholder { color: var(--text-dim); }
   .submit {
-    font-family: 'Geist', sans-serif; font-size: 15px; font-weight: 500; width: 100%;
-    padding: 15px; color: #fff; border: none; border-radius: 999px; cursor: pointer;
-    background: linear-gradient(180deg, #6b63f5 0%, #3d36c2 100%);
-    box-shadow: inset 0 1px 0 rgba(255,255,255,0.22), inset 0 -1px 0 rgba(0,0,0,0.18), 0 1px 2px rgba(40,30,140,0.18);
+    font-family: inherit; font-size: 15px; font-weight: 500; width: 100%;
+    padding: 15px; color: var(--btn-text); border: none; border-radius: 999px; cursor: pointer;
+    background: var(--btn);
+    box-shadow: 0 1px 2px rgba(26,26,26,0.16);
     transition: filter .2s, transform .15s, box-shadow .3s; margin-top: 4px;
   }
   .submit:hover { filter: brightness(1.05); transform: translateY(-1px); box-shadow: inset 0 1px 0 rgba(255,255,255,0.28), inset 0 -1px 0 rgba(0,0,0,0.22), 0 10px 24px rgba(79,70,229,0.32); }
@@ -161,13 +161,18 @@
   @media (hover: none) and (pointer: coarse) {
     .submit:hover { transform: none !important; }
   }
+
+  .lg-wave { stroke: #28775c; }
+  .lg-spark { fill: #28775c; }
+  html[data-theme="dark"] .lg-wave { stroke: #5fb896; }
+  html[data-theme="dark"] .lg-spark { fill: #5fb896; }
 </style>
 </head>
 <body>
 
 <nav>
   <a href="index.html" class="logo">
-    <span class="logo-mark"><svg viewBox="0 0 24 24" fill="none"><path d="M5 15 Q8 9 12 12 Q16 15 19 9" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M19 3.6 C19.15 5.1 20.3 6.25 21.8 6.4 C20.3 6.55 19.15 7.7 19 9.2 C18.85 7.7 17.7 6.55 16.2 6.4 C17.7 6.25 18.85 5.1 19 3.6 Z" fill="#8b84ff"/></svg></span>
+    <span class="logo-mark"><svg viewBox="0 0 24 24" fill="none"><path class="lg-wave" d="M5 15 Q8 9 12 12 Q16 15 19 9" stroke="#28775c" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path class="lg-spark" d="M19 3.6 C19.15 5.1 20.3 6.25 21.8 6.4 C20.3 6.55 19.15 7.7 19 9.2 C18.85 7.7 17.7 6.55 16.2 6.4 C17.7 6.25 18.85 5.1 19 3.6 Z" fill="#28775c"/></svg></span>
     <span class="logo-word">Sona</span>
   </a>
   <ul class="nav-links">
@@ -177,8 +182,8 @@
     <li><a href="contact.html" class="active">Contact</a></li>
   </ul>
   <div class="nav-right">
-    <button type="button" class="nav-signin" onclick="CanopyAuth.openLogin()">Sign in</button>
-    <a href="#" class="btn btn-primary" onclick="event.preventDefault(); CanopyAuth.openSignup();">Get started</a>
+    <button type="button" class="nav-signin" onclick="SonaAuth.openLogin()">Sign in</button>
+    <a href="#" class="btn btn-primary" onclick="event.preventDefault(); SonaAuth.openSignup();">Get started</a>
   </div>
   <button class="menu-btn" aria-label="Menu"><span></span><span></span></button>
 </nav>
@@ -188,7 +193,7 @@
   <a href="index.html#how">How it works</a>
   <a href="index.html#pricing">Pricing</a>
   <a href="contact.html">Contact</a>
-  <a href="#" class="btn btn-primary" onclick="event.preventDefault(); CanopyAuth.openSignup();">Start free</a>
+  <a href="#" class="btn btn-primary" onclick="event.preventDefault(); SonaAuth.openSignup();">Start free</a>
 </div>
 
 <main>
@@ -198,8 +203,7 @@
       <h1>Let's talk.</h1>
       <p>Questions, partnerships, or feedback — we read everything and reply within one business day.</p>
       <div class="channels">
-        <div class="channel"><div class="k">Email</div><a href="mailto:hello@trysona.studio" class="v channel-v">hello@trysona.studio</a></div>
-        <div class="channel"><div class="k">Support</div><a href="mailto:support@trysona.studio" class="v channel-v">support@trysona.studio</a></div>
+        <div class="channel"><div class="k">Email</div><a href="mailto:david@buildwithsona.com" class="v channel-v">david@buildwithsona.com</a></div>
         <div class="channel"><div class="k">Social</div><a href="#" class="v channel-v">@aria · X (Twitter)</a></div>
       </div>
     </div>
@@ -234,7 +238,7 @@
 <footer>
   <div class="footer-base">
     <a href="index.html" class="logo">
-      <span class="logo-mark"><svg viewBox="0 0 24 24" fill="none"><path d="M5 15 Q8 9 12 12 Q16 15 19 9" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M19 3.6 C19.15 5.1 20.3 6.25 21.8 6.4 C20.3 6.55 19.15 7.7 19 9.2 C18.85 7.7 17.7 6.55 16.2 6.4 C17.7 6.25 18.85 5.1 19 3.6 Z" fill="#8b84ff"/></svg></span>
+      <span class="logo-mark"><svg viewBox="0 0 24 24" fill="none"><path class="lg-wave" d="M5 15 Q8 9 12 12 Q16 15 19 9" stroke="#28775c" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path class="lg-spark" d="M19 3.6 C19.15 5.1 20.3 6.25 21.8 6.4 C20.3 6.55 19.15 7.7 19 9.2 C18.85 7.7 17.7 6.55 16.2 6.4 C17.7 6.25 18.85 5.1 19 3.6 Z" fill="#28775c"/></svg></span>
       <span class="logo-word">Sona</span>
     </a>
     <span>&copy; 2026 Sona Labs Inc.</span>
@@ -243,7 +247,7 @@
 <script defer src="data.js"></script>
 <script>
   // Lazy load Sona Auth & Supabase
-  window.CanopyAuth = window.CanopyAuth || {
+  window.SonaAuth = window.SonaAuth || {
     _queue: [],
     openLogin: function() { this._queue.push(['openLogin']); window.loadAuthScripts && window.loadAuthScripts(); },
     openSignup: function() { this._queue.push(['openSignup']); window.loadAuthScripts && window.loadAuthScripts(); },
@@ -311,14 +315,14 @@
   });
   mm.querySelectorAll('a').forEach(a => a.addEventListener('click', () => { menuBtn.classList.remove('open'); mm.classList.remove('open'); document.body.style.overflow = ''; }));
 
-  // Contact form -> CanopyData (Supabase)
+  // Contact form -> SonaData (Supabase)
   const form = document.getElementById('contact-form');
   const msg = document.getElementById('form-msg');
   const btn = document.getElementById('c-submit');
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
     btn.disabled = true; btn.textContent = 'Sending...'; msg.className = 'form-msg';
-    const result = await window.CanopyData.submitContact({
+    const result = await window.SonaData.submitContact({
       name: document.getElementById('c-name').value,
       email: document.getElementById('c-email').value,
       company: document.getElementById('c-company').value,

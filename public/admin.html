@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="robots" content="noindex, nofollow">
-<title>Canopy — Admin</title>
+<title>Sona — Admin</title>
 <style>
   @font-face { font-family: 'Aeonik Pro'; src: local('Aeonik Pro'), local('AeonikPro-Regular'); font-weight: 400; }
   @font-face { font-family: 'Aeonik Pro'; src: local('Aeonik Pro Medium'), local('AeonikPro-Medium'); font-weight: 500; }
@@ -33,6 +33,7 @@
   .admin-nav a:hover { color: var(--off-white); }
 
   .admin-wrap { max-width: 1100px; margin: 0 auto; padding: 40px 32px 80px; }
+  .admin-wrap.wide { max-width: none; }
 
   .mode-banner {
     background: rgba(200,230,74,0.12); border: 1px solid rgba(200,230,74,0.3);
@@ -117,7 +118,7 @@
 <body>
 
 <div class="admin-nav">
-  <div class="logo">Canopy <span>Admin</span></div>
+  <div class="logo">Sona <span>Admin</span></div>
   <a href="index.html">← Back to site</a>
 </div>
 
@@ -168,7 +169,7 @@
       <code>creator | @handle · X | avatarHandle | post text | 12× outlier | 1.2M views | founders</code><br>
       Required: <b>creator</b>, <b>handle</b>, <b>text</b>. <code>cat</code> = founders / writers / creators. <code>avatarHandle</code> blank = derived from handle. Lines starting with <code>#</code> are ignored.
     </p>
-    <textarea id="ol-input" spellcheck="false" placeholder="Paste today's outliers here…" style="width:100%;min-height:220px;font-family:'Geist Mono',ui-monospace,monospace;font-size:13px;line-height:1.6;padding:14px 16px;border:1.5px solid var(--border);border-radius:12px;background:#fff;outline:none;resize:vertical;color:var(--text-dark);"></textarea>
+    <textarea id="ol-input" spellcheck="false" placeholder="Paste today's outliers here…" style="width:100%;min-height:320px;font-family:'Geist Mono',ui-monospace,monospace;font-size:13px;line-height:1.6;padding:14px 16px;border:1.5px solid var(--border);border-radius:12px;background:#fff;outline:none;resize:vertical;color:var(--text-dark);"></textarea>
 
     <div class="toolbar" style="margin-top:14px">
       <label style="font-size:14px;display:flex;align-items:center;gap:6px;cursor:pointer"><input type="radio" name="ol-mode" value="replace" checked> Replace feed</label>
@@ -186,7 +187,7 @@
 
 <script src="data.js"></script>
 <script>
-  const D = window.CanopyData;
+  const D = window.SonaData;
 
   // Mode banner
   document.getElementById('mode-banner').innerHTML = D.MODE === 'mock'
@@ -269,6 +270,7 @@
       document.querySelectorAll('.pane').forEach(p => p.classList.remove('active'));
       tab.classList.add('active');
       document.getElementById('pane-' + tab.dataset.pane).classList.add('active');
+      document.querySelector('.admin-wrap').classList.toggle('wide', tab.dataset.pane === 'outliers');
     });
   });
 
@@ -281,7 +283,7 @@
       { key: 'name', label: 'Name' }, { key: 'email', label: 'Email' },
       { key: 'company', label: 'Company' }, { key: 'created_at', label: 'Joined' },
     ]);
-    download('canopy-waitlist.csv', csv);
+    download('sona-waitlist.csv', csv);
   });
   document.getElementById('export-contacts').addEventListener('click', () => {
     const csv = D.toCSV(D.getContacts(), [
@@ -289,7 +291,7 @@
       { key: 'company', label: 'Company' }, { key: 'subject', label: 'Topic' },
       { key: 'message', label: 'Message' }, { key: 'created_at', label: 'Received' },
     ]);
-    download('canopy-messages.csv', csv);
+    download('sona-messages.csv', csv);
   });
 
   document.getElementById('clear-waitlist').addEventListener('click', () => {

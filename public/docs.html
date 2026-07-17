@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Canopy — Docs</title>
+<title>Sona — Docs</title>
 <style>
   @font-face { font-family: 'Aeonik Pro'; src: local('Aeonik Pro'), local('AeonikPro-Regular'); font-weight: 400; font-style: normal; }
   @font-face { font-family: 'Aeonik Pro'; src: local('Aeonik Pro Medium'), local('AeonikPro-Medium'); font-weight: 500; font-style: normal; }
@@ -562,7 +562,7 @@
 <body>
 
 <nav>
-  <a href="index.html" class="nav-logo">Canopy</a>
+  <a href="index.html" class="nav-logo">Sona</a>
   <ul class="nav-links">
     <li><a href="resources.html">Resources</a></li>
     <li><a href="company.html">Company</a></li>
@@ -632,10 +632,10 @@
   <!-- Content -->
   <main class="docs-content" data-reveal>
     <h1>Introduction</h1>
-    <p class="subtitle">The Canopy API gives you programmatic access to real-time transaction enrichment, merchant identification, and categorization at scale.</p>
+    <p class="subtitle">The Sona API gives you programmatic access to real-time transaction enrichment, merchant identification, and categorization at scale.</p>
 
     <div class="callout">
-      <p><strong>Base URL:</strong> All API requests are made to <code>https://api.canopy.dev/v2</code></p>
+      <p><strong>Base URL:</strong> All API requests are made to <code>https://api.sona.dev/v2</code></p>
     </div>
 
     <h2>Authentication</h2>
@@ -646,7 +646,7 @@
         <span class="code-block-label">Request Header</span>
         <span class="code-block-lang">bash</span>
       </div>
-      <pre><span class="punctuation">$</span> curl https://api.canopy.dev/v2/enrich \
+      <pre><span class="punctuation">$</span> curl https://api.sona.dev/v2/enrich \
   <span class="keyword">-H</span> <span class="string">"Authorization: Bearer cnp_sk_live_..."</span> \
   <span class="keyword">-H</span> <span class="string">"Content-Type: application/json"</span></pre>
     </div>
@@ -683,7 +683,7 @@
   <span class="keyword">"merchant"</span><span class="punctuation">:</span> <span class="punctuation">{</span>
     <span class="keyword">"name"</span><span class="punctuation">:</span> <span class="string">"Amazon"</span><span class="punctuation">,</span>
     <span class="keyword">"category"</span><span class="punctuation">:</span> <span class="string">"Shopping"</span><span class="punctuation">,</span>
-    <span class="keyword">"logo_url"</span><span class="punctuation">:</span> <span class="string">"https://cdn.canopy.dev/logos/amazon.svg"</span><span class="punctuation">,</span>
+    <span class="keyword">"logo_url"</span><span class="punctuation">:</span> <span class="string">"https://cdn.sona.dev/logos/amazon.svg"</span><span class="punctuation">,</span>
     <span class="keyword">"confidence"</span><span class="punctuation">:</span> 0.994
   <span class="punctuation">}</span><span class="punctuation">,</span>
   <span class="keyword">"enrichment"</span><span class="punctuation">:</span> <span class="punctuation">{</span>
@@ -744,7 +744,7 @@
   <span class="keyword">"error"</span><span class="punctuation">:</span> <span class="punctuation">{</span>
     <span class="keyword">"code"</span><span class="punctuation">:</span> <span class="string">"invalid_request"</span><span class="punctuation">,</span>
     <span class="keyword">"message"</span><span class="punctuation">:</span> <span class="string">"The 'amount' field is required."</span><span class="punctuation">,</span>
-    <span class="keyword">"doc_url"</span><span class="punctuation">:</span> <span class="string">"https://docs.canopy.dev/errors#invalid_request"</span>
+    <span class="keyword">"doc_url"</span><span class="punctuation">:</span> <span class="string">"https://docs.sona.dev/errors#invalid_request"</span>
   <span class="punctuation">}</span>
 <span class="punctuation">}</span></pre>
     </div>
@@ -766,7 +766,7 @@
     <div>
       <div class="footer-col-title">Contact</div>
       <div class="footer-contact-info">
-        Canopy, Inc.<br>
+        Sona, Inc.<br>
         548 Market St, Suite 42<br>
         San Francisco, CA 94104
       </div>
@@ -786,14 +786,14 @@
     </div>
   </div>
   <div class="footer-bottom-bar">
-    <span class="footer-copyright">&copy; 2026 Canopy, Inc.</span>
+    <span class="footer-copyright">&copy; 2026 Sona, Inc.</span>
     <ul class="footer-bottom-links">
       <li><a href="#">Privacy</a></li>
       <li><a href="#">Terms</a></li>
       <li><a href="#">Security</a></li>
     </ul>
   </div>
-  <div class="footer-brand">Canopy</div>
+  <div class="footer-brand">Sona</div>
 </footer>
 
 <script>
@@ -862,7 +862,7 @@
 <script src="data.js" defer></script>
 <script>
   // Lazy load Sona Auth & Supabase
-  window.CanopyAuth = window.CanopyAuth || {
+  window.SonaAuth = window.SonaAuth || {
     _queue: [],
     openLogin: function() { this._queue.push(['openLogin']); window.loadAuthScripts && window.loadAuthScripts(); },
     openSignup: function() { this._queue.push(['openSignup']); window.loadAuthScripts && window.loadAuthScripts(); },

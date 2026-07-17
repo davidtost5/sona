@@ -11,52 +11,58 @@
 <link rel="apple-touch-icon" href="/logo.svg">
 <title>Sona — Find proven ideas. Write in your voice.</title>
 <meta name="description" content="Sona studies what's working across every platform and helps you turn it into original content that sounds like you.">
-<link rel="canonical" href="https://trysona.studio/">
+<link rel="canonical" href="https://buildwithsona.com/">
 <!-- Open Graph / social share -->
 <meta property="og:type" content="website">
-<meta property="og:url" content="https://trysona.studio/">
+<meta property="og:url" content="https://buildwithsona.com/">
 <meta property="og:title" content="Sona — Find proven ideas. Write in your voice.">
 <meta property="og:description" content="Surrounded by what's working. Always in your voice. Sona surfaces outlier posts, decodes why they worked, and keeps your hooks and voice beside every draft.">
-<meta property="og:image" content="https://trysona.studio/og.png">
+<meta property="og:image" content="https://buildwithsona.com/og.png">
 <meta property="og:site_name" content="Sona">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Sona — Find proven ideas. Write in your voice.">
 <meta name="twitter:description" content="Surrounded by what's working. Always in your voice.">
-<meta name="twitter:image" content="https://trysona.studio/og.png">
+<meta name="twitter:image" content="https://buildwithsona.com/og.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800&family=Geist+Mono:wght@500&display=swap" rel="stylesheet" media="print" onload="this.media='all'"><noscript><link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800&family=Geist+Mono:wght@500&display=swap" rel="stylesheet"></noscript>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700;9..40,800&family=Geist+Mono:wght@500&display=swap" rel="stylesheet" media="print" onload="this.media='all'"><noscript><link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700;9..40,800&family=Geist+Mono:wght@500&display=swap" rel="stylesheet"></noscript>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
   :root {
-    --bg: #ffffff;
-    --bg-soft: #f7f7f4;
-    --surface: #ffffff;
-    --border: rgba(20,20,28,0.08);
-    --border-strong: rgba(20,20,28,0.14);
-    --text: #15151a;
-    --text-mid: #5a5a62;
-    --text-dim: #6f6f78;
-    --accent: #4f46e5;
-    --accent-2: #6b63f5;
-    --accent-soft: rgba(79,70,229,0.08);
-    --shadow-sm: 0 1px 2px rgba(20,20,30,0.04);
-    --shadow: 0 6px 30px rgba(20,20,30,0.07);
-    --shadow-lg: 0 30px 80px rgba(20,20,30,0.12);
+    --bg: #f3f3f0;
+    --bg-soft: #ecebe6;
+    --surface: #fcfcfa;
+    --border: rgba(26,26,26,0.09);
+    --border-strong: rgba(26,26,26,0.16);
+    --text: #1a1a1a;
+    --text-mid: #55554f;
+    --text-dim: #71716a;
+    --accent: #28775c;
+    --accent-2: #1d5c47;
+    --accent-soft: rgba(40,119,92,0.09);
+    --btn-bg: #1a1a1a;
+    --btn-bg-2: #000000;
+    --btn-fg: #f3f3f0;
+    --shadow-sm: 0 1px 2px rgba(26,26,26,0.04);
+    --shadow: 0 6px 30px rgba(26,26,26,0.07);
+    --shadow-lg: 0 30px 80px rgba(26,26,26,0.12);
   }
   html[data-theme="dark"] {
-    --bg: #0c0c0f;
-    --bg-soft: #131318;
-    --surface: #16161b;
+    --bg: #111312;
+    --bg-soft: #171918;
+    --surface: #1b1e1c;
     --border: rgba(255,255,255,0.09);
     --border-strong: rgba(255,255,255,0.16);
-    --text: #f4f4f6;
-    --text-mid: #a0a0aa;
-    --text-dim: #8a8a94;
-    --accent: #8b84ff;
-    --accent-2: #6b63f5;
-    --accent-soft: rgba(139,132,255,0.14);
+    --text: #f3f3f0;
+    --text-mid: #a5a59e;
+    --text-dim: #8b8b84;
+    --accent: #5fb896;
+    --accent-2: #4fa183;
+    --accent-soft: rgba(95,184,150,0.13);
+    --btn-bg: #f3f3f0;
+    --btn-bg-2: #e6e5e0;
+    --btn-fg: #1a1a1a;
     --shadow-sm: 0 1px 2px rgba(0,0,0,0.4);
     --shadow: 0 6px 30px rgba(0,0,0,0.4);
     --shadow-lg: 0 30px 80px rgba(0,0,0,0.55);
@@ -64,7 +70,7 @@
 
   html { scroll-behavior: smooth; }
   body {
-    font-family: 'Geist', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-family: 'Aeonik Pro', 'Aeonik', 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
     background: var(--bg);
     color: var(--text);
     -webkit-font-smoothing: antialiased;
@@ -182,7 +188,7 @@
   }
   nav.scrolled { border-bottom-color: var(--border); }
   .logo { display: inline-flex; align-items: center; gap: 10px; text-decoration: none; }
-  .logo-mark { width: 32px; height: 32px; border-radius: 9px; background: linear-gradient(150deg,#34343c,#131316); border: 1px solid rgba(255,255,255,.09); box-shadow: var(--shadow-sm), inset 0 1px 0 rgba(255,255,255,.08); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .logo-mark { width: 32px; height: 32px; border-radius: 9px; background: var(--surface); border: 1px solid var(--border-strong); box-shadow: var(--shadow-sm); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
   .logo-mark svg { width: 20px; height: 20px; }
   .logo-word { font-size: 19px; font-weight: 600; letter-spacing: -.5px; color: var(--text); }
   .nav-links { display: flex; gap: 30px; list-style: none; }
@@ -196,12 +202,12 @@
   /* ─── BUTTONS ─── */
   .btn { display: inline-flex; align-items: center; gap: 9px; justify-content: center; font-family: inherit; font-size: 15px; font-weight: 500; border: none; border-radius: 999px; cursor: pointer; text-decoration: none; transition: transform .2s, box-shadow .3s, filter .2s, border-color .2s; white-space: nowrap; }
   .btn-primary {
-    padding: 13px 24px; color: #fff;
-    background: linear-gradient(180deg, #6b63f5 0%, #3d36c2 100%);
-    box-shadow: inset 0 1px 0 rgba(255,255,255,0.22), inset 0 -1px 0 rgba(0,0,0,0.18), 0 1px 2px rgba(40,30,140,0.18);
+    padding: 13px 24px; color: var(--btn-fg);
+    background: var(--btn-bg);
+    box-shadow: 0 1px 2px rgba(26,26,26,0.16);
   }
-  .btn-primary:hover { transform: translateY(-1px); filter: brightness(1.05); box-shadow: inset 0 1px 0 rgba(255,255,255,0.28), inset 0 -1px 0 rgba(0,0,0,0.22), 0 10px 24px rgba(79,70,229,0.32); }
-  .btn-primary:active { transform: translateY(0); filter: brightness(0.96); }
+  .btn-primary:hover { transform: translateY(-1px); background: var(--btn-bg-2); box-shadow: 0 10px 24px rgba(26,26,26,0.22); }
+  .btn-primary:active { transform: translateY(0); }
   .btn-lg { padding: 15px 28px; font-size: 15.5px; }
   .btn-arrow { display: inline-block; transition: transform .2s; }
   .btn:hover .btn-arrow { transform: translateX(3px); }
@@ -252,8 +258,18 @@
 
   .mobile-menu { display: none; position: fixed; inset: 0; z-index: 150; background: var(--bg); flex-direction: column; align-items: center; justify-content: center; gap: 28px; opacity: 0; transition: opacity .3s; pointer-events: none; }
   .mobile-menu.open { display: flex; opacity: 1; pointer-events: auto; }
-  .mobile-menu a { font-size: 26px; font-weight: 600; color: var(--text); text-decoration: none; }
-  .mobile-menu a.btn-primary { color: #fff; }
+  .mobile-menu a { font-size: 26px; font-weight: 600; color: var(--text); text-decoration: none; min-height: 44px; display: inline-flex; align-items: center; }
+  .mobile-menu a.btn-primary { color: var(--btn-fg); }
+  .mobile-menu-close {
+    position: absolute; top: 18px; right: 18px;
+    width: 44px; height: 44px; display: flex; align-items: center; justify-content: center;
+    background: var(--surface); border: 1px solid var(--border-strong); border-radius: 50%;
+    color: var(--text); font-size: 26px; line-height: 1; cursor: pointer;
+    transition: background .2s, transform .15s;
+  }
+  .mobile-menu-close:hover { background: var(--bg-soft); }
+  .mobile-menu-close:active { transform: scale(0.94); }
+  a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
   /* ─── HERO ─── */
   .hero { position: relative; padding: 170px 36px 0; text-align: center; }
@@ -271,6 +287,9 @@
   .hero-sub { font-size: clamp(17px, 2.1vw, 21px); color: var(--text-mid); max-width: 560px; margin: 0 auto 42px; line-height: 1.55; }
   .hero-cta { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; margin-bottom: 18px; align-items: center; }
   .hero-note { font-size: 13px; color: var(--text-dim); }
+  .hero-badge { margin-top: 26px; display: flex; justify-content: center; }
+  .hero-badge img { display: block; max-width: 100%; height: auto; border-radius: 8px; opacity: .92; transition: opacity .2s, transform .2s; }
+  .hero-badge a:hover img { opacity: 1; transform: translateY(-1px); }
 
   .mock-wrap { max-width: 1020px; margin: 96px auto 0; padding: 0 24px; position: relative; }
   .mock-wrap::before { content:''; position:absolute; inset: 25% 8% 0; background: radial-gradient(ellipse at center, var(--accent-soft), transparent 70%); filter: blur(50px); z-index:0; pointer-events:none; }
@@ -317,7 +336,7 @@
   .panel { --mx: 50%; --my: 50%; }
   .panel::before {
     content: ''; position: absolute; inset: 0; border-radius: inherit;
-    background: radial-gradient(420px circle at var(--mx) var(--my), rgba(107,99,245,0.10), transparent 45%);
+    background: radial-gradient(420px circle at var(--mx) var(--my), rgba(40,119,92,0.10), transparent 45%);
     pointer-events: none; opacity: 0; transition: opacity .35s ease-out; z-index: 2;
   }
   .panel:hover::before { opacity: 1; }
@@ -328,7 +347,7 @@
   .panel.live .spark i:hover {
     opacity: 1;
     transform: scaleY(1.1);
-    filter: brightness(1.25) drop-shadow(0 4px 12px rgba(107,99,245,0.45));
+    filter: brightness(1.25) drop-shadow(0 4px 12px rgba(40,119,92,0.45));
     transition: transform .2s cubic-bezier(.16,1,.3,1), opacity .15s, filter .2s;
     transition-delay: 0s !important;
     z-index: 1;
@@ -350,13 +369,13 @@
   .conf:hover {
     border-color: var(--accent);
     transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(107,99,245,0.10);
+    box-shadow: 0 6px 16px rgba(40,119,92,0.10);
   }
 
   /* 5. Draft lines — subtle indigo wash on hover (suggests editability) */
   .draft-line { cursor: text; transition: width 1s cubic-bezier(.16,1,.3,1), background .2s; }
   .panel.live .draft-line:hover {
-    background: linear-gradient(90deg, var(--accent-soft) 0%, rgba(107,99,245,0.04) 100%);
+    background: linear-gradient(90deg, var(--accent-soft) 0%, rgba(40,119,92,0.04) 100%);
   }
 
   /* ─── SECTIONS ─── */
@@ -409,7 +428,7 @@
   /* Editor mock */
   .ed-mock { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 14px; padding: 18px; font-family: 'Geist Mono', monospace; font-size: 12.5px; line-height: 1.75; color: var(--text-mid); position: relative; }
   .ed-mock .hl { background: var(--accent-soft); color: var(--accent); padding: 1px 5px; border-radius: 4px; }
-  .ed-mock .regen { display: inline-flex; align-items: center; gap: 5px; font-family: 'Geist', sans-serif; font-size: 10.5px; font-weight: 500; color: var(--accent); background: var(--accent-soft); padding: 3px 9px; border-radius: 100px; margin-left: 8px; vertical-align: middle; }
+  .ed-mock .regen { display: inline-flex; align-items: center; gap: 5px; font-family: inherit; font-size: 10.5px; font-weight: 500; color: var(--accent); background: var(--accent-soft); padding: 3px 9px; border-radius: 100px; margin-left: 8px; vertical-align: middle; }
   .ed-mock .regen svg { width: 9px; height: 9px; }
 
   /* Mini calendar */
@@ -433,7 +452,7 @@
   /* Sidebar */
   .app-side { background: var(--bg-soft); border-right: 1px solid var(--border); padding: 18px 12px; display: flex; flex-direction: column; gap: 16px; }
   .app-side-top { display: flex; align-items: center; gap: 9px; padding: 4px 8px; }
-  .app-side-top .lm { width: 22px; height: 22px; border-radius: 6px; background: linear-gradient(150deg,#34343c,#131316); border: 1px solid rgba(255,255,255,.09); display: flex; align-items: center; justify-content: center; }
+  .app-side-top .lm { width: 22px; height: 22px; border-radius: 6px; background: var(--surface); border: 1px solid var(--border-strong); display: flex; align-items: center; justify-content: center; }
   .app-side-top .lm svg { width: 14px; height: 14px; }
   .app-side-top .name { font-size: 13.5px; font-weight: 600; letter-spacing: -.3px; }
   .app-side-top .badge { margin-left: auto; font-family: 'Geist Mono', monospace; font-size: 9.5px; color: var(--accent); background: var(--accent-soft); padding: 2px 7px; border-radius: 100px; letter-spacing: .5px; text-transform: uppercase; }
@@ -597,7 +616,7 @@
   .li-slide.active .li-body { color: var(--accent); }
   /* YouTube hook */
   .yt-thumb { aspect-ratio: 16/9; background: linear-gradient(135deg, #15151a 0%, #2a2a35 100%); border-radius: 12px; padding: 18px; display: flex; flex-direction: column; justify-content: space-between; position: relative; overflow: hidden; }
-  .yt-thumb::before { content:''; position: absolute; inset: 0; background: radial-gradient(circle at 30% 70%, rgba(107,99,245,0.35), transparent 60%); }
+  .yt-thumb::before { content:''; position: absolute; inset: 0; background: radial-gradient(circle at 30% 70%, rgba(40,119,92,0.35), transparent 60%); }
   .yt-thumb-title { font-size: 18px; font-weight: 700; color: #fff; letter-spacing: -.5px; line-height: 1.1; position: relative; max-width: 80%; }
   .yt-thumb-bottom { display: flex; align-items: center; gap: 10px; position: relative; }
   .yt-play { width: 30px; height: 30px; border-radius: 50%; background: rgba(255,255,255,.95); display: flex; align-items: center; justify-content: center; }
@@ -648,7 +667,7 @@
 
   /* Platform-themed thumbnails */
   .pc-x .pc-thumb { background: linear-gradient(135deg, #0d0c1a 0%, #1a1530 100%); }
-  .pc-x .pc-thumb::before { background: radial-gradient(circle at 70% 30%, rgba(107,99,245,0.42), transparent 60%); }
+  .pc-x .pc-thumb::before { background: radial-gradient(circle at 70% 30%, rgba(40,119,92,0.42), transparent 60%); }
   .pc-li .pc-thumb { background: linear-gradient(135deg, #08233f 0%, #003a6c 100%); }
   .pc-li .pc-thumb::before { background: radial-gradient(circle at 30% 70%, rgba(0,119,255,0.35), transparent 60%); }
   .pc-yt .pc-thumb { background: linear-gradient(135deg, #1a0a0a 0%, #3a0808 100%); }
@@ -689,7 +708,7 @@
   .tier { display: flex; flex-direction: column; background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: 30px 26px; position: relative; box-shadow: var(--shadow-sm); transition: transform .3s, border-color .3s; }
   .tier:hover { transform: translateY(-3px); border-color: var(--border-strong); }
   .tier.featured { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent), var(--shadow); overflow: hidden; }
-  .tier.featured::before { content:''; position: absolute; top: -40%; right: -15%; width: 320px; height: 320px; border-radius: 50%; background: radial-gradient(circle, rgba(107,99,245,0.12), transparent 70%); filter: blur(40px); pointer-events: none; }
+  .tier.featured::before { content:''; position: absolute; top: -40%; right: -15%; width: 320px; height: 320px; border-radius: 50%; background: radial-gradient(circle, rgba(40,119,92,0.12), transparent 70%); filter: blur(40px); pointer-events: none; }
   .tier-badge { position: absolute; top: 16px; right: 16px; font-family: 'Geist Mono', monospace; font-size: 10px; letter-spacing: .8px; text-transform: uppercase; color: var(--accent); background: var(--accent-soft); padding: 4px 10px; border-radius: 100px; }
   .tier-name { font-family: 'Geist Mono', monospace; font-size: 11px; letter-spacing: 1px; text-transform: uppercase; color: var(--text-mid); margin-bottom: 14px; position: relative; }
   .tier-price { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; margin-bottom: 4px; position: relative; }
@@ -711,11 +730,11 @@
   .founding {
     max-width: 720px; margin: 0 auto; position: relative;
     border-radius: 26px; padding: 1.5px;
-    background: linear-gradient(140deg, #6b63f5 0%, #3d36c2 50%, var(--border-strong) 100%);
-    box-shadow: 0 30px 80px rgba(79,70,229,0.18), 0 0 0 1px rgba(107,99,245,0.1);
+    background: linear-gradient(140deg, var(--accent) 0%, var(--accent-2) 50%, var(--border-strong) 100%);
+    box-shadow: 0 30px 80px rgba(40,119,92,0.18), 0 0 0 1px rgba(40,119,92,0.1);
   }
   .founding-inner { background: var(--surface); border-radius: 24px; padding: 40px 42px; position: relative; overflow: hidden; }
-  .founding-inner::before { content:''; position: absolute; top: -50%; right: -10%; width: 380px; height: 380px; border-radius: 50%; background: radial-gradient(circle, rgba(107,99,245,0.10), transparent 70%); filter: blur(40px); pointer-events: none; }
+  .founding-inner::before { content:''; position: absolute; top: -50%; right: -10%; width: 380px; height: 380px; border-radius: 50%; background: radial-gradient(circle, rgba(40,119,92,0.10), transparent 70%); filter: blur(40px); pointer-events: none; }
   .founding-eye { display: inline-flex; align-items: center; gap: 7px; font-family: 'Geist Mono', monospace; font-size: 11px; letter-spacing: 1px; text-transform: uppercase; color: var(--accent); padding: 5px 12px; background: var(--accent-soft); border-radius: 100px; margin-bottom: 22px; position: relative; }
   .founding-eye .star { font-size: 12px; line-height: 1; }
   .founding h3 { font-size: clamp(28px, 4vw, 40px); font-weight: 600; letter-spacing: -1.6px; line-height: 1.05; margin-bottom: 14px; position: relative; max-width: 480px; }
@@ -782,8 +801,8 @@
   .foot-sub input { flex: 1; padding: 11px 14px; font-family: inherit; font-size: 13px; background: var(--surface); border: 1px solid var(--border-strong); border-radius: 999px; color: var(--text); outline: none; transition: border-color .2s; }
   .foot-sub input:focus { border-color: var(--accent); }
   .foot-sub input::placeholder { color: var(--text-dim); }
-  .foot-sub button { padding: 11px 18px; font-family: inherit; font-size: 13px; font-weight: 500; color: #fff; background: linear-gradient(180deg, #6b63f5 0%, #3d36c2 100%); border: none; border-radius: 999px; cursor: pointer; box-shadow: inset 0 1px 0 rgba(255,255,255,0.22), 0 1px 2px rgba(40,30,140,0.18); transition: filter .2s, transform .2s; }
-  .foot-sub button:hover { filter: brightness(1.05); transform: translateY(-1px); }
+  .foot-sub button { padding: 11px 18px; font-family: inherit; font-size: 13px; font-weight: 500; color: var(--btn-fg); background: var(--btn-bg); border: none; border-radius: 999px; cursor: pointer; box-shadow: 0 1px 2px rgba(26,26,26,0.16); transition: background .2s, transform .2s; }
+  .foot-sub button:hover { background: var(--btn-bg-2); transform: translateY(-1px); }
   .foot-col h3 { font-family: 'Geist Mono', monospace; font-size: 11px; font-weight: 500; color: var(--text-dim); margin-bottom: 16px; letter-spacing: .8px; text-transform: uppercase; }
   .foot-col a { display: block; font-size: 14px; color: var(--text); text-decoration: none; margin-bottom: 11px; transition: color .2s; width: fit-content; }
   .foot-col a:hover { color: var(--accent); }
@@ -1031,6 +1050,11 @@
     .mock-wrap::before { transform: none !important; }
     [data-split] .w { transition-delay: 0s !important; }
   }
+
+  .lg-wave { stroke: #28775c; }
+  .lg-spark { fill: #28775c; }
+  html[data-theme="dark"] .lg-wave { stroke: #5fb896; }
+  html[data-theme="dark"] .lg-spark { fill: #5fb896; }
 </style>
 </head>
 <body>
@@ -1046,7 +1070,7 @@
 
 <nav>
   <a href="index.html" class="logo">
-    <span class="logo-mark"><svg viewBox="0 0 24 24" fill="none"><path d="M5 15 Q8 9 12 12 Q16 15 19 9" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M19 3.6 C19.15 5.1 20.3 6.25 21.8 6.4 C20.3 6.55 19.15 7.7 19 9.2 C18.85 7.7 17.7 6.55 16.2 6.4 C17.7 6.25 18.85 5.1 19 3.6 Z" fill="#8b84ff"/></svg></span>
+    <span class="logo-mark"><svg viewBox="0 0 24 24" fill="none"><path class="lg-wave" d="M5 15 Q8 9 12 12 Q16 15 19 9" stroke="#28775c" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path class="lg-spark" d="M19 3.6 C19.15 5.1 20.3 6.25 21.8 6.4 C20.3 6.55 19.15 7.7 19 9.2 C18.85 7.7 17.7 6.55 16.2 6.4 C17.7 6.25 18.85 5.1 19 3.6 Z" fill="#28775c"/></svg></span>
     <span class="logo-word">Sona</span>
   </a>
   <ul class="nav-links">
@@ -1056,18 +1080,19 @@
     <li><a href="contact.html">Contact</a></li>
   </ul>
   <div class="nav-right">
-    <button type="button" class="nav-signin" onclick="CanopyAuth.openLogin()">Sign in</button>
-    <a href="#" class="btn btn-primary" onclick="event.preventDefault(); CanopyAuth.openSignup();">Get started</a>
+    <button type="button" class="nav-signin" onclick="SonaAuth.openLogin()">Sign in</button>
+    <a href="#" class="btn btn-primary" onclick="event.preventDefault(); SonaAuth.openSignup();">Get started</a>
   </div>
   <button class="menu-btn" aria-label="Menu"><span></span><span></span></button>
 </nav>
 
-<div class="mobile-menu">
+<div class="mobile-menu" id="mobile-menu" role="dialog" aria-modal="true" aria-label="Menu">
+  <button class="mobile-menu-close" aria-label="Close menu">&times;</button>
   <a href="#features">Product</a>
   <a href="#how">How it works</a>
   <a href="#pricing">Pricing</a>
   <a href="contact.html">Contact</a>
-  <a href="#" class="btn btn-primary btn-lg" onclick="event.preventDefault(); CanopyAuth.openSignup();">Get started</a>
+  <a href="#" class="btn btn-primary btn-lg" onclick="event.preventDefault(); SonaAuth.openSignup();">Get started</a>
 </div>
 
 <!-- HERO -->
@@ -1077,15 +1102,18 @@
     <h1 data-r data-split>Write at the<br><span class="quiet">speed of thought.</span></h1>
     <p class="hero-sub" data-r>Surrounded by what's working. Always in your voice.</p>
     <div class="hero-cta" data-r>
-      <a href="#" class="btn btn-primary btn-lg" onclick="event.preventDefault(); CanopyAuth.openSignup();">Get started free <span class="btn-arrow">→</span></a>
+      <a href="#" class="btn btn-primary btn-lg" onclick="event.preventDefault(); SonaAuth.openSignup();">Get started free <span class="btn-arrow">→</span></a>
       <a href="#how" class="quiet-link">See how it works <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12l7 7 7-7"/></svg></a>
     </div>
     <div class="hero-note" data-r>Free during beta · No card required · In the studio in 10 seconds</div>
+    <div class="hero-badge" data-r>
+      <a href="https://nicklaunches.com/products/sona/?utm_source=buildwithsona.com&utm_medium=badge&utm_campaign=featured" target="_blank" rel="noopener"><img src="https://nicklaunches.com/badges/featured.png" alt="Sona on Nick Launches" width="244" height="56" /></a>
+    </div>
   </div>
 
   <div class="mock-wrap" data-r>
     <div class="panel mask-reveal" data-r id="hero-panel">
-      <div class="panel-bar"><i></i><i></i><i></i><span class="u mono">trysona.studio/app</span></div>
+      <div class="panel-bar"><i></i><i></i><i></i><span class="u mono">buildwithsona.com/app</span></div>
       <div class="panel-body">
         <div class="panel-col">
           <div class="pc-label">Draft · in your voice</div>
@@ -1112,7 +1140,7 @@
 <!-- WHO IT'S FOR -->
 <section class="section" id="who">
   <div class="sec-head" data-r>
-    <span class="eyebrow accent line">Who it's for</span>
+    <span class="eyebrow accent line">01 · Who it's for</span>
     <h2>Built for the way <span class="quiet">you actually create.</span></h2>
     <p>Whether you're scaling a personal brand or running content for a team, Sona fits the way you work — not the other way around.</p>
   </div>
@@ -1153,7 +1181,7 @@
 <!-- BENTO FEATURES -->
 <section class="section" id="features">
   <div class="sec-head" data-r>
-    <span class="eyebrow line">Inside Sona</span>
+    <span class="eyebrow line">02 · Inside Sona</span>
     <h2>Built for depth. <span class="quiet">Designed for focus.</span></h2>
     <p>Six tools that quietly do the heavy lifting, so writing stays the only thing you think about.</p>
   </div>
@@ -1249,19 +1277,19 @@ and they stick with it for ninety days.
 <!-- INTERACTIVE PRODUCT PREVIEW -->
 <section class="section" id="inside">
   <div class="sec-head" data-r>
-    <span class="eyebrow accent line">A peek inside</span>
+    <span class="eyebrow accent line">03 · A peek inside</span>
     <h2>This is where you'll work. <span class="quiet">Click around.</span></h2>
     <p>A real preview of the studio. Tap any item in the sidebar to switch views — the real thing ships with your invite.</p>
   </div>
 
   <div class="app-window" data-r>
-    <div class="app-bar"><i></i><i></i><i></i><span class="u">trysona.studio/app</span></div>
+    <div class="app-bar"><i></i><i></i><i></i><span class="u">buildwithsona.com/app</span></div>
     <div class="app-body">
 
       <!-- SIDEBAR -->
       <aside class="app-side">
         <div class="app-side-top">
-          <span class="lm"><svg viewBox="0 0 24 24" fill="none"><path d="M5 15 Q8 9 12 12 Q16 15 19 9" stroke="#fff" stroke-width="2.6" stroke-linecap="round" fill="none"/><path d="M19 3.6 C19.15 5.1 20.3 6.25 21.8 6.4 C20.3 6.55 19.15 7.7 19 9.2 C18.85 7.7 17.7 6.55 16.2 6.4 C17.7 6.25 18.85 5.1 19 3.6 Z" fill="#8b84ff"/></svg></span>
+          <span class="lm"><svg viewBox="0 0 24 24" fill="none"><path class="lg-wave" d="M5 15 Q8 9 12 12 Q16 15 19 9" stroke="#28775c" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path class="lg-spark" d="M19 3.6 C19.15 5.1 20.3 6.25 21.8 6.4 C20.3 6.55 19.15 7.7 19 9.2 C18.85 7.7 17.7 6.55 16.2 6.4 C17.7 6.25 18.85 5.1 19 3.6 Z" fill="#28775c"/></svg></span>
           <span class="name">Sona</span>
           <span class="badge">Beta</span>
         </div>
@@ -1440,7 +1468,7 @@ and they stick with it for ninety days.
 <!-- WHAT YOU'LL SHIP — formats showcase -->
 <section class="section" id="formats">
   <div class="sec-head" data-r>
-    <span class="eyebrow accent line">What you'll ship</span>
+    <span class="eyebrow accent line">04 · What you'll ship</span>
     <h2>One voice. <span class="quiet">Every format your audience reads in.</span></h2>
     <p>Threads, carousels, scripts, essays. Sona gives you the proven structure for each — you write it in your voice.</p>
   </div>
@@ -1584,7 +1612,7 @@ and they stick with it for ninety days.
 <!-- HOW IT WORKS / TIMELINE -->
 <section class="section" id="how">
   <div class="sec-head" data-r>
-    <span class="eyebrow accent line">The workflow</span>
+    <span class="eyebrow accent line">05 · The workflow</span>
     <h2>From blank page <span class="quiet">to published, in minutes.</span></h2>
   </div>
   <div class="steps" data-stagger>
@@ -1615,7 +1643,7 @@ and they stick with it for ninety days.
 <!-- FOUNDING MEMBER OFFER (different from Eden's countdown card) -->
 <section class="section" id="pricing">
   <div class="sec-head" data-r>
-    <span class="eyebrow accent line">Pricing</span>
+    <span class="eyebrow accent line">06 · Pricing</span>
     <h2>Simple pricing. <span class="quiet">Built to be fair.</span></h2>
     <p>Start free, upgrade when it earns its keep. Annual-first, cancel anytime — and a founding rate that disappears once the first 100 seats are gone.</p>
   </div>
@@ -1632,7 +1660,7 @@ and they stick with it for ninety days.
         <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Save up to 10 ideas</li>
         <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>1 playbook · 1 draft at a time</li>
       </ul>
-      <div class="tier-cta"><button type="button" class="btn btn-secondary" onclick="CanopyAuth.openSignup()">Start free</button></div>
+      <div class="tier-cta"><button type="button" class="btn btn-secondary" onclick="SonaAuth.openSignup()">Start free</button></div>
     </div>
 
     <!-- PRO -->
@@ -1647,7 +1675,7 @@ and they stick with it for ninety days.
         <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Decode why any post worked</li>
         <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Multiple playbooks & brands</li>
       </ul>
-      <div class="tier-cta"><button type="button" class="btn btn-secondary" onclick="CanopyAuth.openSignup()">Start 7-day trial</button></div>
+      <div class="tier-cta"><button type="button" class="btn btn-secondary" onclick="SonaAuth.openSignup()">Start 7-day trial</button></div>
     </div>
 
     <!-- FOUNDING (FEATURED) -->
@@ -1677,7 +1705,7 @@ and they stick with it for ninety days.
 <!-- FAQ -->
 <section class="section">
   <div class="sec-head" data-r>
-    <span class="eyebrow line">Questions</span>
+    <span class="eyebrow line">07 · Questions</span>
     <h2>Anything else? <span class="quiet">Let's clear it up.</span></h2>
   </div>
   <div class="faq" data-r>
@@ -1695,7 +1723,7 @@ and they stick with it for ninety days.
   <div class="foot-top">
     <div class="foot-brand">
       <a href="index.html" class="logo">
-        <span class="logo-mark"><svg viewBox="0 0 24 24" fill="none"><path d="M5 15 Q8 9 12 12 Q16 15 19 9" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M19 3.6 C19.15 5.1 20.3 6.25 21.8 6.4 C20.3 6.55 19.15 7.7 19 9.2 C18.85 7.7 17.7 6.55 16.2 6.4 C17.7 6.25 18.85 5.1 19 3.6 Z" fill="#8b84ff"/></svg></span>
+        <span class="logo-mark"><svg viewBox="0 0 24 24" fill="none"><path class="lg-wave" d="M5 15 Q8 9 12 12 Q16 15 19 9" stroke="#28775c" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path class="lg-spark" d="M19 3.6 C19.15 5.1 20.3 6.25 21.8 6.4 C20.3 6.55 19.15 7.7 19 9.2 C18.85 7.7 17.7 6.55 16.2 6.4 C17.7 6.25 18.85 5.1 19 3.6 Z" fill="#28775c"/></svg></span>
         <span class="logo-word">Sona</span>
       </a>
       <p>The creator studio that finds proven ideas and writes them in your voice.</p>
@@ -1729,7 +1757,7 @@ and they stick with it for ninety days.
 <script defer src="data.js"></script>
 <script>
   // Lazy load Sona Auth & Supabase
-  window.CanopyAuth = window.CanopyAuth || {
+  window.SonaAuth = window.SonaAuth || {
     _queue: [],
     openLogin: function() { this._queue.push(['openLogin']); window.loadAuthScripts && window.loadAuthScripts(); },
     openSignup: function() { this._queue.push(['openSignup']); window.loadAuthScripts && window.loadAuthScripts(); },
@@ -1836,13 +1864,18 @@ and they stick with it for ninety days.
   // Mobile menu
   const menuBtn = document.querySelector('.menu-btn');
   const mm = document.querySelector('.mobile-menu');
-  const closeMenu = () => { menuBtn.classList.remove('open'); mm.classList.remove('open'); document.body.style.overflow = ''; };
+  const closeMenu = () => { menuBtn.classList.remove('open'); mm.classList.remove('open'); document.body.style.overflow = ''; menuBtn.setAttribute('aria-expanded', 'false'); };
+  menuBtn.setAttribute('aria-expanded', 'false');
+  menuBtn.setAttribute('aria-controls', 'mobile-menu');
   menuBtn.addEventListener('click', () => {
     const open = !mm.classList.contains('open');
     menuBtn.classList.toggle('open', open); mm.classList.toggle('open', open);
     document.body.style.overflow = open ? 'hidden' : '';
+    menuBtn.setAttribute('aria-expanded', String(open));
+    if (open) mm.querySelector('.mobile-menu-close').focus();
   });
   mm.querySelectorAll('a').forEach(a => a.addEventListener('click', closeMenu));
+  mm.querySelector('.mobile-menu-close').addEventListener('click', () => { closeMenu(); menuBtn.focus(); });
   // ESC also closes
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && mm.classList.contains('open')) closeMenu(); });
 
@@ -1854,7 +1887,7 @@ and they stick with it for ninety days.
       const j = await r.json();
       if (j.ok && j.url) { location.href = j.url; return; }
       btn.innerHTML = 'Payment opens soon — join waitlist?';
-      btn.onclick = () => CanopyAuth.openSignup();
+      btn.onclick = () => SonaAuth.openSignup();
       setTimeout(() => { btn.innerHTML = orig; btn.disabled = false; btn.onclick = () => claimFoundingSeat(btn); }, 4000);
     } catch (e) {
       btn.innerHTML = orig; btn.disabled = false;
@@ -1952,7 +1985,7 @@ and they stick with it for ninety days.
   // Interactive product preview — switch views from the sidebar
   // If redirected from /app without a session, auto-open the sign-in modal
   if (new URLSearchParams(location.search).get('signin') === '1') {
-    setTimeout(() => window.CanopyAuth && window.CanopyAuth.openLogin && window.CanopyAuth.openLogin(), 400);
+    setTimeout(() => window.SonaAuth && window.SonaAuth.openLogin && window.SonaAuth.openLogin(), 400);
   }
 
   (function productPreview() {
@@ -1976,7 +2009,7 @@ and they stick with it for ninety days.
     document.querySelectorAll('.app-side .app-nav-item:not([data-view])').forEach(item => {
       item.addEventListener('click', (e) => {
         e.preventDefault();
-        if (window.CanopyAuth && window.CanopyAuth.openSignup) window.CanopyAuth.openSignup();
+        if (window.SonaAuth && window.SonaAuth.openSignup) window.SonaAuth.openSignup();
       });
     });
 
@@ -2102,8 +2135,8 @@ and they stick with it for ninety days.
     const btn = subForm.querySelector('button');
     btn.disabled = true; const orig = btn.textContent; btn.textContent = '...';
     try {
-      if (window.CanopyData && window.CanopyData.submitWaitlist) {
-        await window.CanopyData.submitWaitlist({ email, source: 'footer-newsletter' });
+      if (window.SonaData && window.SonaData.submitWaitlist) {
+        await window.SonaData.submitWaitlist({ email, source: 'footer-newsletter' });
       }
       btn.textContent = 'Subscribed ✓';
       document.getElementById('sub-email').value = '';
