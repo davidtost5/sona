@@ -37,8 +37,17 @@
   .gate .lm { width:44px; height:44px; border-radius:11px; background:var(--surface); border:1px solid var(--border-strong); display:flex; align-items:center; justify-content:center; }
   .gate .lm svg { width:28px; height:28px; }
   .gate p { font-size:14px; color:var(--text-mid); }
-  .gate .spinner { width:18px; height:18px; border:2px solid var(--border); border-top-color:var(--accent); border-radius:50%; animation:spin .8s linear infinite; }
-  @keyframes spin { to { transform:rotate(360deg); } }
+  /* Logo-as-loader: the mark itself breathes, its line flows, its spark twinkles —
+     no separate spinner. Same idea as Eden/Linear-style boot screens. */
+  .gate .lm.logo-load { animation:gateBreathe 1.8s ease-in-out infinite; }
+  .gate .lg-wave { stroke-dasharray:30; stroke-dashoffset:30; animation:waveFlow 1.8s ease-in-out infinite; }
+  .gate .lg-spark { transform-box:fill-box; transform-origin:center; animation:sparkTwinkle 1.8s ease-in-out infinite .25s; }
+  @keyframes gateBreathe { 0%,100% { transform:scale(1); box-shadow:0 0 0 0 var(--accent-soft); } 50% { transform:scale(1.06); box-shadow:0 0 0 9px var(--accent-soft); } }
+  @keyframes waveFlow { 0% { stroke-dashoffset:30; opacity:.4; } 50% { stroke-dashoffset:0; opacity:1; } 100% { stroke-dashoffset:-30; opacity:.4; } }
+  @keyframes sparkTwinkle { 0%,100% { opacity:.4; transform:scale(.7); } 50% { opacity:1; transform:scale(1); } }
+  @media (prefers-reduced-motion: reduce) {
+    .gate .lm.logo-load, .gate .lg-wave, .gate .lg-spark { animation: none !important; }
+  }
 
   /* ─── App shell ─── */
   .shell { display:grid; grid-template-columns:260px 1fr; height:100vh; }
@@ -439,9 +448,8 @@
 
 <!-- Auth gate (shown until session is verified) -->
 <div class="gate" id="gate">
-  <div class="lm"><svg viewBox="0 0 24 24" fill="none"><path class="lg-wave" d="M5 15 Q8 9 12 12 Q16 15 19 9" stroke="#28775c" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path class="lg-spark" d="M19 3.6 C19.15 5.1 20.3 6.25 21.8 6.4 C20.3 6.55 19.15 7.7 19 9.2 C18.85 7.7 17.7 6.55 16.2 6.4 C17.7 6.25 18.85 5.1 19 3.6 Z" fill="#28775c"/></svg></div>
-  <div class="spinner"></div>
-  <p id="gate-msg">Checking your session…</p>
+  <div class="lm logo-load"><svg viewBox="0 0 24 24" fill="none"><path class="lg-wave" d="M5 15 Q8 9 12 12 Q16 15 19 9" stroke="#28775c" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path class="lg-spark" d="M19 3.6 C19.15 5.1 20.3 6.25 21.8 6.4 C20.3 6.55 19.15 7.7 19 9.2 C18.85 7.7 17.7 6.55 16.2 6.4 C17.7 6.25 18.85 5.1 19 3.6 Z" fill="#28775c"/></svg></div>
+  <p id="gate-msg">One sec…</p>
 </div>
 
 <div class="shell" id="shell" style="display:none;">
