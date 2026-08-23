@@ -821,17 +821,23 @@
           .slice(0, 2)
           .toUpperCase();
 
+        // Markup is static; the two account-derived values are written with
+        // textContent afterwards. Interpolating them into the template would
+        // put attacker-influencable data (email, profile metadata) into an
+        // innerHTML sink — the browser then parses it as markup, not text.
         navRight.innerHTML = `
           <div class="user-menu">
-            <div class="user-avatar">${initials}</div>
+            <div class="user-avatar"></div>
             <div class="user-dropdown" id="user-dropdown">
-              <div class="user-dropdown-email">${user.email}</div>
+              <div class="user-dropdown-email"></div>
               <button class="user-dropdown-item" id="auth-dashboard" type="button">Dashboard</button>
               <button class="user-dropdown-item" id="auth-settings" type="button">Settings</button>
               <button class="user-dropdown-item danger" id="auth-signout">Sign out</button>
             </div>
           </div>
         `;
+        navRight.querySelector('.user-avatar').textContent = initials;
+        navRight.querySelector('.user-dropdown-email').textContent = user.email || '';
 
         const userMenu = navRight.querySelector('.user-menu');
         const dropdown = navRight.querySelector('.user-dropdown');
