@@ -15,7 +15,7 @@
 import { supabase } from './_supabase.js';
 import crypto from 'crypto';
 
-const SERVER = { name: 'sona', title: 'Sona — outlier research', version: '1.0.0' };
+const SERVER = { name: 'sona-mcp', title: 'Sona MCP', version: '1.0.0' };
 
 // Versions this server can speak, newest first.
 const SUPPORTED_PROTOCOLS = ['2025-06-18', '2025-03-26', '2024-11-05'];
