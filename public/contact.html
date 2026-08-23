@@ -167,6 +167,9 @@
   html[data-theme="dark"] .lg-wave { stroke: #5fb896; }
   html[data-theme="dark"] .lg-spark { fill: #5fb896; }
 </style>
+<script>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };</script>
+<script defer src="/_vercel/insights/script.js"></script>
+<script defer src="/_vercel/speed-insights/script.js"></script>
 </head>
 <body>
 
@@ -183,7 +186,7 @@
   </ul>
   <div class="nav-right">
     <button type="button" class="nav-signin" onclick="SonaAuth.openLogin()">Sign in</button>
-    <a href="#" class="btn btn-primary" onclick="event.preventDefault(); SonaAuth.openSignup();">Get started</a>
+    <a href="/contact.html" class="btn btn-primary">Request access</a>
   </div>
   <button class="menu-btn" aria-label="Menu"><span></span><span></span></button>
 </nav>
@@ -193,7 +196,7 @@
   <a href="index.html#how">How it works</a>
   <a href="index.html#pricing">Pricing</a>
   <a href="contact.html">Contact</a>
-  <a href="#" class="btn btn-primary" onclick="event.preventDefault(); SonaAuth.openSignup();">Start free</a>
+  <a href="/contact.html" class="btn btn-primary">Request access</a>
 </div>
 
 <main>
@@ -204,31 +207,27 @@
       <p>Questions, partnerships, or feedback — we read everything and reply within one business day.</p>
       <div class="channels">
         <div class="channel"><div class="k">Email</div><a href="mailto:david@buildwithsona.com" class="v channel-v">david@buildwithsona.com</a></div>
-        <div class="channel"><div class="k">Social</div><a href="#" class="v channel-v">@aria · X (Twitter)</a></div>
       </div>
     </div>
 
     <div class="form-card" data-reveal style="transition-delay:.08s">
       <div class="form-msg" id="form-msg"></div>
-      <form class="form" id="contact-form" autocomplete="on">
+      <form class="form" id="contact-form" method="POST" action="{{FORM_ENDPOINT}}" autocomplete="on">
         <div class="row2">
-          <div class="field"><label for="c-name">Name</label><input type="text" id="c-name" placeholder="Jane Smith" required autocomplete="name"></div>
-          <div class="field"><label for="c-email">Email</label><input type="email" id="c-email" placeholder="jane@company.com" required autocomplete="email"></div>
+          <div class="field"><label for="c-name">Name</label><input type="text" id="c-name" name="name" placeholder="Jane Smith" required autocomplete="name"></div>
+          <div class="field"><label for="c-email">Email</label><input type="email" id="c-email" name="email" placeholder="jane@company.com" required autocomplete="email"></div>
         </div>
-        <div class="row2">
-          <div class="field"><label for="c-company">Company</label><input type="text" id="c-company" placeholder="Optional" autocomplete="organization"></div>
-          <div class="field"><label for="c-subject">Topic</label>
-            <select id="c-subject">
-              <option value="general">General</option>
-              <option value="demo">Request a demo</option>
-              <option value="partnership">Partnership</option>
-              <option value="support">Support</option>
-              <option value="press">Press</option>
-            </select>
-          </div>
+        <div class="field"><label for="c-create">What do you create?</label><input type="text" id="c-create" name="what_you_create" placeholder="One line — e.g. weekly essays on B2B growth" maxlength="140" required></div>
+        <div class="field"><label for="c-tier">Which tier are you after?</label>
+          <select id="c-tier" name="tier">
+            <option value="starter">Starter — free</option>
+            <option value="pro">Pro — $24/mo, billed annually</option>
+            <option value="founding">Founding — $99/year (opening soon)</option>
+            <option value="undecided">Not sure yet</option>
+          </select>
         </div>
-        <div class="field"><label for="c-message">Message</label><textarea id="c-message" placeholder="How can we help?" required></textarea></div>
-        <button type="submit" class="submit" id="c-submit">Send message</button>
+        <div class="field"><label for="c-message">Anything else (optional)</label><textarea id="c-message" name="message" placeholder="Optional context"></textarea></div>
+        <button type="submit" class="submit" id="c-submit">Request access</button>
         <div class="form-foot">We typically reply within one business day.</div>
       </form>
     </div>
@@ -315,24 +314,6 @@
   });
   mm.querySelectorAll('a').forEach(a => a.addEventListener('click', () => { menuBtn.classList.remove('open'); mm.classList.remove('open'); document.body.style.overflow = ''; }));
 
-  // Contact form -> SonaData (Supabase)
-  const form = document.getElementById('contact-form');
-  const msg = document.getElementById('form-msg');
-  const btn = document.getElementById('c-submit');
-  form.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    btn.disabled = true; btn.textContent = 'Sending...'; msg.className = 'form-msg';
-    const result = await window.SonaData.submitContact({
-      name: document.getElementById('c-name').value,
-      email: document.getElementById('c-email').value,
-      company: document.getElementById('c-company').value,
-      subject: document.getElementById('c-subject').value,
-      message: document.getElementById('c-message').value,
-    });
-    if (result.ok) { msg.textContent = result.message; msg.className = 'form-msg success'; form.reset(); }
-    else { msg.textContent = result.error || 'Something went wrong.'; msg.className = 'form-msg error'; }
-    btn.disabled = false; btn.textContent = 'Send message';
-  });
 </script>
 </body>
 </html>

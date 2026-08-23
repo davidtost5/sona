@@ -1,51 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-  Lists only pages that actually exist in production and are crawlable.
-  /app and /admin.html are excluded deliberately — robots.txt disallows both.
-  Verify any new entry returns 200 before adding it: robots.txt advertises this
-  file, so a broken sitemap is worse than none.
--->
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://buildwithsona.com/</loc><lastmod>2026-07-18</lastmod><priority>1.0</priority></url>
+  <url><loc>https://buildwithsona.com/contact.html</loc><lastmod>2026-07-18</lastmod><priority>0.6</priority></url>
+
   <url>
-    <loc>https://buildwithsona.com/</loc>
-    <lastmod>2026-08-18</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>1.0</priority>
+    <loc>https://buildwithsona.com/privacy.html</loc>
   </url>
   <url>
-    <loc>https://buildwithsona.com/docs.html</loc>
-    <lastmod>2026-07-17</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
+    <loc>https://buildwithsona.com/terms.html</loc>
   </url>
   <url>
-    <loc>https://buildwithsona.com/resources.html</loc>
-    <lastmod>2026-07-17</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://buildwithsona.com/changelog.html</loc>
-    <lastmod>2026-07-17</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://buildwithsona.com/company.html</loc>
-    <lastmod>2026-07-17</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://buildwithsona.com/brand.html</loc>
-    <lastmod>2026-07-17</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.4</priority>
-  </url>
-  <url>
-    <loc>https://buildwithsona.com/contact.html</loc>
-    <lastmod>2026-07-17</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
+    <loc>https://buildwithsona.com/security.html</loc>
   </url>
 </urlset>

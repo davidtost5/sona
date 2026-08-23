@@ -19,7 +19,6 @@
 import Anthropic from '@anthropic-ai/sdk';
 import { createHash } from 'crypto';
 import { supabase } from './_supabase.js';
-import { rateLimit, tooMany } from './_rate-limit.js';
 
 const MODEL = 'claude-haiku-4-5';
 const MAX_TEXT = 2000; // guardrail: refuse absurd inputs so nobody can burn the key
@@ -49,15 +48,6 @@ export default async function handler(req, res) {
 
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
-  }
-
-  // Each cache miss spends model credit, and the endpoint takes no auth.
-  const LIMIT = { windowMs: 10 * 60 * 1000, perIp: 20, global: 200 };
-  const limited = rateLimit(req, 'decode', LIMIT);
-  if (limited) {
-    res.setHeader('Retry-After', String(Math.ceil(LIMIT.windowMs / 1000)));
-    // fallback:true tells the client to use its static decode instead of erroring.
-    return res.status(429).json({ error: 'Too many decodes right now. Try again shortly.', fallback: true });
   }
 
   const { text, author = '', platform = '' } = req.body || {};

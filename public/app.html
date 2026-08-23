@@ -12,24 +12,27 @@
 <title>Sona — Studio</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@500&family=Caveat:wght@500;600&display=swap" rel="stylesheet" media="print" onload="this.media='all'"><noscript><link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@500&family=Caveat:wght@500;600&display=swap" rel="stylesheet"></noscript>
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Geist+Mono:wght@500&family=Caveat:wght@500;600&display=swap" rel="stylesheet" media="print" onload="this.media='all'"><noscript><link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Geist+Mono:wght@500&family=Caveat:wght@500;600&display=swap" rel="stylesheet"></noscript>
 <style>
   * { margin:0; padding:0; box-sizing:border-box; }
   :root {
-    --bg:#fff; --bg-soft:#f7f7f4; --surface:#fff;
-    --border:rgba(20,20,28,0.08); --border-strong:rgba(20,20,28,0.16);
-    --text:#15151a; --text-mid:#5a5a62; --text-dim:#6f6f78;
-    --accent:#4f46e5; --accent-2:#6b63f5; --accent-soft:rgba(79,70,229,0.08);
-    --shadow-sm:0 1px 2px rgba(20,20,30,.04);
+    --bg:#f3f3f0; --bg-soft:#ecebe6; --surface:#fcfcfa;
+    --border:rgba(26,26,26,0.09); --border-strong:rgba(26,26,26,0.16);
+    --text:#1a1a1a; --text-mid:#55554f; --text-dim:#71716a;
+    --accent:#28775c; --accent-2:#1d5c47; --accent-soft:rgba(40,119,92,0.09);
+    --btn-bg:#1a1a1a; --btn-bg-2:#000; --btn-fg:#f3f3f0;
+    --shadow-sm:0 1px 2px rgba(26,26,26,.05);
   }
   html[data-theme="dark"] {
-    --bg:#0c0c0f; --bg-soft:#131318; --surface:#16161b;
+    --bg:#111312; --bg-soft:#171918; --surface:#1b1e1c;
     --border:rgba(255,255,255,.09); --border-strong:rgba(255,255,255,.16);
-    --text:#f4f4f6; --text-mid:#a0a0aa; --text-dim:#8a8a94;
-    --accent:#8b84ff; --accent-soft:rgba(139,132,255,.14);
+    --text:#f3f3f0; --text-mid:#a5a59e; --text-dim:#8b8b84;
+    --accent:#5fb896; --accent-2:#4fa183; --accent-soft:rgba(95,184,150,.13);
+    --btn-bg:#f3f3f0; --btn-bg-2:#e6e5e0; --btn-fg:#1a1a1a;
     --shadow-sm:0 1px 2px rgba(0,0,0,.4);
   }
-  body { font-family:'Geist',-apple-system,sans-serif; background:var(--bg); color:var(--text); -webkit-font-smoothing:antialiased; line-height:1.5; overflow:hidden; height:100vh; }
+  body { font-family:'Aeonik Pro','Aeonik','DM Sans',-apple-system,sans-serif; background:var(--bg); color:var(--text); -webkit-font-smoothing:antialiased; line-height:1.5; overflow:hidden; height:100vh; }
 
   /* ─── Auth gate / loading state ─── */
   .gate { position:fixed; inset:0; display:flex; align-items:center; justify-content:center; flex-direction:column; gap:14px; background:var(--bg); z-index:50; }
@@ -37,6 +40,7 @@
   .gate .lm { width:44px; height:44px; border-radius:11px; background:var(--surface); border:1px solid var(--border-strong); display:flex; align-items:center; justify-content:center; }
   .gate .lm svg { width:28px; height:28px; }
   .gate p { font-size:14px; color:var(--text-mid); }
+
   /* Logo-as-loader: the mark itself breathes, its line flows, its spark twinkles —
      no separate spinner. Same idea as Eden/Linear-style boot screens. */
   .gate .lm.logo-load { animation:gateBreathe 1.8s ease-in-out infinite; }
@@ -45,9 +49,6 @@
   @keyframes gateBreathe { 0%,100% { transform:scale(1); box-shadow:0 0 0 0 var(--accent-soft); } 50% { transform:scale(1.06); box-shadow:0 0 0 9px var(--accent-soft); } }
   @keyframes waveFlow { 0% { stroke-dashoffset:30; opacity:.4; } 50% { stroke-dashoffset:0; opacity:1; } 100% { stroke-dashoffset:-30; opacity:.4; } }
   @keyframes sparkTwinkle { 0%,100% { opacity:.4; transform:scale(.7); } 50% { opacity:1; transform:scale(1); } }
-  @media (prefers-reduced-motion: reduce) {
-    .gate .lm.logo-load, .gate .lg-wave, .gate .lg-spark { animation: none !important; }
-  }
 
   /* ─── App shell ─── */
   .shell { display:grid; grid-template-columns:260px 1fr; height:100vh; }
@@ -122,15 +123,25 @@
   .empty h3 { color:var(--text); font-size:18px; font-weight:600; letter-spacing:-.3px; margin-bottom:6px; }
   .empty p { font-size:14px; max-width:380px; line-height:1.55; margin-bottom:18px; }
 
-  .btn { display:inline-flex; align-items:center; gap:8px; padding:11px 20px; font-family:inherit; font-size:14px; font-weight:500; border:0; border-radius:999px; cursor:pointer; color:#fff; background:linear-gradient(180deg,#6b63f5 0%, #3d36c2 100%); box-shadow:inset 0 1px 0 rgba(255,255,255,.22), inset 0 -1px 0 rgba(0,0,0,.18), 0 1px 2px rgba(40,30,140,.18); transition:filter .2s, transform .2s; text-decoration:none; }
-  .btn:hover { filter:brightness(1.05); transform:translateY(-1px); }
+  .btn { display:inline-flex; align-items:center; gap:8px; padding:11px 20px; font-family:inherit; font-size:14px; font-weight:500; border:0; border-radius:999px; cursor:pointer; color:var(--btn-fg); background:var(--btn-bg); box-shadow:0 1px 2px rgba(26,26,26,.16); transition:background .2s, transform .2s, box-shadow .2s; text-decoration:none; }
+  .btn:hover { background:var(--btn-bg-2); transform:translateY(-1px); box-shadow:0 8px 20px rgba(26,26,26,.2); }
+  .btn:active { transform:translateY(0) scale(.98); }
   .btn-ghost { background:transparent; color:var(--text); border:1px solid var(--border-strong); box-shadow:none; padding:10px 18px; }
   .btn-ghost:hover { background:var(--bg-soft); transform:none; filter:none; }
 
   /* DISCOVER */
   .disc-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(280px,1fr)); gap:12px; }
-  .disc-card { background:var(--bg-soft); border:1px solid var(--border); border-radius:12px; padding:14px; transition:border-color .2s, transform .2s; }
-  .disc-card:hover { border-color:var(--border-strong); transform:translateY(-1px); }
+  .disc-card { background:var(--bg-soft); border:1px solid var(--border); border-radius:12px; padding:14px; transition:border-color .2s cubic-bezier(.16,1,.3,1), transform .2s cubic-bezier(.16,1,.3,1), box-shadow .2s; animation:cardIn .5s cubic-bezier(.16,1,.3,1) backwards; }
+  .disc-card:hover { border-color:var(--accent); transform:translateY(-2px); box-shadow:0 8px 20px rgba(26,26,26,.08); }
+  @keyframes cardIn { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:none; } }
+  /* Video outliers — real YouTube uploads ingested via /api/youtube */
+  .disc-thumb { display:block; position:relative; margin:-14px -14px 12px; border-radius:12px 12px 0 0; overflow:hidden; aspect-ratio:16/9; background:var(--bg); }
+  .disc-thumb img { width:100%; height:100%; object-fit:cover; display:block; transition:transform .3s cubic-bezier(.16,1,.3,1); }
+  .disc-card:hover .disc-thumb img { transform:scale(1.03); }
+  .disc-thumb::after { content:''; position:absolute; inset:0; background:linear-gradient(to top, rgba(8,8,12,.35), transparent 45%); pointer-events:none; }
+  .disc-play { position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); width:42px; height:42px; border-radius:50%; background:rgba(8,8,12,.62); backdrop-filter:blur(4px); display:flex; align-items:center; justify-content:center; z-index:1; transition:background .2s, transform .2s cubic-bezier(.16,1,.3,1); }
+  .disc-card:hover .disc-play { background:var(--accent); transform:translate(-50%,-50%) scale(1.08); }
+  .disc-play svg { width:16px; height:16px; fill:#fff; margin-left:2px; }
   .disc-head { display:flex; align-items:center; gap:8px; margin-bottom:10px; }
   .disc-head .disc-views { margin-left:auto; flex-shrink:0; }
   .disc-av { width:24px; height:24px; border-radius:50%; background:linear-gradient(135deg,var(--accent),var(--accent-soft)); flex-shrink:0; }
@@ -156,26 +167,11 @@
   .hook-use { background:transparent; border:1px solid var(--border); border-radius:8px; padding:6px 12px; color:var(--text); cursor:pointer; font-size:12px; font-family:inherit; display:inline-flex; align-items:center; gap:6px; transition:border-color .15s, color .15s, background .15s; }
   .hook-use:hover { border-color:var(--accent); color:var(--accent); background:var(--accent-soft); }
   .hook-use svg { width:12px; height:12px; }
-
-  /* Pattern library — reuses .hooks-grid / .hook-card, adds the aggregate bits */
-  .pat-intro { font-size:13px; color:var(--text-mid); margin-bottom:14px; }
-  .pat-head { display:flex; align-items:baseline; justify-content:space-between; gap:10px; }
-  .pat-count { font-family:'Geist Mono',monospace; font-size:10px; color:var(--text-dim); white-space:nowrap; }
-  .pat-why { font-size:12.5px; line-height:1.5; color:var(--text-mid); }
-  .pat-templates { display:flex; flex-direction:column; gap:7px; }
-  .pat-tpl { font-size:13px; line-height:1.5; color:var(--text); background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:8px 10px; }
-  /* hookSlots() emits .slot spans; the base rule is scoped to .hook-pattern, so repeat it here */
-  .pat-tpl .slot { color:var(--accent); background:var(--accent-soft); padding:0 4px; border-radius:4px; font-weight:600; }
-  .pat-egs { display:flex; flex-direction:column; gap:6px; border-top:1px solid var(--border); padding-top:10px; }
-  .pat-eg { font-size:11.5px; color:var(--text-mid); display:flex; align-items:center; gap:6px; }
-  .pat-eg a { color:var(--text-mid); text-decoration:none; }
-  .pat-eg a:hover { color:var(--accent); text-decoration:underline; }
-  .pat-eg .tag { font-family:'Geist Mono',monospace; font-size:9.5px; color:var(--accent); background:var(--accent-soft); padding:1px 6px; border-radius:100px; flex-shrink:0; }
-  .pat-empty { color:var(--text-mid); font-size:13.5px; line-height:1.6; max-width:460px; }
-  .pat-empty strong { color:var(--text); font-weight:600; }
-  .disc-action { background:transparent; border:1px solid var(--border); border-radius:7px; padding:4px 8px; color:var(--text-mid); cursor:pointer; font-size:11px; font-family:inherit; display:inline-flex; align-items:center; gap:4px; transition:border-color .15s, color .15s; }
+  .disc-action { background:transparent; border:1px solid var(--border); border-radius:7px; padding:4px 8px; color:var(--text-mid); cursor:pointer; font-size:11px; font-family:inherit; display:inline-flex; align-items:center; gap:4px; transition:border-color .15s, color .15s, background .15s, transform .1s; }
   .disc-action:hover { color:var(--accent); border-color:var(--accent); }
-  .disc-action.saved { color:var(--accent); border-color:var(--accent); background:var(--accent-soft); }
+  .disc-action:active { transform:scale(.94); }
+  .disc-action.saved { color:var(--accent); border-color:var(--accent); background:var(--accent-soft); animation:savePop .3s cubic-bezier(.34,1.56,.64,1); }
+  @keyframes savePop { 0% { transform:scale(1); } 40% { transform:scale(1.12); } 100% { transform:scale(1); } }
   .disc-action svg { width:11px; height:11px; }
 
   /* Lists view */
@@ -231,6 +227,25 @@
   .ac-empty { padding:30px 16px; color:var(--text-mid); font-size:13px; text-align:center; }
   .ac-foot { padding:14px 22px; border-top:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; gap:12px; }
   .ac-foot small { font-size:11px; color:var(--text-mid); }
+  /* What's new modal */
+  .wn-back { position:fixed; inset:0; background:color-mix(in srgb, var(--bg) 82%, transparent); backdrop-filter:blur(12px); display:none; align-items:center; justify-content:center; z-index:220; padding:20px; }
+  .wn-back.show { display:flex; }
+  .wn { width:min(480px,100%); max-height:85vh; overflow:auto; background:var(--bg); border:1px solid var(--border-strong); border-radius:16px; padding:26px 26px 22px; box-shadow:0 30px 80px rgba(0,0,0,.35); }
+  .wn-eye { font-family:'Geist Mono',monospace; font-size:10.5px; letter-spacing:1px; text-transform:uppercase; color:var(--accent); margin-bottom:8px; }
+  .wn-head { display:flex; align-items:flex-start; justify-content:space-between; gap:14px; }
+  .wn h2 { font-size:19px; font-weight:600; letter-spacing:-.4px; margin:0 0 4px; }
+  .wn-date { font-size:11.5px; color:var(--text-dim); font-family:'Geist Mono',monospace; margin-bottom:16px; }
+  .wn-x { background:transparent; border:0; color:var(--text-dim); font-size:20px; line-height:1; cursor:pointer; padding:4px; flex-shrink:0; }
+  .wn-x:hover { color:var(--text); }
+  .wn-item { display:flex; gap:12px; padding:12px 0; border-top:1px solid var(--border); }
+  .wn-item:first-of-type { border-top:0; }
+  .wn-tag { flex-shrink:0; font-family:'Geist Mono',monospace; font-size:9.5px; letter-spacing:.6px; text-transform:uppercase; padding:3px 8px; border-radius:100px; height:fit-content; margin-top:2px; }
+  .wn-tag.new { color:var(--accent); background:var(--accent-soft); }
+  .wn-tag.improved { color:var(--text-mid); background:var(--bg-soft); border:1px solid var(--border); }
+  .wn-item-title { font-size:13.5px; font-weight:600; margin-bottom:2px; }
+  .wn-item-desc { font-size:12.5px; color:var(--text-mid); line-height:1.55; }
+  .wn-foot { margin-top:18px; display:flex; justify-content:flex-end; }
+  .wn-foot .btn { padding:10px 22px; font-size:13.5px; }
    /* Outlier decoder */
    .decoder-back { position:fixed; inset:0; background:color-mix(in srgb, var(--bg) 82%, transparent); backdrop-filter:blur(12px); display:none; align-items:center; justify-content:center; z-index:200; padding:20px; }
    .decoder-back.show { display:flex; }
@@ -274,6 +289,41 @@
   .digest-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:14px; }
   .digest-empty { color:var(--text-dim); font-size:13px; padding:16px 2px; }
 
+  /* PIPELINE */
+  .pipeline-top { display:flex; align-items:flex-end; justify-content:space-between; gap:18px; margin-bottom:18px; flex-wrap:wrap; }
+  .pipeline-top h3 { margin:0 0 4px; font-size:15px; letter-spacing:-.01em; }
+  .pipeline-top p { margin:0; color:var(--text-mid); font-size:13px; line-height:1.5; }
+  .pipeline-stats { display:flex; gap:8px; flex-wrap:wrap; }
+  .pipeline-stat { min-width:92px; padding:9px 11px; border:1px solid var(--border); border-radius:10px; background:var(--bg-soft); }
+  .pipeline-stat b { display:block; font-size:17px; line-height:1.1; color:var(--text); }
+  .pipeline-stat span { display:block; margin-top:3px; font-family:'Geist Mono',monospace; font-size:9.5px; letter-spacing:.5px; text-transform:uppercase; color:var(--text-dim); }
+  .pipeline-board { display:grid; grid-template-columns:repeat(5,minmax(220px,1fr)); gap:12px; align-items:start; overflow-x:auto; padding-bottom:8px; }
+  .pipe-col { min-width:220px; background:var(--bg-soft); border:1px solid var(--border); border-radius:12px; padding:10px; }
+  .pipe-col-head { display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:10px; }
+  .pipe-col-head h4 { margin:0; font-size:12px; letter-spacing:.02em; text-transform:uppercase; font-family:'Geist Mono',monospace; color:var(--text-mid); }
+  .pipe-col-head span { font-family:'Geist Mono',monospace; font-size:10px; color:var(--text-dim); }
+  .pipe-list { display:flex; flex-direction:column; gap:9px; min-height:120px; }
+  .pipe-card { background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:11px; box-shadow:var(--shadow-sm); }
+  .pipe-card:hover { border-color:var(--border-strong); }
+  .pipe-card-top { display:flex; align-items:flex-start; justify-content:space-between; gap:8px; margin-bottom:7px; }
+  .pipe-card-title { font-size:13.5px; line-height:1.35; font-weight:600; color:var(--text); }
+  .pipe-card-meta { display:flex; gap:6px; flex-wrap:wrap; margin:8px 0; }
+  .pipe-chip { font-family:'Geist Mono',monospace; font-size:9.5px; color:var(--text-dim); background:var(--bg-soft); border:1px solid var(--border); border-radius:999px; padding:3px 7px; }
+  .pipe-idea { font-size:12px; line-height:1.45; color:var(--text-mid); margin-top:7px; }
+  .pipe-controls { display:grid; grid-template-columns:1fr 1fr; gap:6px; margin-top:10px; }
+  .pipe-controls select, .pipe-controls input { min-width:0; width:100%; border:1px solid var(--border); border-radius:7px; background:var(--bg); color:var(--text); font:inherit; font-size:11.5px; padding:6px 7px; outline:none; }
+  .pipe-controls .wide { grid-column:1/-1; }
+  .pipe-actions { display:flex; gap:6px; margin-top:9px; flex-wrap:wrap; }
+  .pipe-actions button, .pipe-add-row button { font-family:'Geist Mono',monospace; font-size:10.5px; letter-spacing:.3px; text-transform:uppercase; background:transparent; border:1px solid var(--border); border-radius:7px; padding:5px 8px; color:var(--text-mid); cursor:pointer; }
+  .pipe-actions button:hover, .pipe-add-row button:hover { color:var(--accent); border-color:var(--accent); }
+  .pipe-actions button.danger:hover { color:#ef4444; border-color:#ef4444; }
+  .pipe-empty { padding:22px 10px; text-align:center; font-size:12px; color:var(--text-dim); border:1px dashed var(--border); border-radius:9px; }
+  .pipe-add-row { display:flex; align-items:center; gap:8px; margin-top:14px; flex-wrap:wrap; }
+  .pipe-add-row select { min-width:260px; max-width:100%; border:1px solid var(--border); border-radius:9px; background:var(--surface); color:var(--text); font:inherit; font-size:13px; padding:9px 10px; }
+  .pipeline-empty { padding:56px 20px; text-align:center; color:var(--text-mid); border:1px dashed var(--border); border-radius:14px; background:var(--bg-soft); }
+  .pipeline-empty h3 { margin:0 0 6px; color:var(--text); font-size:17px; }
+  .pipeline-empty p { margin:0 auto 16px; max-width:430px; font-size:13px; line-height:1.55; }
+
   /* CANVAS — Eden-style intelligent canvas */
   .canvas-toolbar { display:flex; align-items:center; gap:10px; margin-bottom:14px; flex-wrap:wrap; }
   .canvas-toolbar .btn-ghost.active { color:var(--accent); border-color:var(--accent); }
@@ -288,7 +338,7 @@
   .canvas-node.is-note { transition:transform .15s ease; }
   .canvas-node.is-note:focus-within { transform:rotate(0deg) !important; z-index:2; }
   .canvas-node.is-note .canvas-node-body textarea { font-family:'Caveat',cursive; font-size:21px; line-height:1.35; color:var(--text); }
-  .canvas-node.is-note .canvas-node-body textarea::placeholder { font-family:'Geist',-apple-system,sans-serif; font-size:13px; }
+  .canvas-node.is-note .canvas-node-body textarea::placeholder { font-family:inherit; font-size:13px; }
   .canvas-node-head { display:flex; align-items:center; justify-content:space-between; gap:6px; padding:8px 10px; border-bottom:1px solid var(--border); cursor:grab; font-family:'Geist Mono',monospace; font-size:10.5px; letter-spacing:.4px; text-transform:uppercase; color:var(--text-dim); }
   .canvas-node-head:active { cursor:grabbing; }
   .canvas-node-x { background:transparent; border:none; color:var(--text-dim); cursor:pointer; font-size:15px; line-height:1; padding:2px 4px; }
@@ -382,7 +432,7 @@
   .switch input:checked + i::after { transform:translateX(16px); }
 
   /* ─── FOUNDING UPSELL (in-app sidebar — sleeker than Eden's countdown card) ─── */
-  .upsell { position:relative; border-radius:14px; padding:1px; background:linear-gradient(160deg,var(--accent),var(--accent-2) 60%,transparent 100%); margin:14px 0 4px; box-shadow:0 8px 24px rgba(79,70,229,.15); }
+  .upsell { position:relative; border-radius:14px; padding:1px; background:linear-gradient(160deg,var(--accent),var(--accent-2) 60%,transparent 100%); margin:14px 0 4px; box-shadow:0 8px 24px rgba(40,119,92,.15); }
   .upsell-inner { background:var(--bg-soft); border-radius:13px; padding:14px; }
   .upsell-x { position:absolute; top:8px; right:8px; width:18px; height:18px; border:0; background:transparent; cursor:pointer; color:var(--text-dim); font-size:14px; line-height:1; display:flex; align-items:center; justify-content:center; padding:0; z-index:2; }
   .upsell-x:hover { color:var(--text); }
@@ -395,8 +445,9 @@
   .upsell-seats-row .num b { color:var(--accent); }
   .upsell-bar { height:4px; background:var(--border); border-radius:999px; overflow:hidden; margin-bottom:11px; }
   .upsell-bar i { display:block; height:100%; background:linear-gradient(90deg,var(--accent),var(--accent-2)); border-radius:999px; transition:width .9s cubic-bezier(.16,1,.3,1); }
-  .upsell-btn { display:flex; align-items:center; justify-content:center; gap:6px; width:100%; padding:9px 12px; font-family:inherit; font-size:12px; font-weight:500; color:#fff; background:linear-gradient(180deg,#6b63f5 0%,#3d36c2 100%); border:0; border-radius:8px; cursor:pointer; box-shadow:inset 0 1px 0 rgba(255,255,255,.22); transition:filter .2s, transform .15s; }
-  .upsell-btn:hover { filter:brightness(1.07); transform:translateY(-1px); }
+  .upsell-btn { display:flex; align-items:center; justify-content:center; gap:6px; width:100%; padding:9px 12px; font-family:inherit; font-size:12px; font-weight:500; color:var(--btn-fg); background:var(--btn-bg); border:0; border-radius:8px; cursor:pointer; box-shadow:0 1px 2px rgba(26,26,26,.16); transition:background .2s, transform .15s; }
+  .upsell-btn:hover { background:var(--btn-bg-2); transform:translateY(-1px); }
+  .upsell-btn:active { transform:scale(.97); }
   .upsell-btn:disabled { opacity:.6; cursor:not-allowed; }
   .upsell.hide { display:none; }
 
@@ -459,7 +510,16 @@
   .lg-spark { fill: #28775c; }
   html[data-theme="dark"] .lg-wave { stroke: #5fb896; }
   html[data-theme="dark"] .lg-spark { fill: #5fb896; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .disc-card, .view.active, .disc-action.saved { animation: none !important; }
+    .disc-card, .btn, .upsell-btn, .disc-action, .nav-item { transition: none !important; }
+    .gate .lm.logo-load, .gate .lg-wave, .gate .lg-spark { animation: none !important; }
+  }
 </style>
+<script>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };</script>
+<script defer src="/_vercel/insights/script.js"></script>
+<script defer src="/_vercel/speed-insights/script.js"></script>
 </head>
 <body>
 
@@ -499,6 +559,10 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 1 1 3 3L7 19l-4 1 1-4Z"/></svg>
         Drafts<span class="pill-n" id="drafts-count">0</span>
       </button>
+      <button class="nav-item" data-view="pipeline">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16"/><path d="M4 12h16"/><path d="M4 18h16"/><circle cx="8" cy="6" r="2"/><circle cx="14" cy="12" r="2"/><circle cx="18" cy="18" r="2"/></svg>
+        Pipeline<span class="pill-n" id="pipeline-count">0</span>
+      </button>
       <button class="nav-item" data-view="voice">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
         Playbook
@@ -510,10 +574,6 @@
       <button class="nav-item" data-view="hooks">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z"/></svg>
         Hooks<span class="pill-n" id="hooks-count">0</span>
-      </button>
-      <button class="nav-item" data-view="patterns">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
-        Patterns<span class="pill-n" id="patterns-count">0</span>
       </button>
       <button class="nav-item" data-view="lists">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/><circle cx="17" cy="7" r="3"/><path d="M21 21v-2a4 4 0 0 0-3-3.87"/></svg>
@@ -585,6 +645,7 @@
           <button class="filter" data-filter="founders">Founders</button>
           <button class="filter" data-filter="writers">Writers</button>
           <button class="filter" data-filter="creators">Creators</button>
+          <button class="filter" data-filter="videos">Videos</button>
         </div>
         <div class="disc-grid" id="disc-grid"><!-- rendered by JS --></div>
         <p class="disc-disclaimer">Posts are public examples shown for educational pattern analysis. Creators are not affiliated with or endorsing Sona.</p>
@@ -653,6 +714,34 @@
             <div class="queue-list" id="drafts-list" style="margin-top:14px"></div>
           </aside>
         </div>
+      </div>
+
+      <!-- PIPELINE -->
+      <div class="view" data-view="pipeline">
+        <div class="pipeline-top">
+          <div>
+            <h3>Content pipeline</h3>
+            <p>Move saved ideas and drafts from raw inspiration to published results.</p>
+          </div>
+          <div class="pipeline-stats">
+            <div class="pipeline-stat"><b id="pipe-total">0</b><span>Total</span></div>
+            <div class="pipeline-stat"><b id="pipe-ready">0</b><span>Ready</span></div>
+            <div class="pipeline-stat"><b id="pipe-published">0</b><span>Published</span></div>
+          </div>
+        </div>
+        <div class="pipe-add-row">
+          <select id="pipeline-source">
+            <option value="">Add saved idea or draft...</option>
+          </select>
+          <button type="button" onclick="addPipelineItem()">Add to pipeline</button>
+          <button type="button" onclick="seedPipelineFromSaved()">Seed from saved</button>
+        </div>
+        <div id="pipeline-empty" class="pipeline-empty">
+          <h3>No pipeline items yet.</h3>
+          <p>Save an outlier idea or write a draft, then add it here to track it from idea to published post.</p>
+          <button class="btn" type="button" onclick="switchView('discover')">Browse Discover</button>
+        </div>
+        <div class="pipeline-board" id="pipeline-board"></div>
       </div>
 
       <!-- STYLE GUIDE (formerly Voice) -->
@@ -736,16 +825,6 @@
           <button class="filter" data-hookcat="curiosity">Curiosity</button>
         </div>
         <div class="hooks-grid" id="hooks-grid"><!-- rendered by JS --></div>
-      </div>
-
-      <!-- PATTERN LIBRARY — mechanisms aggregated from every decode ever run.
-           Unlike Hooks (a hand-written static list), this grows on its own as
-           posts get decoded. -->
-      <div class="view" data-view="patterns">
-        <div class="pat-intro" id="pat-intro">
-          Every post you decode is analysed for the mechanism behind it. This is what recurs.
-        </div>
-        <div class="hooks-grid" id="patterns-grid"><!-- rendered by JS --></div>
       </div>
 
       <!-- LISTS -->
@@ -964,6 +1043,21 @@
 </div>
 
 <!-- Add creators modal (must precede the app script — its bindings reference these ids) -->
+<div class="wn-back" id="wn-back" role="dialog" aria-modal="true" aria-label="What's new in Sona">
+  <div class="wn">
+    <div class="wn-head">
+      <div>
+        <div class="wn-eye">✦ What's new</div>
+        <h2>Sona keeps getting better</h2>
+      </div>
+      <button class="wn-x" id="wn-close" aria-label="Close">×</button>
+    </div>
+    <div class="wn-date" id="wn-date"></div>
+    <div id="wn-items"></div>
+    <div class="wn-foot"><button class="btn" id="wn-got-it">Got it</button></div>
+  </div>
+</div>
+
 <div class="ac-back" id="ac-back">
   <div class="ac" role="dialog" aria-modal="true" aria-labelledby="ac-title">
     <div class="ac-head">
@@ -1109,11 +1203,19 @@
           id: r.id,
           cat: r.cat || 'founders',
           name: r.creator_name,
-          av: r.avatar_handle ? AV(r.avatar_handle) : AV((r.handle || '').replace(/^@/, '').split(' ')[0]),
+          // YouTube rows store a full avatar URL; curated rows store a bare handle.
+          av: /^https?:\/\//.test(r.avatar_handle || '')
+            ? r.avatar_handle
+            : (r.avatar_handle ? AV(r.avatar_handle) : AV((r.handle || '').replace(/^@/, '').split(' ')[0])),
           handle: r.handle,
           text: r.text,
           tag: r.outlier_tag || '',
           views: r.views || '',
+          // Video rows (media_type 'video') come from /api/youtube — real uploads,
+          // real view counts, multiplier computed against the channel's own median.
+          media: r.media_type || 'post',
+          thumb: r.thumbnail_url || '',
+          url: r.source_url || '',
           // no `decoded` → live decode path
         }));
         SEED_IDEAS.splice(0, SEED_IDEAS.length, ...mapped);
@@ -1202,6 +1304,8 @@
   }
   let saved = new Set();
   let canvasState = { nodes: [], edges: [] }; // [{id,type:'note'|'idea',x,y,text?,ideaId?}], [{a,b}]
+  let pipelineState = { items: [] };
+  let pipelineSaveTimer = null;
   let connectMode = false;
   let connectFrom = null;
   let canvasDrag = null;
@@ -1300,6 +1404,218 @@
     clearTimeout(canvasSaveTimer);
     canvasSaveTimer = setTimeout(() => { saveWorkspaceSettings({ canvas: canvasState }, 'canvas-status'); }, 600);
   }
+
+  // ─── Pipeline state — tracks saved ideas/drafts through an editorial board. ───
+  const PIPE_STATUSES = [
+    { id:'idea', label:'Idea' },
+    { id:'drafting', label:'Drafting' },
+    { id:'ready', label:'Ready' },
+    { id:'scheduled', label:'Scheduled' },
+    { id:'published', label:'Published' },
+  ];
+  function loadPipelineState() {
+    const p = workspaceSettings.pipeline;
+    pipelineState = (p && Array.isArray(p.items)) ? p : { items: [] };
+  }
+  function savePipelineState() {
+    clearTimeout(pipelineSaveTimer);
+    pipelineSaveTimer = setTimeout(() => { saveWorkspaceSettings({ pipeline: pipelineState }, 'pipeline-status'); }, 500);
+  }
+  function pipelineItemId() {
+    return 'p_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+  }
+  function findPipelineSource(refType, refId) {
+    if (refType === 'idea') return SEED_IDEAS.find(i => i.id === refId);
+    if (refType === 'draft') return drafts.find(d => d.id === refId);
+    return null;
+  }
+  function pipelineTitle(item) {
+    const src = findPipelineSource(item.refType, item.refId);
+    if (item.title) return item.title;
+    if (item.refType === 'draft') return src?.title || 'Untitled draft';
+    return src ? `${src.name}: ${src.text.slice(0, 58)}${src.text.length > 58 ? '...' : ''}` : 'Untitled item';
+  }
+  function pipelinePlatform(item) {
+    const src = findPipelineSource(item.refType, item.refId);
+    return item.platform || src?.platform || (item.refType === 'idea' ? platformFromHandle(src?.handle) : 'X');
+  }
+  function platformFromHandle(handle) {
+    const h = String(handle || '').toLowerCase();
+    if (h.includes('linkedin') || h.includes('· in')) return 'LinkedIn';
+    if (h.includes('youtube') || h.includes('· yt')) return 'YouTube';
+    if (h.includes('substack')) return 'Blog';
+    return 'X';
+  }
+  function pipelineSourceText(item) {
+    const src = findPipelineSource(item.refType, item.refId);
+    if (!src) return 'Source no longer exists.';
+    return item.refType === 'draft' ? (src.body || '').slice(0, 130) : src.text;
+  }
+  function pipelineSourceLabel(item) {
+    const src = findPipelineSource(item.refType, item.refId);
+    if (!src) return 'Missing source';
+    return item.refType === 'draft' ? 'Draft' : `${src.name} · ${src.tag || 'saved idea'}`;
+  }
+  function pipelineStatusOptions(active) {
+    return PIPE_STATUSES.map(s => `<option value="${s.id}"${s.id === active ? ' selected' : ''}>${s.label}</option>`).join('');
+  }
+  function renderPipelineSourcePicker() {
+    const sel = document.getElementById('pipeline-source');
+    if (!sel) return;
+    const existing = new Set(pipelineState.items.map(i => `${i.refType}:${i.refId}`));
+    const savedOptions = SEED_IDEAS
+      .filter(i => saved.has(i.id) && !existing.has(`idea:${i.id}`))
+      .map(i => `<option value="idea:${i.id}">Saved idea - ${escapeHtml(i.name)} - ${escapeHtml(i.text.slice(0, 70))}</option>`);
+    const draftOptions = drafts
+      .filter(d => !existing.has(`draft:${d.id}`))
+      .map(d => `<option value="draft:${d.id}">Draft - ${escapeHtml(d.title || 'Untitled')} - ${escapeHtml((d.body || '').slice(0, 70))}</option>`);
+    sel.innerHTML = '<option value="">Add saved idea or draft...</option>' +
+      (savedOptions.length ? `<optgroup label="Saved ideas">${savedOptions.join('')}</optgroup>` : '') +
+      (draftOptions.length ? `<optgroup label="Drafts">${draftOptions.join('')}</optgroup>` : '');
+  }
+  function renderPipeline() {
+    const board = document.getElementById('pipeline-board');
+    if (!board) return;
+    const items = pipelineState.items || [];
+    document.getElementById('pipeline-count').textContent = items.length;
+    document.getElementById('pipe-total').textContent = items.length;
+    document.getElementById('pipe-ready').textContent = items.filter(i => i.status === 'ready').length;
+    document.getElementById('pipe-published').textContent = items.filter(i => i.status === 'published').length;
+    const empty = document.getElementById('pipeline-empty');
+    if (empty) empty.style.display = items.length ? 'none' : 'block';
+    board.style.display = items.length ? 'grid' : 'none';
+    renderPipelineSourcePicker();
+    board.innerHTML = PIPE_STATUSES.map(col => {
+      const colItems = items
+        .filter(i => (i.status || 'idea') === col.id)
+        .sort((a, b) => (b.updatedAt || 0) - (a.updatedAt || 0));
+      return `
+        <section class="pipe-col">
+          <div class="pipe-col-head"><h4>${col.label}</h4><span>${colItems.length}</span></div>
+          <div class="pipe-list">
+            ${colItems.length ? colItems.map(pipelineCardHTML).join('') : '<div class="pipe-empty">Nothing here.</div>'}
+          </div>
+        </section>`;
+    }).join('');
+  }
+  function pipelineCardHTML(item) {
+    const ideaText = pipelineSourceText(item);
+    const metrics = item.metrics || {};
+    return `
+      <article class="pipe-card">
+        <div class="pipe-card-top">
+          <div class="pipe-card-title">${escapeHtml(pipelineTitle(item))}</div>
+          <button class="canvas-node-x" onclick="removePipelineItem('${item.id}')" aria-label="Remove">×</button>
+        </div>
+        <div class="pipe-card-meta">
+          <span class="pipe-chip">${escapeHtml(pipelinePlatform(item))}</span>
+          <span class="pipe-chip">${escapeHtml(pipelineSourceLabel(item))}</span>
+          ${item.publishDate ? `<span class="pipe-chip">${escapeHtml(item.publishDate)}</span>` : ''}
+        </div>
+        <div class="pipe-idea">${escapeHtml(ideaText || '').slice(0, 180)}${(ideaText || '').length > 180 ? '...' : ''}</div>
+        <div class="pipe-controls">
+          <select onchange="updatePipelineItem('${item.id}', { status:this.value })">${pipelineStatusOptions(item.status || 'idea')}</select>
+          <select onchange="updatePipelineItem('${item.id}', { platform:this.value })">
+            ${['X','LinkedIn','YouTube','Blog'].map(p => `<option value="${p}"${pipelinePlatform(item) === p ? ' selected' : ''}>${p}</option>`).join('')}
+          </select>
+          <input type="date" value="${escapeHtml(item.publishDate || '')}" onchange="updatePipelineItem('${item.id}', { publishDate:this.value })" title="Publish date">
+          <input type="number" min="0" value="${metrics.views || ''}" placeholder="Views" oninput="updatePipelineMetrics('${item.id}', 'views', this.value)">
+          <input type="number" min="0" value="${metrics.likes || ''}" placeholder="Likes" oninput="updatePipelineMetrics('${item.id}', 'likes', this.value)">
+          <input type="number" min="0" value="${metrics.comments || ''}" placeholder="Comments" oninput="updatePipelineMetrics('${item.id}', 'comments', this.value)">
+        </div>
+        <div class="pipe-actions">
+          <button onclick="sendPipelineToDraft('${item.id}')">${item.refType === 'draft' ? 'Open draft' : 'To draft'}</button>
+          ${item.refType === 'idea' ? `<button onclick="openDecoder('${item.refId}')">Decode</button>` : ''}
+          <button class="danger" onclick="removePipelineItem('${item.id}')">Remove</button>
+        </div>
+      </article>`;
+  }
+  window.addPipelineItem = function() {
+    const sel = document.getElementById('pipeline-source');
+    const raw = sel?.value || '';
+    if (!raw) return;
+    const [refType, refId] = raw.split(':');
+    if (!findPipelineSource(refType, refId)) return;
+    if (pipelineState.items.some(i => i.refType === refType && i.refId === refId)) return;
+    const now = Date.now();
+    pipelineState.items.push({
+      id: pipelineItemId(),
+      refType,
+      refId,
+      status: refType === 'draft' ? 'drafting' : 'idea',
+      platform: pipelinePlatform({ refType, refId }),
+      metrics: {},
+      createdAt: now,
+      updatedAt: now,
+    });
+    if (sel) sel.value = '';
+    renderPipeline();
+    savePipelineState();
+  };
+  window.seedPipelineFromSaved = function() {
+    const existing = new Set(pipelineState.items.map(i => `${i.refType}:${i.refId}`));
+    const now = Date.now();
+    SEED_IDEAS.filter(i => saved.has(i.id) && !existing.has(`idea:${i.id}`)).forEach((idea, idx) => {
+      pipelineState.items.push({
+        id: pipelineItemId(),
+        refType: 'idea',
+        refId: idea.id,
+        status: 'idea',
+        platform: platformFromHandle(idea.handle),
+        metrics: {},
+        createdAt: now + idx,
+        updatedAt: now + idx,
+      });
+    });
+    renderPipeline();
+    savePipelineState();
+  };
+  window.updatePipelineItem = function(id, patch) {
+    const item = pipelineState.items.find(i => i.id === id);
+    if (!item) return;
+    Object.assign(item, patch, { updatedAt: Date.now() });
+    renderPipeline();
+    savePipelineState();
+  };
+  window.updatePipelineMetrics = function(id, key, value) {
+    const item = pipelineState.items.find(i => i.id === id);
+    if (!item) return;
+    item.metrics = item.metrics || {};
+    const n = Number(value);
+    if (value === '') delete item.metrics[key];
+    else if (Number.isFinite(n)) item.metrics[key] = n;
+    item.updatedAt = Date.now();
+    savePipelineState();
+  };
+  window.removePipelineItem = function(id) {
+    pipelineState.items = pipelineState.items.filter(i => i.id !== id);
+    renderPipeline();
+    savePipelineState();
+  };
+  window.sendPipelineToDraft = function(id) {
+    const item = pipelineState.items.find(i => i.id === id);
+    if (!item) return;
+    if (item.refType === 'draft') {
+      loadDraft(item.refId);
+      switchView('studio');
+      return;
+    }
+    const idea = SEED_IDEAS.find(i => i.id === item.refId);
+    if (!idea) return;
+    activeDraftId = null;
+    document.getElementById('draft-title').value = pipelineTitle(item);
+    document.getElementById('draft-body').value = `Source pattern from ${idea.name} (${idea.handle}):\n"${idea.text}"\n\nDraft in my voice:\n`;
+    document.getElementById('draft-platform').value = pipelinePlatform(item);
+    document.getElementById('draft-heading').textContent = 'New draft';
+    document.getElementById('draft-meta').textContent = 'Unsaved';
+    document.getElementById('draft-status').textContent = 'Loaded from pipeline. Rewrite in your voice.';
+    item.status = 'drafting';
+    item.updatedAt = Date.now();
+    renderPipeline();
+    savePipelineState();
+    switchView('studio');
+    setTimeout(() => document.getElementById('draft-body').focus(), 50);
+  };
 
   function hydrateForms() {
     const s = workspaceSettings;
@@ -1413,24 +1729,34 @@
     await showApp();
   }
 
+  // Kick off the Supabase script load immediately (in parallel with auth-config),
+  // instead of waiting for the config fetch to resolve first — cuts a full
+  // round trip off the /app startup path, especially on higher-latency connections.
+  // Resolves either way (never rejects) — a failed/slow script load shouldn't
+  // block entering preview mode when Supabase isn't even configured.
+  const supabaseScriptReady = (typeof window.supabase !== 'undefined' && window.supabase.createClient)
+    ? Promise.resolve()
+    : new Promise((resolve) => {
+        const script = document.createElement('script');
+        script.src = "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js";
+        script.onload = resolve;
+        script.onerror = resolve;
+        document.head.appendChild(script);
+      });
+
   async function initApp() {
     try {
-      const res = await fetch('/api/auth-config', { cache: 'no-store' });
+      const [res] = await Promise.all([
+        fetch('/api/auth-config', { cache: 'no-store' }),
+        supabaseScriptReady,
+      ]);
       const cfg = await res.json();
       if (!cfg.configured) {
         await enterPreviewMode();
         return;
       }
-      
-      // Lazily load Supabase script from CDN if not already loaded
       if (typeof window.supabase === 'undefined' || !window.supabase.createClient) {
-        await new Promise((resolve, reject) => {
-          const script = document.createElement('script');
-          script.src = "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js";
-          script.onload = resolve;
-          script.onerror = () => reject(new Error("Supabase script failed to load"));
-          document.head.appendChild(script);
-        });
+        throw new Error('Supabase script failed to load');
       }
 
       sb = window.supabase.createClient(cfg.url, cfg.anonKey, {
@@ -1447,6 +1773,40 @@
       console.error('App init failed', e);
       await enterPreviewMode();
     }
+  }
+
+  // ─── WHAT'S NEW ───
+  // Bump `id` (any new string) + edit items whenever you ship something.
+  // Users see the modal once per id, tracked in localStorage.
+  const WHATS_NEW = {
+    id: '2026-07-18',
+    date: 'July 18, 2026',
+    items: [
+      { tag: 'new', title: 'Scripts — 3 ready-to-shoot formats', desc: 'Tell Sona your product and audience, get a hook-driven story, a pattern-interrupt, and a before/after script. Find it in the sidebar.' },
+      { tag: 'new', title: 'Daily-curated Discover feed', desc: 'Fresh outlier posts from top entrepreneurs, hand-curated every morning.' },
+      { tag: 'improved', title: 'A fresh look', desc: 'New identity across the whole product — warm paper, forest green, and a sharper logo.' },
+      { tag: 'improved', title: 'We moved to buildwithsona.com', desc: 'Same Sona, new home. Old links redirect automatically.' },
+    ],
+  };
+
+  function maybeShowWhatsNew() {
+    try {
+      if (localStorage.getItem('sona-wn-seen') === WHATS_NEW.id) return;
+      const back = document.getElementById('wn-back');
+      document.getElementById('wn-date').textContent = WHATS_NEW.date;
+      document.getElementById('wn-items').innerHTML = WHATS_NEW.items.map(i => `
+        <div class="wn-item">
+          <span class="wn-tag ${i.tag}">${i.tag}</span>
+          <div><div class="wn-item-title">${i.title}</div><div class="wn-item-desc">${i.desc}</div></div>
+        </div>
+      `).join('');
+      const close = () => { back.classList.remove('show'); localStorage.setItem('sona-wn-seen', WHATS_NEW.id); };
+      document.getElementById('wn-close').onclick = close;
+      document.getElementById('wn-got-it').onclick = close;
+      back.onclick = (e) => { if (e.target === back) close(); };
+      document.addEventListener('keydown', function esc(e) { if (e.key === 'Escape' && back.classList.contains('show')) { close(); document.removeEventListener('keydown', esc); } });
+      back.classList.add('show');
+    } catch (_) { /* localStorage unavailable — skip quietly */ }
   }
 
   async function showApp() {
@@ -1475,7 +1835,9 @@
     renderDigest();
     loadCanvasState();
     renderCanvas();
-    loadPatterns(); // async — renders itself when the aggregate lands
+    loadPipelineState();
+    renderPipeline();
+    maybeShowWhatsNew();
   }
 
   // ─── Drafts ───
@@ -1551,6 +1913,7 @@
       sel.innerHTML = '<option value="">— pick a saved idea —</option>' +
         savedIdeas.map(i => `<option value="${i.id}">${escapeHtml(i.name)} — ${escapeHtml(i.text.slice(0,60))}…</option>`).join('');
     }
+    renderPipelineSourcePicker();
   }
   function escapeHtml(s) {
     return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -1638,6 +2001,7 @@
     }
     document.getElementById('draft-status').textContent = 'Saved.';
     renderDrafts();
+    renderPipeline();
   }
   async function deleteDraft() {
     if (!activeDraftId) { newDraft(); return; }
@@ -1650,6 +2014,7 @@
     drafts = drafts.filter(x => x.id !== activeDraftId);
     saveDraftsLocal();
     newDraft();
+    renderPipeline();
   }
   async function copyDraft() {
     const d = currentDraft();
@@ -2055,10 +2420,14 @@
     document.getElementById('saved-count').textContent = saved.size;
   }
 
+  // Escapes first: feed text can come from the YouTube API (real video titles),
+  // so it is never trusted HTML. The search term is escaped the same way so it
+  // still matches against the escaped haystack.
   function highlight(text) {
-    if (!searchTerm) return text;
-    const escaped = searchTerm.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    return text.replace(new RegExp(`(${escaped})`, 'gi'), '<mark>$1</mark>');
+    const safe = escapeHtml(text == null ? '' : text);
+    if (!searchTerm) return safe;
+    const needle = escapeHtml(searchTerm).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    return safe.replace(new RegExp(`(${needle})`, 'gi'), '<mark>$1</mark>');
   }
 
   function hookSlots(pattern) {
@@ -2098,100 +2467,50 @@
     setTimeout(() => body.focus(), 50);
   };
 
-  // ─── Pattern library ───
-  // Aggregated from /api/patterns (every decode ever run, grouped by mechanism).
-  // Distinct from HOOKS_LIBRARY above: that list is hand-written and fixed, this
-  // one grows by itself as posts get decoded.
-  let PATTERNS = [];
-
-  async function loadPatterns() {
-    const grid = document.getElementById('patterns-grid');
-    if (!grid) return;
-    try {
-      const r = await fetch('/api/patterns');
-      if (!r.ok) throw new Error(`HTTP ${r.status}`);
-      const { patterns } = await r.json();
-      PATTERNS = Array.isArray(patterns) ? patterns : [];
-    } catch (_) {
-      PATTERNS = []; // empty state explains itself; no error toast for a passive view
-    }
-    renderPatterns();
-  }
-
-  function renderPatterns() {
-    const grid = document.getElementById('patterns-grid');
-    const intro = document.getElementById('pat-intro');
-    if (!grid) return;
-
-    const countEl = document.getElementById('patterns-count');
-    if (countEl) countEl.textContent = PATTERNS.length;
-
-    if (!PATTERNS.length) {
-      if (intro) intro.style.display = 'none';
-      grid.innerHTML = `
-        <div class="pat-empty">
-          <p><strong>No patterns yet.</strong></p>
-          <p>Hit <em>Decode</em> on any post in Discover. Each decode identifies the
-          mechanism behind that post — hook type, tension, and a reusable template.
-          Once a mechanism shows up more than once, it appears here.</p>
-        </div>`;
-      return;
-    }
-
-    if (intro) intro.style.display = '';
-    grid.innerHTML = PATTERNS.map((p, i) => {
-      const templates = (p.templates || []).map(t =>
-        `<div class="pat-tpl">${hookSlots(t)}</div>`).join('');
-
-      const examples = (p.examples || []).map(e => {
-        const label = `${escapeHtml(e.creator_name || 'Unknown')}${e.handle ? ' · ' + escapeHtml(e.handle) : ''}`;
-        const name = e.source_url
-          ? `<a href="${escapeHtml(e.source_url)}" target="_blank" rel="noopener">${label}</a>`
-          : label;
-        const tag = e.outlier_tag ? `<span class="tag">${escapeHtml(e.outlier_tag)}</span>` : '';
-        return `<div class="pat-eg">${tag}<span>${name}</span></div>`;
-      }).join('');
-
-      return `
-        <div class="hook-card">
-          <div class="pat-head">
-            <div class="hook-cat">${escapeHtml(p.hook)}</div>
-            <div class="pat-count">${p.count}×</div>
-          </div>
-          ${p.why ? `<div class="pat-why">${escapeHtml(p.why)}</div>` : ''}
-          ${templates ? `<div class="pat-templates">${templates}</div>` : ''}
-          ${examples ? `<div class="pat-egs">${examples}</div>` : ''}
-          <div class="hook-foot">
-            <button class="hook-use" onclick="usePattern(${i})">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 1 1 3 3L7 19l-4 1 1-4Z"/></svg>
-              Use in a draft
+  // One card, two homes: Discover shows Save/Saved, the Saved tab shows Remove.
+  // Video rows (from /api/youtube) get a clickable YouTube thumbnail on top.
+  function discCardHTML(i, idx, variant) {
+    const isSaved = saved.has(i.id);
+    const removeStyle = variant === 'remove';
+    const thumb = (i.media === 'video' && i.thumb) ? `
+        <a class="disc-thumb" href="${escapeHtml(i.url)}" target="_blank" rel="noopener noreferrer" title="Watch on YouTube">
+          <img src="${escapeHtml(i.thumb)}" alt="" loading="lazy">
+          <span class="disc-play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span>
+        </a>` : '';
+    const saveBtn = removeStyle
+      ? `<button class="disc-action saved" onclick="toggleSave('${i.id}', this)">
+              <svg viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+              Remove
+            </button>`
+      : `<button class="disc-action ${isSaved ? 'saved' : ''}" data-idea="${i.id}" onclick="toggleSave('${i.id}', this)">
+              <svg viewBox="0 0 24 24" fill="${isSaved ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+              ${isSaved ? 'Saved' : 'Save'}
+            </button>`;
+    return `
+      <div class="disc-card" style="animation-delay:${Math.min(idx * 0.04, 0.4)}s">
+        ${thumb}
+        <div class="disc-head"><span class="disc-av" style="background:url('${escapeHtml(i.av)}') center/cover no-repeat, linear-gradient(135deg,var(--accent),var(--accent-soft))"></span><div><div class="disc-name">${highlight(i.name)}</div><div class="disc-handle">${highlight(i.handle)}</div></div>${i.views ? `<span class="disc-views">${escapeHtml(i.views)}</span>` : ''}</div>
+        <div class="disc-text">${highlight(i.text)}</div>
+        <div class="disc-meta">
+          ${i.tag ? `<span class="disc-tag">${highlight(i.tag)}</span>` : '<span></span>'}
+          <div class="disc-actions">
+            <button class="disc-action decode" onclick="openDecoder('${i.id}')" title="See why this post worked">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 1v6M12 17v6M4.22 4.22l4.24 4.24M15.54 15.54l4.24 4.24M1 12h6M17 12h6M4.22 19.78l4.24-4.24M15.54 8.46l4.24-4.24"/></svg>
+              Decode
             </button>
+            ${saveBtn}
           </div>
-        </div>`;
-    }).join('');
+        </div>
+      </div>`;
   }
-
-  window.usePattern = function(i) {
-    const p = PATTERNS[i];
-    if (!p) return;
-    activeDraftId = null;
-    document.getElementById('draft-title').value = '';
-    const body = document.getElementById('draft-body');
-    const tpl = (p.templates && p.templates[0]) || '';
-    body.value = `${tpl}\n\nWhy it works: ${p.why || ''}\n\n— your version (fill the brackets in your voice) —\n`;
-    document.getElementById('draft-heading').textContent = 'New draft';
-    document.getElementById('draft-meta').textContent = 'Unsaved';
-    document.getElementById('draft-status').textContent = 'Pattern loaded. Make it yours.';
-    switchView('studio');
-    setTimeout(() => body.focus(), 50);
-  };
 
   function renderDiscover() {
     const grid = document.getElementById('disc-grid');
     const countEl = document.getElementById('discover-count');
     if (countEl) countEl.textContent = SEED_IDEAS.length;
     const items = SEED_IDEAS
-      .filter(i => currentFilter === 'all' || i.cat === currentFilter)
+      .filter(i => currentFilter === 'all'
+        || (currentFilter === 'videos' ? i.media === 'video' : i.cat === currentFilter))
       .filter(matchesSearch);
     if (items.length === 0) {
       grid.innerHTML = `
@@ -2201,25 +2520,7 @@
         </div>`;
       return;
     }
-    grid.innerHTML = items.map(i => `
-      <div class="disc-card">
-        <div class="disc-head"><span class="disc-av" style="background:url('${i.av}') center/cover no-repeat, linear-gradient(135deg,var(--accent),var(--accent-soft))"></span><div><div class="disc-name">${highlight(i.name)}</div><div class="disc-handle">${highlight(i.handle)}</div></div>${i.views ? `<span class="disc-views">${i.views}</span>` : ''}</div>
-        <div class="disc-text">${highlight(i.text)}</div>
-        <div class="disc-meta">
-          <span class="disc-tag">${i.tag}</span>
-          <div class="disc-actions">
-            <button class="disc-action decode" onclick="openDecoder('${i.id}')" title="See why this post worked">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 1v6M12 17v6M4.22 4.22l4.24 4.24M15.54 15.54l4.24 4.24M1 12h6M17 12h6M4.22 19.78l4.24-4.24M15.54 8.46l4.24-4.24"/></svg>
-              Decode
-            </button>
-            <button class="disc-action ${saved.has(i.id) ? 'saved' : ''}" data-idea="${i.id}" onclick="toggleSave('${i.id}', this)">
-              <svg viewBox="0 0 24 24" fill="${saved.has(i.id) ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
-              ${saved.has(i.id) ? 'Saved' : 'Save'}
-            </button>
-          </div>
-        </div>
-      </div>
-    `).join('');
+    grid.innerHTML = items.map((i, idx) => discCardHTML(i, idx, 'save')).join('');
   }
 
   function renderSaved() {
@@ -2237,25 +2538,7 @@
         </div>`;
       return;
     }
-    grid.innerHTML = items.map(i => `
-      <div class="disc-card">
-        <div class="disc-head"><span class="disc-av" style="background:url('${i.av}') center/cover no-repeat, linear-gradient(135deg,var(--accent),var(--accent-soft))"></span><div><div class="disc-name">${highlight(i.name)}</div><div class="disc-handle">${highlight(i.handle)}</div></div>${i.views ? `<span class="disc-views">${i.views}</span>` : ''}</div>
-        <div class="disc-text">${highlight(i.text)}</div>
-        <div class="disc-meta">
-          <span class="disc-tag">${i.tag}</span>
-          <div class="disc-actions">
-            <button class="disc-action decode" onclick="openDecoder('${i.id}')" title="See why this post worked">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 1v6M12 17v6M4.22 4.22l4.24 4.24M15.54 15.54l4.24 4.24M1 12h6M17 12h6M4.22 19.78l4.24-4.24M15.54 8.46l4.24-4.24"/></svg>
-              Decode
-            </button>
-            <button class="disc-action saved" onclick="toggleSave('${i.id}', this)">
-              <svg viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
-              Remove
-            </button>
-          </div>
-        </div>
-      </div>
-    `).join('');
+    grid.innerHTML = items.map((i, idx) => discCardHTML(i, idx, 'remove')).join('');
   }
 
   window.toggleSave = async function(ideaId, btn) {
@@ -2274,6 +2557,7 @@
     renderSaved();
     renderSwipe();
     renderDrafts();
+    renderPipeline();
   };
 
   // ─── SCRIPTS — 3 free formats, template-based (no AI, zero cost) ───
@@ -2599,9 +2883,9 @@
       scripts:['Scripts','3 free formats, no obligation'],
       voice:['Playbook','Yours — never AI'],
       hooks:['Hooks library', `${HOOKS_LIBRARY.length} proven patterns`],
-      patterns:['Patterns', PATTERNS.length ? `${PATTERNS.length} mechanism${PATTERNS.length===1?'':'s'} across your decodes` : 'Decode a post to start'],
       canvas:['Canvas', canvasState.nodes.length ? `${canvasState.nodes.length} card${canvasState.nodes.length===1?'':'s'}` : 'Connect your ideas visually'],
       saved:['Saved ideas',`${saved.size} item${saved.size===1?'':'s'}`],
+      pipeline:['Pipeline', pipelineState.items.length ? `${pipelineState.items.length} item${pipelineState.items.length===1?'':'s'} in motion` : 'Plan, publish, learn'],
       brand:['Personal brand', workspaceSettings.workspaceName || 'Workspace'],
       swipe:['Idea swipe','Review and save outliers'],
       settings:['Settings','Account and workspace'],
@@ -2684,6 +2968,7 @@
       exportedAt: new Date().toISOString(),
       user: { id: user?.id, email: user?.email },
       settings: workspaceSettings,
+      pipeline: pipelineState,
       savedIdeas: SEED_IDEAS.filter(i => saved.has(i.id)),
     };
     const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
@@ -2752,6 +3037,10 @@
     renderDrafts();
     renderStyleGuide();
     renderLists();
+    loadCanvasState();
+    renderCanvas();
+    loadPipelineState();
+    renderPipeline();
   });
 
   // ─── Live search wiring ───

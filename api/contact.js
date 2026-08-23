@@ -2,7 +2,6 @@
 // Persists to Supabase if configured; otherwise falls back to in-memory (resets on redeploy).
 
 import { supabase } from './_supabase.js';
-import { rateLimit, tooMany } from './_rate-limit.js';
 
 const memory = [];
 
@@ -13,12 +12,6 @@ export default async function handler(req, res) {
 
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
-
-  // Public write endpoint — throttle so it can't be used as a spam funnel.
-  const LIMIT = { windowMs: 10 * 60 * 1000, perIp: 3, global: 60 };
-  if (tooMany(res, rateLimit(req, 'contact', LIMIT), LIMIT.windowMs,
-      'Too many messages from this address. Try again shortly.')) return;
-
 
   const { name, email, company, subject, message } = req.body || {};
 
