@@ -19,6 +19,7 @@
 import Anthropic from '@anthropic-ai/sdk';
 import { createHash } from 'crypto';
 import { supabase } from './_supabase.js';
+import { rateLimit, tooMany } from './_rate-limit.js';
 
 const MODEL = 'claude-haiku-4-5';
 const MAX_TEXT = 2000; // guardrail: refuse absurd inputs so nobody can burn the key
@@ -43,51 +44,6 @@ function sha256(s) {
   return createHash('sha256').update(s).digest('hex');
 }
 
-// ── Abuse guard ──
-// This endpoint spends real model credit on every cache miss and needs no auth
-// (the /app studio and api/mcp.js both call it). Without a throttle, anyone can
-// loop it and run up the bill.
-//
-// Limits are per warm serverless instance, not global — Vercel may run several,
-// so a determined attacker spread across instances gets a multiple of these
-// numbers. That is a deliberate trade: it costs nothing, adds no infrastructure,
-// and still turns "unbounded spend" into "bounded per instance". A global limit
-// would need shared state (Supabase or KV); worth adding if abuse ever shows up.
-const RATE = { windowMs: 10 * 60 * 1000, perIp: 20, global: 200 };
-const hits = new Map();      // ip -> [timestamps]
-let globalHits = [];         // timestamps across all callers
-
-function clientIp(req) {
-  const fwd = req.headers['x-forwarded-for'];
-  if (typeof fwd === 'string' && fwd) return fwd.split(',')[0].trim();
-  return req.headers['x-real-ip'] || 'unknown';
-}
-
-function rateLimited(req) {
-  const now = Date.now();
-  const cutoff = now - RATE.windowMs;
-
-  globalHits = globalHits.filter(t => t > cutoff);
-  if (globalHits.length >= RATE.global) return 'global';
-
-  const ip = clientIp(req);
-  const recent = (hits.get(ip) || []).filter(t => t > cutoff);
-  if (recent.length >= RATE.perIp) {
-    hits.set(ip, recent);
-    return 'ip';
-  }
-
-  recent.push(now);
-  hits.set(ip, recent);
-  globalHits.push(now);
-
-  // Keep the map from growing without bound on a long-lived instance.
-  if (hits.size > 5000) {
-    for (const [k, v] of hits) if (!v.some(t => t > cutoff)) hits.delete(k);
-  }
-  return null;
-}
-
 export default async function handler(req, res) {
   res.setHeader('Cache-Control', 'no-store');
 
@@ -95,15 +51,13 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const limited = rateLimited(req);
+  // Each cache miss spends model credit, and the endpoint takes no auth.
+  const LIMIT = { windowMs: 10 * 60 * 1000, perIp: 20, global: 200 };
+  const limited = rateLimit(req, 'decode', LIMIT);
   if (limited) {
-    res.setHeader('Retry-After', String(Math.ceil(RATE.windowMs / 1000)));
-    return res.status(429).json({
-      error: limited === 'global'
-        ? 'The decoder is busy right now. Try again shortly.'
-        : 'Too many decodes from this address. Try again shortly.',
-      fallback: true,   // client falls back to its static decode
-    });
+    res.setHeader('Retry-After', String(Math.ceil(LIMIT.windowMs / 1000)));
+    // fallback:true tells the client to use its static decode instead of erroring.
+    return res.status(429).json({ error: 'Too many decodes right now. Try again shortly.', fallback: true });
   }
 
   const { text, author = '', platform = '' } = req.body || {};

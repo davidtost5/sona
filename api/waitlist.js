@@ -9,6 +9,7 @@
 import { supabase } from './_supabase.js';
 import { sendEmail } from './_email.js';
 import { welcomeEmail } from './_email-templates.js';
+import { rateLimit, tooMany } from './_rate-limit.js';
 
 const memory = [];
 
@@ -41,6 +42,12 @@ export default async function handler(req, res) {
 
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
+
+  // Every accepted signup writes a row and sends an email. Unthrottled, that's a
+  // way to burn the sending quota and get a young domain marked as a spammer.
+  const LIMIT = { windowMs: 10 * 60 * 1000, perIp: 5, global: 100 };
+  if (tooMany(res, rateLimit(req, 'waitlist', LIMIT), LIMIT.windowMs,
+      'Too many signups from this address. Try again shortly.')) return;
 
   const { name, email, company, source } = req.body || {};
   if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
