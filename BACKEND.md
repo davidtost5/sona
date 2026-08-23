@@ -28,6 +28,23 @@ in your admin page. It's perfect for demoing the flow; not for collecting real l
    SUPABASE_SERVICE_ROLE_KEY = <service_role secret>
    ```
 
+   Optional — welcome emails on signup. Pick **one** transport; SMTP wins if both
+   are set. Without either, signups still work and the email is simply skipped.
+   ```
+   # Option A — Spacemail (or any mailbox host) over SMTP
+   SMTP_HOST  = mail.spacemail.com
+   SMTP_PORT  = 465                          # 465 = SSL, 587 = STARTTLS
+   SMTP_USER  = hello@buildwithsona.com
+   SMTP_PASS  = <mailbox password>
+   EMAIL_FROM = Sona <hello@buildwithsona.com>
+
+   # Option B — Resend (transactional API)
+   RESEND_API_KEY = re_...
+   EMAIL_FROM     = Sona <hello@buildwithsona.com>
+   ```
+   `EMAIL_FROM` must be on a domain you're allowed to send as, or mail will be
+   rejected or land in spam.
+
 4. **Flip the switch.** In `public/data.js`, change:
    ```js
    const MODE = 'mock';   →   const MODE = 'api';

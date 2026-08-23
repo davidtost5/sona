@@ -7,8 +7,13 @@ create table if not exists waitlist (
   name text,
   email text unique not null,
   company text,
+  source text default 'unknown',   -- footer-newsletter | request-access | contact
   created_at timestamptz default now()
 );
+
+-- Migration for databases created before `source` existed. Safe to re-run.
+-- Until this is applied, api/waitlist.js drops the field rather than failing.
+alter table waitlist add column if not exists source text default 'unknown';
 
 create table if not exists contacts (
   id uuid primary key default gen_random_uuid(),

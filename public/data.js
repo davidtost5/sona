@@ -30,7 +30,10 @@
   }
 
   // ─── WAITLIST (Request access) ───
-  async function submitWaitlist({ name, email, company }) {
+  // `source` distinguishes a footer-newsletter subscriber from someone requesting
+  // access. Callers already pass it; it used to be dropped here, which made the two
+  // indistinguishable in the waitlist table — and they need different emails.
+  async function submitWaitlist({ name, email, company, source }) {
     if (!email || !email.includes('@')) {
       return { ok: false, error: 'Please enter a valid email address.' };
     }
@@ -40,6 +43,7 @@
       name: (name || '').trim(),
       email: email.trim().toLowerCase(),
       company: (company || '').trim(),
+      source: source || 'unknown',
       created_at: new Date().toISOString(),
     };
 
