@@ -1,0 +1,23 @@
+# Dependabot — free on every repository, public or private.
+#
+# Opens PRs for dependency updates, and (once Dependabot alerts are enabled in
+# Settings → Code security) for known CVEs in the packages this project pins.
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: "/"
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+    groups:
+      # One PR for routine bumps instead of a stream of them; security updates
+      # still arrive as their own PRs.
+      minor-and-patch:
+        update-types: [minor, patch]
+
+  # Keeps the Actions in the CodeQL workflow current — a stale action is its own
+  # supply-chain risk.
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: monthly

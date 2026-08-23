@@ -1,0 +1,44 @@
+# CodeQL — GitHub's static analysis (SAST). Free for public repositories.
+#
+# Covers the same class of finding third-party scanners charge for: injection,
+# XSS sinks, unsafe deserialization, path traversal, hardcoded credentials.
+# Results appear under the repo's Security → Code scanning tab, and annotate
+# pull requests inline.
+name: CodeQL
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  schedule:
+    # Weekly, so newly published rules find old code without needing a commit.
+    - cron: '31 4 * * 1'
+
+jobs:
+  analyze:
+    name: Analyze JavaScript
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      security-events: write   # required to upload results
+      actions: read
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          # Covers the serverless functions in api/ and the browser JS in public/,
+          # including scripts inline in HTML.
+          languages: javascript-typescript
+          # security-extended adds lower-severity rules the default pack omits.
+          queries: security-extended
+
+      # No build step — this project is vanilla JS with no bundler.
+      - name: Perform CodeQL analysis
+        uses: github/codeql-action/analyze@v3
+        with:
+          category: "/language:javascript-typescript"
