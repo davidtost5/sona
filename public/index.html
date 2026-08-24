@@ -276,6 +276,70 @@
   .hero-inner { max-width: 880px; margin: 0 auto; position: relative; z-index: 1; }
 
   /* (Trust microbar removed) */
+
+  /* ── Hero: left-aligned, wider, capability list ── */
+  .hero { text-align: left; }
+  .hero-inner { max-width: 1140px; }
+  .hero-eyebrow { font-size: 14.5px; color: var(--text-dim); margin-bottom: 22px; letter-spacing: -.1px; }
+  .hero h1 .lit { color: var(--text); font-weight: 700; }
+
+  /* Two columns of concrete capabilities, the way a spec sheet reads —
+     bold verb first, detail in a quieter tone. */
+  .hero-caps {
+    list-style: none; margin: 0 0 30px; padding: 0;
+    display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 13px 46px; max-width: 940px;
+  }
+  .hero-caps li {
+    position: relative; padding-left: 27px;
+    font-size: 16.5px; line-height: 1.45; color: var(--text-dim);
+  }
+  .hero-caps li b { color: var(--text); font-weight: 500; }
+  .hero-caps li::before {
+    content: ''; position: absolute; left: 2px; top: 7px;
+    width: 11px; height: 6px; border-left: 1.8px solid var(--accent);
+    border-bottom: 1.8px solid var(--accent); transform: rotate(-45deg);
+  }
+
+  /* MCP callout — Sona genuinely ships one, so it earns hero space. */
+  .hero-mcp { display: flex; align-items: center; gap: 9px; font-size: 14.5px; margin-bottom: 34px; flex-wrap: wrap; }
+  .mcp-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); flex-shrink: 0; }
+  .mcp-label { color: var(--text-dim); }
+  .hero-mcp a { color: var(--text); text-decoration: none; font-weight: 500; display: inline-flex; align-items: center; gap: 6px; }
+  .hero-mcp a:hover { color: var(--accent); }
+  .mcp-arrow { transition: transform .2s ease; }
+  .hero-mcp a:hover .mcp-arrow { transform: translateX(3px); }
+
+  /* Pill CTA — fully round, light on dark. Distinct from the old squared
+     button: the sheen and the lift are the tell, not an arrow glyph. */
+  .btn-pill {
+    padding: 15px 34px; border-radius: 100px;
+    background: var(--btn-bg); color: var(--btn-fg);
+    font-size: 15.5px; font-weight: 600; letter-spacing: -.1px;
+    border: 1px solid transparent; position: relative; overflow: hidden;
+    box-shadow: 0 1px 2px rgba(0,0,0,.18), inset 0 1px 0 rgba(255,255,255,.14);
+    transition: transform .18s ease, box-shadow .18s ease;
+  }
+  .btn-pill::after {
+    content: ''; position: absolute; inset: 0;
+    background: linear-gradient(120deg, transparent 30%, rgba(255,255,255,.22), transparent 70%);
+    transform: translateX(-120%); transition: transform .55s ease;
+  }
+  .btn-pill:hover { transform: translateY(-1px); box-shadow: 0 6px 18px rgba(0,0,0,.24), inset 0 1px 0 rgba(255,255,255,.2); }
+  .btn-pill:hover::after { transform: translateX(120%); }
+  .hero .hero-cta { justify-content: flex-start; }
+  .hero .hero-badge { justify-content: flex-start; }
+
+  @media (max-width: 860px) {
+    .hero { text-align: center; }
+    .hero-caps { grid-template-columns: 1fr; gap: 11px; text-align: left; max-width: 420px; margin-left: auto; margin-right: auto; }
+    .hero .hero-mcp, .hero .hero-cta, .hero .hero-badge { justify-content: center; }
+    .hero-eyebrow { font-size: 13.5px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .btn-pill, .btn-pill::after, .mcp-arrow { transition: none !important; }
+  }
+
   .pill {
     display: inline-flex; align-items: center; gap: 9px; padding: 6px 14px 6px 8px;
     background: var(--surface); border: 1px solid var(--border); border-radius: 100px;
@@ -1098,14 +1162,29 @@
 <!-- HERO -->
 <header class="hero">
   <div class="hero-inner">
-    <div class="pill" data-r><span class="tag">Beta</span> Discover, Drafts &amp; Hooks library live · Lists shipping fast</div>
-    <h1 data-r data-split>Write at the<br><span class="quiet">speed of thought.</span></h1>
-    <p class="hero-sub" data-r>Surrounded by what's working. Always in your voice.</p>
+    <p class="hero-eyebrow" data-r>Find what's working. Learn why. Write it in your voice.</p>
+    <h1 data-r data-split>The <span class="lit">outlier engine</span><br><span class="quiet">for people who write.</span></h1>
+
+    <ul class="hero-caps" data-r>
+      <li><b>Browse posts that beat</b> their own creator's baseline</li>
+      <li><b>Save links and posts</b> from anywhere, find them later</li>
+      <li><b>Decode why a post worked</b> — hook, tension, payoff</li>
+      <li><b>See which mechanisms recur</b> across every decode</li>
+      <li><b>Fill in 50 proven hooks</b>, ready to make yours</li>
+      <li><b>Draft in your voice</b>, saved across every device</li>
+    </ul>
+
+    <p class="hero-mcp" data-r>
+      <span class="mcp-dot" aria-hidden="true"></span>
+      <span class="mcp-label">Sona MCP</span>
+      <a href="/docs.html">Connect Claude to Sona <span class="mcp-arrow">→</span></a>
+    </p>
+
     <div class="hero-cta" data-r>
-      <a href="#" class="btn btn-primary btn-lg" onclick="event.preventDefault(); SonaAuth.openSignup();">Get started free <span class="btn-arrow">→</span></a>
+      <a href="#" class="btn btn-pill" onclick="event.preventDefault(); SonaAuth.openSignup();">Start free</a>
       <a href="#how" class="quiet-link">See how it works <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12l7 7 7-7"/></svg></a>
     </div>
-    <div class="hero-note" data-r>Free during beta · No card required · In the studio in 10 seconds</div>
+    <div class="hero-note" data-r>Free tier · No card required · In the studio in 10 seconds</div>
     <div class="hero-badge" data-r>
       <a href="https://nicklaunches.com/products/sona/?utm_source=buildwithsona.com&utm_medium=badge&utm_campaign=featured" target="_blank" rel="noopener"><img src="https://nicklaunches.com/badges/featured.png" alt="Sona on Nick Launches" width="244" height="56" /></a>
     </div>
