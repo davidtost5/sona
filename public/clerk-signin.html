@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<meta name="color-scheme" content="dark">
+<title>Sona — Sign in</title>
+
+<script defer crossorigin="anonymous"
+  src="https://rapid-malamute-4041.clerk.accounts.dev/npm/@clerk/ui@1/dist/ui.browser.js"></script>
+<script defer crossorigin="anonymous"
+  data-clerk-publishable-key="pk_test_cmFwaWQtbWFsYW11dGUtNDA0MS5jbGVyay5hY2NvdW50cy5kZXYk"
+  src="https://rapid-malamute-4041.clerk.accounts.dev/npm/@clerk/clerk-js@6/dist/clerk.browser.js"></script>
+
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  :root {
+    --ink:#0a0a0b; --text:#f4f4f2; --dim:#8b8b93; --faint:#5a5a62;
+    --accent:#5fb896; --accent-deep:#28775c;
+  }
+  html, body { height:100%; }
+  body {
+    background:var(--ink); color:var(--text);
+    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,sans-serif;
+    -webkit-font-smoothing:antialiased;
+    display:flex; align-items:center; justify-content:center;
+    padding:32px 20px; position:relative; overflow-x:hidden;
+  }
+  /* Sona's own atmosphere: a low green bloom, rather than Eden's neutral grain. */
+  body::before {
+    content:''; position:fixed; inset:0; pointer-events:none;
+    background:radial-gradient(60% 50% at 50% 42%, rgba(40,119,92,.20), transparent 70%);
+  }
+  .stage { position:relative; width:100%; max-width:520px; text-align:center; }
+
+  /* The mark breathes while idle — the same motion the studio uses when loading. */
+  .mark { width:44px; height:44px; margin:0 auto 30px; display:block; animation:breathe 3.4s ease-in-out infinite; }
+  .mark svg { width:100%; height:100%; display:block; }
+  .wave { stroke:var(--accent); stroke-dasharray:34; stroke-dashoffset:34; animation:trace 3.4s ease-in-out infinite; }
+  .spark { fill:var(--accent); transform-box:fill-box; transform-origin:center; animation:twinkle 3.4s ease-in-out infinite .3s; }
+  @keyframes breathe { 0%,100%{transform:scale(1)} 50%{transform:scale(1.05)} }
+  @keyframes trace { 0%{stroke-dashoffset:34;opacity:.45} 50%{stroke-dashoffset:0;opacity:1} 100%{stroke-dashoffset:-34;opacity:.45} }
+  @keyframes twinkle { 0%,100%{opacity:.4;transform:scale(.75)} 50%{opacity:1;transform:scale(1)} }
+
+  h1 { font-size:clamp(30px,6vw,42px); font-weight:600; letter-spacing:-1.4px; line-height:1.12; margin-bottom:12px; }
+  h1 .quiet { color:var(--dim); }
+  .sub { font-size:15px; color:var(--dim); margin-bottom:8px; }
+  .creed { font-size:13px; color:var(--faint); margin-bottom:40px; }
+
+  #auth { min-height:300px; }
+  .legal { margin-top:36px; font-size:12px; color:var(--faint); line-height:1.6; }
+  .legal a { color:var(--dim); text-decoration:underline; text-underline-offset:2px; }
+
+
+  /* ── Clerk overrides ──
+     Clerk emits stable `cl-` classnames into the light DOM (no shadow root),
+     so plain CSS is the dependable way to strip its card chrome. The appearance
+     prop is set too; this guarantees the result regardless of theme changes. */
+  #auth .cl-cardBox, #auth .cl-card {
+    background:transparent !important; border:none !important;
+    box-shadow:none !important; padding:0 !important; width:100% !important;
+  }
+  #auth .cl-header { display:none !important; }        /* our own headline says it */
+  #auth .cl-footer { background:transparent !important; border:none !important; }
+  #auth .cl-formFieldLabel { display:none !important; }
+  #auth .cl-formFieldInput {
+    background:transparent !important; border:none !important;
+    border-bottom:1px solid rgba(255,255,255,.14) !important; border-radius:0 !important;
+    text-align:center !important; font-size:24px !important; padding:14px 0 !important;
+    color:var(--text) !important; box-shadow:none !important;
+  }
+  #auth .cl-formFieldInput::placeholder { color:#4e4e57 !important; font-size:24px !important; }
+  #auth .cl-formButtonPrimary {
+    background:rgba(255,255,255,.10) !important; border:1px solid rgba(255,255,255,.16) !important;
+    color:var(--text) !important; border-radius:100px !important; padding:15px !important;
+    font-size:15px !important; font-weight:500 !important; text-transform:none !important;
+    box-shadow:none !important; letter-spacing:0 !important;
+  }
+  #auth .cl-formButtonPrimary:hover { background:rgba(255,255,255,.16) !important; }
+  #auth .cl-socialButtonsBlockButton {
+    background:transparent !important; border:1px solid rgba(255,255,255,.12) !important;
+    color:var(--text) !important; border-radius:100px !important; padding:13px !important;
+  }
+  #auth .cl-socialButtonsBlockButton:hover { background:rgba(255,255,255,.05) !important; }
+  #auth .cl-dividerLine { background:rgba(255,255,255,.09) !important; }
+  #auth .cl-dividerText { color:var(--faint) !important; }
+  #auth .cl-footerActionText { color:var(--faint) !important; }
+  #auth .cl-footerActionLink { color:var(--dim) !important; }
+  #auth .cl-internal-1h6fgzy, #auth .cl-logoBox { display:none !important; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .mark, .wave, .spark { animation:none !important; }
+    .wave { stroke-dashoffset:0; }
+  }
+</style>
+</head>
+<body>
+  <main class="stage">
+    <span class="mark">
+      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path class="wave" d="M5 15 Q8 9 12 12 Q16 15 19 9" stroke-width="2.4" stroke-linecap="round" fill="none"/>
+        <path class="spark" d="M19 3.6 C19.15 5.1 20.3 6.25 21.8 6.4 C20.3 6.55 19.15 7.7 19 9.2 C18.85 7.7 17.7 6.55 16.2 6.4 C17.7 6.25 18.85 5.1 19 3.6 Z"/>
+      </svg>
+    </span>
+
+    <h1>Start with<br><span class="quiet">what's working.</span></h1>
+    <p class="sub">Sign in, or create your account.</p>
+    <p class="creed">Nothing here writes for you. You write.</p>
+
+    <div id="auth"></div>
+
+    <p class="legal">
+      By continuing you agree to our
+      <a href="/terms.html">Terms</a> and <a href="/privacy.html">Privacy Policy</a>.
+    </p>
+  </main>
+
+<script>
+window.addEventListener('load', async function () {
+  await Clerk.load({ ui: { ClerkUI: window.__internal_ClerkUICtor } });
+
+  // Strip Clerk's card chrome so the form reads as part of the page, not a widget
+  // dropped onto it — the borderless look Eden uses.
+  const appearance = {
+    variables: {
+      colorBackground: 'transparent',
+      colorText: '#f4f4f2',
+      colorTextSecondary: '#8b8b93',
+      colorPrimary: '#5fb896',
+      colorInputBackground: 'transparent',
+      colorInputText: '#f4f4f2',
+      borderRadius: '100px',
+      fontFamily: 'inherit',
+    },
+    elements: {
+      rootBox: { width: '100%' },
+      cardBox: { boxShadow: 'none', border: 'none', width: '100%' },
+      card: { background: 'transparent', boxShadow: 'none', border: 'none', padding: '0' },
+      header: { display: 'none' },              // our own headline already says it
+      footer: { background: 'transparent' },
+      formFieldLabel: { display: 'none' },
+      formFieldInput: {
+        background: 'transparent', border: 'none', borderBottom: '1px solid rgba(255,255,255,.12)',
+        borderRadius: '0', textAlign: 'center', fontSize: '26px', padding: '14px 0', color: '#f4f4f2',
+      },
+      formButtonPrimary: {
+        background: 'rgba(255,255,255,.10)', border: '1px solid rgba(255,255,255,.14)',
+        color: '#f4f4f2', fontSize: '15px', fontWeight: '500', textTransform: 'none',
+        padding: '15px', borderRadius: '100px', boxShadow: 'none',
+      },
+      socialButtonsBlockButton: {
+        background: 'transparent', border: '1px solid rgba(255,255,255,.12)',
+        color: '#f4f4f2', borderRadius: '100px', padding: '13px',
+      },
+      dividerLine: { background: 'rgba(255,255,255,.09)' },
+      dividerText: { color: '#5a5a62' },
+      footerActionText: { color: '#5a5a62' },
+      footerActionLink: { color: '#8b8b93' },
+    },
+  };
+
+  const host = document.getElementById('auth');
+
+  function render() {
+    host.innerHTML = '';
+    if (Clerk.isSignedIn) {
+      const box = document.createElement('div');
+      box.style.cssText = 'display:flex;flex-direction:column;align-items:center;gap:16px';
+      const who = document.createElement('p');
+      who.style.cssText = 'font-size:15px;color:#8b8b93';
+      const email = Clerk.user.primaryEmailAddress && Clerk.user.primaryEmailAddress.emailAddress;
+      who.textContent = 'Signed in as ' + (email || Clerk.user.id);
+      const slot = document.createElement('div');
+      box.append(who, slot); host.appendChild(box);
+      Clerk.mountUserButton(slot);
+    } else {
+      // One entry point for both paths, like Eden — no sign-in/sign-up fork up front.
+      Clerk.mountSignIn(host, { appearance });
+    }
+  }
+
+  render();
+  Clerk.addListener(render);
+});
+</script>
+</body>
+</html>
