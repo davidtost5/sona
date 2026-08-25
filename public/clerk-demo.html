@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Sona — Clerk exploration</title>
+
+<!-- Clerk UI + core, loaded from the Frontend API. No build step, which is why
+     this works in a project that has no bundler. The publishable key is public
+     by design — it is safe in client code. CLERK_SECRET_KEY must never appear here. -->
+<script defer crossorigin="anonymous"
+  src="https://rapid-malamute-4041.clerk.accounts.dev/npm/@clerk/ui@1/dist/ui.browser.js"></script>
+<script defer crossorigin="anonymous"
+  data-clerk-publishable-key="pk_test_cmFwaWQtbWFsYW11dGUtNDA0MS5jbGVyay5hY2NvdW50cy5kZXYk"
+  src="https://rapid-malamute-4041.clerk.accounts.dev/npm/@clerk/clerk-js@6/dist/clerk.browser.js"></script>
+
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  :root {
+    --bg:#fff; --bg-soft:#f7f7f4; --surface:#fff;
+    --border:rgba(20,20,28,.08); --border-strong:rgba(20,20,28,.16);
+    --text:#15151a; --text-mid:#5a5a62; --text-dim:#6f6f78;
+    --accent:#4f46e5; --accent-soft:rgba(79,70,229,.08);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg:#0c0c0f; --bg-soft:#131318; --surface:#16161b;
+      --border:rgba(255,255,255,.09); --border-strong:rgba(255,255,255,.16);
+      --text:#f4f4f6; --text-mid:#a0a0aa; --text-dim:#8a8a94;
+      --accent:#8b84ff; --accent-soft:rgba(139,132,255,.14);
+    }
+  }
+  body { font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+         background:var(--bg); color:var(--text); line-height:1.5; -webkit-font-smoothing:antialiased; }
+  .nav { display:flex; align-items:center; gap:12px; padding:16px 24px;
+         border-bottom:1px solid var(--border); background:var(--bg-soft); }
+  .brand { display:flex; align-items:center; gap:9px; font-weight:600; font-size:15px; letter-spacing:-.3px; }
+  .mark { width:26px; height:26px; border-radius:7px; background:var(--surface);
+          border:1px solid var(--border-strong); display:flex; align-items:center; justify-content:center; }
+  .mark svg { width:16px; height:16px; }
+  .tag { font-family:ui-monospace,Menlo,monospace; font-size:9.5px; letter-spacing:.5px;
+         text-transform:uppercase; color:var(--accent); background:var(--accent-soft);
+         padding:2px 7px; border-radius:100px; }
+  .nav-right { margin-left:auto; display:flex; align-items:center; gap:10px; min-height:32px; }
+  .wrap { max-width:640px; margin:0 auto; padding:48px 24px; }
+  h1 { font-size:26px; font-weight:600; letter-spacing:-.7px; margin-bottom:10px; }
+  p { color:var(--text-mid); font-size:14.5px; margin-bottom:14px; }
+  .card { background:var(--bg-soft); border:1px solid var(--border);
+          border-radius:12px; padding:20px; margin-top:22px; }
+  .card h2 { font-size:13px; font-weight:600; margin-bottom:10px; }
+  .state { font-family:ui-monospace,Menlo,monospace; font-size:12px; color:var(--text-dim);
+           white-space:pre-wrap; word-break:break-all; }
+  .btn { border:0; border-radius:8px; padding:8px 15px; font-size:13.5px; font-weight:500;
+         font-family:inherit; cursor:pointer; background:var(--accent); color:#fff; }
+  .btn.ghost { background:transparent; color:var(--text); border:1px solid var(--border-strong); }
+  .note { font-size:12.5px; color:var(--text-dim); border-left:2px solid var(--border-strong);
+          padding-left:11px; margin-top:22px; line-height:1.6; }
+  #signin-host { margin-top:22px; display:flex; justify-content:center; }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <span class="brand">
+    <span class="mark"><svg viewBox="0 0 24 24" fill="none"><path d="M5 15 Q8 9 12 12 Q16 15 19 9" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" fill="none"/><path d="M19 3.6 C19.15 5.1 20.3 6.25 21.8 6.4 C20.3 6.55 19.15 7.7 19 9.2 C18.85 7.7 17.7 6.55 16.2 6.4 C17.7 6.25 18.85 5.1 19 3.6 Z" fill="currentColor"/></svg></span>
+    Sona
+  </span>
+  <span class="tag">Clerk demo</span>
+  <!-- Signed-in user control, or sign-in / sign-up when signed out -->
+  <div class="nav-right" id="nav-auth"></div>
+</nav>
+
+<div class="wrap">
+  <h1>Clerk, running inside Sona</h1>
+  <p>This page is an exploration. It does not touch <code>public/auth.js</code>,
+     your Supabase session, or any RLS policy — nothing else in the app is aware of it.</p>
+
+  <div id="signin-host"></div>
+
+  <div class="card">
+    <h2>Live session state</h2>
+    <div class="state" id="state">Loading Clerk…</div>
+  </div>
+
+  <div class="note">
+    Sona secures every row through Supabase RLS keyed on <code>auth.uid()</code>.
+    Clerk issues its own session, so adopting it for real means migrating those
+    policies and the existing users — not just swapping this widget in.
+  </div>
+</div>
+
+<script>
+window.addEventListener('load', async function () {
+  const stateEl = document.getElementById('state');
+  const navEl = document.getElementById('nav-auth');
+  const host = document.getElementById('signin-host');
+
+  try {
+    await Clerk.load({ ui: { ClerkUI: window.__internal_ClerkUICtor } });
+  } catch (e) {
+    stateEl.textContent = 'Clerk failed to load: ' + (e && e.message || e);
+    return;
+  }
+
+  function render() {
+    navEl.innerHTML = '';
+    host.innerHTML = '';
+
+    if (Clerk.isSignedIn) {
+      const slot = document.createElement('div');
+      navEl.appendChild(slot);
+      Clerk.mountUserButton(slot);
+
+      const u = Clerk.user;
+      stateEl.textContent = JSON.stringify({
+        signedIn: true,
+        id: u.id,
+        primaryEmail: u.primaryEmailAddress && u.primaryEmailAddress.emailAddress,
+        firstName: u.firstName,
+        createdAt: u.createdAt,
+      }, null, 2);
+    } else {
+      const signIn = document.createElement('button');
+      signIn.className = 'btn ghost'; signIn.textContent = 'Sign in';
+      signIn.onclick = () => Clerk.openSignIn();
+
+      const signUp = document.createElement('button');
+      signUp.className = 'btn'; signUp.textContent = 'Sign up';
+      signUp.onclick = () => Clerk.openSignUp();
+
+      navEl.append(signIn, signUp);
+
+      const slot = document.createElement('div');
+      host.appendChild(slot);
+      Clerk.mountSignIn(slot);
+
+      stateEl.textContent = JSON.stringify({ signedIn: false }, null, 2);
+    }
+  }
+
+  render();
+  Clerk.addListener(render); // re-render on sign-in / sign-out
+});
+</script>
+
+</body>
+</html>
