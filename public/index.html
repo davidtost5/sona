@@ -304,13 +304,50 @@
   .sc-text { font-size:11px; line-height:1.5; color:#c9c9d1; margin-bottom:10px; }
   .sc-foot { display:flex; align-items:center; gap:5px; }
   .sc-tag { font-size:8.5px; color:#5fb896; background:rgba(95,184,150,.13); border-radius:100px; padding:2px 7px; }
-  .sc-act { margin-left:auto; font-size:9.5px; color:#a0a0aa; border:1px solid rgba(255,255,255,.09); border-radius:6px; padding:2px 7px; }
+  .sc-act { margin-left:auto; font-size:9.5px; color:#a0a0aa; border:1px solid rgba(255,255,255,.09); border-radius:6px; padding:2px 7px;
+    background:none; font-family:inherit; cursor:pointer; transition:color .18s ease, border-color .18s ease, background .18s ease; }
   .sc-act + .sc-act { margin-left:0; }
+  .sc-act:hover { color:#f4f4f6; border-color:rgba(95,184,150,.45); background:rgba(95,184,150,.10); }
+
+  /* ── Live hero demo ──
+     The cards are interactive, so they need affordances the static mock didn't:
+     hover states, a real avatar chip, and the decode panel the app shows. */
+  .shot-card { transition:border-color .18s ease, background .18s ease; }
+  .shot-cards:not(.is-decode) .shot-card:hover { border-color:rgba(255,255,255,.14); background:#151517; }
+  .sc-av { display:flex; align-items:center; justify-content:center;
+    font-size:7.5px; font-weight:700; color:#8a8a96; letter-spacing:.2px; }
+  .shot-nav:not(.on) { cursor:pointer; }
+  .shot-nav:not(.on):hover { background:#131315; color:#d4d4dc; }
+  .shot-chips span { cursor:pointer; transition:color .18s ease, border-color .18s ease; }
+  .shot-chips span:not(.on):hover { color:#f4f4f6; border-color:rgba(255,255,255,.2); }
+
+  /* Decode view — replaces the grid, mirroring the app's decoder. */
+  .shot-cards.is-decode { display:block; }
+  .shot-decode { animation:sdIn .28s cubic-bezier(.2,.8,.2,1); }
+  @keyframes sdIn { from { opacity:0; transform:translateY(6px) } to { opacity:1; transform:none } }
+  .shot-back { background:none; border:none; font-family:inherit; cursor:pointer;
+    font-size:10px; color:#8a8a96; padding:0; margin-bottom:10px; transition:color .18s ease; }
+  .shot-back:hover { color:#f4f4f6; }
+  .sd-quote { background:#121213; border:1px solid rgba(255,255,255,.07); border-radius:11px; padding:11px; margin-bottom:11px; }
+  .sd-quote .sc-tag { margin-left:auto; }
+  .sd-quote .sc-text { margin-bottom:0; }
+  .sd-row { display:grid; grid-template-columns:88px 1fr; gap:10px; align-items:start; margin-bottom:9px; }
+  .sd-lab { font-size:8.5px; letter-spacing:.6px; text-transform:uppercase; color:#6f6f78; padding-top:2px; }
+  .sd-row p { font-size:10.5px; line-height:1.55; color:#c9c9d1; }
+  .sd-pat { color:#5fb896 !important; background:rgba(95,184,150,.08);
+    border-left:2px solid rgba(95,184,150,.35); border-radius:0 5px 5px 0; padding:6px 9px; }
+  .sd-cta { margin-top:12px; background:rgba(95,184,150,.14); border:1px solid rgba(95,184,150,.4);
+    color:#5fb896; font-family:inherit; font-size:10.5px; font-weight:600; cursor:pointer;
+    border-radius:100px; padding:7px 15px; transition:background .2s ease; }
+  .sd-cta:hover { background:rgba(95,184,150,.24); }
+
+  @media (prefers-reduced-motion: reduce) { .shot-decode { animation:none } }
   @media (max-width: 900px) {
     .shot { grid-template-columns:1fr; }
     .shot-side { display:none; }
     .shot-cards { grid-template-columns:1fr; }
-    .shot-cards .shot-card:nth-child(n+3) { display:none; }
+    .shot-cards:not(.is-decode) .shot-card:nth-child(n+3) { display:none; }
+    .sd-row { grid-template-columns:1fr; gap:3px; }
   }
 
   /* (Trust microbar removed) */
@@ -2180,5 +2217,6 @@ and they stick with it for ninety days.
     setTimeout(() => { btn.textContent = orig; btn.disabled = false; }, 2400);
   });
 </script>
+<script src="/hero-demo.js" defer></script>
 </body>
 </html>
