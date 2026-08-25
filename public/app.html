@@ -49,6 +49,39 @@
     .gate .lm.logo-load, .gate .lg-wave, .gate .lg-spark { animation: none !important; }
   }
 
+
+  /* First-run niche picker */
+  .niche-modal { max-width: 460px; }
+  .niche-sub { font-size: 13.5px; color: var(--text-mid); margin-top: 6px; line-height: 1.5; }
+  .niche-opts { display: flex; flex-direction: column; gap: 9px; margin: 4px 0 4px; }
+  .niche-opt {
+    text-align: left; background: var(--bg-soft); border: 1px solid var(--border);
+    border-radius: 11px; padding: 14px 16px; cursor: pointer; font-family: inherit;
+    display: flex; flex-direction: column; gap: 3px;
+    transition: border-color .15s, background .15s, transform .15s;
+  }
+  .niche-opt:hover { border-color: var(--accent); background: var(--accent-soft); transform: translateY(-1px); }
+  .niche-opt b { font-size: 14.5px; font-weight: 600; color: var(--text); }
+  .niche-opt span { font-size: 12.5px; color: var(--text-mid); line-height: 1.45; }
+
+  /* One-time cue pointing at the action that proves the product */
+  .coach {
+    position: absolute; z-index: 5; background: var(--text); color: var(--bg);
+    font-size: 12.5px; font-weight: 500; padding: 7px 12px; border-radius: 8px;
+    box-shadow: 0 8px 24px rgba(0,0,0,.28); white-space: nowrap;
+    display: flex; align-items: center; gap: 9px;
+  }
+  .coach::after {
+    content: ''; position: absolute; bottom: -5px; left: 18px;
+    width: 10px; height: 10px; background: var(--text); transform: rotate(45deg);
+  }
+  .coach button {
+    background: none; border: 0; color: var(--bg); opacity: .6; cursor: pointer;
+    font-family: inherit; font-size: 15px; line-height: 1; padding: 0;
+  }
+  .coach button:hover { opacity: 1; }
+  @media (prefers-reduced-motion: reduce) { .niche-opt { transition: none !important; } }
+
   /* ─── App shell ─── */
   .shell { display:grid; grid-template-columns:260px 1fr; height:100vh; }
   .side { background:var(--bg-soft); border-right:1px solid var(--border); padding:18px 14px; display:flex; flex-direction:column; gap:18px; overflow-y:auto; }
@@ -1008,6 +1041,32 @@
   </div>
 </div>
 
+<!-- First run: pick a niche, so the feed means something on arrival -->
+<div class="decoder-back" id="niche-back">
+  <div class="decoder niche-modal" role="dialog" aria-modal="true" aria-labelledby="niche-title">
+    <div class="decoder-head">
+      <div>
+        <h2 id="niche-title">What are you building?</h2>
+        <p class="niche-sub">So the feed starts with posts from your corner, not everyone's.</p>
+      </div>
+    </div>
+    <div class="niche-opts">
+      <button type="button" class="niche-opt" data-niche="founders">
+        <b>A startup</b><span>Build in public, turn what you learn into posts</span>
+      </button>
+      <button type="button" class="niche-opt" data-niche="writers">
+        <b>A writing habit</b><span>Essays, threads, newsletters — publish consistently</span>
+      </button>
+      <button type="button" class="niche-opt" data-niche="creators">
+        <b>An audience</b><span>Grow a personal brand across platforms</span>
+      </button>
+    </div>
+    <div class="decoder-foot">
+      <button class="btn btn-ghost" onclick="skipNiche()">Show me everything</button>
+    </div>
+  </div>
+</div>
+
 <!-- Canvas: add-saved-idea picker -->
 <div class="decoder-back" id="canvas-idea-back">
   <div class="decoder" role="dialog" aria-modal="true" aria-labelledby="canvas-idea-title">
@@ -1498,6 +1557,7 @@
     loadCanvasState();
     renderCanvas();
     loadPatterns(); // async — renders itself when the aggregate lands
+    maybeAskNiche();
   }
 
   // ─── Drafts ───
@@ -2674,6 +2734,75 @@
     if (!saved.has(item.id)) await window.toggleSave(item.id);
     nextSwipe();
   };
+
+
+  // ─── First five minutes ───
+  // Sign up → choose niche → land on a filtered feed → decode one → make it yours.
+  // The pieces already existed (filters, decoder, applyPatternToDraft); what was
+  // missing was anything telling a new user that chain exists.
+  const NICHE_KEY = 'sona_niche';
+
+  function applyNiche(niche) {
+    currentFilter = niche;
+    document.querySelectorAll('.filter[data-filter]').forEach(b =>
+      b.classList.toggle('active', b.dataset.filter === niche));
+    renderDiscover();
+  }
+
+  window.skipNiche = function () {
+    try { localStorage.setItem(NICHE_KEY, 'all'); } catch (_) {}
+    document.getElementById('niche-back').classList.remove('show');
+    showDecodeCue();
+  };
+
+  function chooseNiche(niche) {
+    try { localStorage.setItem(NICHE_KEY, niche); } catch (_) {}
+    applyNiche(niche);
+    document.getElementById('niche-back').classList.remove('show');
+    showDecodeCue();
+  }
+
+  // Point at Decode on the first card — the one action that demonstrates the
+  // product. Shown once, dismissible, and never blocks the UI.
+  function showDecodeCue() {
+    if (localStorage.getItem('sona_cue_seen')) return;
+    // setTimeout rather than requestAnimationFrame: rAF is paused while a tab is
+    // in the background, so opening the app in a background tab would skip the
+    // cue entirely and never show it again.
+    setTimeout(() => {
+      const card = document.querySelector('#disc-grid .disc-card');
+      if (!card) return;
+      const btn = [...card.querySelectorAll('button, .disc-action')]
+        .find(b => /decode/i.test(b.textContent));
+      if (!btn) return;
+      const cue = document.createElement('div');
+      cue.className = 'coach';
+      cue.innerHTML = '<span>Start here — see why this one worked</span>';
+      const close = document.createElement('button');
+      close.type = 'button'; close.textContent = '×';
+      close.setAttribute('aria-label', 'Dismiss');
+      close.onclick = () => { cue.remove(); try { localStorage.setItem('sona_cue_seen', '1'); } catch (_) {} };
+      cue.appendChild(close);
+      card.style.position = card.style.position || 'relative';
+      cue.style.left = '14px';
+      cue.style.bottom = (card.offsetHeight - btn.offsetTop + 10) + 'px';
+      card.appendChild(cue);
+      btn.addEventListener('click', () => {
+        cue.remove();
+        try { localStorage.setItem('sona_cue_seen', '1'); } catch (_) {}
+      }, { once: true });
+    }, 0);
+  }
+
+  function maybeAskNiche() {
+    let saved = null;
+    try { saved = localStorage.getItem(NICHE_KEY); } catch (_) {}
+    if (saved) { if (saved !== 'all') applyNiche(saved); return; }
+    document.getElementById('niche-back').classList.add('show');
+  }
+
+  document.querySelectorAll('.niche-opt').forEach(btn =>
+    btn.addEventListener('click', () => chooseNiche(btn.dataset.niche)));
 
   document.querySelectorAll('.nav-item[data-view]').forEach(btn => btn.addEventListener('click', () => switchView(btn.dataset.view)));
   document.querySelectorAll('.filter[data-filter]').forEach(btn => btn.addEventListener('click', () => {
