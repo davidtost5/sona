@@ -136,6 +136,20 @@
   /* .work-grid sets display:grid, which beats the UA rule for [hidden]. */
   #pb-editor[hidden] { display:none; }
 
+
+  /* Discover — masonry columns so cards keep their natural height */
+  .disc-grid { columns: 3; column-gap: 12px; display: block !important; }
+  @media (max-width: 1180px) { .disc-grid { columns: 2; } }
+  @media (max-width: 760px)  { .disc-grid { columns: 1; } }
+  .disc-card { break-inside: avoid; margin: 0 0 12px; }
+  .filter-sep { width:1px; align-self:stretch; background:var(--border); margin:0 4px; flex-shrink:0; }
+  .disc-plat { width:13px; height:13px; opacity:.5; flex-shrink:0; }
+  .disc-mult {
+    font-family:'Geist Mono',monospace; font-size:10px; font-weight:500;
+    color:#d9a441; background:rgba(217,164,65,.13); border:1px solid rgba(217,164,65,.22);
+    border-radius:100px; padding:2px 8px; white-space:nowrap;
+  }
+
   /* ─── App shell ─── */
   .shell { display:grid; grid-template-columns:260px 1fr; height:100vh; }
   .side { background:var(--bg-soft); border-right:1px solid var(--border); padding:18px 14px; display:flex; flex-direction:column; gap:18px; overflow-y:auto; }
@@ -728,6 +742,10 @@
           <button class="filter" data-filter="founders">Founders</button>
           <button class="filter" data-filter="writers">Writers</button>
           <button class="filter" data-filter="creators">Creators</button>
+          <span class="filter-sep" aria-hidden="true"></span>
+          <button class="filter" data-sort="breakouts" title="Highest multiple against the creator's own baseline">Breakouts</button>
+          <button class="filter" data-sort="gems" title="Beat their baseline hard without going mega-viral">Hidden gems</button>
+          <button class="filter" data-sort="viral" title="Most views in absolute terms">Viral now</button>
         </div>
         <div class="disc-grid" id="disc-grid"><!-- rendered by JS --></div>
         <p class="disc-disclaimer">Posts are public examples shown for educational pattern analysis. Creators are not affiliated with or endorsing Sona.</p>
@@ -2465,13 +2483,49 @@
     setTimeout(() => body.focus(), 50);
   };
 
+
+  // Quality filters computed from what a post actually carries: the multiple
+  // against its creator's own baseline, and absolute views. No invented metrics.
+  let discSort = null;
+  const multOf  = i => { const m = /([\d.]+)\s*×/.exec(i.tag || ''); return m ? parseFloat(m[1]) : 0; };
+  const viewsOf = i => {
+    const m = /([\d.]+)\s*([KM])?/.exec((i.views || '').replace(/,/g, ''));
+    if (!m) return 0;
+    const n = parseFloat(m[1]) || 0;
+    return m[2] === 'M' ? n * 1e6 : m[2] === 'K' ? n * 1e3 : n;
+  };
+  function applyDiscSort(list) {
+    if (discSort === 'breakouts') return [...list].sort((a, b) => multOf(b) - multOf(a));
+    if (discSort === 'viral')     return [...list].sort((a, b) => viewsOf(b) - viewsOf(a));
+    // A hidden gem beat its own baseline hard without being a monster in raw
+    // reach — high multiple, comparatively modest views.
+    if (discSort === 'gems')      return [...list]
+      .filter(i => multOf(i) >= 5 && viewsOf(i) < 1e6)
+      .sort((a, b) => multOf(b) - multOf(a));
+    return list;
+  }
+  const PLAT_ICON = {
+    x: '<svg class="disc-plat" viewBox="0 0 24 24" fill="currentColor"><path d="M18.9 2H22l-7 8 8.2 12h-6.4l-5-7-5.8 7H2.9l7.5-8.6L2.6 2H9l4.6 6.4z"/></svg>',
+    in: '<svg class="disc-plat" viewBox="0 0 24 24" fill="currentColor"><path d="M4.98 3.5A2.5 2.5 0 1 0 5 8.5a2.5 2.5 0 0 0 0-5zM3 9h4v12H3zM9 9h3.8v1.7h.05a4.2 4.2 0 0 1 3.75-2c4 0 4.75 2.6 4.75 6V21h-4v-5.3c0-1.3 0-2.9-1.8-2.9s-2 1.4-2 2.8V21H9z"/></svg>',
+    yt: '<svg class="disc-plat" viewBox="0 0 24 24" fill="currentColor"><path d="M23 12s0-3.5-.45-5.15a2.7 2.7 0 0 0-1.9-1.9C19 4.5 12 4.5 12 4.5s-7 0-8.65.45a2.7 2.7 0 0 0-1.9 1.9C1 8.5 1 12 1 12s0 3.5.45 5.15a2.7 2.7 0 0 0 1.9 1.9C5 19.5 12 19.5 12 19.5s7 0 8.65-.45a2.7 2.7 0 0 0 1.9-1.9C23 15.5 23 12 23 12zM9.75 15.25v-6.5L15.5 12z"/></svg>',
+    sub: '<svg class="disc-plat" viewBox="0 0 24 24" fill="currentColor"><path d="M4 3h16v2.5H4zM4 7.5h16V10H4zM4 12.5 12 17l8-4.5V21l-8-4.5L4 21z"/></svg>',
+  };
+  function platIcon(handle) {
+    const tail = String(handle || '').split('·').pop().trim().toLowerCase();
+    if (tail === 'x') return PLAT_ICON.x;
+    if (tail === 'in') return PLAT_ICON.in;
+    if (tail === 'yt') return PLAT_ICON.yt;
+    if (tail.startsWith('sub')) return PLAT_ICON.sub;
+    return '';
+  }
+
   function renderDiscover() {
     const grid = document.getElementById('disc-grid');
     const countEl = document.getElementById('discover-count');
     if (countEl) countEl.textContent = SEED_IDEAS.length;
-    const items = SEED_IDEAS
+    const items = applyDiscSort(SEED_IDEAS
       .filter(i => currentFilter === 'all' || i.cat === currentFilter)
-      .filter(matchesSearch);
+      .filter(matchesSearch));
     if (items.length === 0) {
       grid.innerHTML = `
         <div class="empty-search" style="grid-column:1/-1">
@@ -2485,7 +2539,8 @@
         <div class="disc-head"><span class="disc-av" style="background:url('${i.av}') center/cover no-repeat, linear-gradient(135deg,var(--accent),var(--accent-soft))"></span><div><div class="disc-name">${highlight(i.name)}</div><div class="disc-handle">${highlight(i.handle)}</div></div>${i.views ? `<span class="disc-views">${i.views}</span>` : ''}</div>
         <div class="disc-text">${highlight(i.text)}</div>
         <div class="disc-meta">
-          <span class="disc-tag">${i.tag}</span>
+          ${multOf(i) ? `<span class="disc-mult">${multOf(i)}×</span>` : ''}
+          <span class="disc-tag">${platIcon(i.handle)}${(i.views || '').replace(' views','')}</span>
           <div class="disc-actions">
             <button class="disc-action decode" onclick="openDecoder('${i.id}')" title="See why this post worked">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 1v6M12 17v6M4.22 4.22l4.24 4.24M15.54 15.54l4.24 4.24M1 12h6M17 12h6M4.22 19.78l4.24-4.24M15.54 8.46l4.24-4.24"/></svg>
@@ -3087,6 +3142,13 @@
     document.querySelectorAll('.filter[data-filter]').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
     currentFilter = btn.dataset.filter;
+    renderDiscover();
+  }));
+  document.querySelectorAll('.filter[data-sort]').forEach(btn => btn.addEventListener('click', () => {
+    const on = btn.classList.contains('active');
+    document.querySelectorAll('.filter[data-sort]').forEach(b => b.classList.remove('active'));
+    discSort = on ? null : btn.dataset.sort;      // click again to clear
+    if (!on) btn.classList.add('active');
     renderDiscover();
   }));
   document.querySelectorAll('.filter[data-hookcat]').forEach(btn => btn.addEventListener('click', () => {
