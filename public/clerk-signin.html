@@ -27,15 +27,37 @@
     display:flex; align-items:center; justify-content:center;
     padding:32px 20px; position:relative; overflow-x:hidden;
   }
-  /* Sona's own atmosphere: a low green bloom, rather than Eden's neutral grain. */
-  body::before {
-    content:''; position:fixed; inset:0; pointer-events:none;
-    background:radial-gradient(60% 50% at 50% 42%, rgba(40,119,92,.20), transparent 70%);
+
+  /* ── Animated backdrop ──
+     Layer 1 (canvas): drifting starfield + two slow green blooms — signin-bg.js.
+     Layer 2 (grain):  feTurbulence noise, jittered on a step timer. Together they
+     give the surface the slight restlessness a flat gradient can't. Both are
+     pointer-events:none and sit behind .stage. */
+  #bg { position:fixed; inset:0; width:100%; height:100%; z-index:0; pointer-events:none; }
+  .grain {
+    position:fixed; inset:-120%; z-index:1; pointer-events:none; opacity:.045;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.82' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    animation:grain 6s steps(6) infinite;
   }
-  .stage { position:relative; width:100%; max-width:520px; text-align:center; }
+  /* Whole-pixel jumps, not a smooth slide — that's what reads as grain. */
+  @keyframes grain {
+    0%,100% { transform:translate(0,0) }
+    16%     { transform:translate(-6%,-4%) }
+    33%     { transform:translate(4%,-7%) }
+    50%     { transform:translate(-3%,6%) }
+    66%     { transform:translate(7%,3%) }
+    83%     { transform:translate(-5%,-2%) }
+  }
+  /* A soft vignette pulls the eye to the centre column. */
+  .vignette {
+    position:fixed; inset:0; z-index:1; pointer-events:none;
+    background:radial-gradient(75% 65% at 50% 45%, transparent 45%, rgba(0,0,0,.45) 100%);
+  }
+
+  .stage { position:relative; z-index:2; width:100%; max-width:460px; text-align:center; }
 
   /* The mark breathes while idle — the same motion the studio uses when loading. */
-  .mark { width:44px; height:44px; margin:0 auto 30px; display:block; animation:breathe 3.4s ease-in-out infinite; }
+  .mark { width:58px; height:58px; margin:0 auto 34px; display:block; animation:breathe 3.4s ease-in-out infinite; }
   .mark svg { width:100%; height:100%; display:block; }
   .wave { stroke:var(--accent); stroke-dasharray:34; stroke-dashoffset:34; animation:trace 3.4s ease-in-out infinite; }
   .spark { fill:var(--accent); transform-box:fill-box; transform-origin:center; animation:twinkle 3.4s ease-in-out infinite .3s; }
@@ -43,13 +65,15 @@
   @keyframes trace { 0%{stroke-dashoffset:34;opacity:.45} 50%{stroke-dashoffset:0;opacity:1} 100%{stroke-dashoffset:-34;opacity:.45} }
   @keyframes twinkle { 0%,100%{opacity:.4;transform:scale(.75)} 50%{opacity:1;transform:scale(1)} }
 
-  h1 { font-size:clamp(30px,6vw,42px); font-weight:600; letter-spacing:-1.4px; line-height:1.12; margin-bottom:12px; }
+  h1 { font-size:clamp(32px,6vw,44px); font-weight:600; letter-spacing:-1.5px; line-height:1.1; margin-bottom:14px; }
   h1 .quiet { color:var(--dim); }
-  .sub { font-size:15px; color:var(--dim); margin-bottom:8px; }
-  .creed { font-size:13px; color:var(--faint); margin-bottom:40px; }
+  .sub { font-size:15px; color:var(--dim); margin-bottom:54px; }
 
   #auth { min-height:300px; }
-  .legal { margin-top:36px; font-size:12px; color:var(--faint); line-height:1.6; }
+  /* The creed moves down here from under the headline. It's still on the page —
+     it just isn't competing with the form for attention any more. */
+  .creed { margin-top:40px; font-size:12.5px; color:var(--faint); }
+  .legal { margin-top:14px; font-size:12px; color:var(--faint); line-height:1.6; }
   .legal a { color:var(--dim); text-decoration:underline; text-underline-offset:2px; }
 
 
@@ -64,19 +88,41 @@
   #auth .cl-header { display:none !important; }        /* our own headline says it */
   #auth .cl-footer { background:transparent !important; border:none !important; }
   #auth .cl-formFieldLabel { display:none !important; }
+  /* Email before Google, like Eden — Clerk renders socials first by default. */
+  #auth .cl-main { display:flex !important; flex-direction:column !important; }
+  #auth .cl-form { order:1 !important; }
+  #auth .cl-dividerRow { order:2 !important; margin:28px 0 18px !important; }
+  #auth .cl-socialButtonsRoot { order:3 !important; margin-top:0 !important; }
+
+  /* The oversized ghosted field is the whole look. No box, no border, just type. */
   #auth .cl-formFieldInput {
-    background:transparent !important; border:none !important;
-    border-bottom:1px solid rgba(255,255,255,.14) !important; border-radius:0 !important;
-    text-align:center !important; font-size:24px !important; padding:14px 0 !important;
-    color:var(--text) !important; box-shadow:none !important;
+    background:transparent !important; border:none !important; border-bottom:none !important;
+    border-radius:0 !important; text-align:center !important;
+    font-size:clamp(26px,5.2vw,38px) !important; font-weight:500 !important;
+    letter-spacing:-.8px !important; padding:10px 0 !important;
+    color:var(--text) !important; box-shadow:none !important; outline:none !important;
   }
-  #auth .cl-formFieldInput::placeholder { color:#4e4e57 !important; font-size:24px !important; }
+  #auth .cl-formFieldInput::placeholder {
+    color:#3a3a42 !important; font-size:clamp(26px,5.2vw,38px) !important;
+    font-weight:500 !important; letter-spacing:-.8px !important;
+  }
+  /* Focus shows as a hairline that grows in, not a box. */
+  #auth .cl-formField { position:relative !important; }
+  #auth .cl-formField::after {
+    content:''; position:absolute; left:50%; bottom:0; height:1px; width:0;
+    background:linear-gradient(90deg, transparent, rgba(95,184,150,.75), transparent);
+    transform:translateX(-50%); transition:width .45s cubic-bezier(.2,.8,.2,1);
+  }
+  #auth .cl-formField:focus-within::after { width:100%; }
+
   #auth .cl-formButtonPrimary {
-    background:rgba(255,255,255,.10) !important; border:1px solid rgba(255,255,255,.16) !important;
-    color:var(--text) !important; border-radius:100px !important; padding:15px !important;
+    background:rgba(255,255,255,.09) !important; border:1px solid rgba(255,255,255,.13) !important;
+    color:var(--text) !important; border-radius:100px !important; padding:17px !important;
     font-size:15px !important; font-weight:500 !important; text-transform:none !important;
-    box-shadow:none !important; letter-spacing:0 !important;
+    box-shadow:none !important; letter-spacing:0 !important; margin-top:34px !important;
+    transition:background .25s ease, border-color .25s ease, transform .25s ease !important;
   }
+  #auth .cl-formButtonPrimary:hover { transform:translateY(-1px); }
   #auth .cl-formButtonPrimary:hover { background:rgba(255,255,255,.16) !important; }
   #auth .cl-socialButtonsBlockButton {
     background:transparent !important; border:1px solid rgba(255,255,255,.12) !important;
@@ -85,17 +131,30 @@
   #auth .cl-socialButtonsBlockButton:hover { background:rgba(255,255,255,.05) !important; }
   #auth .cl-dividerLine { background:rgba(255,255,255,.09) !important; }
   #auth .cl-dividerText { color:var(--faint) !important; }
-  #auth .cl-footerActionText { color:var(--faint) !important; }
-  #auth .cl-footerActionLink { color:var(--dim) !important; }
-  #auth .cl-internal-1h6fgzy, #auth .cl-logoBox { display:none !important; }
+  #auth .cl-footerActionText { color:var(--dim) !important; }
+  #auth .cl-footerActionLink { color:var(--text) !important; text-decoration:none !important; }
+  #auth .cl-footerActionLink:hover { text-decoration:underline !important; }
+  #auth .cl-footerAction { gap:6px !important; margin-top:6px !important; }
+  #auth .cl-logoBox { display:none !important; }
+  /* .cl-footerItem holds both "Secured by Clerk" and the dev-instance ribbon.
+     The wrappers inside it are hash-named (.cl-internal-57atez etc.) and change
+     between releases; .cl-footerItem is stable, so hide the row itself.
+     tidyChrome() still runs as a text-based backstop if that ever changes. */
+  #auth .cl-footerItem { display:none !important; }
+  #auth [data-sona-hidden] { display:none !important; }
 
   @media (prefers-reduced-motion: reduce) {
-    .mark, .wave, .spark { animation:none !important; }
+    .mark, .wave, .spark, .grain { animation:none !important; }
     .wave { stroke-dashoffset:0; }
+    #auth .cl-formField::after, #auth .cl-formButtonPrimary { transition:none !important; }
   }
 </style>
 </head>
 <body>
+  <canvas id="bg" aria-hidden="true"></canvas>
+  <div class="grain" aria-hidden="true"></div>
+  <div class="vignette" aria-hidden="true"></div>
+
   <main class="stage">
     <span class="mark">
       <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
@@ -105,11 +164,11 @@
     </span>
 
     <h1>Start with<br><span class="quiet">what's working.</span></h1>
-    <p class="sub">Sign in, or create your account.</p>
-    <p class="creed">Nothing here writes for you. You write.</p>
+    <p class="sub">Sign up or sign in to get started.</p>
 
     <div id="auth"></div>
 
+    <p class="creed">Nothing here writes for you. You write.</p>
     <p class="legal">
       By continuing you agree to our
       <a href="/terms.html">Terms</a> and <a href="/privacy.html">Privacy Policy</a>.
@@ -118,7 +177,15 @@
 
 <script>
 window.addEventListener('load', async function () {
-  await Clerk.load({ ui: { ClerkUI: window.__internal_ClerkUICtor } });
+  await Clerk.load({
+    ui: { ClerkUI: window.__internal_ClerkUICtor },
+    // Eden's field reads as a ghost of the answer, not an instruction.
+    localization: {
+      formFieldInputPlaceholder__emailAddress: 'you@email.com',
+      formFieldInputPlaceholder__emailAddress_username: 'you@email.com',
+      formButtonPrimary: 'Continue',
+    },
+  });
 
   // Strip Clerk's card chrome so the form reads as part of the page, not a widget
   // dropped onto it — the borderless look Eden uses.
@@ -141,13 +208,14 @@ window.addEventListener('load', async function () {
       footer: { background: 'transparent' },
       formFieldLabel: { display: 'none' },
       formFieldInput: {
-        background: 'transparent', border: 'none', borderBottom: '1px solid rgba(255,255,255,.12)',
-        borderRadius: '0', textAlign: 'center', fontSize: '26px', padding: '14px 0', color: '#f4f4f2',
+        background: 'transparent', border: 'none', borderBottom: 'none',
+        borderRadius: '0', textAlign: 'center', fontSize: '38px', fontWeight: '500',
+        padding: '10px 0', color: '#f4f4f2',
       },
       formButtonPrimary: {
-        background: 'rgba(255,255,255,.10)', border: '1px solid rgba(255,255,255,.14)',
+        background: 'rgba(255,255,255,.09)', border: '1px solid rgba(255,255,255,.13)',
         color: '#f4f4f2', fontSize: '15px', fontWeight: '500', textTransform: 'none',
-        padding: '15px', borderRadius: '100px', boxShadow: 'none',
+        padding: '17px', borderRadius: '100px', boxShadow: 'none',
       },
       socialButtonsBlockButton: {
         background: 'transparent', border: '1px solid rgba(255,255,255,.12)',
@@ -161,6 +229,24 @@ window.addEventListener('load', async function () {
   };
 
   const host = document.getElementById('auth');
+
+  // "Secured by Clerk" and the dev-instance ribbon live in hash-named classes
+  // (.cl-internal-xxxx) that change between releases, so match on text instead.
+  // The dev ribbon only appears on a pk_test key and is gone in production —
+  // hiding it keeps the preview honest to what users will actually see.
+  // Prefixes, not exact strings: the badge's leaf text is just "Secured by",
+  // with the Clerk wordmark rendered as a sibling SVG.
+  const NOISE = ['secured by', 'development mode'];
+  function tidyChrome() {
+    host.querySelectorAll('.cl-footerItem').forEach(el => el.setAttribute('data-sona-hidden', ''));
+    host.querySelectorAll('p, span, div, a').forEach(el => {
+      if (el.children.length) return;                       // leaf nodes only
+      const t = (el.textContent || '').trim().toLowerCase();
+      if (!t || !NOISE.some(n => t.startsWith(n))) return;
+      // Hide the badge's row, not just the text node inside it.
+      (el.closest('.cl-footerItem') || el.parentElement || el).setAttribute('data-sona-hidden', '');
+    });
+  }
 
   function render() {
     host.innerHTML = '';
@@ -178,11 +264,16 @@ window.addEventListener('load', async function () {
       // One entry point for both paths, like Eden — no sign-in/sign-up fork up front.
       Clerk.mountSignIn(host, { appearance });
     }
+    // Clerk paints asynchronously after mount; observe instead of guessing a delay.
+    const obs = new MutationObserver(tidyChrome);
+    obs.observe(host, { childList: true, subtree: true });
+    tidyChrome();
   }
 
   render();
   Clerk.addListener(render);
 });
 </script>
+<script src="/signin-bg.js" defer></script>
 </body>
 </html>
