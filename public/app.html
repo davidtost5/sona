@@ -82,6 +82,31 @@
   .coach button:hover { opacity: 1; }
   @media (prefers-reduced-motion: reduce) { .niche-opt { transition: none !important; } }
 
+
+  /* Library */
+  .lib-intro { font-size: 13.5px; color: var(--text-mid); margin-bottom: 14px; }
+  .lib-search { margin-bottom: 14px; }
+  .lib-grid { columns: 3; column-gap: 12px; }
+  @media (max-width: 1100px) { .lib-grid { columns: 2; } }
+  @media (max-width: 720px)  { .lib-grid { columns: 1; } }
+  .lib-card {
+    break-inside: avoid; margin: 0 0 12px; background: var(--bg-soft);
+    border: 1px solid var(--border); border-radius: 12px; padding: 15px;
+    display: flex; flex-direction: column; gap: 9px; cursor: pointer;
+    transition: border-color .15s, transform .15s;
+  }
+  .lib-card:hover { border-color: var(--border-strong); transform: translateY(-1px); }
+  .lib-kind {
+    font-family: 'Geist Mono', monospace; font-size: 9.5px; letter-spacing: .8px;
+    text-transform: uppercase; color: var(--accent);
+  }
+  .lib-title { font-size: 14px; font-weight: 600; color: var(--text); line-height: 1.4; }
+  .lib-body { font-size: 13px; color: var(--text-mid); line-height: 1.5; }
+  .lib-meta { font-family: 'Geist Mono', monospace; font-size: 10px; color: var(--text-dim); }
+  .lib-empty { color: var(--text-mid); font-size: 13.5px; line-height: 1.6; max-width: 440px; }
+  .lib-empty strong { color: var(--text); }
+  @media (prefers-reduced-motion: reduce) { .lib-card { transition: none !important; } }
+
   /* ─── App shell ─── */
   .shell { display:grid; grid-template-columns:260px 1fr; height:100vh; }
   .side { background:var(--bg-soft); border-right:1px solid var(--border); padding:18px 14px; display:flex; flex-direction:column; gap:18px; overflow-y:auto; }
@@ -520,6 +545,10 @@
     </label>
 
     <nav class="nav">
+      <button class="nav-item" data-view="library">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5V4.5A2.5 2.5 0 0 1 6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5z"/><path d="M9 2v20"/></svg>
+        Library<span class="pill-n" id="library-count">0</span>
+      </button>
       <button class="nav-item active" data-view="discover">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m14.5 9.5-5 1.5 1.5 5 5-1.5z"/></svg>
         Discover<span class="pill-n" id="discover-count">24</span>
@@ -612,6 +641,25 @@
 
     <div class="content">
       <!-- DISCOVER -->
+      <!-- LIBRARY — everything you've kept, in one searchable place. Saved ideas,
+           drafts, hooks and decoded patterns already existed; they were just
+           spread across five separate screens with no way to search across them. -->
+      <div class="view" data-view="library">
+        <p class="lib-intro">Everything you've kept in this workspace, searchable in one place.</p>
+        <label class="search lib-search" id="lib-search-box">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+          <input type="search" id="lib-search" placeholder="Search ideas, drafts, hooks and patterns" autocomplete="off" spellcheck="false">
+        </label>
+        <div class="filters" id="lib-filters">
+          <button class="filter active" data-lib="all">All</button>
+          <button class="filter" data-lib="idea">Ideas</button>
+          <button class="filter" data-lib="draft">Drafts</button>
+          <button class="filter" data-lib="hook">Hooks</button>
+          <button class="filter" data-lib="pattern">Patterns</button>
+        </div>
+        <div class="lib-grid" id="lib-grid"></div>
+      </div>
+
       <div class="view active" data-view="discover">
         <div class="filters">
           <button class="filter active" data-filter="all">All</button>
@@ -1557,6 +1605,7 @@
     loadCanvasState();
     renderCanvas();
     loadPatterns(); // async — renders itself when the aggregate lands
+    renderLibrary();
     maybeAskNiche();
   }
 
@@ -2169,6 +2218,8 @@
   window.useHook = function(id) {
     const h = HOOKS_LIBRARY.find(x => x.id === id);
     if (!h) return;
+    usedHookIds.add(id);
+    try { localStorage.setItem('sona_used_hooks', JSON.stringify([...usedHookIds])); } catch (_) {}
     activeDraftId = null;
     document.getElementById('draft-title').value = '';
     const body = document.getElementById('draft-body');
@@ -2185,6 +2236,7 @@
   // Distinct from HOOKS_LIBRARY above: that list is hand-written and fixed, this
   // one grows by itself as posts get decoded.
   let PATTERNS = [];
+  const usedHookIds = new Set(JSON.parse(localStorage.getItem('sona_used_hooks') || '[]'));
 
   async function loadPatterns() {
     const grid = document.getElementById('patterns-grid');
@@ -2674,6 +2726,7 @@
     document.querySelectorAll('.nav-item[data-view]').forEach(b => b.classList.toggle('active', b.dataset.view === v));
     document.querySelectorAll('.view').forEach(view => view.classList.toggle('active', view.dataset.view === v));
     const titles = {
+      library:['Library', 'Everything you\'ve kept, in one place'],
       discover:['Discover','Founders · last 7 days · sorted by outlier'],
       digest:['Digest', 'This week’s breakout posts, by niche'],
       studio:['Drafts', drafts.length ? `${drafts.length} draft${drafts.length===1?'':'s'}` : 'Start a draft'],
@@ -2696,6 +2749,7 @@
     if (location.hash !== `#${v}`) history.replaceState(null, '', `#${v}`);
     // Hidden views report zero-size rects, so edges drawn while off-screen land at (0,0). Redraw on entry.
     if (v === 'canvas') requestAnimationFrame(drawCanvasEdges);
+    if (v === 'library') renderLibrary();
   };
 
   function renderSwipe() {
@@ -2803,6 +2857,74 @@
 
   document.querySelectorAll('.niche-opt').forEach(btn =>
     btn.addEventListener('click', () => chooseNiche(btn.dataset.niche)));
+
+
+  // ─── Library ───
+  // One searchable surface over things that already exist but lived on five
+  // different screens. Reads the same in-memory collections the other views use,
+  // so nothing new is persisted and nothing can drift out of sync.
+  let libFilter = 'all';
+
+  function libraryItems() {
+    const out = [];
+    SEED_IDEAS.filter(i => saved.has(i.id)).forEach(i => out.push({
+      kind: 'idea', label: 'Saved idea', title: i.name, body: i.text,
+      meta: [i.tag, i.views].filter(Boolean).join(' · '), go: () => switchView('saved'),
+    }));
+    drafts.forEach(d => out.push({
+      kind: 'draft', label: 'Draft', title: d.title || 'Untitled',
+      body: (d.body || '').slice(0, 220),
+      meta: `${d.platform || 'X'} · ${new Date(d.updatedAt).toLocaleDateString()}`,
+      go: () => { loadDraft(d.id); switchView('studio'); },
+    }));
+    HOOKS_LIBRARY.filter(h => usedHookIds.has(h.id)).forEach(h => out.push({
+      kind: 'hook', label: 'Hook', title: h.pattern, body: h.eg,
+      meta: h.cat, go: () => switchView('hooks'),
+    }));
+    PATTERNS.forEach(pt => out.push({
+      kind: 'pattern', label: 'Pattern', title: pt.hook,
+      body: (pt.templates && pt.templates[0]) || pt.why || '',
+      meta: `${pt.count}× across your decodes`, go: () => switchView('patterns'),
+    }));
+    return out;
+  }
+
+  function renderLibrary() {
+    const grid = document.getElementById('lib-grid');
+    if (!grid) return;
+    const q = (document.getElementById('lib-search')?.value || '').toLowerCase().trim();
+    let items = libraryItems();
+    const total = items.length;
+    const countEl = document.getElementById('library-count');
+    if (countEl) countEl.textContent = total;
+
+    if (libFilter !== 'all') items = items.filter(i => i.kind === libFilter);
+    if (q) items = items.filter(i => (i.title + ' ' + i.body + ' ' + i.meta).toLowerCase().includes(q));
+
+    if (!items.length) {
+      grid.innerHTML = total === 0
+        ? `<div class="lib-empty"><p><strong>Nothing kept yet.</strong></p><p>Save an idea from Discover, decode a post, or start a draft — whatever you keep shows up here, searchable together.</p></div>`
+        : `<div class="lib-empty"><p>Nothing matches that.</p></div>`;
+      return;
+    }
+    grid.innerHTML = items.map((i, n) => `
+      <div class="lib-card" data-lib-i="${n}">
+        <div class="lib-kind">${escapeHtml(i.label)}</div>
+        <div class="lib-title">${escapeHtml(i.title)}</div>
+        ${i.body ? `<div class="lib-body">${escapeHtml(i.body)}</div>` : ''}
+        ${i.meta ? `<div class="lib-meta">${escapeHtml(i.meta)}</div>` : ''}
+      </div>`).join('');
+    grid.querySelectorAll('[data-lib-i]').forEach(el =>
+      el.addEventListener('click', () => items[+el.dataset.libI].go()));
+  }
+
+  document.querySelectorAll('.filter[data-lib]').forEach(btn => btn.addEventListener('click', () => {
+    document.querySelectorAll('.filter[data-lib]').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    libFilter = btn.dataset.lib;
+    renderLibrary();
+  }));
+  document.getElementById('lib-search')?.addEventListener('input', renderLibrary);
 
   document.querySelectorAll('.nav-item[data-view]').forEach(btn => btn.addEventListener('click', () => switchView(btn.dataset.view)));
   document.querySelectorAll('.filter[data-filter]').forEach(btn => btn.addEventListener('click', () => {
