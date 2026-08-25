@@ -167,7 +167,10 @@
     <p style="font-size:13px;color:var(--text-mid);line-height:1.7;margin-bottom:10px">
       One per line, fields separated by <code>|</code>:<br>
       <code>creator | @handle · X | avatarHandle | post text | 12× outlier | 1.2M views | founders</code><br>
-      Required: <b>creator</b>, <b>handle</b>, <b>text</b>. <code>cat</code> = founders / writers / creators. <code>avatarHandle</code> blank = derived from handle. Lines starting with <code>#</code> are ignored.
+      Required: <b>creator</b>, <b>handle</b>, <b>text</b>. <code>cat</code> = founders / writers / creators. <code>avatarHandle</code> blank = derived from handle. Lines starting with <code>#</code> are ignored.<br>
+      <b>Optional media</b>, added after <code>cat</code> in any order — leave off and the card stays text-only:<br>
+      <code>image=https://… | video=https://… | dur=10:38 | likes=12K | reposts=480</code><br>
+      <code>image</code>/<code>video</code> take a thumbnail URL; <code>video</code> adds the play badge and shows <code>dur</code>. Use real numbers from the post — they display as typed.
     </p>
     <textarea id="ol-input" spellcheck="false" placeholder="Paste today's outliers here…" style="width:100%;min-height:320px;font-family:'Geist Mono',ui-monospace,monospace;font-size:13px;line-height:1.6;padding:14px 16px;border:1.5px solid var(--border);border-radius:12px;background:#fff;outline:none;resize:vertical;color:var(--text-dark);"></textarea>
 
@@ -312,6 +315,11 @@
     else { localStorage.removeItem('sona_admin_key'); document.getElementById('ol-key-state').textContent = 'Cleared.'; }
   });
 
+  // Media fields are optional and opt-in per line, so a line written before they
+  // existed still parses identically. Anything after the 7 positional fields is
+  // read as `key=value` — split on the FIRST '=' only, since URLs contain '='.
+  const MEDIA_KEYS = { image: 'image', video: 'video', dur: 'dur', likes: 'likes', reposts: 'reposts' };
+
   function parseOutliers(raw) {
     const items = [];
     raw.split('\n').forEach(line => {
@@ -320,14 +328,27 @@
       const p = t.split('|').map(s => s.trim());
       const [creator_name, handle, avatar_handle, text, outlier_tag, views, cat] = p;
       if (!creator_name || !handle || !text) return; // skip malformed lines
-      items.push({ creator_name, handle, avatar_handle, text, outlier_tag, views, cat });
+
+      const item = { creator_name, handle, avatar_handle, text, outlier_tag, views, cat };
+      p.slice(7).forEach(extra => {
+        const eq = extra.indexOf('=');
+        if (eq < 1) return;
+        const key = extra.slice(0, eq).trim().toLowerCase();
+        const val = extra.slice(eq + 1).trim();
+        if (!val || !MEDIA_KEYS[key]) return;
+        if (key === 'image' || key === 'video') { item.media_type = key; item.thumb_url = val; }
+        else if (key === 'dur') item.duration = val;
+        else item[key] = val;
+      });
+      items.push(item);
     });
     return items;
   }
 
   const OL_EXAMPLE = `# creator | @handle · X | avatarHandle | post text | tag | views | cat
+# optional extras after cat, in any order: image=URL  video=URL  dur=10:38  likes=12K  reposts=480
 Alex Hormozi | @AlexHormozi · X | AlexHormozi | Most founders post too much — not too little. The ones who break out pick one contrarian take and stick to it. | 12× outlier | 1.2M views | founders
-Dan Koe | @thedankoe · X | thedankoe | Three questions I ask before writing anything. They've saved me hundreds of bad drafts. | 18× outlier | 2.4M views | writers`;
+Dan Koe | @thedankoe · X | thedankoe | Three questions I ask before writing anything. They've saved me hundreds of bad drafts. | 18× outlier | 2.4M views | writers | likes=41K | reposts=3.2K`;
 
   document.getElementById('ol-example').addEventListener('click', () => { document.getElementById('ol-input').value = OL_EXAMPLE; });
 

@@ -214,9 +214,22 @@ create table if not exists outliers (
   outlier_tag text,                    -- '12× outlier'
   views text,                          -- '1.2M views'
   source_url text,
+  media_type text,                     -- null | 'image' | 'video'  (null = text post)
+  thumb_url text,                      -- preview image for image/video posts
+  duration text,                       -- '10:38' for video
+  likes text,                          -- '101K'  — as captured, not computed
+  reposts text,                        -- '17K'
   position int default 0,              -- display order (lower first)
   captured_at timestamptz default now()
 );
+
+-- Media columns were added after the table shipped. Safe to re-run; rows
+-- without them keep rendering as text cards.
+alter table outliers add column if not exists media_type text;
+alter table outliers add column if not exists thumb_url text;
+alter table outliers add column if not exists duration text;
+alter table outliers add column if not exists likes text;
+alter table outliers add column if not exists reposts text;
 
 create index if not exists outliers_position_idx on outliers (position, captured_at desc);
 

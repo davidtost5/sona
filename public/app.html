@@ -150,6 +150,30 @@
     border-radius:100px; padding:2px 8px; white-space:nowrap;
   }
 
+
+  /* Media-rich cards. Everything here only renders when the row carries it —
+     a text post is unchanged. */
+  .disc-media { position:relative; margin:-17px -17px 12px; border-radius:15px 15px 0 0; overflow:hidden; background:#0f0f10; }
+  .disc-media img { display:block; width:100%; height:auto; }
+  .disc-media.video::after {
+    content:''; position:absolute; inset:0; background:rgba(0,0,0,.18);
+  }
+  .disc-play {
+    position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+    width:38px; height:38px; border-radius:50%; background:rgba(0,0,0,.55);
+    display:flex; align-items:center; justify-content:center; z-index:1;
+    backdrop-filter:blur(3px);
+  }
+  .disc-play svg { width:14px; height:14px; fill:#fff; margin-left:2px; }
+  .disc-dur {
+    position:absolute; right:8px; bottom:8px; z-index:1;
+    font-family:'Geist Mono',monospace; font-size:10px; color:#fff;
+    background:rgba(0,0,0,.7); border-radius:5px; padding:2px 6px;
+  }
+  .disc-engage { display:flex; align-items:center; gap:12px; margin-bottom:9px; font-size:11.5px; color:var(--text-dim); }
+  .disc-engage span { display:inline-flex; align-items:center; gap:5px; }
+  .disc-engage svg { width:12px; height:12px; opacity:.65; }
+
   /* ─── App shell ─── */
   .shell { display:grid; grid-template-columns:260px 1fr; height:100vh; }
   .side { background:var(--bg-soft); border-right:1px solid var(--border); padding:18px 14px; display:flex; flex-direction:column; gap:18px; overflow-y:auto; }
@@ -1316,6 +1340,11 @@
           text: r.text,
           tag: r.outlier_tag || '',
           views: r.views || '',
+          mediaType: r.media_type || null,
+          thumb: r.thumb_url || '',
+          duration: r.duration || '',
+          likes: r.likes || '',
+          reposts: r.reposts || '',
           // no `decoded` → live decode path
         }));
         // Lead with curated rows, then keep the built-in set behind them.
@@ -2519,6 +2548,27 @@
     return '';
   }
 
+
+  // Media block — only emitted when the row actually carries a thumbnail.
+  const HEART = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.8 6.6a5 5 0 0 0-7.1 0L12 8.3l-1.7-1.7a5 5 0 1 0-7.1 7.1l8.8 8.8 8.8-8.8a5 5 0 0 0 0-7.1z"/></svg>';
+  const REPOST = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 1l4 4-4 4"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><path d="M7 23l-4-4 4-4"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>';
+  function mediaBlock(i) {
+    if (!i.thumb) return '';
+    const isVideo = i.mediaType === 'video';
+    return `<div class="disc-media${isVideo ? ' video' : ''}">
+      <img src="${escapeHtml(i.thumb)}" alt="" loading="lazy">
+      ${isVideo ? '<span class="disc-play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span>' : ''}
+      ${isVideo && i.duration ? `<span class="disc-dur">${escapeHtml(i.duration)}</span>` : ''}
+    </div>`;
+  }
+  function engageBlock(i) {
+    if (!i.likes && !i.reposts) return '';
+    return `<div class="disc-engage">
+      ${i.likes ? `<span>${HEART}${escapeHtml(i.likes)}</span>` : ''}
+      ${i.reposts ? `<span>${REPOST}${escapeHtml(i.reposts)}</span>` : ''}
+    </div>`;
+  }
+
   function renderDiscover() {
     const grid = document.getElementById('disc-grid');
     const countEl = document.getElementById('discover-count');
@@ -2536,8 +2586,10 @@
     }
     grid.innerHTML = items.map(i => `
       <div class="disc-card">
+        ${mediaBlock(i)}
         <div class="disc-head"><span class="disc-av" style="background:url('${i.av}') center/cover no-repeat, linear-gradient(135deg,var(--accent),var(--accent-soft))"></span><div><div class="disc-name">${highlight(i.name)}</div><div class="disc-handle">${highlight(i.handle)}</div></div>${i.views ? `<span class="disc-views">${i.views}</span>` : ''}</div>
         <div class="disc-text">${highlight(i.text)}</div>
+        ${engageBlock(i)}
         <div class="disc-meta">
           ${multOf(i) ? `<span class="disc-mult">${multOf(i)}×</span>` : ''}
           <span class="disc-tag">${platIcon(i.handle)}${(i.views || '').replace(' views','')}</span>

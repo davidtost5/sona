@@ -6,7 +6,8 @@
 //   - env SUPABASE_URL + SUPABASE_SERVICE_ROLE_KEY (service-role bypasses RLS)
 //
 // Body: { mode: 'replace' | 'append', items: [ { creator_name, handle, text,
-//          avatar_handle?, outlier_tag?, views?, cat?, source_url?, position? } ] }
+//          avatar_handle?, outlier_tag?, views?, cat?, source_url?, position?,
+//          media_type? ('image'|'video'), thumb_url?, duration?, likes?, reposts? } ] }
 //
 // This is the daily-refresh tool: paste the day's set in /admin → Publish.
 // Curation is human (your taste) — no scraping, no AI writing.
@@ -79,6 +80,12 @@ export default async function handler(req, res) {
       outlier_tag: String(it.outlier_tag || it.tag || '').trim() || null,
       views: String(it.views || '').trim() || null,
       source_url: String(it.source_url || '').trim() || null,
+      // Media is optional; a row without it renders exactly as before.
+      media_type: ['image', 'video'].includes(it.media_type) ? it.media_type : null,
+      thumb_url: String(it.thumb_url || '').trim() || null,
+      duration: String(it.duration || '').trim() || null,
+      likes: String(it.likes || '').trim() || null,
+      reposts: String(it.reposts || '').trim() || null,
       position: Number.isFinite(+it.position) ? +it.position : i,
     });
   }
