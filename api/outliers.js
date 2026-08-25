@@ -26,6 +26,31 @@ function slugify(s) {
   return String(s || '').toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_+|_+$/g, '').slice(0, 24);
 }
 
+// Media columns shipped after this table did. If migration-outliers-media.sql
+// hasn't been run, PostgREST rejects the entire batch — and in replace mode the
+// delete has already committed, which would leave the Discover feed EMPTY.
+// Retry without the media fields so a pending migration can't wipe the feed.
+const MEDIA_FIELDS = ['media_type', 'thumb_url', 'duration', 'likes', 'reposts'];
+
+async function upsertRows(rows) {
+  const { error } = await supabase.from('outliers').upsert(rows, { onConflict: 'id' });
+  if (!error) return { error: null, degraded: false };
+
+  // PGRST204 = column absent from PostgREST's schema cache, 42703 = undefined column.
+  const missingColumn = error.code === 'PGRST204' || error.code === '42703'
+    || MEDIA_FIELDS.some(f => (error.message || '').includes(f));
+  if (!missingColumn) return { error, degraded: false };
+
+  console.warn('[Outliers] media columns missing — publishing without them. Run migration-outliers-media.sql.');
+  const stripped = rows.map(r => {
+    const copy = { ...r };
+    for (const f of MEDIA_FIELDS) delete copy[f];
+    return copy;
+  });
+  const retry = await supabase.from('outliers').upsert(stripped, { onConflict: 'id' });
+  return { error: retry.error || null, degraded: !retry.error };
+}
+
 export default async function handler(req, res) {
   const adminKey = process.env.ADMIN_KEY;
 
@@ -95,9 +120,14 @@ export default async function handler(req, res) {
       const { error: delErr } = await supabase.from('outliers').delete().neq('id', '');
       if (delErr) throw delErr;
     }
-    const { error: insErr } = await supabase.from('outliers').upsert(rows, { onConflict: 'id' });
+    const { error: insErr, degraded } = await upsertRows(rows);
     if (insErr) throw insErr;
-    return res.status(200).json({ ok: true, mode, count: rows.length });
+    return res.status(200).json({
+      ok: true, mode, count: rows.length,
+      // Surfaced so /admin can say why media didn't stick, instead of silently
+      // publishing text-only rows and looking broken.
+      ...(degraded ? { degraded: 'media', note: 'Published without media — run migration-outliers-media.sql in Supabase.' } : {}),
+    });
   } catch (e) {
     return res.status(500).json({ error: (e && e.message) || 'Write failed.' });
   }

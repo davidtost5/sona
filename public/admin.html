@@ -370,6 +370,13 @@ Dan Koe | @thedankoe · X | thedankoe | Three questions I ask before writing any
       if (!r.ok) throw new Error(j.error || 'Publish failed.');
       status.style.color = 'var(--green-muted)';
       status.textContent = `✓ ${j.mode === 'replace' ? 'Replaced feed with' : 'Added'} ${j.count} outliers — live in the app now.`;
+      // The publish succeeded but the media columns aren't in the database yet,
+      // so any image/video/likes on those lines were dropped. Say so plainly —
+      // otherwise it just looks like the media fields silently don't work.
+      if (j.degraded === 'media') {
+        status.style.color = '#b8860b';
+        status.textContent += ' Media was skipped — run migration-outliers-media.sql in Supabase, then publish again.';
+      }
       loadLiveOutliers();
     } catch (e) {
       status.style.color = '#c85050'; status.textContent = e.message;
