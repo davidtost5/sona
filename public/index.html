@@ -782,6 +782,16 @@
   .tier-price .amt { font-size: 42px; font-weight: 600; letter-spacing: -1.8px; line-height: 1; font-variant-numeric: tabular-nums; }
   .tier-price .unit { font-size: 14px; color: var(--text-mid); }
   .tier-sub { font-size: 12.5px; color: var(--text-dim); min-height: 18px; margin-bottom: 22px; position: relative; }
+
+  .tier-for { font-size: 13px; color: var(--text-mid); line-height: 1.5; margin: -14px 0 18px; }
+  .tier-feats .soon {
+    display: inline-block; margin-left: 7px; padding: 1px 6px; border-radius: 100px;
+    font-family: 'Geist Mono', monospace; font-size: 9px; letter-spacing: .4px;
+    text-transform: uppercase; color: var(--text-dim);
+    background: var(--bg-soft); border: 1px solid var(--border);
+    vertical-align: 1px;
+  }
+
   .tier-sub .strike { text-decoration: line-through; font-family: 'Geist Mono', monospace; }
   .tier-feats { list-style: none; display: flex; flex-direction: column; gap: 10px; margin-bottom: 26px; flex-grow: 1; position: relative; }
   .tier-feats li { display: flex; align-items: flex-start; gap: 9px; font-size: 14px; color: var(--text); line-height: 1.45; }
@@ -1727,61 +1737,75 @@ and they stick with it for ninety days.
   <div class="sec-head" data-r>
     <span class="eyebrow accent line">06 · Pricing</span>
     <h2>Start free. <span class="quiet">Go further with Pro.</span></h2>
-    <p>Start free, upgrade when it earns its keep. Annual-first, cancel anytime — and a founding rate that disappears once the first 100 seats are gone.</p>
+    <p>Start free, upgrade when it earns its keep. Pay monthly or save two months on annual — cancel anytime.</p>
   </div>
 
   <div class="tiers" data-stagger>
 
-    <!-- STARTER (FREE) -->
+    <!-- FREE -->
     <div class="tier">
-      <div class="tier-name">Starter</div>
-      <div class="tier-price"><span class="amt">$0</span><span class="unit">free forever</span></div>
-      <div class="tier-sub">No card required.</div>
+      <div class="tier-name">Free</div>
+      <div class="tier-price"><span class="amt">$0</span></div>
+      <div class="tier-sub">For trying Sona</div>
       <ul class="tier-feats">
-        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Browse the outlier feed</li>
-        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Save up to 10 ideas</li>
-        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>1 playbook · 1 draft at a time</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Browse outliers</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Save 10 ideas</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>1 playbook</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Limited drafts</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Limited AI usage</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>No credit card</li>
       </ul>
-      <div class="tier-cta"><button type="button" class="btn btn-secondary" onclick="SonaAuth.openSignup()">Start free <span class="btn-arrow">→</span></button></div>
+      <div class="tier-cta"><button type="button" class="btn btn-secondary" onclick="SonaAuth.openSignup()">Start free</button></div>
     </div>
 
-    <!-- PRO -->
-    <div class="tier">
-      <div class="tier-name">Pro</div>
-      <div class="tier-price"><span class="amt">$24</span><span class="unit">/mo</span></div>
-      <div class="tier-sub">Billed $288/year · or $29/mo, billed monthly</div>
-      <ul class="tier-feats">
-        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Everything in Starter</li>
-        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Unlimited saved ideas, lists & drafts</li>
-        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Full hooks library</li>
-        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Decode why any post worked</li>
-        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Multiple playbooks & brands</li>
-      </ul>
-      <div class="tier-cta"><button type="button" class="btn btn-secondary" onclick="SonaAuth.openSignup()">Choose Pro <span class="btn-arrow">→</span></button></div>
-    </div>
-
-    <!-- FOUNDING (FEATURED) -->
+    <!-- CREATOR (featured) -->
     <div class="tier featured">
-      <span class="tier-badge">✦ 100 seats</span>
-      <div class="tier-name">Founding</div>
-      <div class="tier-price"><span class="amt" id="founding-price-big" data-count="99" data-prefix="$">$99</span><span class="unit">/year, for life</span></div>
-      <div class="tier-sub"><span class="strike">vs $288/yr Pro</span> · lifetime rate</div>
+      <span class="tier-badge">Most popular</span>
+      <div class="tier-name">Creator</div>
+      <div class="tier-price"><span class="amt">$19</span><span class="unit">/mo</span></div>
+      <div class="tier-sub">or $190/year — <b>2 months free</b></div>
+      <p class="tier-for">For creators who want to consistently publish better content.</p>
       <ul class="tier-feats">
-        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Everything in Pro, forever</li>
-        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Skip the waitlist · instant access</li>
-        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Direct line to the team</li>
-        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Founding badge · refund in 30 days</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Everything in Free</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Unlimited saved ideas</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Unlimited drafts</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Full Outlier Discovery</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Decode any post</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Full hooks library</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Personal Playbook</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Voice profiles<span class="soon">Soon</span></li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Creator tracking</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Content repurposing<span class="soon">Soon</span></li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Scheduling<span class="soon">Soon</span></li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>All core platforms</li>
       </ul>
-      <div class="tier-cta"><button type="button" class="btn btn-primary" onclick="claimFoundingSeat(this)">Claim my seat <span class="btn-arrow">→</span></button></div>
-      <div class="seats">
-        <div class="seats-row"><span class="lbl">Founding seats</span><span class="num"><b id="seats-claimed">0</b> / 100</span></div>
-        <div class="seats-bar"><i id="seats-bar" style="width:0%"></i></div>
-      </div>
+      <div class="tier-cta"><button type="button" class="btn btn-primary" onclick="SonaAuth.openSignup()">Start creating <span class="btn-arrow">→</span></button></div>
+    </div>
+
+    <!-- CREATOR PRO -->
+    <div class="tier">
+      <div class="tier-name">Creator Pro</div>
+      <div class="tier-price"><span class="amt">$39</span><span class="unit">/mo</span></div>
+      <div class="tier-sub">or $390/year</div>
+      <p class="tier-for">For creators who treat content like a business.</p>
+      <ul class="tier-feats">
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Everything in Creator</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Unlimited creator tracking</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Advanced outlier research</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Multiple brands &amp; playbooks</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Advanced analytics<span class="soon">Soon</span></li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Advanced scheduling<span class="soon">Soon</span></li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Team collaboration<span class="soon">Soon</span></li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Priority support</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Advanced repurposing<span class="soon">Soon</span></li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>API &amp; MCP access</li>
+      </ul>
+      <div class="tier-cta"><button type="button" class="btn btn-secondary" onclick="SonaAuth.openSignup()">Go Pro <span class="btn-arrow">→</span></button></div>
     </div>
 
   </div>
 
-  <p class="pricing-footnote">Questions before you start? <a href="/contact.html">Talk to us</a>.</p>
+  <p class="pricing-footnote">Running content for a team or multiple brands? Custom plans for agencies and teams. <a href="/contact.html">Talk to us →</a></p>
 </section>
 
 <!-- FAQ -->
