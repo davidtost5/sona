@@ -280,7 +280,10 @@
   /* ── Hero: left-aligned, wider, capability list ── */
   .hero { text-align: left; }
   .hero-inner { max-width: 1140px; }
-  .hero-eyebrow { font-size: 14.5px; color: var(--text-dim); margin-bottom: 22px; letter-spacing: -.1px; }
+  .hero-lede {
+    font-size: clamp(17px, 2vw, 20px); line-height: 1.55; color: var(--text-mid);
+    max-width: 620px; margin: 0 0 30px; letter-spacing: -.2px;
+  }
   .hero h1 .lit { color: var(--text); font-weight: 700; }
 
   /* Two columns of concrete capabilities, the way a spec sheet reads —
@@ -334,7 +337,7 @@
     .hero { text-align: center; }
     .hero-caps { grid-template-columns: 1fr; gap: 11px; text-align: left; max-width: 420px; margin-left: auto; margin-right: auto; }
     .hero .hero-mcp, .hero .hero-cta, .hero .hero-badge { justify-content: center; }
-    .hero-eyebrow { font-size: 13.5px; }
+    .hero-lede { font-size: 16.5px; margin-left: auto; margin-right: auto; }
   }
   @media (prefers-reduced-motion: reduce) {
     .btn-pill, .btn-pill::after, .mcp-arrow { transition: none !important; }
@@ -1162,8 +1165,8 @@
 <!-- HERO -->
 <header class="hero">
   <div class="hero-inner">
-    <p class="hero-eyebrow" data-r>Find what's working. Learn why. Write it in your voice.</p>
-    <h1 data-r data-split>The <span class="lit">outlier engine</span><br><span class="quiet">for people who write.</span></h1>
+    <h1 data-r data-split>Stop guessing<br><span class="quiet">what to post.</span></h1>
+    <p class="hero-lede" data-r>Find what's working in your niche, understand why it works, and turn the underlying idea into content that's yours.</p>
 
     <ul class="hero-caps" data-r>
       <li><b>Browse posts that beat</b> their own creator's baseline</li>
@@ -1184,7 +1187,7 @@
       <a href="#" class="btn btn-pill" onclick="event.preventDefault(); SonaAuth.openSignup();">Start free</a>
       <a href="#how" class="quiet-link">See how it works <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12l7 7 7-7"/></svg></a>
     </div>
-    <div class="hero-note" data-r>Free tier · No card required · In the studio in 10 seconds</div>
+    <div class="hero-note" data-r>No credit card required.</div>
     <div class="hero-badge" data-r>
       <a href="https://nicklaunches.com/products/sona/?utm_source=buildwithsona.com&utm_medium=badge&utm_campaign=featured" target="_blank" rel="noopener"><img src="https://nicklaunches.com/badges/featured.png" alt="Sona on Nick Launches" width="244" height="56" /></a>
     </div>
@@ -1723,7 +1726,7 @@ and they stick with it for ninety days.
 <section class="section" id="pricing">
   <div class="sec-head" data-r>
     <span class="eyebrow accent line">06 · Pricing</span>
-    <h2>Simple pricing. <span class="quiet">Built to be fair.</span></h2>
+    <h2>Start free. <span class="quiet">Go further with Pro.</span></h2>
     <p>Start free, upgrade when it earns its keep. Annual-first, cancel anytime — and a founding rate that disappears once the first 100 seats are gone.</p>
   </div>
 
