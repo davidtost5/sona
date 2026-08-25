@@ -19,14 +19,14 @@
     --bg:#fff; --bg-soft:#f7f7f4; --surface:#fff;
     --border:rgba(20,20,28,0.08); --border-strong:rgba(20,20,28,0.16);
     --text:#15151a; --text-mid:#5a5a62; --text-dim:#6f6f78;
-    --accent:#4f46e5; --accent-2:#6b63f5; --accent-soft:rgba(79,70,229,0.08);
+    --accent:#28775c; --accent-2:#1d5c47; --accent-soft:rgba(40,119,92,0.09);
     --shadow-sm:0 1px 2px rgba(20,20,30,.04);
   }
   html[data-theme="dark"] {
-    --bg:#0c0c0f; --bg-soft:#131318; --surface:#16161b;
-    --border:rgba(255,255,255,.09); --border-strong:rgba(255,255,255,.16);
+    --bg:#0a0a0b; --bg-soft:#121213; --surface:#151517;
+    --border:rgba(255,255,255,.07); --border-strong:rgba(255,255,255,.13);
     --text:#f4f4f6; --text-mid:#a0a0aa; --text-dim:#8a8a94;
-    --accent:#8b84ff; --accent-soft:rgba(139,132,255,.14);
+    --accent:#5fb896; --accent-soft:rgba(95,184,150,.13);
     --shadow-sm:0 1px 2px rgba(0,0,0,.4);
   }
   body { font-family:'Geist',-apple-system,sans-serif; background:var(--bg); color:var(--text); -webkit-font-smoothing:antialiased; line-height:1.5; overflow:hidden; height:100vh; }
@@ -91,7 +91,7 @@
   @media (max-width: 720px)  { .lib-grid { columns: 1; } }
   .lib-card {
     break-inside: avoid; margin: 0 0 12px; background: var(--bg-soft);
-    border: 1px solid var(--border); border-radius: 12px; padding: 15px;
+    border: 1px solid var(--border); border-radius: 15px; padding: 17px;
     display: flex; flex-direction: column; gap: 9px; cursor: pointer;
     transition: border-color .15s, transform .15s;
   }
@@ -182,6 +182,12 @@
   /* Groups stack on desktop; on mobile they flatten into one scroller so the
      sidebar doesn't become five separate rows each showing one item. */
   .nav-groups { display: block; }
+
+  /* Recent drafts, listed in the nav the way Eden lists chats */
+  .recent-item { font-size:12.5px; color:var(--text-mid); padding:6px 10px; border-radius:7px; cursor:pointer;
+                 background:none; border:0; font-family:inherit; text-align:left; width:100%;
+                 white-space:nowrap; overflow:hidden; text-overflow:ellipsis; display:block; }
+  .recent-item:hover { background:var(--surface); color:var(--text); }
   .nav-group { margin-top:14px; }
   .nav-group:first-of-type { margin-top:0; }
   .section-label { font-family:'Geist Mono',monospace; font-size:9.5px; color:var(--text-dim); letter-spacing:.6px; text-transform:uppercase; padding:0 10px; margin-bottom:6px; }
@@ -216,14 +222,14 @@
   .empty h3 { color:var(--text); font-size:18px; font-weight:600; letter-spacing:-.3px; margin-bottom:6px; }
   .empty p { font-size:14px; max-width:380px; line-height:1.55; margin-bottom:18px; }
 
-  .btn { display:inline-flex; align-items:center; gap:8px; padding:11px 20px; font-family:inherit; font-size:14px; font-weight:500; border:0; border-radius:999px; cursor:pointer; color:#fff; background:linear-gradient(180deg,#6b63f5 0%, #3d36c2 100%); box-shadow:inset 0 1px 0 rgba(255,255,255,.22), inset 0 -1px 0 rgba(0,0,0,.18), 0 1px 2px rgba(40,30,140,.18); transition:filter .2s, transform .2s; text-decoration:none; }
+  .btn { display:inline-flex; align-items:center; gap:8px; padding:11px 20px; font-family:inherit; font-size:14px; font-weight:500; border:0; border-radius:999px; cursor:pointer; color:#fff; background:linear-gradient(180deg,#3f9b78 0%, #28775c 100%); box-shadow:inset 0 1px 0 rgba(255,255,255,.22), inset 0 -1px 0 rgba(0,0,0,.18), 0 1px 2px rgba(40,30,140,.18); transition:filter .2s, transform .2s; text-decoration:none; }
   .btn:hover { filter:brightness(1.05); transform:translateY(-1px); }
   .btn-ghost { background:transparent; color:var(--text); border:1px solid var(--border-strong); box-shadow:none; padding:10px 18px; }
   .btn-ghost:hover { background:var(--bg-soft); transform:none; filter:none; }
 
   /* DISCOVER */
   .disc-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(280px,1fr)); gap:12px; }
-  .disc-card { background:var(--bg-soft); border:1px solid var(--border); border-radius:12px; padding:14px; transition:border-color .2s, transform .2s; }
+  .disc-card { background:var(--bg-soft); border:1px solid var(--border); border-radius:15px; padding:17px; transition:border-color .2s, transform .2s; }
   .disc-card:hover { border-color:var(--border-strong); transform:translateY(-1px); }
   .disc-head { display:flex; align-items:center; gap:8px; margin-bottom:10px; }
   .disc-head .disc-views { margin-left:auto; flex-shrink:0; }
@@ -476,7 +482,7 @@
   .switch input:checked + i::after { transform:translateX(16px); }
 
   /* ─── FOUNDING UPSELL (in-app sidebar — sleeker than Eden's countdown card) ─── */
-  .upsell { position:relative; border-radius:14px; padding:1px; background:linear-gradient(160deg,var(--accent),var(--accent-2) 60%,transparent 100%); margin:14px 0 4px; box-shadow:0 8px 24px rgba(79,70,229,.15); }
+  .upsell { position:relative; border-radius:14px; padding:1px; background:linear-gradient(160deg,var(--accent),var(--accent-2) 60%,transparent 100%); margin:14px 0 4px; box-shadow:0 8px 24px rgba(40,119,92,.15); }
   .upsell-inner { background:var(--bg-soft); border-radius:13px; padding:14px; }
   .upsell-x { position:absolute; top:8px; right:8px; width:18px; height:18px; border:0; background:transparent; cursor:pointer; color:var(--text-dim); font-size:14px; line-height:1; display:flex; align-items:center; justify-content:center; padding:0; z-index:2; }
   .upsell-x:hover { color:var(--text); }
@@ -489,7 +495,7 @@
   .upsell-seats-row .num b { color:var(--accent); }
   .upsell-bar { height:4px; background:var(--border); border-radius:999px; overflow:hidden; margin-bottom:11px; }
   .upsell-bar i { display:block; height:100%; background:linear-gradient(90deg,var(--accent),var(--accent-2)); border-radius:999px; transition:width .9s cubic-bezier(.16,1,.3,1); }
-  .upsell-btn { display:flex; align-items:center; justify-content:center; gap:6px; width:100%; padding:9px 12px; font-family:inherit; font-size:12px; font-weight:500; color:#fff; background:linear-gradient(180deg,#6b63f5 0%,#3d36c2 100%); border:0; border-radius:8px; cursor:pointer; box-shadow:inset 0 1px 0 rgba(255,255,255,.22); transition:filter .2s, transform .15s; }
+  .upsell-btn { display:flex; align-items:center; justify-content:center; gap:6px; width:100%; padding:9px 12px; font-family:inherit; font-size:12px; font-weight:500; color:#fff; background:linear-gradient(180deg,#3f9b78 0%,#28775c 100%); border:0; border-radius:8px; cursor:pointer; box-shadow:inset 0 1px 0 rgba(255,255,255,.22); transition:filter .2s, transform .15s; }
   .upsell-btn svg { width:14px; height:14px; flex-shrink:0; }
   .upsell-btn:hover { filter:brightness(1.07); transform:translateY(-1px); }
   .upsell-btn:disabled { opacity:.6; cursor:not-allowed; }
@@ -630,6 +636,9 @@
         Playbook
       </button>
     </nav>
+    <div class="section-label nav-group" id="recent-label" hidden>Recent</div>
+    <nav class="nav" id="recent-drafts" hidden></nav>
+
     <div class="section-label nav-group">Yours</div>
     <nav class="nav">
       <button class="nav-item" data-view="library">
@@ -1674,6 +1683,7 @@
     renderCanvas();
     loadPatterns(); // async — renders itself when the aggregate lands
     renderLibrary();
+    renderRecentDrafts();
     syncNavCounts();
     maybeAskNiche();
   }
@@ -1730,6 +1740,7 @@
     document.getElementById('drafts-count').textContent = drafts.length;
   }
   function renderDrafts() {
+    renderRecentDrafts();
     document.getElementById('drafts-count').textContent = drafts.length;
     const list = document.getElementById('drafts-list');
     if (!list) return;
@@ -1902,6 +1913,23 @@
   // ─── Playbook read view ───
   // Renders whatever the editor has saved. Same source of truth as the form, so
   // the two can't disagree.
+
+  // The three most recently touched drafts, inline. Returning to yesterday's
+  // work shouldn't need a view switch and a scan.
+  function renderRecentDrafts() {
+    const host = document.getElementById('recent-drafts');
+    const label = document.getElementById('recent-label');
+    if (!host || !label) return;
+    const recent = drafts.slice().sort((a, b) => b.updatedAt - a.updatedAt).slice(0, 3);
+    if (!recent.length) { host.setAttribute('hidden', ''); label.setAttribute('hidden', ''); return; }
+    host.removeAttribute('hidden'); label.removeAttribute('hidden');
+    host.innerHTML = recent.map(d =>
+      `<button type="button" class="recent-item" data-draft-id="${escapeHtml(d.id)}">${escapeHtml(d.title || 'Untitled')}</button>`
+    ).join('');
+    host.querySelectorAll('[data-draft-id]').forEach(b =>
+      b.addEventListener('click', () => { loadDraft(b.dataset.draftId); switchView('studio'); }));
+  }
+
   function renderPlaybookCards() {
     const host = document.getElementById('pb-cards');
     if (!host) return;
