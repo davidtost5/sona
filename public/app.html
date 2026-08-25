@@ -109,6 +109,33 @@
 
   .upsell-note { font-size: 11.5px; color: var(--text-mid); line-height: 1.45; margin: 8px 0 12px; }
 
+
+  /* Playbook */
+  .pb-head { display:flex; align-items:flex-start; justify-content:space-between; gap:16px; margin-bottom:18px; flex-wrap:wrap; }
+  .pb-title { font-size:22px; font-weight:600; letter-spacing:-.5px; }
+  .pb-kicker { font-family:'Geist Mono',monospace; font-size:10.5px; letter-spacing:.9px; text-transform:uppercase; color:var(--text-dim); margin-top:5px; }
+  .pb-head-right { display:flex; align-items:center; gap:9px; }
+  .pb-never {
+    font-family:'Geist Mono',monospace; font-size:10px; letter-spacing:.8px; text-transform:uppercase;
+    color:var(--accent); background:var(--accent-soft); border:1px solid var(--accent-soft);
+    padding:5px 11px; border-radius:100px; display:inline-flex; align-items:center; gap:6px;
+  }
+  .pb-never::before { content:''; width:6px; height:6px; border-radius:50%; background:var(--accent); }
+  .pb-cards { display:flex; flex-direction:column; gap:12px; }
+  .pb-card { background:var(--bg-soft); border:1px solid var(--border); border-radius:14px; padding:18px 20px; }
+  .pb-card-head { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:12px; }
+  .pb-card-name { display:flex; align-items:center; gap:9px; font-size:15px; font-weight:600; color:var(--text); }
+  .pb-dot { width:7px; height:7px; border-radius:50%; background:var(--accent); flex-shrink:0; }
+  .pb-dot.warn { background:#d9a441; }
+  .pb-count { font-family:'Geist Mono',monospace; font-size:10px; color:var(--text-dim); border:1px solid var(--border); border-radius:100px; padding:3px 10px; white-space:nowrap; }
+  .pb-lines { display:flex; flex-direction:column; gap:5px; }
+  .pb-line { font-size:14px; line-height:1.55; color:var(--text-mid); }
+  .pb-line:first-child { color:var(--text); font-weight:500; }
+  .pb-inline { font-size:14px; line-height:1.6; color:var(--text-mid); }
+  .pb-empty-line { font-size:13.5px; color:var(--text-dim); font-style:italic; }
+  /* .work-grid sets display:grid, which beats the UA rule for [hidden]. */
+  #pb-editor[hidden] { display:none; }
+
   /* ─── App shell ─── */
   .shell { display:grid; grid-template-columns:260px 1fr; height:100vh; }
   .side { background:var(--bg-soft); border-right:1px solid var(--border); padding:18px 14px; display:flex; flex-direction:column; gap:18px; overflow-y:auto; }
@@ -741,7 +768,22 @@
 
       <!-- STYLE GUIDE (formerly Voice) -->
       <div class="view" data-view="voice">
-        <div class="work-grid">
+        <div class="pb-head">
+          <div>
+            <h2 class="pb-title">Your playbook</h2>
+            <p class="pb-kicker">Yours · pinned beside every draft</p>
+          </div>
+          <div class="pb-head-right">
+            <span class="pb-never">Never AI</span>
+            <button type="button" class="btn btn-ghost pb-edit" id="pb-edit-btn" onclick="togglePlaybookEdit()">Edit</button>
+          </div>
+        </div>
+
+        <!-- Read view: the playbook at a glance. The editor below is only shown
+             on demand — staring at four empty textareas was the old default. -->
+        <div class="pb-cards" id="pb-cards"></div>
+
+        <div class="work-grid" id="pb-editor" hidden>
           <section class="panel">
             <div class="panel-head">
               <div>
@@ -1832,6 +1874,53 @@
       styleGuide = { ...styleGuide, ...readLocalStyleGuide() };
     }
   }
+
+  // ─── Playbook read view ───
+  // Renders whatever the editor has saved. Same source of truth as the form, so
+  // the two can't disagree.
+  function renderPlaybookCards() {
+    const host = document.getElementById('pb-cards');
+    if (!host) return;
+    const lines = v => (v || '').split('\n').map(x => x.trim()).filter(Boolean);
+    const csv   = v => (v || '').split(',').map(x => x.trim()).filter(Boolean);
+
+    const hooks = lines(styleGuide.hookPatterns);
+    const rules = lines(styleGuide.voiceRules);
+    const sigs  = lines(styleGuide.signatureLines);
+    const avoid = csv(styleGuide.bannedPhrases);
+
+    const card = (name, count, body, warn) => `
+      <div class="pb-card">
+        <div class="pb-card-head">
+          <div class="pb-card-name"><span class="pb-dot${warn ? ' warn' : ''}"></span>${escapeHtml(name)}</div>
+          <span class="pb-count">${escapeHtml(count)}</span>
+        </div>
+        ${body}
+      </div>`;
+    const asLines = (arr, empty) => arr.length
+      ? `<div class="pb-lines">${arr.map(l => `<div class="pb-line">${escapeHtml(l)}</div>`).join('')}</div>`
+      : `<p class="pb-empty-line">${escapeHtml(empty)}</p>`;
+    const asInline = (arr, empty) => arr.length
+      ? `<p class="pb-inline">${arr.map(escapeHtml).join(' · ')}</p>`
+      : `<p class="pb-empty-line">${escapeHtml(empty)}</p>`;
+
+    host.innerHTML = [
+      card('Winning hooks', `${hooks.length} saved`, asLines(hooks, 'No hooks yet — add the openers that work for you.')),
+      card('Voice rules', `${rules.length} rules`, asLines(rules, 'No rules yet — how should a post of yours sound?')),
+      card('Signature lines', `${sigs.length} saved`, asInline(sigs, 'No signature lines yet — your go-to opener or sign-off.')),
+      card('Never say', avoid.length ? 'avoid' : 'none', asInline(avoid, 'Nothing on the avoid list yet.'), true),
+    ].join('');
+  }
+
+  window.togglePlaybookEdit = function () {
+    const ed = document.getElementById('pb-editor');
+    const btn = document.getElementById('pb-edit-btn');
+    if (!ed) return;
+    const opening = ed.hasAttribute('hidden');
+    if (opening) { ed.removeAttribute('hidden'); btn.textContent = 'Done'; }
+    else { ed.setAttribute('hidden', ''); btn.textContent = 'Edit'; renderPlaybookCards(); }
+  };
+
   function renderStyleGuide() {
     const set = (id, v) => { const el = document.getElementById(id); if (el) el.value = v || ''; };
     set('style-hooks', styleGuide.hookPatterns);
@@ -1845,6 +1934,7 @@
     setText2('stat-rules', lines(styleGuide.voiceRules));
     setText2('stat-signature', lines(styleGuide.signatureLines));
     setText2('stat-banned', csv(styleGuide.bannedPhrases));
+    renderPlaybookCards();
     const preview = document.getElementById('style-preview');
     if (preview) {
       const firstHook = (styleGuide.hookPatterns || '').split('\n').find(x => x.trim());
