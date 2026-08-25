@@ -275,6 +275,44 @@
   .hero { position: relative; padding: 170px 36px 0; text-align: center; }
   .hero-inner { max-width: 880px; margin: 0 auto; position: relative; z-index: 1; }
 
+
+  /* Hero product shot — mirrors the real /app Discover view */
+  .shot { display:grid; grid-template-columns:168px 1fr; background:#0a0a0b; min-height:340px; text-align:left; }
+  .shot-side { border-right:1px solid rgba(255,255,255,.07); padding:14px 10px; }
+  .shot-brand { display:flex; align-items:center; gap:7px; font-size:13px; font-weight:600; color:#f4f4f6; padding:0 6px 12px; }
+  .shot-mark { width:20px; height:20px; border-radius:6px; background:#151517; border:1px solid rgba(255,255,255,.13); display:flex; align-items:center; justify-content:center; }
+  .shot-mark svg { width:12px; height:12px; }
+  .shot-search { font-size:11px; color:#6f6f78; background:#121213; border:1px solid rgba(255,255,255,.07); border-radius:7px; padding:6px 9px; margin-bottom:12px; }
+  .shot-group { font-family:'Geist Mono',monospace; font-size:8.5px; letter-spacing:.7px; text-transform:uppercase; color:#6f6f78; padding:10px 6px 5px; }
+  .shot-nav { display:flex; align-items:center; font-size:11.5px; color:#a0a0aa; padding:5px 8px; border-radius:6px; }
+  .shot-nav b { margin-left:auto; font-family:'Geist Mono',monospace; font-size:9px; font-weight:400; color:#6f6f78; }
+  .shot-nav.on { background:#151517; color:#f4f4f6; }
+  .shot-main { padding:14px 16px; min-width:0; }
+  .shot-head { display:flex; align-items:baseline; gap:9px; margin-bottom:11px; flex-wrap:wrap; }
+  .shot-head b { font-size:15px; color:#f4f4f6; letter-spacing:-.3px; }
+  .shot-head span { font-size:8.5px; letter-spacing:.7px; text-transform:uppercase; color:#6f6f78; }
+  .shot-chips { display:flex; gap:5px; margin-bottom:11px; }
+  .shot-chips span { font-size:10.5px; color:#a0a0aa; border:1px solid rgba(255,255,255,.09); border-radius:100px; padding:3px 10px; }
+  .shot-chips .on { background:rgba(95,184,150,.13); border-color:rgba(95,184,150,.4); color:#5fb896; }
+  .shot-cards { display:grid; grid-template-columns:repeat(3,1fr); gap:9px; }
+  .shot-card { background:#121213; border:1px solid rgba(255,255,255,.07); border-radius:11px; padding:11px; }
+  .sc-top { display:flex; align-items:center; gap:7px; margin-bottom:8px; }
+  .sc-av { width:19px; height:19px; border-radius:50%; background:linear-gradient(135deg,#2a2a31,#1a1a1f); flex-shrink:0; }
+  .sc-name { font-size:11px; font-weight:600; color:#f4f4f6; line-height:1.2; }
+  .sc-handle { font-size:8.5px; color:#6f6f78; }
+  .sc-views { margin-left:auto; font-size:8.5px; color:#6f6f78; white-space:nowrap; }
+  .sc-text { font-size:11px; line-height:1.5; color:#c9c9d1; margin-bottom:10px; }
+  .sc-foot { display:flex; align-items:center; gap:5px; }
+  .sc-tag { font-size:8.5px; color:#5fb896; background:rgba(95,184,150,.13); border-radius:100px; padding:2px 7px; }
+  .sc-act { margin-left:auto; font-size:9.5px; color:#a0a0aa; border:1px solid rgba(255,255,255,.09); border-radius:6px; padding:2px 7px; }
+  .sc-act + .sc-act { margin-left:0; }
+  @media (max-width: 900px) {
+    .shot { grid-template-columns:1fr; }
+    .shot-side { display:none; }
+    .shot-cards { grid-template-columns:1fr; }
+    .shot-cards .shot-card:nth-child(n+3) { display:none; }
+  }
+
   /* (Trust microbar removed) */
 
   /* ── Hero: left-aligned, wider, capability list ── */
@@ -369,38 +407,12 @@
   .panel-bar i { width: 10px; height: 10px; border-radius: 50%; background: var(--border-strong); display: block; }
   .panel-bar .u { margin-left: 12px; font-size: 11px; color: var(--text-dim); font-family: 'Geist Mono', monospace; }
   .panel-body { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 1px; background: var(--border); }
-  .panel-col { background: var(--surface); padding: 26px; text-align: left; }
-  .pc-label { font-family: 'Geist Mono', monospace; font-size: 10.5px; letter-spacing: 1px; text-transform: uppercase; color: var(--text-dim); margin-bottom: 18px; }
-  .draft-line { height: 9px; border-radius: 5px; background: var(--bg-soft); margin-bottom: 9px; }
-  .draft-line.a { background: linear-gradient(90deg, var(--accent-soft), var(--bg-soft)); }
-  .badge-row { display: flex; gap: 10px; margin-top: 22px; flex-wrap: wrap; }
   .conf { display: flex; flex-direction: column; gap: 4px; padding: 12px 14px; background: var(--bg-soft); border: 1px solid var(--border); border-radius: 12px; flex: 1; }
   .conf .k { font-family: 'Geist Mono', monospace; font-size: 10px; letter-spacing: .5px; text-transform: uppercase; color: var(--text-dim); }
   .conf .v { font-size: 22px; font-weight: 600; letter-spacing: -.5px; }
   .conf .v.acc { color: var(--accent); }
-  .spark { display: flex; align-items: flex-end; gap: 5px; height: 64px; margin-top: 6px; }
-  .spark i { flex: 1; background: var(--accent-soft); border-radius: 4px 4px 0 0; display: block; transform: scaleY(0); transform-origin: bottom; transition: transform .9s cubic-bezier(.16,1,.3,1); }
-  .spark i:nth-child(odd) { background: var(--accent); opacity: .85; }
-  .panel.live .spark i { transform: scaleY(1); }
-  .panel.live .spark i:nth-child(1) { transition-delay: .05s; }
-  .panel.live .spark i:nth-child(2) { transition-delay: .12s; }
-  .panel.live .spark i:nth-child(3) { transition-delay: .19s; }
-  .panel.live .spark i:nth-child(4) { transition-delay: .26s; }
-  .panel.live .spark i:nth-child(5) { transition-delay: .33s; }
-  .panel.live .spark i:nth-child(6) { transition-delay: .40s; }
-  .panel.live .spark i:nth-child(7) { transition-delay: .47s; }
   /* Draft lines — animate width in on view */
-  .draft-line { width: 0; transition: width 1s cubic-bezier(.16,1,.3,1); }
-  .panel.live .draft-line { width: var(--w, 80%); }
-  .panel.live .draft-line:nth-child(2) { transition-delay: .15s; }
-  .panel.live .draft-line:nth-child(3) { transition-delay: .30s; }
-  .panel.live .draft-line:nth-child(4) { transition-delay: .45s; }
-  .panel.live .draft-line:nth-child(5) { transition-delay: .60s; }
   .conf .v { font-variant-numeric: tabular-nums; }
-  .cv-row { display: flex; align-items: center; gap: 11px; padding: 12px 14px; background: var(--bg-soft); border: 1px solid var(--border); border-radius: 11px; margin-bottom: 10px; }
-  .cv-av { width: 28px; height: 28px; border-radius: 50%; background: var(--accent-soft); border: 1px solid var(--border); flex-shrink: 0; }
-  .cv-line { height: 8px; border-radius: 4px; background: var(--border); }
-  .cv-tag { font-family: 'Geist Mono', monospace; font-size: 11px; font-weight: 500; color: var(--accent); background: var(--accent-soft); padding: 3px 9px; border-radius: 100px; margin-left: auto; white-space: nowrap; transition: transform .25s cubic-bezier(.16,1,.3,1); }
 
   /* ─── PANEL MICRO-INTERACTIONS ─── */
   /* 1. Cursor-follow soft spotlight on the panel */
@@ -413,27 +425,8 @@
   .panel:hover::before { opacity: 1; }
 
   /* 2. Spark bars — dim siblings, highlight target with lift + glow */
-  .panel.live .spark i { cursor: pointer; }
-  .panel.live .spark:hover i { opacity: .35; transition: opacity .2s, transform .2s; }
-  .panel.live .spark i:hover {
-    opacity: 1;
-    transform: scaleY(1.1);
-    filter: brightness(1.25) drop-shadow(0 4px 12px rgba(40,119,92,0.45));
-    transition: transform .2s cubic-bezier(.16,1,.3,1), opacity .15s, filter .2s;
-    transition-delay: 0s !important;
-    z-index: 1;
-  }
 
   /* 3. Outlier rows — accent slide + tag bump */
-  .cv-row { cursor: pointer; transition: border-color .2s, background-color .2s, transform .25s cubic-bezier(.16,1,.3,1); }
-  .cv-row:hover {
-    border-color: var(--accent);
-    background-color: var(--accent-soft);
-    transform: translateX(3px);
-  }
-  .cv-row:hover .cv-tag { transform: scale(1.08); }
-  .cv-row:hover .cv-line { background: var(--accent); opacity: .35; }
-  .cv-line { transition: background .2s, opacity .2s; }
 
   /* 4. Confidence cards — lift with accent border */
   .conf { cursor: pointer; transition: border-color .2s, transform .25s cubic-bezier(.16,1,.3,1), box-shadow .25s; }
@@ -444,10 +437,6 @@
   }
 
   /* 5. Draft lines — subtle indigo wash on hover (suggests editability) */
-  .draft-line { cursor: text; transition: width 1s cubic-bezier(.16,1,.3,1), background .2s; }
-  .panel.live .draft-line:hover {
-    background: linear-gradient(90deg, var(--accent-soft) 0%, rgba(40,119,92,0.04) 100%);
-  }
 
   /* ─── SECTIONS ─── */
   .section { max-width: 1140px; margin: 0 auto; padding: 160px 36px 0; }
@@ -486,9 +475,6 @@
   .voice-pct { font-family: 'Geist Mono', monospace; font-size: 11.5px; color: var(--text); min-width: 36px; text-align: right; }
 
   /* Mini spark for outlier */
-  .mini-spark { display: flex; align-items: flex-end; gap: 5px; height: 78px; padding: 4px 0; }
-  .mini-spark i { flex: 1; background: var(--accent-soft); border-radius: 3px 3px 0 0; display: block; }
-  .mini-spark i.peak { background: var(--accent); }
   .outlier-tag { display: inline-flex; align-items: center; gap: 6px; font-family: 'Geist Mono', monospace; font-size: 10.5px; font-weight: 500; color: var(--accent); background: var(--accent-soft); padding: 4px 10px; border-radius: 100px; margin-top: 12px; }
   .outlier-tag::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
 
@@ -1013,14 +999,8 @@
     .mock-wrap { margin-top: 56px; padding: 0 6px; }
     .panel-bar { padding: 11px 14px; }
     .panel-bar .u { font-size: 10px; }
-    .panel-col { padding: 18px; }
-    .pc-label { font-size: 9.5px; letter-spacing: .8px; margin-bottom: 14px; }
-    .badge-row { gap: 8px; margin-top: 18px; }
     .conf { padding: 10px 12px; }
     .conf .v { font-size: 19px; }
-    .spark { height: 56px; }
-    .cv-tag { font-size: 9.5px; padding: 2px 7px; }
-    .cv-row { padding: 10px 12px; }
 
     /* Section typography */
     .section { padding: 80px 18px 0; }
@@ -1130,9 +1110,7 @@
   }
 
   .lg-wave { stroke: #28775c; }
-  .lg-spark { fill: #28775c; }
   html[data-theme="dark"] .lg-wave { stroke: #5fb896; }
-  html[data-theme="dark"] .lg-spark { fill: #5fb896; }
 </style>
 </head>
 <body>
@@ -1197,25 +1175,48 @@
   </div>
 
   <div class="mock-wrap" data-r>
+    <!-- The real Discover view, not an abstract mock: same sidebar groups, same
+         card anatomy, same outlier badges and Decode/Save actions the app ships. -->
     <div class="panel mask-reveal" data-r id="hero-panel">
       <div class="panel-bar"><i></i><i></i><i></i><span class="u mono">buildwithsona.com/app</span></div>
-      <div class="panel-body">
-        <div class="panel-col">
-          <div class="pc-label">Draft · in your voice</div>
-          <div class="draft-line a" style="--w:96%"></div>
-          <div class="draft-line" style="--w:88%"></div>
-          <div class="draft-line" style="--w:92%"></div>
-          <div class="draft-line" style="--w:64%"></div>
-          <div class="badge-row">
-            <div class="conf"><span class="k">Words</span><span class="v acc" data-count="248">0</span></div>
-            <div class="conf"><span class="k">Saved ideas</span><span class="v" data-count="6">0</span></div>
+      <div class="shot">
+        <aside class="shot-side">
+          <div class="shot-brand">
+            <span class="shot-mark"><svg viewBox="0 0 24 24" fill="none"><path d="M5 15 Q8 9 12 12 Q16 15 19 9" stroke="#5fb896" stroke-width="2.6" stroke-linecap="round" fill="none"/><path d="M19 3.6 C19.15 5.1 20.3 6.25 21.8 6.4 C20.3 6.55 19.15 7.7 19 9.2 C18.85 7.7 17.7 6.55 16.2 6.4 C17.7 6.25 18.85 5.1 19 3.6 Z" fill="#5fb896"/></svg></span>
+            Sona
           </div>
-        </div>
-        <div class="panel-col">
-          <div class="pc-label">Top outliers · last 30d</div>
-          <div class="spark"><i style="height:40%"></i><i style="height:62%"></i><i style="height:50%"></i><i style="height:84%"></i><i style="height:70%"></i><i style="height:100%"></i><i style="height:78%"></i></div>
-          <div class="cv-row" style="margin-top:18px"><span class="cv-av"></span><div style="flex:1"><div class="cv-line" style="width:80%"></div></div><span class="cv-tag" data-count="12" data-suffix="× outlier">0× outlier</span></div>
-          <div class="cv-row"><span class="cv-av"></span><div style="flex:1"><div class="cv-line" style="width:65%"></div></div><span class="cv-tag" data-count="7" data-suffix="× outlier">0× outlier</span></div>
+          <div class="shot-search">Find ideas</div>
+          <div class="shot-group">Find</div>
+          <div class="shot-nav on">Discover <b>30</b></div>
+          <div class="shot-nav">Digest</div>
+          <div class="shot-nav">Lists <b>2</b></div>
+          <div class="shot-group">Understand</div>
+          <div class="shot-nav">Patterns</div>
+          <div class="shot-nav">Hooks <b>36</b></div>
+          <div class="shot-group">Make</div>
+          <div class="shot-nav">Drafts</div>
+          <div class="shot-nav">Playbook</div>
+        </aside>
+        <div class="shot-main">
+          <div class="shot-head"><b>Discover</b><span class="mono">founders · last 7 days · sorted by outlier</span></div>
+          <div class="shot-chips"><span class="on">All</span><span>Founders</span><span>Writers</span><span>Creators</span></div>
+          <div class="shot-cards">
+            <div class="shot-card">
+              <div class="sc-top"><span class="sc-av"></span><div><div class="sc-name">Alex Hormozi</div><div class="sc-handle mono">@AlexHormozi · X</div></div><span class="sc-views mono">1.2M views</span></div>
+              <p class="sc-text">Most founders post too much — not too little. The ones who break out pick one contrarian take and stick to it.</p>
+              <div class="sc-foot"><span class="sc-tag mono">12× outlier</span><span class="sc-act">Decode</span><span class="sc-act">Save</span></div>
+            </div>
+            <div class="shot-card">
+              <div class="sc-top"><span class="sc-av"></span><div><div class="sc-name">Dan Koe</div><div class="sc-handle mono">@thedankoe · X</div></div><span class="sc-views mono">2.4M views</span></div>
+              <p class="sc-text">Three questions I ask before writing anything. They've saved me hundreds of bad drafts.</p>
+              <div class="sc-foot"><span class="sc-tag mono">18× outlier</span><span class="sc-act">Decode</span><span class="sc-act">Save</span></div>
+            </div>
+            <div class="shot-card">
+              <div class="sc-top"><span class="sc-av"></span><div><div class="sc-name">Naval</div><div class="sc-handle mono">@naval · X</div></div><span class="sc-views mono">510K views</span></div>
+              <p class="sc-text">Stop optimizing your morning routine. Start optimizing what you do with the next 6 hours.</p>
+              <div class="sc-foot"><span class="sc-tag mono">6× outlier</span><span class="sc-act">Decode</span><span class="sc-act">Save</span></div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
