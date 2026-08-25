@@ -1796,7 +1796,7 @@ and they stick with it for ninety days.
     <h2>Anything else? <span class="quiet">Let's clear it up.</span></h2>
   </div>
   <div class="faq" data-r>
-    <details class="q"><summary>Will my posts end up sounding like AI?<span class="qi">+</span></summary><p class="ans">Never — because Sona doesn't write for you. You write. Sona surrounds you with the right raw material: proven outliers to remix, hook templates to drop in, and your own style notes pinned beside the editor. The output stays unmistakably you. (Optional AI-assist arrives later as a separate paid add-on — not part of the founding offer.)</p></details>
+    <details class="q"><summary>Will my posts end up sounding like AI?<span class="qi">+</span></summary><p class="ans">Never — because Sona doesn't write for you. You write. Sona surrounds you with the right raw material: proven outliers to remix, hook templates to drop in, and your own style notes pinned beside the editor. The output stays unmistakably you. (Optional AI-assist arrives later as a separate paid add-on.)</p></details>
     <details class="q"><summary>Which platforms does it support?<span class="qi">+</span></summary><p class="ans">X (Twitter), LinkedIn, Threads, Instagram, Substack, and YouTube descriptions. We auto-reformat per platform so you don't have to.</p></details>
     <details class="q"><summary>Where do the "outlier" posts come from?<span class="qi">+</span></summary><p class="ans">We track over a million high-performing posts across the supported platforms, refreshed daily. Outliers are detected by comparing performance to a creator's baseline — not just raw view counts.</p></details>
     <details class="q"><summary>Is there a free trial?<span class="qi">+</span></summary><p class="ans">The Starter plan is free forever, with no card required — that is the way to try Sona. We do not run a time-limited trial on the paid plans today.</p></details>
@@ -1966,60 +1966,8 @@ and they stick with it for ninety days.
   // ESC also closes
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && mm.classList.contains('open')) closeMenu(); });
 
-  // Founding-member Stripe checkout
-  window.claimFoundingSeat = async function(btn) {
-    btn.disabled = true; const orig = btn.innerHTML; btn.innerHTML = 'Opening checkout…';
-    try {
-      const r = await fetch('/api/checkout');
-      const j = await r.json();
-      if (j.ok && j.url) { location.href = j.url; return; }
-      btn.innerHTML = 'Payment opens soon — join waitlist?';
-      btn.onclick = () => SonaAuth.openSignup();
-      setTimeout(() => { btn.innerHTML = orig; btn.disabled = false; btn.onclick = () => claimFoundingSeat(btn); }, 4000);
-    } catch (e) {
-      btn.innerHTML = orig; btn.disabled = false;
-    }
-  };
 
-  // Founding $99 — count up from $0 when scrolled into view (Awwwards delight, single moment)
-  (function foundingPriceCount() {
-    const el = document.getElementById('founding-price-big');
-    if (!el) return;
-    const target = parseInt(el.dataset.count, 10);
-    const prefix = el.dataset.prefix || '';
-    el.textContent = prefix + '0';
-    const ease = (t) => 1 - Math.pow(1 - t, 3);
-    const po = new IntersectionObserver((entries) => entries.forEach(e => {
-      if (!e.isIntersecting) return;
-      const dur = 1200; const start = performance.now();
-      function frame(t) {
-        const p = Math.min(1, (t - start) / dur);
-        el.textContent = prefix + Math.round(target * ease(p));
-        if (p < 1) requestAnimationFrame(frame);
-      }
-      requestAnimationFrame(frame);
-      po.unobserve(el);
-    }), { threshold: 0.5 });
-    po.observe(el);
-  })();
 
-  // Seats bar — fetch the real count from Supabase (0 today, real once Stripe webhook is wired)
-  (function loadFoundingCount() {
-    const bar = document.getElementById('seats-bar');
-    const num = document.getElementById('seats-claimed');
-    if (!bar || !num) return;
-    fetch('/api/founding-count').then(r => r.json()).then(({ claimed, total }) => {
-      num.textContent = claimed;
-      // animate the bar in when visible
-      const so = new IntersectionObserver(es => es.forEach(e => {
-        if (e.isIntersecting) {
-          bar.style.width = `${Math.min(100, (claimed / total) * 100)}%`;
-          so.unobserve(e.target);
-        }
-      }), { threshold: 0.4 });
-      so.observe(bar);
-    }).catch(() => {});
-  })();
 
   // Section chip — tiny floating "you are here" pill, bottom-right
   (function sectionChip() {
