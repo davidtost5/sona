@@ -107,6 +107,8 @@
   .lib-empty strong { color: var(--text); }
   @media (prefers-reduced-motion: reduce) { .lib-card { transition: none !important; } }
 
+  .upsell-note { font-size: 11.5px; color: var(--text-mid); line-height: 1.45; margin: 8px 0 12px; }
+
   /* ─── App shell ─── */
   .shell { display:grid; grid-template-columns:260px 1fr; height:100vh; }
   .side { background:var(--bg-soft); border-right:1px solid var(--border); padding:18px 14px; display:flex; flex-direction:column; gap:18px; overflow-y:auto; }
@@ -602,17 +604,18 @@
 
     <div class="preview-note" id="preview-note"><b>Preview mode.</b> Supabase auth is not configured yet, so saved ideas stay on this device.</div>
 
-    <!-- Founding upsell — dismissible, premium, NOT a panic timer -->
+    <!-- Creator upsell — dismissible, states the value, no countdown.
+         The seat counter went with the Founding tier: Creator is not a limited
+         offer, so a progress bar toward 100 would be invented scarcity. -->
     <div class="upsell" id="upsell">
       <button class="upsell-x" onclick="dismissUpsell()" aria-label="Dismiss">×</button>
       <div class="upsell-inner">
-        <div class="upsell-eye">✦ Founding member</div>
-        <h4>Lock in <span class="acc">$99/yr for life</span>. Be one of the first 100.</h4>
-        <div class="upsell-seats-row"><span class="lbl">Founding seats</span><span class="num"><b id="up-claimed">0</b>/100</span></div>
-        <div class="upsell-bar"><i id="up-bar" style="width:0%"></i></div>
+        <div class="upsell-eye">✦ Creator</div>
+        <h4>Decode any post for <span class="acc">$19/mo</span>. Unlimited ideas and drafts.</h4>
+        <p class="upsell-note">Or $190/year — two months free. Cancel anytime.</p>
         <button class="upsell-btn" onclick="claimSeat(this)">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12 L19 12 M13 6 L19 12 L13 18"/></svg>
-          Claim my seat
+          Start creating
         </button>
       </div>
     </div>
@@ -3052,15 +3055,7 @@
     }
   });
 
-  // Load real founding-member count
-  fetch('/api/founding-count').then(r => r.json()).then(({ claimed, total }) => {
-    const n = document.getElementById('up-claimed');
-    const b = document.getElementById('up-bar');
-    if (n) n.textContent = claimed;
-    if (b) b.style.width = `${Math.min(100, (claimed / total) * 100)}%`;
-  }).catch(() => {});
-
-  // Founding upsell — dismiss + claim (Stripe Payment Link via /api/checkout)
+  // Creator upsell — dismiss + start checkout (payment link via /api/checkout)
   if (localStorage.getItem('sona-upsell-dismissed') === '1') {
     const el = document.getElementById('upsell');
     if (el) el.classList.add('hide');
