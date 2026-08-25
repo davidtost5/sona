@@ -32,8 +32,32 @@
   body { font-family:'Geist',-apple-system,sans-serif; background:var(--bg); color:var(--text); -webkit-font-smoothing:antialiased; line-height:1.5; overflow:hidden; height:100vh; }
 
   /* ─── Auth gate / loading state ─── */
-  .gate { position:fixed; inset:0; display:flex; align-items:center; justify-content:center; flex-direction:column; gap:14px; background:var(--bg); z-index:50; }
+  .gate { position:fixed; inset:0; display:flex; align-items:center; justify-content:center; flex-direction:column; gap:14px; background:var(--bg); z-index:50; overflow:hidden; }
   .gate.hide { display:none; }
+
+  /* Animated backdrop — same three layers as the sign-in page (signin-bg.js).
+     They live INSIDE .gate so `.hide` removes them with it; showApp() also calls
+     __sonaBg.stop() so the loop isn't still running behind the studio. */
+  .gate #bg { position:absolute; inset:0; width:100%; height:100%; z-index:0; pointer-events:none; }
+  .gate .grain {
+    position:absolute; inset:-120%; z-index:1; pointer-events:none; opacity:.045;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.82' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    animation:gateGrain 6s steps(6) infinite;
+  }
+  @keyframes gateGrain {
+    0%,100% { transform:translate(0,0) }
+    16%     { transform:translate(-6%,-4%) }
+    33%     { transform:translate(4%,-7%) }
+    50%     { transform:translate(-3%,6%) }
+    66%     { transform:translate(7%,3%) }
+    83%     { transform:translate(-5%,-2%) }
+  }
+  .gate .vignette {
+    position:absolute; inset:0; z-index:1; pointer-events:none;
+    background:radial-gradient(75% 65% at 50% 45%, transparent 45%, rgba(0,0,0,.45) 100%);
+  }
+  /* Lift the mark and message above the backdrop. */
+  .gate .lm, .gate p { position:relative; z-index:2; }
   .gate .lm { width:44px; height:44px; border-radius:11px; background:var(--surface); border:1px solid var(--border-strong); display:flex; align-items:center; justify-content:center; }
   .gate .lm svg { width:28px; height:28px; }
   .gate p { font-size:14px; color:var(--text-mid); }
@@ -46,7 +70,7 @@
   @keyframes waveFlow { 0% { stroke-dashoffset:30; opacity:.4; } 50% { stroke-dashoffset:0; opacity:1; } 100% { stroke-dashoffset:-30; opacity:.4; } }
   @keyframes sparkTwinkle { 0%,100% { opacity:.4; transform:scale(.7); } 50% { opacity:1; transform:scale(1); } }
   @media (prefers-reduced-motion: reduce) {
-    .gate .lm.logo-load, .gate .lg-wave, .gate .lg-spark { animation: none !important; }
+    .gate .lm.logo-load, .gate .lg-wave, .gate .lg-spark, .gate .grain { animation: none !important; }
   }
 
 
@@ -607,6 +631,9 @@
 
 <!-- Auth gate (shown until session is verified) -->
 <div class="gate" id="gate">
+  <canvas id="bg" aria-hidden="true"></canvas>
+  <div class="grain" aria-hidden="true"></div>
+  <div class="vignette" aria-hidden="true"></div>
   <div class="lm logo-load"><svg viewBox="0 0 24 24" fill="none"><path class="lg-wave" d="M5 15 Q8 9 12 12 Q16 15 19 9" stroke="#28775c" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path class="lg-spark" d="M19 3.6 C19.15 5.1 20.3 6.25 21.8 6.4 C20.3 6.55 19.15 7.7 19 9.2 C18.85 7.7 17.7 6.55 16.2 6.4 C17.7 6.25 18.85 5.1 19 3.6 Z" fill="#28775c"/></svg></div>
   <p id="gate-msg">One sec…</p>
 </div>
@@ -1704,6 +1731,9 @@
 
   async function showApp() {
     document.getElementById('gate').classList.add('hide');
+    // The gate is display:none from here on — keeping a rAF loop alive would
+    // burn a frame's worth of canvas work forever behind the studio.
+    if (window.__sonaBg) window.__sonaBg.stop();
     document.getElementById('shell').style.display = 'grid';
     document.getElementById('preview-note').classList.toggle('show', demoMode);
     document.getElementById('view-chip').textContent = demoMode ? 'Preview mode' : 'Refreshed just now';
@@ -3483,5 +3513,6 @@
     if (initialView) switchView(initialView);
   });
 </script>
+<script src="/signin-bg.js" defer></script>
 </body>
 </html>
