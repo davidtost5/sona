@@ -280,6 +280,10 @@
   /* ── Hero: left-aligned, wider, capability list ── */
   .hero { text-align: left; }
   .hero-inner { max-width: 1140px; }
+  .hero-triad {
+    font-size: clamp(19px, 2.4vw, 24px); font-weight: 500; color: var(--text);
+    letter-spacing: -.5px; line-height: 1.35; margin: 0 0 14px; max-width: 620px;
+  }
   .hero-lede {
     font-size: clamp(17px, 2vw, 20px); line-height: 1.55; color: var(--text-mid);
     max-width: 620px; margin: 0 0 30px; letter-spacing: -.2px;
@@ -1173,16 +1177,8 @@
 <header class="hero">
   <div class="hero-inner">
     <h1 data-r data-split>Stop guessing<br><span class="quiet">what to post.</span></h1>
-    <p class="hero-lede" data-r>Find what's working in your niche, understand why it works, and turn the underlying idea into content that's yours.</p>
-
-    <ul class="hero-caps" data-r>
-      <li><b>Browse posts that beat</b> their own creator's baseline</li>
-      <li><b>Save links and posts</b> from anywhere, find them later</li>
-      <li><b>Decode why a post worked</b> — hook, tension, payoff</li>
-      <li><b>See which mechanisms recur</b> across every decode</li>
-      <li><b>Fill in 50 proven hooks</b>, ready to make yours</li>
-      <li><b>Draft in your voice</b>, saved across every device</li>
-    </ul>
+    <p class="hero-triad" data-r>Find what's working. Understand why. Make it yours.</p>
+    <p class="hero-lede" data-r>Sona finds high-performing content in your niche and helps you turn the underlying ideas into original content in your voice.</p>
 
     <p class="hero-mcp" data-r>
       <span class="mcp-dot" aria-hidden="true"></span>
@@ -1191,7 +1187,7 @@
     </p>
 
     <div class="hero-cta" data-r>
-      <a href="#" class="btn btn-pill" onclick="event.preventDefault(); SonaAuth.openSignup();">Start free</a>
+      <a href="#" class="btn btn-pill" onclick="event.preventDefault(); SonaAuth.openSignup();">Start free <span class="btn-arrow">→</span></a>
       <a href="#how" class="quiet-link">See how it works <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12l7 7 7-7"/></svg></a>
     </div>
     <div class="hero-note" data-r>No credit card required.</div>
