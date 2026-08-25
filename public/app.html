@@ -1116,7 +1116,29 @@
           views: r.views || '',
           // no `decoded` → live decode path
         }));
-        SEED_IDEAS.splice(0, SEED_IDEAS.length, ...mapped);
+        // Lead with curated rows, then keep the built-in set behind them.
+        //
+        // Replacing the whole feed used to mean a thin `outliers` table emptied
+        // Discover: four curated rows wiped thirty, and because mapped rows carry
+        // no `decoded`, every Decode went to the live endpoint — so a first-time
+        // user saw fewer posts AND a decoder that could fail. The built-in posts
+        // are real, sourced, and ship with decodes, so they are a better floor
+        // than an empty grid. Curated rows still come first.
+        // Match on handle as well as text: the same creator curated with a
+        // slightly different post would otherwise appear twice, once curated
+        // and once built-in, which reads as a bug.
+        // Handles carry a platform suffix ("@greg · X" vs "@greg · in"), so strip
+        // everything past the separator before comparing, or the same creator on
+        // two platforms reads as two people.
+        const norm = v => String(v || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+        const who = v => norm(String(v || '').split('·')[0]);
+        const seenText = new Set(mapped.map(m => norm(m.text).slice(0, 60)));
+        const seenWho = new Set(mapped.map(m => who(m.handle) || norm(m.name)));
+        const keep = SEED_IDEAS.filter(s =>
+          !seenText.has(norm(s.text).slice(0, 60)) &&
+          !seenWho.has(who(s.handle) || norm(s.name))
+        );
+        SEED_IDEAS.splice(0, SEED_IDEAS.length, ...mapped, ...keep);
       }
     } catch (e) {
       console.warn('loadOutliers failed, using static seed', e);
