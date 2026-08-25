@@ -276,78 +276,50 @@
   .hero-inner { max-width: 880px; margin: 0 auto; position: relative; z-index: 1; }
 
 
-  /* Hero product shot — mirrors the real /app Discover view */
-  .shot { display:grid; grid-template-columns:168px 1fr; background:#0a0a0b; min-height:340px; text-align:left; }
-  .shot-side { border-right:1px solid rgba(255,255,255,.07); padding:14px 10px; }
-  .shot-brand { display:flex; align-items:center; gap:7px; font-size:13px; font-weight:600; color:#f4f4f6; padding:0 6px 12px; }
-  .shot-mark { width:20px; height:20px; border-radius:6px; background:#151517; border:1px solid rgba(255,255,255,.13); display:flex; align-items:center; justify-content:center; }
-  .shot-mark svg { width:12px; height:12px; }
-  .shot-search { font-size:11px; color:#6f6f78; background:#121213; border:1px solid rgba(255,255,255,.07); border-radius:7px; padding:6px 9px; margin-bottom:12px; }
-  .shot-group { font-family:'Geist Mono',monospace; font-size:8.5px; letter-spacing:.7px; text-transform:uppercase; color:#6f6f78; padding:10px 6px 5px; }
-  .shot-nav { display:flex; align-items:center; font-size:11.5px; color:#a0a0aa; padding:5px 8px; border-radius:6px; }
-  .shot-nav b { margin-left:auto; font-family:'Geist Mono',monospace; font-size:9px; font-weight:400; color:#6f6f78; }
-  .shot-nav.on { background:#151517; color:#f4f4f6; }
-  .shot-main { padding:14px 16px; min-width:0; }
-  .shot-head { display:flex; align-items:baseline; gap:9px; margin-bottom:11px; flex-wrap:wrap; }
-  .shot-head b { font-size:15px; color:#f4f4f6; letter-spacing:-.3px; }
-  .shot-head span { font-size:8.5px; letter-spacing:.7px; text-transform:uppercase; color:#6f6f78; }
-  .shot-chips { display:flex; gap:5px; margin-bottom:11px; }
-  .shot-chips span { font-size:10.5px; color:#a0a0aa; border:1px solid rgba(255,255,255,.09); border-radius:100px; padding:3px 10px; }
-  .shot-chips .on { background:rgba(95,184,150,.13); border-color:rgba(95,184,150,.4); color:#5fb896; }
-  .shot-cards { display:grid; grid-template-columns:repeat(3,1fr); gap:9px; }
-  .shot-card { background:#121213; border:1px solid rgba(255,255,255,.07); border-radius:11px; padding:11px; }
-  .sc-top { display:flex; align-items:center; gap:7px; margin-bottom:8px; }
-  .sc-av { width:19px; height:19px; border-radius:50%; background:linear-gradient(135deg,#2a2a31,#1a1a1f); flex-shrink:0; }
-  .sc-name { font-size:11px; font-weight:600; color:#f4f4f6; line-height:1.2; }
-  .sc-handle { font-size:8.5px; color:#6f6f78; }
-  .sc-views { margin-left:auto; font-size:8.5px; color:#6f6f78; white-space:nowrap; }
-  .sc-text { font-size:11px; line-height:1.5; color:#c9c9d1; margin-bottom:10px; }
-  .sc-foot { display:flex; align-items:center; gap:5px; }
-  .sc-tag { font-size:8.5px; color:#5fb896; background:rgba(95,184,150,.13); border-radius:100px; padding:2px 7px; }
-  .sc-act { margin-left:auto; font-size:9.5px; color:#a0a0aa; border:1px solid rgba(255,255,255,.09); border-radius:6px; padding:2px 7px;
-    background:none; font-family:inherit; cursor:pointer; transition:color .18s ease, border-color .18s ease, background .18s ease; }
-  .sc-act + .sc-act { margin-left:0; }
-  .sc-act:hover { color:#f4f4f6; border-color:rgba(95,184,150,.45); background:rgba(95,184,150,.10); }
+  /* Hero decode — one real post resolved into one reusable pattern. */
+  /* Columns stretch to a shared height, then centre their own content — the two
+     halves read as balanced regardless of which one is taller. */
+  .dsplit { display:grid; grid-template-columns:1fr auto 1fr; align-items:stretch; gap:4px;
+    background:#0a0a0b; padding:30px 26px; text-align:left; min-height:300px; }
+  .ds-col { min-width:0; display:flex; flex-direction:column; justify-content:center; }
+  .ds-lab { display:block; font-size:9px; letter-spacing:.9px; text-transform:uppercase;
+    color:#6f6f78; margin-bottom:9px; }
+  .ds-col .ds-lab + * + .ds-lab { margin-top:18px; }
 
-  /* ── Live hero demo ──
-     The cards are interactive, so they need affordances the static mock didn't:
-     hover states, a real avatar chip, and the decode panel the app shows. */
-  .shot-card { transition:border-color .18s ease, background .18s ease; }
-  .shot-cards:not(.is-decode) .shot-card:hover { border-color:rgba(255,255,255,.14); background:#151517; }
-  .sc-av { display:flex; align-items:center; justify-content:center;
-    font-size:7.5px; font-weight:700; color:#8a8a96; letter-spacing:.2px; }
-  .shot-nav:not(.on) { cursor:pointer; }
-  .shot-nav:not(.on):hover { background:#131315; color:#d4d4dc; }
-  .shot-chips span { cursor:pointer; transition:color .18s ease, border-color .18s ease; }
-  .shot-chips span:not(.on):hover { color:#f4f4f6; border-color:rgba(255,255,255,.2); }
+  .ds-post { background:#121213; border:1px solid rgba(255,255,255,.07); border-radius:13px; padding:15px; }
+  .ds-top { display:flex; align-items:center; gap:9px; margin-bottom:11px; }
+  .ds-av { width:26px; height:26px; border-radius:50%; background:linear-gradient(135deg,#2a2a31,#1a1a1f);
+    display:flex; align-items:center; justify-content:center; flex-shrink:0;
+    font-size:9px; font-weight:700; color:#8a8a96; }
+  .ds-name { font-size:13px; font-weight:600; color:#f4f4f6; line-height:1.2; }
+  .ds-handle { font-size:10px; color:#6f6f78; }
+  .ds-tag { margin-left:auto; font-size:9.5px; color:#5fb896;
+    background:rgba(95,184,150,.13); border-radius:100px; padding:3px 9px; white-space:nowrap; }
+  .ds-text { font-size:14px; line-height:1.6; color:#e4e4ea; margin-bottom:11px; }
+  .ds-meta { font-size:9.5px; color:#6f6f78; }
 
-  /* Decode view — replaces the grid, mirroring the app's decoder. */
-  .shot-cards.is-decode { display:block; }
-  .shot-decode { animation:sdIn .28s cubic-bezier(.2,.8,.2,1); }
-  @keyframes sdIn { from { opacity:0; transform:translateY(6px) } to { opacity:1; transform:none } }
-  .shot-back { background:none; border:none; font-family:inherit; cursor:pointer;
-    font-size:10px; color:#8a8a96; padding:0; margin-bottom:10px; transition:color .18s ease; }
-  .shot-back:hover { color:#f4f4f6; }
-  .sd-quote { background:#121213; border:1px solid rgba(255,255,255,.07); border-radius:11px; padding:11px; margin-bottom:11px; }
-  .sd-quote .sc-tag { margin-left:auto; }
-  .sd-quote .sc-text { margin-bottom:0; }
-  .sd-row { display:grid; grid-template-columns:88px 1fr; gap:10px; align-items:start; margin-bottom:9px; }
-  .sd-lab { font-size:8.5px; letter-spacing:.6px; text-transform:uppercase; color:#6f6f78; padding-top:2px; }
-  .sd-row p { font-size:10.5px; line-height:1.55; color:#c9c9d1; }
-  .sd-pat { color:#5fb896 !important; background:rgba(95,184,150,.08);
-    border-left:2px solid rgba(95,184,150,.35); border-radius:0 5px 5px 0; padding:6px 9px; }
-  .sd-cta { margin-top:12px; background:rgba(95,184,150,.14); border:1px solid rgba(95,184,150,.4);
-    color:#5fb896; font-family:inherit; font-size:10.5px; font-weight:600; cursor:pointer;
-    border-radius:100px; padding:7px 15px; transition:background .2s ease; }
-  .sd-cta:hover { background:rgba(95,184,150,.24); }
+  /* The connector carries the argument: this becomes that. */
+  .ds-flow { display:flex; flex-direction:column; align-items:center; gap:9px;
+    padding:0 22px; align-self:center; height:56%; }
+  .ds-line { width:1px; flex:1; min-height:22px; background:linear-gradient(transparent, rgba(95,184,150,.55)); }
+  .ds-flow .ds-line:last-child { background:linear-gradient(rgba(95,184,150,.55), transparent); }
+  .ds-chev { font-size:17px; color:#5fb896; line-height:1; }
 
-  @media (prefers-reduced-motion: reduce) { .shot-decode { animation:none } }
+  .ds-why { font-size:12.5px; line-height:1.65; color:#a8a8b2; }
+  .ds-pattern { font-size:12.5px; line-height:1.7; color:#5fb896;
+    background:rgba(95,184,150,.08); border-left:2px solid rgba(95,184,150,.4);
+    border-radius:0 7px 7px 0; padding:11px 13px; }
+  .ds-yours { margin-top:14px; font-size:11px; color:#6f6f78; }
+
   @media (max-width: 900px) {
-    .shot { grid-template-columns:1fr; }
-    .shot-side { display:none; }
-    .shot-cards { grid-template-columns:1fr; }
-    .shot-cards:not(.is-decode) .shot-card:nth-child(n+3) { display:none; }
-    .sd-row { grid-template-columns:1fr; gap:3px; }
+    /* Stack, and turn the connector on its side so it still reads as a flow. */
+    .dsplit { grid-template-columns:1fr; gap:0; padding:20px 18px; min-height:0; }
+    .ds-flow { flex-direction:row; padding:16px 0; width:100%; height:auto; align-self:auto; }
+    .ds-line { width:auto; height:1px; flex:1; min-height:0;
+      background:linear-gradient(90deg, #1e1e22, rgba(95,184,150,.35)); }
+    .ds-flow .ds-line:last-child { background:linear-gradient(90deg, rgba(95,184,150,.35), #1e1e22); }
+    .ds-chev { transform:rotate(90deg); }
+    .ds-text { font-size:13px; }
   }
 
   /* (Trust microbar removed) */
@@ -1216,45 +1188,41 @@
          card anatomy, same outlier badges and Decode/Save actions the app ships. -->
     <div class="panel mask-reveal" data-r id="hero-panel">
       <div class="panel-bar"><i></i><i></i><i></i><span class="u mono">buildwithsona.com/app</span></div>
-      <div class="shot">
-        <aside class="shot-side">
-          <div class="shot-brand">
-            <span class="shot-mark"><svg viewBox="0 0 24 24" fill="none"><path d="M5 15 Q8 9 12 12 Q16 15 19 9" stroke="#5fb896" stroke-width="2.6" stroke-linecap="round" fill="none"/><path d="M19 3.6 C19.15 5.1 20.3 6.25 21.8 6.4 C20.3 6.55 19.15 7.7 19 9.2 C18.85 7.7 17.7 6.55 16.2 6.4 C17.7 6.25 18.85 5.1 19 3.6 Z" fill="#5fb896"/></svg></span>
-            Sona
-          </div>
-          <div class="shot-search">Find ideas</div>
-          <div class="shot-group">Find</div>
-          <div class="shot-nav on">Discover <b>30</b></div>
-          <div class="shot-nav">Digest</div>
-          <div class="shot-nav">Lists <b>2</b></div>
-          <div class="shot-group">Understand</div>
-          <div class="shot-nav">Patterns</div>
-          <div class="shot-nav">Hooks <b>36</b></div>
-          <div class="shot-group">Make</div>
-          <div class="shot-nav">Drafts</div>
-          <div class="shot-nav">Playbook</div>
-        </aside>
-        <div class="shot-main">
-          <div class="shot-head"><b>Discover</b><span class="mono">founders · last 7 days · sorted by outlier</span></div>
-          <div class="shot-chips"><span class="on">All</span><span>Founders</span><span>Writers</span><span>Creators</span></div>
-          <div class="shot-cards">
-            <div class="shot-card">
-              <div class="sc-top"><span class="sc-av"></span><div><div class="sc-name">Alex Hormozi</div><div class="sc-handle mono">@AlexHormozi · X</div></div><span class="sc-views mono">1.2M views</span></div>
-              <p class="sc-text">Most founders post too much — not too little. The ones who break out pick one contrarian take and stick to it.</p>
-              <div class="sc-foot"><span class="sc-tag mono">12× outlier</span><span class="sc-act">Decode</span><span class="sc-act">Save</span></div>
+      <!-- One decode, start to finish: a real post on the left, the reusable
+           pattern it yields on the right. This is the whole product in one
+           frame — no app chrome to parse. The decode is hand-written and is
+           what the app actually shows for this post. -->
+      <div class="dsplit">
+        <div class="ds-col">
+          <span class="ds-lab mono">A post that outperformed</span>
+          <div class="ds-post">
+            <div class="ds-top">
+              <span class="ds-av">AH</span>
+              <div>
+                <div class="ds-name">Alex Hormozi</div>
+                <div class="ds-handle mono">@AlexHormozi · X</div>
+              </div>
+              <span class="ds-tag mono">12× outlier</span>
             </div>
-            <div class="shot-card">
-              <div class="sc-top"><span class="sc-av"></span><div><div class="sc-name">Dan Koe</div><div class="sc-handle mono">@thedankoe · X</div></div><span class="sc-views mono">2.4M views</span></div>
-              <p class="sc-text">Three questions I ask before writing anything. They've saved me hundreds of bad drafts.</p>
-              <div class="sc-foot"><span class="sc-tag mono">18× outlier</span><span class="sc-act">Decode</span><span class="sc-act">Save</span></div>
-            </div>
-            <div class="shot-card">
-              <div class="sc-top"><span class="sc-av"></span><div><div class="sc-name">Naval</div><div class="sc-handle mono">@naval · X</div></div><span class="sc-views mono">510K views</span></div>
-              <p class="sc-text">Stop optimizing your morning routine. Start optimizing what you do with the next 6 hours.</p>
-              <div class="sc-foot"><span class="sc-tag mono">6× outlier</span><span class="sc-act">Decode</span><span class="sc-act">Save</span></div>
-            </div>
+            <p class="ds-text">Most founders post too much — not too little. The ones who break out pick one contrarian take and stick to it.</p>
+            <div class="ds-meta mono">1.2M views · 12× this creator's baseline</div>
           </div>
         </div>
+
+        <div class="ds-flow" aria-hidden="true">
+          <span class="ds-line"></span>
+          <span class="ds-chev">→</span>
+          <span class="ds-line"></span>
+        </div>
+
+        <div class="ds-col">
+          <span class="ds-lab mono">Why it worked</span>
+          <p class="ds-why">Opens with a category most people belong to, then strips out 99% of them. The reader self-identifies into the elite 1%.</p>
+          <span class="ds-lab mono">The pattern underneath</span>
+          <p class="ds-pattern mono">Most [group] [common belief]. The ones who break out [contrarian action].</p>
+          <p class="ds-yours">Yours to write — Sona never writes it for you.</p>
+        </div>
+      </div>
       </div>
     </div>
   </div>
@@ -2217,6 +2185,5 @@ and they stick with it for ninety days.
     setTimeout(() => { btn.textContent = orig; btn.disabled = false; }, 2400);
   });
 </script>
-<script src="/hero-demo.js" defer></script>
 </body>
 </html>
