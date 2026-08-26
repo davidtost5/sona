@@ -805,9 +805,14 @@
     // Mock mode (no Supabase): non-settings entry points become the waitlist
     else if (view !== 'settings' && (!configured || !supabase)) view = 'waitlist';
     switchView(view);
-    requestAnimationFrame(() => {
-      document.getElementById('auth-overlay').classList.add('open');
-    });
+    // Force a reflow so the browser commits the pre-transition state, then flip
+    // the class synchronously. requestAnimationFrame was used here and is not
+    // reliable — it doesn't fire in a hidden or non-compositing tab, which left
+    // the overlay stuck at opacity 0 with the modal frozen mid-transform: a
+    // modal that appears empty apart from its close button.
+    const overlayEl = document.getElementById('auth-overlay');
+    void overlayEl.offsetWidth;
+    overlayEl.classList.add('open');
     document.body.style.overflow = 'hidden';
   }
 
