@@ -416,6 +416,18 @@
   .hero-cta { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; margin-bottom: 18px; align-items: center; }
   .hero-note { font-size: 13px; color: var(--text-dim); }
   .hero-badge { margin-top: 26px; display: flex; align-items: center; gap: 14px; flex-wrap: wrap; justify-content: center; }
+  /* Product Hunt's featured.svg renders a live vote counter on the right. Until
+     launch that reads "0", which is weaker than showing nothing — so crop it.
+     PH puts the count in a group at translate(201,·) of a 250-wide SVG, so 200px
+     cuts it cleanly; the wrapper re-rounds the exposed edge.
+     ON LAUNCH DAY: delete "ph-crop" from the anchor in the hero and the real
+     count appears. Nothing else needs changing. */
+  .hero-badge .ph-crop {
+    display: block; width: 200px; overflow: hidden;
+    border-radius: 8px; line-height: 0;
+  }
+  .hero-badge .ph-crop img { max-width: none; border-radius: 0; }
+
   .hero-badge img { display: block; max-width: 100%; height: 54px; width: auto; border-radius: 8px; opacity: .92; transition: opacity .2s, transform .2s; }
   .hero-badge a:hover img { opacity: 1; transform: translateY(-1px); }
 
@@ -1111,7 +1123,7 @@
     <div class="hero-note" data-r>No credit card required.</div>
     <div class="hero-badge" data-r>
       <a href="https://nicklaunches.com/products/sona/?utm_source=buildwithsona.com&utm_medium=badge&utm_campaign=featured" target="_blank" rel="noopener"><img src="https://nicklaunches.com/badges/featured.png" alt="Sona on Nick Launches" width="244" height="56" /></a>
-      <a href="https://www.producthunt.com/products/sona-8?embed=true&utm_source=badge-featured&utm_medium=badge&utm_campaign=badge-sona-12" target="_blank" rel="noopener noreferrer"><img src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=1233391&theme=neutral&t=1787771481484" alt="Sona - Draft ideas in your voice at the speed of light | Product Hunt" width="250" height="54" /></a>
+      <a class="ph-badge ph-crop" href="https://www.producthunt.com/products/sona-8?embed=true&utm_source=badge-featured&utm_medium=badge&utm_campaign=badge-sona-12" target="_blank" rel="noopener noreferrer"><img src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=1233391&theme=neutral&t=1787771481484" alt="Sona - Draft ideas in your voice at the speed of light | Product Hunt" width="250" height="54" /></a>
     </div>
   </div>
 
