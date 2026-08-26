@@ -534,10 +534,6 @@
             </div>
             <button type="submit" class="auth-submit">Continue</button>
           </form>
-          <div class="auth-divider">or</div>
-          <div class="auth-social">
-            <button type="button" class="auth-social-btn" data-provider="google">Continue with Google</button>
-          </div>
           <div class="auth-toggle">
             <a id="auth-show-login">Use a password instead</a>
           </div>
