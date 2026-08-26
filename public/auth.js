@@ -205,12 +205,12 @@
       }
       .auth-modal-title {
         font-family: 'Geist', -apple-system, sans-serif;
-        font-size: 26px;
+        font-size: 30px;
         font-weight: 600;
         color: var(--text);
-        letter-spacing: -1px;
+        letter-spacing: -1.2px;
         line-height: 1.1;
-        margin-bottom: 10px;
+        margin-bottom: 12px;
       }
       .auth-modal-sub {
         font-family: 'Geist', -apple-system, sans-serif;
@@ -225,43 +225,42 @@
         flex-direction: column;
         gap: 7px;
       }
+      /* Labels are hidden, not deleted: the placeholder carries the meaning
+         visually while the label stays for screen readers. */
       .auth-field label {
-        font-family: 'Aeonik Pro', -apple-system, sans-serif;
-        font-size: 12px;
-        font-weight: 500;
-        color: #8a8a84;
-        letter-spacing: 0.4px;
-        text-transform: uppercase;
+        position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+        overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
       }
       .auth-field input {
         font-family: 'Geist', -apple-system, sans-serif;
-        font-size: 15px;
-        padding: 13px 0;
+        font-size: 17px;
+        padding: 15px 0;
         border: none;
-        border-bottom: 1.5px solid var(--border);
+        border-bottom: 1px solid var(--border);
         border-radius: 0;
         background: transparent;
         color: var(--text);
         outline: none;
-        transition: border-color 0.25s;
+        transition: border-color 0.3s;
       }
-      .auth-field input:focus { border-bottom-color: var(--accent); }
-      .auth-field input::placeholder { color: var(--text-dim); }
+      .auth-field input:focus { border-bottom-color: #5fb896; }
+      .auth-field input::placeholder { color: var(--text-dim); opacity: .55; }
       .auth-submit {
         font-family: 'Geist', -apple-system, sans-serif;
         font-size: 15px;
         font-weight: 500;
         padding: 14px;
-        background: linear-gradient(180deg, var(--accent-2) 0%, var(--accent) 100%);
-        color: #ffffff;
+        background: #5fb896;
+        color: #0a0a0b;
+        font-weight: 600;
         border: none;
         border-radius: 999px;
         cursor: pointer;
-        box-shadow: var(--shadow);
-        transition: transform 0.2s, box-shadow 0.3s, filter 0.2s;
-        margin-top: 18px;
+        box-shadow: none;
+        transition: transform 0.2s, background 0.2s;
+        margin-top: 26px;
       }
-      .auth-submit:hover { transform: translateY(-1px); box-shadow: var(--shadow-lg); filter: brightness(1.05); }
+      .auth-submit:hover { transform: translateY(-1px); background: #6fc7a5; }
       .auth-submit:active { transform: translateY(0); filter: brightness(0.96); }
       .auth-submit:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
       /* Waitlist success card */
@@ -352,7 +351,7 @@
         color: #5a5a56;
       }
       .auth-toggle a {
-        color: #4f46e5;
+        color: #5fb896;
         font-weight: 600;
         text-decoration: none;
         cursor: pointer;
@@ -393,7 +392,7 @@
         width: 32px;
         height: 32px;
         border-radius: 50%;
-        background: #4f46e5;
+        background: #28775c;
         color: #f5f4f0;
         display: flex;
         align-items: center;
@@ -467,7 +466,7 @@
         <!-- LOGIN VIEW -->
         <div id="auth-login-view">
           <div class="auth-logo">
-            <span class="auth-logo-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M5 15 Q8 9 12 12 Q16 15 19 9" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M19 3.6 C19.15 5.1 20.3 6.25 21.8 6.4 C20.3 6.55 19.15 7.7 19 9.2 C18.85 7.7 17.7 6.55 16.2 6.4 C17.7 6.25 18.85 5.1 19 3.6 Z" fill="#8b84ff"/></svg></span>
+            <span class="auth-logo-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M5 15 Q8 9 12 12 Q16 15 19 9" stroke="#5fb896" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M19 3.6 C19.15 5.1 20.3 6.25 21.8 6.4 C20.3 6.55 19.15 7.7 19 9.2 C18.85 7.7 17.7 6.55 16.2 6.4 C17.7 6.25 18.85 5.1 19 3.6 Z" fill="#5fb896"/></svg></span>
             <span class="auth-logo-text">Sona</span>
           </div>
           <div class="auth-modal-title">Welcome back</div>
@@ -492,7 +491,7 @@
         <!-- WAITLIST VIEW (mock mode — no Supabase configured) -->
         <div id="auth-waitlist-view" style="display:none">
           <div class="auth-logo">
-            <span class="auth-logo-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M5 15 Q8 9 12 12 Q16 15 19 9" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M19 3.6 C19.15 5.1 20.3 6.25 21.8 6.4 C20.3 6.55 19.15 7.7 19 9.2 C18.85 7.7 17.7 6.55 16.2 6.4 C17.7 6.25 18.85 5.1 19 3.6 Z" fill="#8b84ff"/></svg></span>
+            <span class="auth-logo-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M5 15 Q8 9 12 12 Q16 15 19 9" stroke="#5fb896" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M19 3.6 C19.15 5.1 20.3 6.25 21.8 6.4 C20.3 6.55 19.15 7.7 19 9.2 C18.85 7.7 17.7 6.55 16.2 6.4 C17.7 6.25 18.85 5.1 19 3.6 Z" fill="#5fb896"/></svg></span>
             <span class="auth-logo-text">Sona</span>
           </div>
           <div class="auth-modal-title">Request early access</div>
@@ -532,11 +531,11 @@
         <!-- SIGNUP VIEW -->
         <div id="auth-signup-view" style="display:none">
           <div class="auth-logo">
-            <span class="auth-logo-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M5 15 Q8 9 12 12 Q16 15 19 9" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M19 3.6 C19.15 5.1 20.3 6.25 21.8 6.4 C20.3 6.55 19.15 7.7 19 9.2 C18.85 7.7 17.7 6.55 16.2 6.4 C17.7 6.25 18.85 5.1 19 3.6 Z" fill="#8b84ff"/></svg></span>
+            <span class="auth-logo-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M5 15 Q8 9 12 12 Q16 15 19 9" stroke="#5fb896" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M19 3.6 C19.15 5.1 20.3 6.25 21.8 6.4 C20.3 6.55 19.15 7.7 19 9.2 C18.85 7.7 17.7 6.55 16.2 6.4 C17.7 6.25 18.85 5.1 19 3.6 Z" fill="#5fb896"/></svg></span>
             <span class="auth-logo-text">Sona</span>
           </div>
           <div class="auth-modal-title">Create your account</div>
-          <div class="auth-modal-sub">You'll be in the studio in 10 seconds. Browse outliers, save ideas to your swipe board, hooks library coming soon.</div>
+          <div class="auth-modal-sub">Find what's working in your niche, understand why, and make it yours.</div>
           <div class="auth-error" id="auth-signup-error"></div>
           <div class="auth-success" id="auth-signup-success"></div>
           <form class="auth-form" id="auth-signup-form">
@@ -562,7 +561,7 @@
         <!-- SETTINGS VIEW -->
         <div id="auth-settings-view" style="display:none">
           <div class="auth-logo">
-            <span class="auth-logo-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M5 15 Q8 9 12 12 Q16 15 19 9" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M19 3.6 C19.15 5.1 20.3 6.25 21.8 6.4 C20.3 6.55 19.15 7.7 19 9.2 C18.85 7.7 17.7 6.55 16.2 6.4 C17.7 6.25 18.85 5.1 19 3.6 Z" fill="#8b84ff"/></svg></span>
+            <span class="auth-logo-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M5 15 Q8 9 12 12 Q16 15 19 9" stroke="#5fb896" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M19 3.6 C19.15 5.1 20.3 6.25 21.8 6.4 C20.3 6.55 19.15 7.7 19 9.2 C18.85 7.7 17.7 6.55 16.2 6.4 C17.7 6.25 18.85 5.1 19 3.6 Z" fill="#5fb896"/></svg></span>
             <span class="auth-logo-text">Sona</span>
           </div>
           <div class="auth-modal-title">Account settings</div>
