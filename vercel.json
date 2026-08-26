@@ -31,9 +31,10 @@
       ]
     },
     {
+      "_comment": "JS is unversioned (no build step, no content hash in filenames), so a long max-age means a fix can take a day to reach a returning visitor - which is exactly how a broken auth.js stayed live after it was fixed. must-revalidate makes the browser check with the server every load; unchanged files answer 304 from the ETag, so the cost is a few hundred bytes, not a re-download.",
       "source": "/(.*)\\.(js)",
       "headers": [
-        { "key": "Cache-Control", "value": "public, max-age=86400" }
+        { "key": "Cache-Control", "value": "public, max-age=0, must-revalidate" }
       ]
     }
   ]
