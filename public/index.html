@@ -802,6 +802,10 @@
   .tier-feats { list-style: none; display: flex; flex-direction: column; gap: 10px; margin-bottom: 26px; flex-grow: 1; position: relative; }
   .tier-feats li { display: flex; align-items: flex-start; gap: 9px; font-size: 14px; color: var(--text); line-height: 1.45; }
   .tier-feats svg { width: 15px; height: 15px; color: var(--accent); flex-shrink: 0; margin-top: 2px; }
+  .tier-annual { background:none; border:0; padding:0; font:inherit; color:inherit;
+    cursor:pointer; text-decoration:underline; text-underline-offset:2px;
+    text-decoration-color:var(--text-dim); transition:color .2s; }
+  .tier-annual:hover { color:var(--text); }
   .tier-cta { position: relative; }
   .tier-cta .btn { width: 100%; justify-content: center; padding: 13px 20px; font-size: 14.5px; }
   .btn-secondary { background: transparent; color: var(--text); border: 1px solid var(--border-strong); }
@@ -1699,7 +1703,7 @@ and they stick with it for ninety days.
       <span class="tier-badge">Most popular</span>
       <div class="tier-name">Creator</div>
       <div class="tier-price"><span class="amt">$19</span><span class="unit">/mo</span></div>
-      <div class="tier-sub">or $190/year — <b>2 months free</b></div>
+      <div class="tier-sub">or <button type="button" class="tier-annual" onclick="startCheckout('creator-annual', this)">$190/year</button> — <b>2 months free</b></div>
       <p class="tier-for">For publishing consistently, without the guesswork.</p>
       <ul class="tier-feats">
         <li class="key"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Decode any post — hook, tension, reusable pattern</li>
@@ -1708,7 +1712,7 @@ and they stick with it for ninety days.
         <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Track the creators you learn from</li>
         <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Your playbook, on every device</li>
       </ul>
-      <div class="tier-cta"><button type="button" class="btn btn-primary" onclick="SonaAuth.openSignup()">Start creating <span class="btn-arrow">→</span></button></div>
+      <div class="tier-cta"><button type="button" class="btn btn-primary" onclick="startCheckout('creator-monthly', this)">Start creating <span class="btn-arrow">→</span></button></div>
       <p class="tier-foot">Cancel anytime</p>
     </div>
 
@@ -1716,7 +1720,7 @@ and they stick with it for ninety days.
     <div class="tier">
       <div class="tier-name">Creator Pro</div>
       <div class="tier-price"><span class="amt">$39</span><span class="unit">/mo</span></div>
-      <div class="tier-sub">or $390/year — <b>2 months free</b></div>
+      <div class="tier-sub">or <button type="button" class="tier-annual" onclick="startCheckout('pro-annual', this)">$390/year</button> — <b>2 months free</b></div>
       <p class="tier-for">For treating content like a business.</p>
       <ul class="tier-feats">
         <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Everything in Creator</li>
@@ -1725,7 +1729,7 @@ and they stick with it for ninety days.
         <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Multiple brands and playbooks</li>
         <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Priority support</li>
       </ul>
-      <div class="tier-cta"><button type="button" class="btn btn-secondary" onclick="SonaAuth.openSignup()">Go Pro <span class="btn-arrow">→</span></button></div>
+      <div class="tier-cta"><button type="button" class="btn btn-secondary" onclick="startCheckout('pro-monthly', this)">Go Pro <span class="btn-arrow">→</span></button></div>
     </div>
 
   </div>
@@ -2122,6 +2126,22 @@ and they stick with it for ninety days.
     } catch (_) { btn.textContent = 'Try again'; }
     setTimeout(() => { btn.textContent = orig; btn.disabled = false; }, 2400);
   });
+</script>
+<script>
+  // Pricing → Stripe. Safe by default: until the STRIPE_LINK_* env vars are set,
+  // /api/checkout answers 503 and we fall back to signup, so the buttons behave
+  // exactly as they did before rather than dead-ending on an error.
+  window.startCheckout = async function (plan, btn) {
+    const orig = btn ? btn.innerHTML : null;
+    if (btn) { btn.disabled = true; btn.innerHTML = 'Opening checkout…'; }
+    try {
+      const r = await fetch('/api/checkout?plan=' + encodeURIComponent(plan));
+      const j = await r.json();
+      if (j && j.ok && j.url) { location.href = j.url; return; }
+    } catch (_) { /* fall through to signup */ }
+    if (btn) { btn.disabled = false; btn.innerHTML = orig; }
+    if (window.SonaAuth) window.SonaAuth.openSignup();
+  };
 </script>
 </body>
 </html>

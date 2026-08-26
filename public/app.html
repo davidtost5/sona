@@ -3365,7 +3365,7 @@
   window.claimSeat = async function(btn) {
     btn.disabled = true; const orig = btn.innerHTML; btn.innerHTML = 'Opening checkout…';
     try {
-      const r = await fetch('/api/checkout');
+      const r = await fetch('/api/checkout?plan=creator-monthly');
       const j = await r.json();
       if (j.ok && j.url) {
         const u = new URL(j.url);
