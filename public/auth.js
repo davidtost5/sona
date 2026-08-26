@@ -71,16 +71,6 @@
     return data?.session || null;
   }
 
-  async function signUp(email, password, fullName) {
-    if (!supabase) return { error: { message: "Account creation is not open yet. Join the waitlist and we'll email you when your seat is ready." } };
-    const { data, error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: { data: { full_name: fullName } }
-    });
-    return { data, error };
-  }
-
   async function signIn(email, password) {
     if (!supabase) return { error: { message: "Sign in is not available until account access opens." } };
     const { data, error } = await supabase.auth.signInWithPassword({ email, password });
@@ -484,7 +474,7 @@
             <button type="submit" class="auth-submit">Sign in</button>
           </form>
           <div class="auth-toggle">
-            Don't have an account? <a id="auth-show-signup">Create account</a>
+            <a id="auth-show-signup">Email me a link instead</a>
           </div>
         </div>
 
@@ -528,33 +518,44 @@
           </div>
         </div>
 
-        <!-- SIGNUP VIEW -->
-        <div id="auth-signup-view" style="display:none">
+        <!-- MAGIC LINK VIEW — one entry point for signup and sign-in -->
+        <div id="auth-magic-view" style="display:none">
           <div class="auth-logo">
             <span class="auth-logo-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M5 15 Q8 9 12 12 Q16 15 19 9" stroke="#5fb896" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M19 3.6 C19.15 5.1 20.3 6.25 21.8 6.4 C20.3 6.55 19.15 7.7 19 9.2 C18.85 7.7 17.7 6.55 16.2 6.4 C17.7 6.25 18.85 5.1 19 3.6 Z" fill="#5fb896"/></svg></span>
             <span class="auth-logo-text">Sona</span>
           </div>
-          <div class="auth-modal-title">Create your account</div>
-          <div class="auth-modal-sub">Find what's working in your niche, understand why, and make it yours.</div>
-          <div class="auth-error" id="auth-signup-error"></div>
-          <div class="auth-success" id="auth-signup-success"></div>
-          <form class="auth-form" id="auth-signup-form">
+          <div class="auth-modal-title">Start with what's working.</div>
+          <div class="auth-modal-sub">Sign up or sign in to get started.</div>
+          <div class="auth-error" id="auth-magic-error"></div>
+          <form class="auth-form" id="auth-magic-form">
             <div class="auth-field">
-              <label for="signup-name">Full name</label>
-              <input type="text" id="signup-name" placeholder="Jane Smith" required autocomplete="name">
+              <label for="magic-email">Email</label>
+              <input type="email" id="magic-email" placeholder="you@email.com" required autocomplete="email">
             </div>
-            <div class="auth-field">
-              <label for="signup-email">Email</label>
-              <input type="email" id="signup-email" placeholder="jane@company.com" required autocomplete="email">
-            </div>
-            <div class="auth-field">
-              <label for="signup-password">Password</label>
-              <input type="password" id="signup-password" placeholder="Min 8 characters" required minlength="8" autocomplete="new-password">
-            </div>
-            <button type="submit" class="auth-submit">Create account</button>
+            <button type="submit" class="auth-submit">Continue</button>
           </form>
+          <div class="auth-divider">or</div>
+          <div class="auth-social">
+            <button type="button" class="auth-social-btn" data-provider="google">Continue with Google</button>
+          </div>
           <div class="auth-toggle">
-            Already have an account? <a id="auth-show-login">Sign in</a>
+            <a id="auth-show-login">Use a password instead</a>
+          </div>
+        </div>
+
+        <!-- SENT STATE -->
+        <div id="auth-magic-sent" style="display:none">
+          <div class="auth-logo">
+            <span class="auth-logo-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M5 15 Q8 9 12 12 Q16 15 19 9" stroke="#5fb896" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M19 3.6 C19.15 5.1 20.3 6.25 21.8 6.4 C20.3 6.55 19.15 7.7 19 9.2 C18.85 7.7 17.7 6.55 16.2 6.4 C17.7 6.25 18.85 5.1 19 3.6 Z" fill="#5fb896"/></svg></span>
+            <span class="auth-logo-text">Sona</span>
+          </div>
+          <div class="auth-modal-title">Check your email.</div>
+          <div class="auth-modal-sub">
+            We sent a sign-in link to <b id="auth-magic-dest">your inbox</b>.
+            Open it on this device and you'll land straight in the studio.
+          </div>
+          <div class="auth-toggle" style="margin-top:22px">
+            <a id="auth-magic-again">Use a different email</a>
           </div>
         </div>
 
@@ -605,7 +606,7 @@
     overlay.querySelector('.auth-close').addEventListener('click', closeAuthModal);
     overlay.addEventListener('click', (e) => { if (e.target === overlay) closeAuthModal(); });
 
-    document.getElementById('auth-show-signup').addEventListener('click', () => switchView('signup'));
+    document.getElementById('auth-show-signup').addEventListener('click', () => switchView('magic'));
     document.getElementById('auth-show-login').addEventListener('click', () => switchView('login'));
 
     // ── Settings view handlers ──
@@ -668,47 +669,41 @@
     });
 
     // Signup form
-    document.getElementById('auth-signup-form').addEventListener('submit', async (e) => {
+    document.getElementById('auth-magic-form').addEventListener('submit', async (e) => {
       e.preventDefault();
       const btn = e.target.querySelector('.auth-submit');
-      const errEl = document.getElementById('auth-signup-error');
-      const successEl = document.getElementById('auth-signup-success');
-      btn.disabled = true;
-      btn.textContent = 'Creating account...';
+      const errEl = document.getElementById('auth-magic-error');
+      const email = document.getElementById('magic-email').value.trim();
       errEl.classList.remove('visible');
-      successEl.classList.remove('visible');
 
-      // Guard: if Supabase auth isn't configured yet, route to waitlist as a clean fallback
+      // Same fallback the password form had: without Supabase, route to waitlist.
       if (!configured) {
         errEl.textContent = "Sign-up isn't open yet — join the waitlist and we'll email you the moment it is.";
         errEl.classList.add('visible');
         setTimeout(() => switchView('waitlist'), 1200);
-        btn.disabled = false; btn.textContent = 'Create account';
         return;
       }
 
-      const name = document.getElementById('signup-name').value;
-      const email = document.getElementById('signup-email').value;
-      const password = document.getElementById('signup-password').value;
-      const { data, error } = await signUp(email, password, name);
+      btn.disabled = true;
+      btn.textContent = 'Sending…';
+      const { error } = await sendMagicLink(email);
+      btn.disabled = false;
+      btn.textContent = 'Continue';
 
       if (error) {
-        errEl.textContent = humanError(error, "We couldn't create your account. Please try again, or contact support if it keeps happening.");
+        errEl.textContent = humanError(error, "We couldn't send that link. Check the address and try again.");
         errEl.classList.add('visible');
-      } else if (data?.session) {
-        // Auto-signed-in (email confirmation disabled) — go straight to app
-        window.location.href = '/app.html';
         return;
-      } else {
-        successEl.textContent = "Check your email for the confirmation link, then we'll take you to the app.";
-        successEl.classList.add('visible');
-        e.target.reset();
       }
-      btn.disabled = false;
-      btn.textContent = 'Create account';
+      document.getElementById('auth-magic-dest').textContent = email;
+      switchView('sent');
     });
 
-    // Waitlist form — captures to Supabase, then swaps to the success card with position
+    document.getElementById('auth-magic-again').addEventListener('click', () => {
+      document.getElementById('magic-email').value = '';
+      switchView('magic');
+    });
+
     document.getElementById('auth-waitlist-form').addEventListener('submit', async (e) => {
       e.preventDefault();
       const form = e.target;
@@ -765,7 +760,8 @@
 
   function switchView(view) {
     document.getElementById('auth-login-view').style.display = view === 'login' ? '' : 'none';
-    document.getElementById('auth-signup-view').style.display = view === 'signup' ? '' : 'none';
+    document.getElementById('auth-magic-view').style.display = view === 'magic' ? '' : 'none';
+    document.getElementById('auth-magic-sent').style.display = view === 'sent' ? '' : 'none';
     document.getElementById('auth-waitlist-view').style.display = view === 'waitlist' ? '' : 'none';
     const settingsView = document.getElementById('auth-settings-view');
     if (settingsView) settingsView.style.display = view === 'settings' ? '' : 'none';
@@ -962,8 +958,8 @@
   const queue = (window.SonaAuth && window.SonaAuth._queue) || [];
 
   window.SonaAuth = {
-    openLogin: () => openAuthModal('login'),
-    openSignup: () => openAuthModal('signup'),
+    openLogin: () => openAuthModal('magic'),
+    openSignup: () => openAuthModal('magic'),
     openWaitlist: () => openAuthModal('waitlist'),
     openSettings: () => openAuthModal('settings'),
     close: closeAuthModal,
