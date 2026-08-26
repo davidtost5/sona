@@ -71,6 +71,25 @@
     return data?.session || null;
   }
 
+  // Magic link. shouldCreateUser:true means one flow covers both signup and
+  // sign-in — Supabase creates the account if the email is new, signs them in
+  // if it isn't. The on_auth_user_created trigger still fires either way, so
+  // profiles keep working exactly as they did.
+  //
+  // NOTE: the redirect target must be allowlisted in Supabase →
+  // Authentication → URL Configuration → Redirect URLs, or the link fails.
+  async function sendMagicLink(email) {
+    if (!supabase) return { error: { message: 'Sign in is not available yet.' } };
+    const { data, error } = await supabase.auth.signInWithOtp({
+      email,
+      options: {
+        shouldCreateUser: true,
+        emailRedirectTo: window.location.origin + '/app',
+      },
+    });
+    return { data, error };
+  }
+
   async function signIn(email, password) {
     if (!supabase) return { error: { message: "Sign in is not available until account access opens." } };
     const { data, error } = await supabase.auth.signInWithPassword({ email, password });
