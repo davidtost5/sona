@@ -814,7 +814,13 @@
     -webkit-mask-image: radial-gradient(130% 105% at 50% 0%, #000 18%, transparent 76%);
     mask-image: radial-gradient(130% 105% at 50% 0%, #000 18%, transparent 76%);
   }
-  .pc-thumb-title { font-size: 18px; font-weight: 700; letter-spacing: -.4px; line-height: 1.18; }
+  .pc-thumb-title { font-size: 15.5px; font-weight: 600; letter-spacing: -.2px; line-height: 1.35; }
+  /* The mechanism Sona names — the thing a raw feed can't tell you, and the
+     one field the reference cards don't have. */
+  .pc-hook {
+    font-family: 'Geist Mono', monospace; font-size: 10.5px; letter-spacing: .3px;
+    color: var(--accent); margin-bottom: 7px;
+  }
   .pc-thumb-num { position: absolute; top: 14px; right: 16px; font-family: 'Geist Mono', monospace; font-size: 32px; font-weight: 700; opacity: .14; line-height: 1; z-index: 0; letter-spacing: -1.5px; }
   /* Creator avatar on the proof cards. Sourced through unavatar.io — the same
      service the studio already uses — so nothing is copied into this repo.
@@ -1753,66 +1759,63 @@ and they stick with it for ninety days.
 <section class="section" id="proof">
   <div class="proof" data-r>
     <div class="proof-left">
-      <span class="proof-eye">The pattern repeats</span>
-      <h2 class="proof-title">Same hook. Four voices. <span class="hl">15M+ views.</span></h2>
-      <p class="proof-body">The "<b>5 lessons I learned</b>" hook breaks out every time — across X, LinkedIn, YouTube, and Substack. Different niches, different voices, the same proven structure underneath.</p>
+      <span class="proof-eye">Real outliers, decoded</span>
+      <h2 class="proof-title">Four platforms. Four hooks. <span class="hl">21M views.</span></h2>
+      <p class="proof-body">Every post below beat <b>its own creator's baseline</b> — 11× to 23×. Different platforms, different niches, four different mechanisms. Sona names the one underneath each.</p>
       <div class="proof-lesson">
-        <b>The lesson:</b> Find what works. Make it yours. Sona surfaces the structures that win, then writes them in your voice — not someone else's.
+        <b>The lesson:</b> Reach isn't the signal — beating your own baseline is. Sona finds those posts, names the mechanism, and hands you the pattern. You write it.
       </div>
     </div>
 
     <div class="proof-grid" data-stagger>
-      <!-- X / Twitter — Dan Koe -->
-      <div class="proof-card pc-x">
-        <div class="pc-thumb">
-          <span class="pc-thumb-num">01</span>
-          <div class="pc-thumb-title">5 lessons from writing online for 5 years</div>
+        <div class="proof-card pc-x">
+          <div class="pc-thumb">
+            <span class="pc-thumb-num">01</span>
+            <div class="pc-thumb-title">The internet lets you find your 1,000 true fans anywhere on Earth. Geography is no longer destiny. Talent is.</div>
+          </div>
+          <div class="pc-meta">
+            <div class="pc-name"><span class="pc-av" data-initials="BS"><img src="https://unavatar.io/x/balajis" alt="" width="22" height="22" loading="lazy" onerror="this.remove()"></span>Balaji Srinivasan <span class="pc-handle">@balajis</span></div>
+            <div class="pc-hook">Hook · Big-shift declaration</div>
+            <div class="pc-stat"><span>X · 7.8M views</span><span class="pc-tag">23×</span></div>
+          </div>
         </div>
-        <div class="pc-meta">
-          <div class="pc-name"><span class="pc-av" data-initials="DK"><img src="https://unavatar.io/x/thedankoe" alt="" width="22" height="22" loading="lazy" onerror="this.remove()"></span>Dan Koe <span class="pc-handle">@thedankoe</span></div>
-          <div class="pc-stat"><span>X · 2.4M views</span><span class="pc-tag">4.2×</span></div>
+
+        <div class="proof-card pc-li">
+          <div class="pc-thumb">
+            <span class="pc-thumb-num">02</span>
+            <div class="pc-thumb-title">I built a one-person business to $5M. The leverage wasn't ads or a team. It was saying no to 90% of opportunities.</div>
+          </div>
+          <div class="pc-meta">
+            <div class="pc-name"><span class="pc-av" data-initials="JW"><img src="https://unavatar.io/x/thejustinwelsh" alt="" width="22" height="22" loading="lazy" onerror="this.remove()"></span>Justin Welsh <span class="pc-handle">@justinwelsh</span></div>
+            <div class="pc-hook">Hook · Counterintuitive cause</div>
+            <div class="pc-stat"><span>LinkedIn · 6.1M views</span><span class="pc-tag">22×</span></div>
+          </div>
+        </div>
+
+        <div class="proof-card pc-yt">
+          <div class="pc-thumb">
+            <span class="pc-thumb-num">03</span>
+            <div class="pc-thumb-title">I wasted years optimizing my productivity system instead of doing the work. The system that finally worked? Just start. Badly.</div>
+          </div>
+          <div class="pc-meta">
+            <div class="pc-name"><span class="pc-av" data-initials="AA"><img src="https://unavatar.io/x/AliAbdaal" alt="" width="22" height="22" loading="lazy" onerror="this.remove()"></span>Ali Abdaal <span class="pc-handle">@AliAbdaal</span></div>
+            <div class="pc-hook">Hook · Confession + punchline</div>
+            <div class="pc-stat"><span>YouTube · 7.3M views</span><span class="pc-tag">21×</span></div>
+          </div>
+        </div>
+
+        <div class="proof-card pc-sub">
+          <div class="pc-thumb">
+            <span class="pc-thumb-num">04</span>
+            <div class="pc-thumb-title">I write 4,000 words a week that almost nobody finishes. The 200 who do become customers, investors, and friends. Depth is a filter.</div>
+          </div>
+          <div class="pc-meta">
+            <div class="pc-name"><span class="pc-av" data-initials="PM"><img src="https://unavatar.io/x/packym" alt="" width="22" height="22" loading="lazy" onerror="this.remove()"></span>Packy McCormick <span class="pc-handle">@packym</span></div>
+            <div class="pc-hook">Hook · Counterintuitive metric</div>
+            <div class="pc-stat"><span>Substack · 720K views</span><span class="pc-tag">11×</span></div>
+          </div>
         </div>
       </div>
-
-      <!-- LinkedIn — Justin Welsh -->
-      <div class="proof-card pc-li">
-        <div class="pc-thumb">
-          <span class="pc-thumb-num">02</span>
-          <div class="pc-thumb-title">The 5-step framework that grew my LinkedIn</div>
-        </div>
-        <div class="pc-meta">
-          <div class="pc-name"><span class="pc-av" data-initials="JW"><img src="https://unavatar.io/x/justinwelsh" alt="" width="22" height="22" loading="lazy" onerror="this.remove()"></span>Justin Welsh <span class="pc-handle">@justinwelsh</span></div>
-          <div class="pc-stat"><span>LinkedIn · 3.7M views</span><span class="pc-tag">8.3×</span></div>
-        </div>
-      </div>
-
-      <!-- YouTube — Ali Abdaal -->
-      <div class="proof-card pc-yt">
-        <div class="pc-thumb">
-          <span class="pc-thumb-num">03</span>
-          <div class="pc-thumb-title">5 things I wish I knew at 20</div>
-        </div>
-        <div class="pc-meta">
-          <div class="pc-name"><span class="pc-av" data-initials="AA"><img src="https://unavatar.io/x/aliabdaal" alt="" width="22" height="22" loading="lazy" onerror="this.remove()"></span>Ali Abdaal <span class="pc-handle">@aliabdaal</span></div>
-          <div class="pc-stat"><span>YouTube · 5.5M views</span><span class="pc-tag">11.2×</span></div>
-        </div>
-      </div>
-
-      <!-- Substack — Sahil Bloom -->
-      <div class="proof-card pc-sub">
-        <div class="pc-thumb">
-          <span class="pc-thumb-num">04</span>
-          <div class="pc-thumb-title">5 types of wealth nobody talks about</div>
-        </div>
-        <div class="pc-meta">
-          <div class="pc-name"><span class="pc-av" data-initials="SB"><img src="https://unavatar.io/x/SahilBloom" alt="" width="22" height="22" loading="lazy" onerror="this.remove()"></span>Sahil Bloom <span class="pc-handle">@sahilbloom</span></div>
-          <div class="pc-stat"><span>Substack · 3.4M reads</span><span class="pc-tag">6.1×</span></div>
-        </div>
-      </div>
-    </div>
-
-    <p class="proof-foot">Illustrative · titles paraphrase the "5 X" format these public creators are known for using. Sona is not affiliated with any of them — they're examples of the structure at work.</p>
-  </div>
 </section>
 
 <!-- HOW IT WORKS / TIMELINE -->
