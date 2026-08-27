@@ -221,6 +221,42 @@
     .upsell-x { min-width: 36px; min-height: 36px; }
   }
 
+  /* First-run nudge above the Discover grid. */
+  .disc-onboard {
+    display:flex; align-items:flex-start; gap:13px; margin-bottom:16px;
+    padding:14px 16px; border-radius:15px;
+    border:1px solid color-mix(in srgb, var(--accent) 28%, transparent);
+    background:color-mix(in srgb, var(--accent) 7%, transparent);
+  }
+  .disc-onboard[hidden] { display:none; }
+  .do-plus {
+    width:22px; height:22px; border-radius:7px; flex-shrink:0;
+    display:flex; align-items:center; justify-content:center;
+    background:color-mix(in srgb, var(--accent) 20%, transparent);
+    color:var(--accent); font-size:15px; line-height:1;
+  }
+  .do-body { display:flex; flex-direction:column; gap:3px; min-width:0; }
+  .do-body b { font-size:13.5px; color:var(--text); }
+  .do-body span { font-size:12.5px; color:var(--text-mid); line-height:1.5; }
+  .do-body span b { font-size:inherit; color:var(--accent); font-weight:600; }
+  /* Three pips, filled as ideas are saved — progress the user can see. */
+  .do-progress { display:flex; gap:5px; margin-left:auto; padding-top:5px; flex-shrink:0; }
+  .do-progress i {
+    width:7px; height:7px; border-radius:50%;
+    background:color-mix(in srgb, var(--accent) 22%, transparent);
+    transition:background .3s ease, transform .3s ease;
+  }
+  .do-progress i.on { background:var(--accent); transform:scale(1.15); }
+  .do-x {
+    background:none; border:0; cursor:pointer; padding:0 2px; flex-shrink:0;
+    color:var(--text-dim); font-size:17px; line-height:1; transition:color .2s;
+  }
+  .do-x:hover { color:var(--text); }
+  @media (max-width:768px) {
+    .disc-onboard { flex-wrap:wrap; }
+    .do-progress { margin-left:0; padding-top:2px; }
+  }
+
   /* ─── App shell ─── */
   .shell { display:grid; grid-template-columns:260px 1fr; height:100vh; }
   .side { background:var(--bg-soft); border-right:1px solid var(--border); padding:18px 14px; display:flex; flex-direction:column; gap:18px; overflow-y:auto; }
@@ -857,6 +893,18 @@
           <button class="filter" data-sort="breakouts" title="Highest multiple against the creator's own baseline">Breakouts</button>
           <button class="filter" data-sort="gems" title="Beat their baseline hard without going mega-viral">Hidden gems</button>
           <button class="filter" data-sort="viral" title="Most views in absolute terms">Viral now</button>
+        </div>
+        <!-- First-run nudge. A new feed gives no instruction on what to do
+             first; this names one concrete action and shows progress toward it.
+             Hidden once three ideas are saved, or on dismiss. -->
+        <div class="disc-onboard" id="disc-onboard" hidden>
+          <span class="do-plus" aria-hidden="true">+</span>
+          <div class="do-body">
+            <b>Save 3 posts you wish you'd made.</b>
+            <span>Hit <b>Save</b> on a post to keep it, or <b>Decode</b> to see the pattern underneath. Your feed sharpens with everything you save.</span>
+          </div>
+          <div class="do-progress" id="do-progress" aria-live="polite"><i></i><i></i><i></i></div>
+          <button class="do-x" id="do-dismiss" type="button" aria-label="Dismiss">×</button>
         </div>
         <div class="disc-grid" id="disc-grid"><!-- rendered by JS --></div>
         <p class="disc-disclaimer">Posts are public examples shown for educational pattern analysis. Creators are not affiliated with or endorsing Sona.</p>
@@ -2459,6 +2507,7 @@
     if (demoMode || !sb) {
       saved = new Set(JSON.parse(localStorage.getItem('sona-preview-saved') || '[]'));
       document.getElementById('saved-count').textContent = saved.size;
+    syncOnboard();
       return;
     }
     try {
@@ -2466,6 +2515,7 @@
       saved = new Set((data || []).map(r => r.idea_id));
     } catch (_) { saved = new Set(); }
     document.getElementById('saved-count').textContent = saved.size;
+    syncOnboard();
   }
 
   function highlight(text) {
@@ -2745,6 +2795,7 @@
     }
     if (demoMode || !sb) localStorage.setItem('sona-preview-saved', JSON.stringify([...saved]));
     document.getElementById('saved-count').textContent = saved.size;
+    syncOnboard();
     updateWorkspaceUI();
     renderDiscover();
     renderSaved();
@@ -3272,6 +3323,38 @@
 
   // A "0" next to every section makes a new account look broken. Hide the pill
   // until there is something to count.
+
+  // ─── Discover first-run nudge ───
+  // Shown until three ideas are saved, or until dismissed. Reads the same
+  // `saved` set the rest of the app uses, so the pips can't drift from reality.
+  const ONBOARD_GOAL = 3;
+  function syncOnboard() {
+    const el = document.getElementById('disc-onboard');
+    if (!el) return;
+    let dismissed = false;
+    try { dismissed = localStorage.getItem('sona-onboard-done') === '1'; } catch (_) {}
+    const n = saved.size;
+    if (dismissed || n >= ONBOARD_GOAL) {
+      el.hidden = true;
+      // Once the goal is met it stays gone, so it can't reappear after unsaving.
+      if (n >= ONBOARD_GOAL && !dismissed) {
+        try { localStorage.setItem('sona-onboard-done', '1'); } catch (_) {}
+      }
+      return;
+    }
+    el.hidden = false;
+    document.querySelectorAll('#do-progress i').forEach((pip, i) => {
+      pip.classList.toggle('on', i < n);
+    });
+  }
+
+  document.addEventListener('click', (e) => {
+    if (e.target && e.target.id === 'do-dismiss') {
+      try { localStorage.setItem('sona-onboard-done', '1'); } catch (_) {}
+      syncOnboard();
+    }
+  });
+
   function syncNavCounts() {
     document.querySelectorAll('.nav-item .pill-n').forEach(el => {
       const n = parseInt(el.textContent, 10);
@@ -3379,6 +3462,7 @@
     await loadLists();
     await loadStyleGuide();   // cloud copy kept; only the local copy was cleared
     document.getElementById('saved-count').textContent = saved.size;
+    syncOnboard();
     renderDiscover();
     renderSaved();
     renderSwipe();
