@@ -344,6 +344,40 @@
   }
   @media (max-width:600px) { .dec-row .btn { margin-left:0; width:100%; } }
 
+  /* ─── Instant read (local analysis) ─── */
+  .ir {
+    margin-top:22px; padding:17px 18px; border-radius:15px;
+    background:var(--surface); border:1px solid var(--border);
+  }
+  .ir[hidden] { display:none; }
+  .ir-head { display:flex; align-items:baseline; gap:10px; margin-bottom:14px; flex-wrap:wrap; }
+  .ir-head b { font-size:14px; }
+  .ir-head span { font-family:'Geist Mono',monospace; font-size:9.5px; letter-spacing:.4px; color:var(--accent); }
+  .ir-stats { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:16px; }
+  .ir-stat {
+    display:flex; flex-direction:column; gap:2px; padding:8px 12px;
+    border-radius:10px; background:var(--bg); border:1px solid var(--border);
+  }
+  .ir-stat span { font-size:10px; color:var(--text-dim); }
+  .ir-stat b { font-size:13px; }
+  .ir-sub {
+    font-family:'Geist Mono',monospace; font-size:9px; letter-spacing:.8px;
+    text-transform:uppercase; color:var(--text-dim); margin:14px 0 8px;
+  }
+  .ir-hook { margin-bottom:9px; }
+  .ir-hook-top { display:flex; align-items:center; gap:10px; margin-bottom:4px; }
+  .ir-cat { font-size:11.5px; font-weight:600; color:var(--text); text-transform:capitalize; }
+  .ir-bar { flex:1; height:3px; border-radius:3px; background:var(--border); overflow:hidden; }
+  .ir-bar u { display:block; height:100%; background:var(--accent); text-decoration:none; }
+  .ir-hook p { font-size:12px; color:var(--text-mid); line-height:1.5; }
+  .ir-tpl {
+    font-family:'Geist Mono',monospace; font-size:11.5px; line-height:1.65; color:var(--accent);
+    background:var(--accent-soft); border-left:2px solid var(--accent);
+    border-radius:0 8px 8px 0; padding:9px 12px;
+  }
+  .ir-foot { margin-top:14px; font-size:11.5px; color:var(--text-dim); line-height:1.55; }
+  .ir-foot b { color:var(--text-mid); }
+
   /* ─── App shell ─── */
   .shell { display:grid; grid-template-columns:260px 1fr; height:100vh; }
   .side { background:var(--bg-soft); border-right:1px solid var(--border); padding:18px 14px; display:flex; flex-direction:column; gap:18px; overflow-y:auto; }
@@ -1195,6 +1229,10 @@
             </div>
             <p class="dec-note" id="dec-note"></p>
           </form>
+
+          <!-- Local analysis. Appears as you type, costs nothing, and works
+               with the decoder offline or out of credit. -->
+          <div class="ir" id="dec-read" hidden></div>
 
           <div class="dec-recent" id="dec-recent" hidden>
             <span class="dec-recent-label">Decoded this session</span>
@@ -3630,6 +3668,16 @@
       });
     }
 
+    // Runs as you type — free, so there's no reason to make anyone press a button.
+    const ta = document.getElementById('dec-text');
+    if (ta) {
+      let t = null;
+      ta.addEventListener('input', () => {
+        clearTimeout(t);
+        t = setTimeout(() => renderInstantRead(ta.value), 180);
+      });
+    }
+
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
       const note = document.getElementById('dec-note');
@@ -3689,6 +3737,103 @@
       }, 400);
     });
   })();
+
+
+  // ─── Instant read ───
+  // Local analysis of a pasted post: no network, no model, no credit. Matches
+  // against HOOKS_LIBRARY structurally, so it works offline and stays free
+  // however many posts get pasted. The AI decode is the optional layer on top —
+  // this answers "what shape is this", that answers "why did it work".
+  const IR_STOP = new Set("a an the and or but if of to in on for with is are was were be been it its this that you your i my we our they them he she as at by from so than then there here what how why when who".split(' '));
+  const irTokens = t => String(t).toLowerCase().replace(/[^a-z0-9\s']/g, ' ').split(/\s+/).filter(Boolean);
+  const irContent = t => irTokens(t).filter(w => !IR_STOP.has(w) && w.length > 2);
+
+  // A hook template carries its signature in the words OUTSIDE the [brackets].
+  // Keeping their order lets a sequential match score higher than a coincidental
+  // bag-of-words overlap.
+  function irSkeleton(pattern) {
+    return irTokens(String(pattern).replace(/\[[^\]]*\]/g, ' § ')).filter(w => w !== '§');
+  }
+
+  function irMatchHooks(text, topN) {
+    const words = irTokens(text);
+    const set = new Set(words);
+    const cw = irContent(text);
+    const scored = (typeof HOOKS_LIBRARY !== 'undefined' ? HOOKS_LIBRARY : []).map(h => {
+      const skel = irSkeleton(h.pattern);
+      if (!skel.length) return { h, score: 0 };
+      let hit = 0, lastIdx = -1, inOrder = 0;
+      for (const w of skel) {
+        if (!set.has(w)) continue;
+        hit++;
+        const idx = words.indexOf(w, lastIdx + 1);
+        if (idx > lastIdx) { inOrder++; lastIdx = idx; }
+      }
+      const eg = new Set(irContent(h.eg || ''));
+      const shared = cw.filter(w => eg.has(w)).length;
+      const egSim = eg.size ? shared / Math.min(eg.size, Math.max(cw.length, 1)) : 0;
+      return { h, score: (hit / skel.length) * 0.55 + (inOrder / skel.length) * 0.30 + egSim * 0.15 };
+    });
+    return scored.filter(x => x.score > 0.18).sort((a, b) => b.score - a.score).slice(0, topN || 3);
+  }
+
+  function irStructure(text) {
+    const t = String(text).trim();
+    const sentences = t.split(/(?<=[.!?])\s+/).filter(x => x.trim().length > 1);
+    const words = irTokens(t);
+    const first = (sentences[0] || t).trim();
+    const specifics = (t.match(/\b\d[\d,.]*\s?(?:%|k|m|x|×)?\b/gi) || []).length
+                    + (t.match(/[$£€]\s?\d[\d,.]*\s?[kmb]?/gi) || []).length;
+    let opening = 'Statement';
+    if (/^\d|^(one|two|three|four|five|six|seven|eight|nine|ten)\b/i.test(first)) opening = 'Number-led';
+    else if (/\?$/.test(first)) opening = 'Question';
+    else if (/^(most|everyone|nobody|stop|don'?t|never|forget|unpopular)\b/i.test(first)) opening = 'Contrarian';
+    else if (/^i\b|^my\b|^we\b/i.test(first)) opening = 'Personal';
+    return {
+      words: words.length,
+      avgSentence: sentences.length ? Math.round(words.length / sentences.length) : 0,
+      firstLineWords: irTokens(first).length,
+      opening, specifics,
+      // Specifics bracketed out — a reusable skeleton, computed locally.
+      template: t.split(/(?<=[.!?])\s+/).slice(0, 2).join(' ')
+        .replace(/[$£€]\s?\d[\d,.]*\s?[kmb]?/gi, '[amount]')
+        .replace(/\b\d[\d,.]*\s?(?:%|k|m|x|×)\b/gi, '[number]')
+        .replace(/\b\d[\d,.]*\b/g, '[number]'),
+    };
+  }
+
+  function renderInstantRead(text) {
+    const box = document.getElementById('dec-read');
+    if (!box) return;
+    if (String(text).trim().length < 10) { box.hidden = true; return; }
+    const r = irStructure(text);
+    const hooks = irMatchHooks(text, 3);
+    const stat = (k, v) => `<div class="ir-stat"><span>${k}</span><b>${escapeHtml(String(v))}</b></div>`;
+    box.hidden = false;
+    box.innerHTML = `
+      <div class="ir-head"><b>Instant read</b><span>computed on your device · no credits used</span></div>
+      <div class="ir-stats">
+        ${stat('Opening', r.opening)}
+        ${stat('Length', r.words + ' words')}
+        ${stat('First line', r.firstLineWords + ' words')}
+        ${stat('Avg sentence', r.avgSentence + ' words')}
+        ${stat('Specifics', r.specifics)}
+      </div>
+      ${hooks.length ? `
+        <div class="ir-sub">Closest hooks in your library</div>
+        ${hooks.map(x => `
+          <div class="ir-hook">
+            <div class="ir-hook-top">
+              <span class="ir-cat">${escapeHtml(x.h.cat)}</span>
+              <i class="ir-bar"><u style="width:${Math.round(Math.min(x.score, 1) * 100)}%"></u></i>
+            </div>
+            <p>${escapeHtml(x.h.pattern)}</p>
+          </div>`).join('')}
+      ` : `<div class="ir-sub">No close structural match in your 36 hooks — that can mean it's genuinely novel, or that it leans on voice rather than structure.</div>`}
+      <div class="ir-sub">Skeleton</div>
+      <p class="ir-tpl">${escapeHtml(r.template)}</p>
+      <p class="ir-foot">This is structure only. What it can't tell you is <b>why</b> it worked — that's the decode.</p>`;
+  }
 
   function syncNavCounts() {
     document.querySelectorAll('.nav-item .pill-n').forEach(el => {
