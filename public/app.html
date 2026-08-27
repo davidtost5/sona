@@ -198,6 +198,29 @@
   .disc-engage span { display:inline-flex; align-items:center; gap:5px; }
   .disc-engage svg { width:12px; height:12px; opacity:.65; }
 
+  /* ─── Focus ───
+     There was no focus indicator anywhere: three outline:none declarations and
+     zero :focus-visible rules, so keyboard users had no idea where they were.
+     :focus-visible (not :focus) is the important part — a ring appears for
+     keyboard navigation and never on a mouse click.
+     :where() keeps specificity at 0 so components that draw their own focus
+     treatment still win. */
+  :where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+    border-radius: 6px;
+  }
+
+  /* ─── Touch targets ───
+     Card actions render at 24px and filter pills at 28px, which is fine for a
+     mouse and awkward for a thumb. Only coarse pointers get the larger hit
+     area, so desktop keeps its density. */
+  @media (pointer: coarse) {
+    .disc-action { min-height: 36px; padding-left: 11px; padding-right: 11px; }
+    .filter, .sort-tab { min-height: 36px; }
+    .upsell-x { min-width: 36px; min-height: 36px; }
+  }
+
   /* ─── App shell ─── */
   .shell { display:grid; grid-template-columns:260px 1fr; height:100vh; }
   .side { background:var(--bg-soft); border-right:1px solid var(--border); padding:18px 14px; display:flex; flex-direction:column; gap:18px; overflow-y:auto; }
@@ -625,6 +648,43 @@
   .lg-spark { fill: #28775c; }
   html[data-theme="dark"] .lg-wave { stroke: #5fb896; }
   html[data-theme="dark"] .lg-spark { fill: #5fb896; }
+  /* ─── Mobile sidebar ───
+     Stacked vertically above the feed, the sidebar pushed the first card to
+     524px on a 812px screen: two thirds of the studio was navigation before a
+     single idea. Collapsed to one horizontally scrollable strip of nav pills.
+     Group labels go (they don't read in a row) and the upsell goes (it's
+     dismissible and it's a tall block above the content people came for).
+     Sign-out stays, at the end of the strip. */
+  @media (max-width: 768px) {
+    .side {
+      display: flex !important;
+      /* The desktop rule sets flex-direction:column; without overriding it the
+         children kept stacking and the strip stayed as tall as the old sidebar. */
+      flex-direction: row !important;
+      align-items: center;
+      gap: 6px;
+      overflow-x: auto;
+      overflow-y: hidden;
+      padding: 8px 10px;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+    .side::-webkit-scrollbar { display: none; }
+    .side-top { flex: 0 0 auto; margin: 0 4px 0 0; padding: 0; }
+    .side > .search { display: none; }
+    /* Any remaining direct child (nav wrappers) must sit in the row too. */
+    .side > div { margin-top: 0 !important; flex: 0 0 auto; }
+    .nav-groups { display: flex !important; gap: 6px; flex: 0 0 auto; }
+    .nav { display: flex; gap: 6px; flex: 0 0 auto; }
+    .side .section-label, .side .preview-note, .side .upsell { display: none !important; }
+    .nav-item {
+      white-space: nowrap; flex: 0 0 auto;
+      min-height: 36px; padding: 0 12px; border-radius: 999px;
+    }
+    .side-bottom { flex: 0 0 auto; border: 0; padding: 0 0 0 6px; margin: 0; }
+    .side-bottom .user-row { padding: 0; }
+  }
+
 </style>
 </head>
 <body>
@@ -989,7 +1049,7 @@
               <button class="sort-tab" data-sort="viewed">Top viewed</button>
               <button class="sort-tab" data-sort="outlier">Top outlier</button>
             </div>
-            <select id="lists-time" class="time-select">
+            <select id="lists-time" class="time-select" aria-label="Time range">
               <option value="all">All time</option>
               <option value="7">Last 7 days</option>
               <option value="30">Last 30 days</option>
@@ -1198,7 +1258,7 @@
         <h3 class="ac-title" id="ac-title">Add creators</h3>
         <button class="decoder-close" onclick="closeAddCreators()" aria-label="Close">×</button>
       </div>
-      <div class="ac-to">to <select id="ac-target"></select></div>
+      <div class="ac-to">to <select id="ac-target" aria-label="Add to list"></select></div>
     </div>
     <div class="ac-search">
       <input id="ac-search" type="text" placeholder="Search a handle or paste a profile URL" autocomplete="off">
