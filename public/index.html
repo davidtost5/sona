@@ -802,6 +802,18 @@
   .pc-thumb { aspect-ratio: 16/10; padding: 20px; display: flex; align-items: flex-end; color: #fff; position: relative; overflow: hidden; }
   .pc-thumb::before { content: ''; position: absolute; inset: 0; pointer-events: none; }
   .pc-thumb > * { position: relative; z-index: 1; max-width: 90%; }
+  /* Texture over the colour: a soft grid and a noise wash. Generated in CSS —
+     nothing to license, no extra requests, sharp at any card size. */
+  .pc-thumb::after {
+    content: ''; position: absolute; inset: 0; z-index: 0; pointer-events: none;
+    background-image:
+      linear-gradient(rgba(255,255,255,.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,.05) 1px, transparent 1px),
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.35'/%3E%3C/svg%3E");
+    background-size: 34px 34px, 34px 34px, 180px 180px;
+    -webkit-mask-image: radial-gradient(130% 105% at 50% 0%, #000 18%, transparent 76%);
+    mask-image: radial-gradient(130% 105% at 50% 0%, #000 18%, transparent 76%);
+  }
   .pc-thumb-title { font-size: 18px; font-weight: 700; letter-spacing: -.4px; line-height: 1.18; }
   .pc-thumb-num { position: absolute; top: 14px; right: 16px; font-family: 'Geist Mono', monospace; font-size: 32px; font-weight: 700; opacity: .14; line-height: 1; z-index: 0; letter-spacing: -1.5px; }
   .pc-meta { padding: 14px 16px 16px; }
@@ -821,14 +833,33 @@
   .pc-tag { background: var(--accent-soft); color: var(--accent); padding: 3px 8px; border-radius: 100px; font-weight: 700; text-transform: none; letter-spacing: 0; font-size: 11px; }
 
   /* Platform-themed thumbnails */
-  .pc-x .pc-thumb { background: linear-gradient(135deg, #0d0c1a 0%, #1a1530 100%); }
-  .pc-x .pc-thumb::before { background: radial-gradient(circle at 70% 30%, rgba(40,119,92,0.42), transparent 60%); }
-  .pc-li .pc-thumb { background: linear-gradient(135deg, #08233f 0%, #003a6c 100%); }
+  .pc-x .pc-thumb { background:
+    radial-gradient(90% 70% at 78% 18%, #2b2350 0%, transparent 62%),
+    radial-gradient(70% 60% at 12% 88%, #123a2e 0%, transparent 64%),
+    linear-gradient(150deg, #0b0a16 0%, #16122a 100%); }
+  .pc-x .pc-thumb::before { background: radial-gradient(circle at 70% 30%, rgba(95,184,150,.30), transparent 58%); }
+  .pc-li .pc-thumb { background:
+    radial-gradient(85% 70% at 22% 78%, #0b4f8f 0%, transparent 62%),
+    radial-gradient(70% 55% at 82% 16%, #0a2e56 0%, transparent 60%),
+    linear-gradient(150deg, #06182c 0%, #063461 100%); }
   .pc-li .pc-thumb::before { background: radial-gradient(circle at 30% 70%, rgba(0,119,255,0.35), transparent 60%); }
-  .pc-yt .pc-thumb { background: linear-gradient(135deg, #1a0a0a 0%, #3a0808 100%); }
+  .pc-yt .pc-thumb { background:
+    radial-gradient(85% 70% at 62% 40%, #6b1414 0%, transparent 60%),
+    radial-gradient(60% 50% at 14% 86%, #2a0606 0%, transparent 62%),
+    linear-gradient(150deg, #170708 0%, #340a0a 100%); }
   .pc-yt .pc-thumb::before { background: radial-gradient(circle at 60% 40%, rgba(255,40,40,0.35), transparent 60%); }
   .pc-yt .pc-thumb-title { text-transform: uppercase; font-size: 17px; line-height: 1.12; }
-  .pc-sub .pc-thumb { background: #f5e9d3; color: #2a1f10; }
+  .pc-sub .pc-thumb { color: #2a1f10; background:
+    radial-gradient(80% 70% at 20% 14%, #fff8ea 0%, transparent 60%),
+    radial-gradient(70% 60% at 86% 90%, #ecd9b6 0%, transparent 62%),
+    linear-gradient(150deg, #f7ecd8 0%, #f0e0c4 100%); }
+  /* The light card needs dark grid lines, not white ones. */
+  .pc-sub .pc-thumb::after {
+    background-image:
+      linear-gradient(rgba(0,0,0,.045) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,0,0,.045) 1px, transparent 1px);
+    background-size: 34px 34px, 34px 34px;
+  }
   .pc-sub .pc-thumb-title { font-weight: 600; }
 
   @media (max-width: 880px) {
