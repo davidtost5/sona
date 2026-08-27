@@ -366,6 +366,13 @@
         cursor: pointer;
       }
       .auth-toggle a:hover { text-decoration: underline; }
+      .auth-toggle a[aria-disabled="true"] { opacity: .5; pointer-events: none; text-decoration: none; }
+      .auth-sep { margin: 0 8px; color: #5a5a56; }
+      .auth-hint {
+        margin-top: 16px; text-align: center;
+        font-family: 'Geist', -apple-system, sans-serif;
+        font-size: 12.5px; color: var(--text-dim);
+      }
       .auth-error {
         font-family: 'Aeonik Pro', -apple-system, sans-serif;
         font-size: 13px;
@@ -569,7 +576,13 @@
             We sent a sign-in link to <b id="auth-magic-dest">your inbox</b>.
             Open it on this device and you'll land straight in the studio.
           </div>
-          <div class="auth-toggle" style="margin-top:22px">
+          <div class="auth-error" id="auth-resend-error"></div>
+          <!-- Without these two the flow dead-ends: if the mail is slow, filtered
+               or mistyped, the visitor has no way forward and is simply lost. -->
+          <p class="auth-hint">Not there in a minute? Check your spam folder.</p>
+          <div class="auth-toggle" style="margin-top:18px">
+            <a id="auth-magic-resend">Resend link</a>
+            <span class="auth-sep">·</span>
             <a id="auth-magic-again">Use a different email</a>
           </div>
         </div>
@@ -712,6 +725,39 @@
       }
       document.getElementById('auth-magic-dest').textContent = email;
       switchView('sent');
+    });
+
+    document.getElementById('auth-magic-resend').addEventListener('click', async (e) => {
+      const link = e.target;
+      if (link.getAttribute('aria-disabled') === 'true') return;
+      const email = document.getElementById('auth-magic-dest').textContent.trim();
+      const errEl = document.getElementById('auth-resend-error');
+      errEl.classList.remove('visible');
+      link.setAttribute('aria-disabled', 'true');
+      link.textContent = 'Sending…';
+
+      const { error } = await sendMagicLink(email);
+      if (error) {
+        errEl.textContent = humanError(error, "Couldn't resend. Wait a moment and try again.");
+        errEl.classList.add('visible');
+        link.removeAttribute('aria-disabled');
+        link.textContent = 'Resend link';
+        return;
+      }
+      // Cooldown: Supabase rate-limits per address, and each new link invalidates
+      // the previous one — letting someone click repeatedly guarantees a dead link.
+      let left = 30;
+      link.textContent = `Sent · resend in ${left}s`;
+      const tick = setInterval(() => {
+        left -= 1;
+        if (left <= 0) {
+          clearInterval(tick);
+          link.removeAttribute('aria-disabled');
+          link.textContent = 'Resend link';
+        } else {
+          link.textContent = `Sent · resend in ${left}s`;
+        }
+      }, 1000);
     });
 
     document.getElementById('auth-magic-again').addEventListener('click', () => {
