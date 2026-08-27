@@ -301,6 +301,49 @@
     .set-link { width:auto; border:1px solid var(--border); border-radius:100px; padding:7px 13px; }
   }
 
+  /* ─── Decode a post ─── */
+  .dec-wrap { max-width:660px; }
+  .dec-h { font-size:27px; font-weight:600; letter-spacing:-.8px; margin-bottom:8px; }
+  .dec-sub { font-size:14px; color:var(--text-mid); line-height:1.6; margin-bottom:22px; }
+  .dec-form textarea {
+    width:100%; padding:15px 16px; font-family:inherit; font-size:14.5px; line-height:1.6;
+    color:var(--text); background:var(--surface); border:1px solid var(--border);
+    border-radius:14px; outline:none; resize:vertical; min-height:120px;
+    transition:border-color .2s;
+  }
+  .dec-form textarea:focus { border-color:var(--accent); }
+  .dec-form textarea::placeholder { color:var(--text-dim); }
+  .dec-row { display:flex; gap:9px; margin-top:11px; flex-wrap:wrap; }
+  .dec-row input, .dec-row select {
+    padding:10px 13px; font-family:inherit; font-size:13px; color:var(--text);
+    background:var(--surface); border:1px solid var(--border); border-radius:100px;
+    outline:none; transition:border-color .2s;
+  }
+  .dec-row input { flex:1; min-width:150px; }
+  .dec-row input:focus, .dec-row select:focus { border-color:var(--accent); }
+  .dec-row .btn { margin-left:auto; }
+  .dec-note { margin-top:11px; font-size:12.5px; color:var(--text-dim); min-height:17px; }
+  .dec-note.err { color:#e07a7a; }
+  .dec-recent { margin-top:30px; }
+  .dec-recent[hidden] { display:none; }
+  .dec-recent-label {
+    display:block; font-family:'Geist Mono',monospace; font-size:9px; letter-spacing:.8px;
+    text-transform:uppercase; color:var(--text-dim); margin-bottom:10px;
+  }
+  .dec-item {
+    display:flex; align-items:center; gap:11px; width:100%; text-align:left;
+    padding:11px 13px; margin-bottom:7px; cursor:pointer;
+    background:var(--surface); border:1px solid var(--border); border-radius:12px;
+    font-family:inherit; color:var(--text); transition:border-color .2s;
+  }
+  .dec-item:hover { border-color:var(--border-strong); }
+  .dec-item span { font-size:13px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .dec-item b {
+    margin-left:auto; flex-shrink:0; font-family:'Geist Mono',monospace; font-size:10px;
+    color:var(--accent); background:var(--accent-soft); border-radius:100px; padding:3px 9px;
+  }
+  @media (max-width:600px) { .dec-row .btn { margin-left:0; width:100%; } }
+
   /* ─── App shell ─── */
   .shell { display:grid; grid-template-columns:260px 1fr; height:100vh; }
   .side { background:var(--bg-soft); border-right:1px solid var(--border); padding:18px 14px; display:flex; flex-direction:column; gap:18px; overflow-y:auto; }
@@ -813,6 +856,10 @@
     </nav>
     <div class="section-label nav-group">Understand</div>
     <nav class="nav">
+      <button class="nav-item" data-view="decode">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3M16 3h3a2 2 0 0 1 2 2v3M8 21H5a2 2 0 0 1-2-2v-3M16 21h3a2 2 0 0 0 2-2v-3"/><path d="M7 12h10"/></svg>
+        Decode a post
+      </button>
       <button class="nav-item" data-view="patterns">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
         Patterns<span class="pill-n" id="patterns-count">0</span>
@@ -1120,6 +1167,43 @@
       <!-- PATTERN LIBRARY — mechanisms aggregated from every decode ever run.
            Unlike Hooks (a hand-written static list), this grows on its own as
            posts get decoded. -->
+      <!-- DECODE A POST
+           Sona's answer to an open prompt box. A chat surface asks what to
+           generate; this asks what already worked. Pricing sells "Decode any
+           post", but openDecoder() only took an id from the feed — there was no
+           way in for a post the user found elsewhere. This is that way in.
+           It builds a synthetic idea and hands it to the existing decoder, so
+           the modal, memoisation and "apply pattern to draft" all come free. -->
+      <div class="view" data-view="decode">
+        <div class="dec-wrap">
+          <h2 class="dec-h">What worked?</h2>
+          <p class="dec-sub">Paste a post that outperformed — yours or anyone's. Sona names the mechanism underneath it. It won't write it for you.</p>
+
+          <form class="dec-form" id="dec-form">
+            <textarea id="dec-text" rows="5" placeholder="Paste the post here…" spellcheck="false" aria-label="Post text"></textarea>
+            <div class="dec-row">
+              <input type="text" id="dec-author" placeholder="Author (optional)" autocomplete="off" aria-label="Author">
+              <select id="dec-platform" aria-label="Platform">
+                <option value="X">X</option>
+                <option value="LinkedIn">LinkedIn</option>
+                <option value="YouTube">YouTube</option>
+                <option value="Substack">Substack</option>
+                <option value="Threads">Threads</option>
+                <option value="Instagram">Instagram</option>
+              </select>
+              <button class="btn" type="submit" id="dec-go">Decode this post</button>
+            </div>
+            <p class="dec-note" id="dec-note"></p>
+          </form>
+
+          <div class="dec-recent" id="dec-recent" hidden>
+            <span class="dec-recent-label">Decoded this session</span>
+            <div id="dec-recent-list"></div>
+          </div>
+        </div>
+      </div>
+
+
       <div class="view" data-view="patterns">
         <div class="pat-intro" id="pat-intro">
           Every post you decode is analysed for the mechanism behind it. This is what recurs.
@@ -3240,6 +3324,7 @@
       brand:['Personal brand', workspaceSettings.workspaceName || 'Workspace'],
       swipe:['Idea swipe','Review and save outliers'],
       settings:['Settings','Account and workspace'],
+      decode:['Decode a post','Paste anything that worked'],
     };
     const title = titles[v];
     if (!title) return;
@@ -3515,6 +3600,94 @@
         setTimeout(() => { note.textContent = ''; }, 2600);
       });
     }
+  })();
+
+
+  // ─── Decode a post ───
+  // Wraps pasted text in a synthetic idea and hands it to openDecoder, so the
+  // modal, the memoised result and "apply pattern to draft" all work unchanged.
+  (function initPasteDecode() {
+    const form = document.getElementById('dec-form');
+    if (!form) return;
+    const recent = [];
+
+    function renderRecent() {
+      const box = document.getElementById('dec-recent');
+      const list = document.getElementById('dec-recent-list');
+      box.hidden = recent.length === 0;
+      list.innerHTML = '';
+      recent.forEach(r => {
+        const b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'dec-item';
+        const t = document.createElement('span');
+        t.textContent = r.text.slice(0, 78) + (r.text.length > 78 ? '…' : '');
+        const h = document.createElement('b');
+        h.textContent = r.hook || 'decoded';
+        b.append(t, h);
+        b.addEventListener('click', () => openDecoder(r.id));
+        list.appendChild(b);
+      });
+    }
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const note = document.getElementById('dec-note');
+      const btn = document.getElementById('dec-go');
+      const text = document.getElementById('dec-text').value.trim();
+      note.classList.remove('err');
+
+      // Matches the endpoint's own floor, so a too-short post fails here with a
+      // useful message instead of a 400 from the server.
+      if (text.length < 10) {
+        note.textContent = 'Paste a bit more — at least 10 characters.';
+        note.classList.add('err');
+        return;
+      }
+      if (text.length > 2000) {
+        note.textContent = `That's ${text.length} characters; the decoder takes up to 2000.`;
+        note.classList.add('err');
+        return;
+      }
+
+      const author = document.getElementById('dec-author').value.trim();
+      const platform = document.getElementById('dec-platform').value;
+      const id = 'paste_' + Date.now().toString(36);
+
+      // A synthetic idea with no `decoded`, which is exactly what sends
+      // openDecoder down the live /api/decode path.
+      SEED_IDEAS.unshift({
+        id, cat: 'founders',
+        name: author || 'Pasted post',
+        av: '', handle: (author ? '@' + author.replace(/^@/, '') : 'pasted') + ' · ' + platform,
+        text, tag: 'pasted', views: '',
+      });
+
+      btn.disabled = true;
+      note.textContent = 'Decoding…';
+      openDecoder(id);
+
+      // openDecoder memoises onto the idea; poll briefly for the result so the
+      // session list can show the hook it found.
+      const started = Date.now();
+      const tick = setInterval(() => {
+        const idea = SEED_IDEAS.find(x => x.id === id);
+        const done = idea && idea.decoded;
+        if (done || Date.now() - started > 20000) {
+          clearInterval(tick);
+          btn.disabled = false;
+          if (done) {
+            note.textContent = '';
+            document.getElementById('dec-text').value = '';
+            recent.unshift({ id, text, hook: idea.decoded.hook });
+            renderRecent();
+          } else {
+            note.textContent = 'The decoder didn\'t answer. Check the modal for details.';
+            note.classList.add('err');
+          }
+        }
+      }, 400);
+    });
   })();
 
   function syncNavCounts() {
