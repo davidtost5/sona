@@ -162,10 +162,10 @@
 
 
   /* Discover — masonry columns so cards keep their natural height */
-  .disc-grid { columns: 3; column-gap: 12px; display: block !important; }
+  .disc-grid { columns: 3; column-gap: 16px; display: block !important; }
   @media (max-width: 1180px) { .disc-grid { columns: 2; } }
   @media (max-width: 760px)  { .disc-grid { columns: 1; } }
-  .disc-card { break-inside: avoid; margin: 0 0 12px; }
+  .disc-card { break-inside: avoid; margin: 0 0 16px; }
   .filter-sep { width:1px; align-self:stretch; background:var(--border); margin:0 4px; flex-shrink:0; }
   .disc-plat { width:13px; height:13px; opacity:.5; flex-shrink:0; }
   .disc-mult {
@@ -470,20 +470,20 @@
   .btn-ghost:hover { background:var(--bg-soft); transform:none; filter:none; }
 
   /* DISCOVER */
-  .disc-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(280px,1fr)); gap:12px; }
-  .disc-card { background:var(--bg-soft); border:1px solid var(--border); border-radius:15px; padding:17px; transition:border-color .2s, transform .2s; }
+  .disc-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(300px,1fr)); gap:16px; }
+  .disc-card { background:var(--bg-soft); border:1px solid var(--border); border-radius:16px; padding:20px; transition:border-color .2s, transform .2s; }
   .disc-card:hover { border-color:var(--border-strong); transform:translateY(-1px); }
-  .disc-head { display:flex; align-items:center; gap:8px; margin-bottom:10px; }
+  .disc-head { display:flex; align-items:center; gap:11px; margin-bottom:13px; }
   .disc-head .disc-views { margin-left:auto; flex-shrink:0; }
-  .disc-av { width:24px; height:24px; border-radius:50%; background:linear-gradient(135deg,var(--accent),var(--accent-soft)); flex-shrink:0; }
-  .disc-name { font-size:12px; font-weight:600; }
-  .disc-handle { font-size:11px; color:var(--text-dim); }
-  .disc-text { font-size:13px; color:var(--text); line-height:1.5; margin-bottom:12px; }
+  .disc-av { width:38px; height:38px; border-radius:50%; background:linear-gradient(135deg,var(--accent),var(--accent-soft)); flex-shrink:0; }
+  .disc-name { font-size:14.5px; font-weight:600; letter-spacing:-.2px; }
+  .disc-handle { font-size:13px; color:var(--text-dim); }
+  .disc-text { font-size:15px; color:var(--text); line-height:1.62; margin-bottom:15px; white-space:pre-wrap; }
   .disc-card mark { background: var(--accent-soft); color: var(--accent); padding: 1px 3px; border-radius: 3px; font-weight: 600; }
   .disc-meta { display:flex; align-items:center; justify-content:space-between; gap:10px; }
   .disc-meta-left { display:flex; align-items:center; gap:9px; min-width:0; }
   .disc-tag { font-family:'Geist Mono',monospace; font-size:10.5px; color:var(--accent); background:var(--accent-soft); padding:3px 8px; border-radius:100px; font-weight:500; white-space:nowrap; }
-  .disc-views { font-family:'Geist Mono',monospace; font-size:10px; color:var(--text-dim); white-space:nowrap; }
+  .disc-views { font-family:'Geist Mono',monospace; font-size:11px; color:var(--text-dim); white-space:nowrap; }
   .disc-actions { display:flex; gap:6px; flex-shrink:0; }
   .disc-disclaimer { margin:18px 2px 0; font-size:11px; line-height:1.5; color:var(--text-dim); max-width:640px; }
   /* Hooks library */
@@ -784,7 +784,7 @@
     .filters::-webkit-scrollbar { display: none; }
     .filter { flex-shrink: 0; }
     .disc-grid { grid-template-columns: 1fr; gap: 10px; }
-    .disc-card { padding: 14px; }
+    .disc-card { padding: 16px; }
     .empty { padding: 60px 16px; }
     .empty h3 { font-size: 17px; }
     .empty p { font-size: 13.5px; }
