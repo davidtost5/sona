@@ -257,6 +257,50 @@
     .do-progress { margin-left:0; padding-top:2px; }
   }
 
+  /* ─── Settings: grouped nav + panes ─── */
+  .set-shell { display:grid; grid-template-columns:212px 1fr; gap:26px; align-items:start; }
+  .set-nav { position:sticky; top:18px; display:flex; flex-direction:column; gap:4px; }
+  .set-nav-title { font-size:19px; font-weight:600; letter-spacing:-.4px; margin-bottom:12px; }
+  .set-search { position:relative; margin-bottom:14px; }
+  .set-search svg { position:absolute; left:11px; top:50%; transform:translateY(-50%); width:14px; height:14px; color:var(--text-dim); pointer-events:none; }
+  .set-search input {
+    width:100%; padding:9px 12px 9px 32px; font-size:12.5px; font-family:inherit;
+    color:var(--text); background:var(--surface); border:1px solid var(--border);
+    border-radius:100px; outline:none; transition:border-color .2s;
+  }
+  .set-search input:focus { border-color:var(--accent); }
+  .set-none { font-size:12px; color:var(--text-dim); padding:4px 10px; }
+  .set-group { display:flex; flex-direction:column; gap:2px; margin-bottom:14px; }
+  .set-group[hidden] { display:none; }
+  .set-group-label {
+    font-family:'Geist Mono',monospace; font-size:9px; letter-spacing:.8px;
+    text-transform:uppercase; color:var(--text-dim); padding:8px 10px 4px;
+  }
+  .set-link {
+    display:flex; align-items:center; gap:9px; width:100%; text-align:left;
+    padding:8px 11px; border:0; border-radius:9px; cursor:pointer;
+    background:none; font-family:inherit; font-size:13px; color:var(--text-mid);
+    transition:background .18s ease, color .18s ease;
+  }
+  .set-link[hidden] { display:none; }
+  .set-link svg { width:15px; height:15px; flex-shrink:0; opacity:.85; }
+  .set-link:hover { background:var(--surface); color:var(--text); }
+  .set-link.on { background:var(--surface); color:var(--text); font-weight:600; }
+  .set-main { min-width:0; }
+  .set-pane[hidden] { display:none; }
+  /* Keyboard users need to see where they are; the app has almost no focus
+     styling, and a nav you tab through is where that hurts most. */
+  .set-link:focus-visible, .set-search input:focus-visible {
+    outline:2px solid var(--accent); outline-offset:2px;
+  }
+  @media (max-width:900px) {
+    .set-shell { grid-template-columns:1fr; gap:18px; }
+    .set-nav { position:static; }
+    .set-group { flex-direction:row; flex-wrap:wrap; gap:6px; margin-bottom:8px; }
+    .set-group-label { width:100%; padding:4px 2px 0; }
+    .set-link { width:auto; border:1px solid var(--border); border-radius:100px; padding:7px 13px; }
+  }
+
   /* ─── App shell ─── */
   .shell { display:grid; grid-template-columns:260px 1fr; height:100vh; }
   .side { background:var(--bg-soft); border-right:1px solid var(--border); padding:18px 14px; display:flex; flex-direction:column; gap:18px; overflow-y:auto; }
@@ -1239,59 +1283,121 @@
 
       <!-- SETTINGS -->
       <div class="view" data-view="settings">
-        <div class="work-grid">
-          <section class="panel">
-            <div class="panel-head">
-              <div>
-                <h2>Settings</h2>
-                <p>Control account, workspace, and local app preferences.</p>
-              </div>
-              <span class="coming-soon" id="settings-mode">Account</span>
+        <!-- Grouped settings. Every pane below is backed by something that
+             exists — no placeholder sections. The nav is the scalable part:
+             adding a pane is one <button> plus one <section>. -->
+        <div class="set-shell">
+          <aside class="set-nav">
+            <h2 class="set-nav-title">Settings</h2>
+            <div class="set-search">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+              <input type="text" id="set-search" placeholder="Search settings" aria-label="Search settings" autocomplete="off">
             </div>
-            <form id="settings-form">
-              <div class="form-grid">
-                <div class="field">
-                  <label for="settings-email">Email</label>
-                  <input id="settings-email" disabled>
-                </div>
-                <div class="field">
-                  <label for="settings-timezone">Timezone</label>
-                  <input id="settings-timezone" name="timezone">
-                </div>
-                <div class="field full">
-                  <label for="settings-goal">Content goal</label>
-                  <input id="settings-goal" name="contentGoal" placeholder="Grow a sharper founder voice">
-                </div>
-              </div>
-              <div class="panel" style="margin-top:16px;padding:4px 16px">
-                <label class="toggle-row">
-                  <span>Email digest<small>Weekly idea recap and product updates.</small></span>
-                  <span class="switch"><input type="checkbox" id="settings-digest" name="emailDigest"><i></i></span>
-                </label>
-                <label class="toggle-row">
-                  <span>Public profile<small>Reserve the setting now; public pages ship later.</small></span>
-                  <span class="switch"><input type="checkbox" id="settings-public" name="publicProfile"><i></i></span>
-                </label>
-              </div>
-              <div class="actions-row">
-                <button class="btn" type="submit">Save settings</button>
-                <button class="btn btn-ghost" type="button" id="export-data">Export data</button>
-                <span class="status-note" id="settings-status">No unsaved changes.</span>
-              </div>
-            </form>
-          </section>
-          <aside class="panel">
-            <h2>Account</h2>
-            <div class="stat-list">
-              <div class="stat-row"><span>Status</span><b id="account-status">Beta</b></div>
-              <div class="stat-row"><span>Storage</span><b id="account-storage">Local + Supabase</b></div>
-              <div class="stat-row"><span>Workspace</span><b id="account-workspace">Personal brand</b></div>
+            <p class="set-none" id="set-none" hidden>No settings match that.</p>
+
+            <div class="set-group" data-group>
+              <span class="set-group-label">Personal</span>
+              <button class="set-link on" data-pane="profile" data-keywords="email timezone goal account">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-6 8-6s8 2 8 6"/></svg>Profile</button>
+              <button class="set-link" data-pane="prefs" data-keywords="digest email notifications public profile privacy">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M4 12h16M4 18h16"/><circle cx="9" cy="6" r="2" fill="currentColor"/><circle cx="15" cy="12" r="2" fill="currentColor"/><circle cx="7" cy="18" r="2" fill="currentColor"/></svg>Preferences</button>
             </div>
-            <div class="actions-row">
-              <button class="btn btn-ghost" type="button" onclick="switchView('brand')">Edit brand</button>
-              <button class="btn btn-ghost" type="button" id="clear-local">Clear local data</button>
+
+            <div class="set-group" data-group>
+              <span class="set-group-label">Workspace</span>
+              <button class="set-link" data-pane="brand" data-keywords="brand voice personal workspace">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21V8l9-5 9 5v13"/><path d="M9 21v-6h6v6"/></svg>Brand</button>
+              <button class="set-link" data-pane="data" data-keywords="export download storage clear local data">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="6" rx="8" ry="3"/><path d="M4 6v12c0 1.7 3.6 3 8 3s8-1.3 8-3V6"/><path d="M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/></svg>Data</button>
+            </div>
+
+            <div class="set-group" data-group>
+              <span class="set-group-label">AI</span>
+              <button class="set-link" data-pane="mcp" data-keywords="mcp claude connect integration model context protocol">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3v6M15 3v6"/><rect x="6" y="9" width="12" height="7" rx="2"/><path d="M12 16v5"/></svg>MCP</button>
             </div>
           </aside>
+
+          <div class="set-main">
+            <!-- PROFILE -->
+            <section class="panel set-pane" data-pane="profile">
+              <div class="panel-head"><div><h2>Profile</h2><p>Your account details and what you're writing toward.</p></div></div>
+              <form id="settings-form">
+                <div class="form-grid">
+                  <div class="field">
+                    <label for="settings-email">Email</label>
+                    <input id="settings-email" disabled>
+                  </div>
+                  <div class="field">
+                    <label for="settings-timezone">Timezone</label>
+                    <input id="settings-timezone" name="timezone">
+                  </div>
+                  <div class="field full">
+                    <label for="settings-goal">Content goal</label>
+                    <input id="settings-goal" name="contentGoal" placeholder="Grow a sharper founder voice">
+                  </div>
+                </div>
+                <div class="actions-row">
+                  <button class="btn" type="submit">Save settings</button>
+                  <span class="status-note" id="settings-status">No unsaved changes.</span>
+                </div>
+              </form>
+              <div class="stat-list" style="margin-top:18px">
+                <div class="stat-row"><span>Status</span><b id="account-status">Beta</b></div>
+                <div class="stat-row"><span>Storage</span><b id="account-storage">Local + Supabase</b></div>
+                <div class="stat-row"><span>Workspace</span><b id="account-workspace">Personal brand</b></div>
+              </div>
+            </section>
+
+            <!-- PREFERENCES -->
+            <section class="panel set-pane" data-pane="prefs" hidden>
+              <div class="panel-head"><div><h2>Preferences</h2><p>What Sona sends you, and what it shows others.</p></div></div>
+              <label class="toggle-row">
+                <span>Email digest<small>Weekly idea recap and product updates.</small></span>
+                <span class="switch"><input type="checkbox" id="settings-digest" name="emailDigest"><i></i></span>
+              </label>
+              <label class="toggle-row">
+                <span>Public profile<small>Reserve the setting now; public pages ship later.</small></span>
+                <span class="switch"><input type="checkbox" id="settings-public" name="publicProfile"><i></i></span>
+              </label>
+              <p class="status-note" style="margin-top:12px">Saved with your profile.</p>
+            </section>
+
+            <!-- BRAND -->
+            <section class="panel set-pane" data-pane="brand" hidden>
+              <div class="panel-head"><div><h2>Brand</h2><p>The voice Sona writes back to you in.</p></div></div>
+              <div class="stat-list">
+                <div class="stat-row"><span>Active workspace</span><b>Personal brand</b></div>
+              </div>
+              <div class="actions-row">
+                <button class="btn btn-ghost" type="button" onclick="switchView('brand')">Edit brand</button>
+              </div>
+            </section>
+
+            <!-- DATA -->
+            <section class="panel set-pane" data-pane="data" hidden>
+              <div class="panel-head"><div><h2>Data</h2><p>Everything you've saved is yours to take.</p></div></div>
+              <div class="actions-row">
+                <button class="btn btn-ghost" type="button" id="export-data">Export data</button>
+                <button class="btn btn-ghost" type="button" id="clear-local">Clear local data</button>
+              </div>
+              <p class="status-note" style="margin-top:12px">Export downloads a JSON file. Clearing removes local previews only — saved rows stay in your account.</p>
+            </section>
+
+            <!-- MCP -->
+            <section class="panel set-pane" data-pane="mcp" hidden>
+              <div class="panel-head"><div><h2>Sona MCP</h2><p>Query your research from Claude, without leaving the conversation.</p></div></div>
+              <p class="status-note" style="margin-bottom:12px">Add this endpoint as a custom connector in Claude, then ask it to search your outlier feed.</p>
+              <div class="field full">
+                <label for="mcp-url">Endpoint</label>
+                <input id="mcp-url" readonly value="https://buildwithsona.com/api/mcp">
+              </div>
+              <div class="actions-row">
+                <button class="btn btn-ghost" type="button" id="mcp-copy">Copy endpoint</button>
+                <span class="status-note" id="mcp-status"></span>
+              </div>
+            </section>
+          </div>
         </div>
       </div>
     </div>
@@ -3354,6 +3460,62 @@
       syncOnboard();
     }
   });
+
+
+  // ─── Settings panes ───
+  // Nav switches panes; the search filters links by label + data-keywords and
+  // hides a group once all of its links are filtered out.
+  (function initSettings() {
+    const nav = document.querySelector('.set-nav');
+    if (!nav) return;
+
+    function showPane(name) {
+      document.querySelectorAll('.set-pane').forEach(p => { p.hidden = p.dataset.pane !== name; });
+      document.querySelectorAll('.set-link').forEach(l => l.classList.toggle('on', l.dataset.pane === name));
+    }
+    nav.addEventListener('click', (e) => {
+      const link = e.target.closest('.set-link');
+      if (link) showPane(link.dataset.pane);
+    });
+
+    const search = document.getElementById('set-search');
+    if (search) {
+      search.addEventListener('input', () => {
+        const q = search.value.trim().toLowerCase();
+        document.querySelectorAll('.set-link').forEach(l => {
+          const hay = (l.textContent + ' ' + (l.dataset.keywords || '')).toLowerCase();
+          l.hidden = q ? !hay.includes(q) : false;
+        });
+        let anyVisible = false;
+        document.querySelectorAll('[data-group]').forEach(g => {
+          const has = [...g.querySelectorAll('.set-link')].some(l => !l.hidden);
+          g.hidden = !has;
+          if (has) anyVisible = true;
+        });
+        const none = document.getElementById('set-none');
+        if (none) none.hidden = anyVisible;
+      });
+    }
+
+    const copy = document.getElementById('mcp-copy');
+    if (copy) {
+      copy.addEventListener('click', async () => {
+        const url = document.getElementById('mcp-url').value;
+        const note = document.getElementById('mcp-status');
+        try {
+          await navigator.clipboard.writeText(url);
+          note.textContent = 'Copied.';
+        } catch (_) {
+          // Clipboard API needs a secure context and permission; select the
+          // text instead so the user can copy it by hand.
+          const f = document.getElementById('mcp-url');
+          f.removeAttribute('readonly'); f.select(); f.setAttribute('readonly', '');
+          note.textContent = 'Selected — press Cmd/Ctrl+C.';
+        }
+        setTimeout(() => { note.textContent = ''; }, 2600);
+      });
+    }
+  })();
 
   function syncNavCounts() {
     document.querySelectorAll('.nav-item .pill-n').forEach(el => {
