@@ -378,6 +378,60 @@
   .ir-foot { margin-top:14px; font-size:11.5px; color:var(--text-dim); line-height:1.55; }
   .ir-foot b { color:var(--text-mid); }
 
+  /* ─── Create-or-search pill + command palette ─── */
+  .cmd-trigger {
+    display:flex; align-items:center; gap:9px; width:100%; cursor:pointer;
+    padding:10px 12px; margin-bottom:6px; border-radius:100px;
+    background:var(--surface); border:1px solid var(--border);
+    font-family:inherit; font-size:13px; color:var(--text-mid);
+    transition:border-color .18s ease, color .18s ease;
+  }
+  .cmd-trigger:hover { border-color:var(--border-strong); color:var(--text); }
+  .cmd-trigger svg { width:15px; height:15px; flex-shrink:0; }
+  .cmd-trigger .kbd { margin-left:auto; }
+  .cmd-trigger:focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
+
+  .cmd-back {
+    position:fixed; inset:0; z-index:120; display:flex; justify-content:center;
+    align-items:flex-start; padding:12vh 20px 20px;
+    background:rgba(0,0,0,.55); backdrop-filter:blur(4px);
+  }
+  .cmd-back[hidden] { display:none; }
+  .cmd-panel {
+    width:100%; max-width:560px; border-radius:16px; overflow:hidden;
+    background:var(--bg-soft); border:1px solid var(--border-strong);
+    box-shadow:0 24px 60px rgba(0,0,0,.45);
+  }
+  .cmd-field { display:flex; align-items:center; gap:10px; padding:14px 16px; border-bottom:1px solid var(--border); }
+  .cmd-field svg { width:16px; height:16px; color:var(--text-dim); flex-shrink:0; }
+  .cmd-field input {
+    flex:1; background:none; border:0; outline:none; font-family:inherit;
+    font-size:15px; color:var(--text);
+  }
+  .cmd-field input::placeholder { color:var(--text-dim); }
+  .cmd-list { max-height:min(52vh,440px); overflow-y:auto; padding:8px; }
+  .cmd-group {
+    font-family:'Geist Mono',monospace; font-size:9px; letter-spacing:.8px;
+    text-transform:uppercase; color:var(--text-dim); padding:10px 10px 5px;
+  }
+  .cmd-item {
+    display:flex; align-items:center; gap:10px; width:100%; text-align:left;
+    padding:9px 10px; border:0; border-radius:9px; cursor:pointer;
+    background:none; font-family:inherit; font-size:13.5px; color:var(--text);
+  }
+  .cmd-item svg { width:15px; height:15px; flex-shrink:0; color:var(--text-dim); }
+  .cmd-item small { margin-left:auto; font-size:11px; color:var(--text-dim); flex-shrink:0; }
+  /* Active row is driven by the keyboard, so hover must not fight it. */
+  .cmd-item.on { background:var(--surface); }
+  .cmd-item.on svg { color:var(--accent); }
+
+  /* Recent items: relative age, like the reference's 1m / 21h / Jul 17. */
+  .recent-item { display:flex; align-items:center; gap:8px; }
+  .recent-item .dot { width:5px; height:5px; border-radius:50%; background:var(--border-strong); flex-shrink:0; }
+  .recent-item .age { margin-left:auto; font-size:10.5px; color:var(--text-dim); flex-shrink:0; }
+
+  @media (max-width:768px) { .cmd-back { padding:8vh 14px 14px; } }
+
   /* ─── App shell ─── */
   .shell { display:grid; grid-template-columns:260px 1fr; height:100vh; }
   .side { background:var(--bg-soft); border-right:1px solid var(--border); padding:18px 14px; display:flex; flex-direction:column; gap:18px; overflow-y:auto; }
@@ -865,7 +919,15 @@
       <span class="badge">Beta</span>
     </div>
 
-    <label class="search" id="search-box">
+    <!-- One entry point for creating and finding, rather than a search field
+         that only filters the feed. Opens the command palette; the old inline
+         feed filter still runs, reachable as a "Search the feed" action. -->
+    <button type="button" class="cmd-trigger" id="cmd-trigger">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+      <span>Create or search</span>
+      <span class="kbd">⌘K</span>
+    </button>
+    <label class="search" id="search-box" hidden>
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
       <input type="search" id="search-input" placeholder="Find ideas" autocomplete="off" spellcheck="false">
       <button type="button" class="clear" id="search-clear" aria-label="Clear search">✕</button>
@@ -1529,6 +1591,19 @@
         </div>
       </div>
     </div>
+  </div>
+</div>
+
+
+<!-- COMMAND PALETTE -->
+<div class="cmd-back" id="cmd-back" hidden>
+  <div class="cmd-panel" role="dialog" aria-modal="true" aria-label="Create or search">
+    <div class="cmd-field">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+      <input type="text" id="cmd-input" placeholder="Create or search…" autocomplete="off" spellcheck="false" aria-label="Create or search">
+      <span class="kbd">esc</span>
+    </div>
+    <div class="cmd-list" id="cmd-list" role="listbox"></div>
   </div>
 </div>
 
@@ -2343,7 +2418,7 @@
     if (!recent.length) { host.setAttribute('hidden', ''); label.setAttribute('hidden', ''); return; }
     host.removeAttribute('hidden'); label.removeAttribute('hidden');
     host.innerHTML = recent.map(d =>
-      `<button type="button" class="recent-item" data-draft-id="${escapeHtml(d.id)}">${escapeHtml(d.title || 'Untitled')}</button>`
+      `<button type="button" class="recent-item" data-draft-id="${escapeHtml(d.id)}"><i class="dot"></i><span>${escapeHtml(d.title || 'Untitled')}</span><span class="age">${escapeHtml(relAge(d.updatedAt))}</span></button>`
     ).join('');
     host.querySelectorAll('[data-draft-id]').forEach(b =>
       b.addEventListener('click', () => { loadDraft(b.dataset.draftId); switchView('studio'); }));
@@ -3841,6 +3916,146 @@
       <p class="ir-foot">This is structure only. What it can't tell you is <b>why</b> it worked — that's the decode.</p>`;
   }
 
+
+  // ─── Command palette ───
+  // The sidebar has 14 destinations and no fast way between them, and creating
+  // anything meant navigating first. This is one surface for both.
+  const CMD_ICON = {
+    plus: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>',
+    go:   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>',
+    doc:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3v5h5"/><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg>',
+    find: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>',
+  };
+
+  // Relative age, matching the reference: 1m / 21h / Jul 17.
+  function relAge(ts) {
+    if (!ts) return '';
+    const d = Date.now() - Number(ts);
+    if (d < 6e4) return 'now';
+    if (d < 36e5) return Math.floor(d / 6e4) + 'm';
+    if (d < 864e5) return Math.floor(d / 36e5) + 'h';
+    if (d < 6048e5) return Math.floor(d / 864e5) + 'd';
+    return new Date(Number(ts)).toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+  }
+
+  const CMD_VIEWS = [
+    ['discover','Discover'], ['decode','Decode a post'], ['digest','Digest'],
+    ['lists','My lists'], ['patterns','Patterns'], ['hooks','Hooks library'],
+    ['studio','Drafts'], ['scripts','Scripts'], ['canvas','Canvas'],
+    ['voice','Playbook'], ['library','Library'], ['saved','Saved ideas'],
+    ['swipe','Idea swipe'], ['brand','Personal brand'], ['settings','Settings'],
+  ];
+
+  let cmdRows = [], cmdIdx = 0;
+
+  function cmdBuild(q) {
+    const query = q.trim().toLowerCase();
+    const hit = t => !query || String(t).toLowerCase().includes(query);
+    const rows = [];
+
+    const creates = [
+      ['New draft', () => { switchView('studio'); const n = document.getElementById('draft-new'); if (n) n.click(); }],
+      ['Decode a post', () => switchView('decode')],
+      ['New list', () => switchView('lists')],
+    ].filter(c => hit(c[0]));
+    if (creates.length) {
+      rows.push({ group: 'Create' });
+      creates.forEach(c => rows.push({ icon: CMD_ICON.plus, label: c[0], run: c[1] }));
+    }
+
+    const views = CMD_VIEWS.filter(v => hit(v[1]));
+    if (views.length) {
+      rows.push({ group: 'Go to' });
+      views.forEach(v => rows.push({ icon: CMD_ICON.go, label: v[1], run: () => switchView(v[0]) }));
+    }
+
+    const ds = (typeof drafts !== 'undefined' ? drafts : [])
+      .filter(d => hit(d.title || 'Untitled')).slice(0, 5);
+    if (ds.length) {
+      rows.push({ group: 'Drafts' });
+      ds.forEach(d => rows.push({
+        icon: CMD_ICON.doc, label: d.title || 'Untitled', meta: relAge(d.updatedAt),
+        run: () => { loadDraft(d.id); switchView('studio'); },
+      }));
+    }
+
+    // Falls through to the feed filter that already existed, so the old
+    // behaviour is still reachable rather than replaced.
+    if (query) {
+      rows.push({ group: 'Search' });
+      rows.push({
+        icon: CMD_ICON.find, label: 'Search the feed for “' + q.trim() + '”',
+        run: () => {
+          const inp = document.getElementById('search-input');
+          if (inp) { inp.value = q.trim(); }
+          if (typeof applySearch === 'function') applySearch(q.trim());
+          switchView('discover');
+        },
+      });
+    }
+    return rows;
+  }
+
+  function cmdRender(q) {
+    const list = document.getElementById('cmd-list');
+    cmdRows = cmdBuild(q);
+    // There is always at least one row: a query yields the feed-search action,
+    // and an empty query yields the Create and Go to groups. So no empty state.
+    const actionable = cmdRows.filter(r => r.run);
+    if (cmdIdx >= actionable.length) cmdIdx = 0;
+    let n = -1;
+    list.innerHTML = cmdRows.map(r => {
+      if (r.group) return '<div class="cmd-group">' + escapeHtml(r.group) + '</div>';
+      n++;
+      return '<button type="button" class="cmd-item' + (n === cmdIdx ? ' on' : '') +
+        '" data-i="' + n + '" role="option">' + r.icon +
+        '<span>' + escapeHtml(r.label) + '</span>' +
+        (r.meta ? '<small>' + escapeHtml(r.meta) + '</small>' : '') + '</button>';
+    }).join('');
+    list.querySelectorAll('[data-i]').forEach(b => {
+      b.addEventListener('click', () => cmdRun(Number(b.dataset.i)));
+    });
+    const on = list.querySelector('.cmd-item.on');
+    if (on) on.scrollIntoView({ block: 'nearest' });
+  }
+
+  function cmdRun(i) {
+    const r = cmdRows.filter(x => x.run)[i];
+    if (!r) return;
+    cmdClose();
+    r.run();
+  }
+  function cmdOpen() {
+    const back = document.getElementById('cmd-back');
+    back.hidden = false;
+    cmdIdx = 0;
+    const inp = document.getElementById('cmd-input');
+    inp.value = '';
+    cmdRender('');
+    inp.focus();
+  }
+  function cmdClose() {
+    document.getElementById('cmd-back').hidden = true;
+  }
+
+  (function initCmd() {
+    const trigger = document.getElementById('cmd-trigger');
+    const back = document.getElementById('cmd-back');
+    const inp = document.getElementById('cmd-input');
+    if (!trigger || !back || !inp) return;
+
+    trigger.addEventListener('click', cmdOpen);
+    back.addEventListener('click', e => { if (e.target === back) cmdClose(); });
+    inp.addEventListener('input', () => { cmdIdx = 0; cmdRender(inp.value); });
+    inp.addEventListener('keydown', e => {
+      const n = cmdRows.filter(r => r.run).length;
+      if (e.key === 'ArrowDown') { e.preventDefault(); cmdIdx = (cmdIdx + 1) % n; cmdRender(inp.value); }
+      else if (e.key === 'ArrowUp') { e.preventDefault(); cmdIdx = (cmdIdx - 1 + n) % n; cmdRender(inp.value); }
+      else if (e.key === 'Enter') { e.preventDefault(); cmdRun(cmdIdx); }
+      else if (e.key === 'Escape') { e.preventDefault(); cmdClose(); }
+    });
+  })();
+
   function syncNavCounts() {
     document.querySelectorAll('.nav-item .pill-n').forEach(el => {
       const n = parseInt(el.textContent, 10);
@@ -3974,8 +4189,7 @@
   document.addEventListener('keydown', (e) => {
     if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
       e.preventDefault();
-      searchInput.focus();
-      searchInput.select();
+      cmdOpen();
     } else if (e.key === 'Escape' && document.activeElement === searchInput) {
       searchInput.value = ''; applySearch('');
       searchInput.blur();
