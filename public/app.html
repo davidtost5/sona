@@ -502,6 +502,15 @@
   .pb-flag b { font-weight:600; }
   .pb-clean { font-size:12px; color:var(--accent); }
 
+  .ir-pct { font-family:'Geist Mono',monospace; font-size:10px; color:var(--text-dim); flex-shrink:0; }
+  .ir-eg { font-size:11.5px; color:var(--text-dim); font-style:italic; margin-top:4px; line-height:1.5; }
+  .ir-use {
+    margin-top:7px; padding:5px 11px; border-radius:100px; cursor:pointer;
+    background:none; border:1px solid var(--border); font-family:inherit;
+    font-size:11.5px; color:var(--text-mid); transition:border-color .18s, color .18s;
+  }
+  .ir-use:hover { border-color:var(--accent); color:var(--accent); }
+
   /* ─── App shell ─── */
   .shell { display:grid; grid-template-columns:260px 1fr; height:100vh; }
   .side { background:var(--bg-soft); border-right:1px solid var(--border); padding:18px 14px; display:flex; flex-direction:column; gap:18px; overflow-y:auto; }
@@ -4042,13 +4051,16 @@
       </div>
       ${hooks.length ? `
         <div class="ir-sub">Closest hooks in your library</div>
-        ${hooks.map(x => `
+        ${hooks.map((x, n) => `
           <div class="ir-hook">
             <div class="ir-hook-top">
               <span class="ir-cat">${escapeHtml(x.h.cat)}</span>
               <i class="ir-bar"><u style="width:${Math.round(Math.min(x.score, 1) * 100)}%"></u></i>
+              <span class="ir-pct">${Math.round(Math.min(x.score, 1) * 100)}%</span>
             </div>
             <p>${escapeHtml(x.h.pattern)}</p>
+            ${x.h.eg ? `<p class="ir-eg">e.g. ${escapeHtml(x.h.eg)}</p>` : ''}
+            <button type="button" class="ir-use" data-hook="${escapeHtml(x.h.id)}">Write from this shape →</button>
           </div>`).join('')}
       ` : `<div class="ir-sub">No close structural match in your 36 hooks — that can mean it's genuinely novel, or that it leans on voice rather than structure.</div>`}
       <div class="ir-sub">Skeleton</div>
@@ -4288,6 +4300,29 @@
       ? hits.map(h => '<div class="pb-flag">⚠ You said <b>' + escapeHtml(h) + '</b> — it\'s on your never-say list.</div>').join('')
       : '<p class="pb-clean">✓ Nothing from your never-say list.</p>';
   }
+
+
+  // "Write from this shape" — drops the hook's template into a new draft with
+  // the [slots] intact, so the writing step starts from a structure instead of
+  // a blank page. No model call; the template is one of the 36 already stored.
+  document.addEventListener('click', function (e) {
+    const btn = e.target.closest && e.target.closest('.ir-use');
+    if (!btn) return;
+    const h = (typeof HOOKS_LIBRARY !== 'undefined' ? HOOKS_LIBRARY : [])
+      .find(x => x.id === btn.dataset.hook);
+    if (!h) return;
+    switchView('studio');
+    const title = document.getElementById('draft-title');
+    const body = document.getElementById('draft-body');
+    if (title && !title.value) title.value = h.cat.charAt(0).toUpperCase() + h.cat.slice(1) + ' draft';
+    if (body) {
+      // Prepend rather than overwrite: never destroy something already typed.
+      body.value = h.pattern + (body.value ? '\n\n' + body.value : '');
+      body.dispatchEvent(new Event('input'));
+      body.focus();
+      body.setSelectionRange(0, h.pattern.length);
+    }
+  });
 
   function syncNavCounts() {
     document.querySelectorAll('.nav-item .pill-n').forEach(el => {
