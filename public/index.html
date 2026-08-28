@@ -1069,6 +1069,17 @@
   a.foot-credit-name:hover { color: var(--accent); }
   .foot-credit .role { font-size: 13.5px; color: var(--text-mid); margin-top: 2px; }
 
+  /* Footer directory badges — smaller and quieter than the hero's, and they
+     lift to full opacity on hover so they read as links rather than decoration. */
+  .foot-badges { display:flex; align-items:center; gap:10px; flex-wrap:wrap; flex-shrink:0; }
+  .foot-badges a { flex:0 0 auto; }
+  .foot-badges img { display:block; height:34px; width:auto; max-width:100%; border-radius:6px; opacity:.55; transition:opacity .2s; }
+  .foot-badges a:hover img { opacity:1; }
+  /* The Product Hunt crop still hides the vote counter, scaled to this height:
+     200x54 in the hero becomes 126x34 here, the same proportion. */
+  .foot-badges .ph-crop { width:126px; border-radius:6px; overflow:hidden; line-height:0; }
+  @media (max-width:760px) { .foot-badges { justify-content:center; width:100%; } }
+
   .foot-base { max-width: 1140px; margin: 0 auto; padding: 30px 36px 38px; display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; border-top: 1px solid var(--border); }
   .foot-base span { font-size: 12.5px; color: var(--text-dim); }
   .foot-base .links { display: flex; gap: 22px; }
@@ -1289,8 +1300,6 @@
     <div class="hero-note" data-r>No credit card required.</div>
     <div class="hero-badge" data-r>
       <a href="https://nicklaunches.com/products/sona/?utm_source=buildwithsona.com&utm_medium=badge&utm_campaign=featured" target="_blank" rel="noopener"><img src="https://nicklaunches.com/badges/featured.png" alt="Sona on Nick Launches" width="244" height="56" /></a>
-      <a class="ph-badge ph-crop" href="https://www.producthunt.com/products/sona-8?embed=true&utm_source=badge-featured&utm_medium=badge&utm_campaign=badge-sona-12" target="_blank" rel="noopener noreferrer"><img src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=1233391&theme=neutral&t=1787771481484" alt="Sona - Draft ideas in your voice at the speed of light | Product Hunt" width="250" height="54" /></a>
-      <a href="https://saasbrowser.com/en/saas/1574324/sona" target="_blank" rel="nofollow noopener noreferrer"><img src="https://static-files.saasbrowser.com/saas-browser-badge-16.svg" alt="Sona - Compare B2B SaaS" width="200" height="39" loading="lazy"></a>
     </div>
   </div>
 
@@ -1969,6 +1978,13 @@ and they stick with it for ninety days.
 
   <div class="foot-base">
     <span>&copy; 2026 Sona Labs Inc. Made for creators.</span>
+    <!-- Directory listings live down here. They're credibility for anyone who
+         goes looking, not a reason to sign up, so they don't belong beside the
+         hero CTA. Nick Launches stays up there as the one recognisable mark. -->
+    <div class="foot-badges">
+      <a class="ph-badge ph-crop" href="https://www.producthunt.com/products/sona-8?embed=true&utm_source=badge-featured&utm_medium=badge&utm_campaign=badge-sona-12" target="_blank" rel="noopener noreferrer"><img src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=1233391&theme=neutral&t=1787771481484" alt="Sona - Draft ideas in your voice at the speed of light | Product Hunt" width="250" height="54" /></a>
+      <a href="https://saasbrowser.com/en/saas/1574324/sona" target="_blank" rel="nofollow noopener noreferrer"><img src="https://static-files.saasbrowser.com/saas-browser-badge-16.svg" alt="Sona - Compare B2B SaaS" width="613" height="119" loading="lazy"></a>
+    </div>
   </div>
 </footer>
 <script defer src="data.js"></script>
