@@ -1076,6 +1076,9 @@
   a.foot-credit-name:hover { color: var(--accent); }
   .foot-credit .role { font-size: 13.5px; color: var(--text-mid); margin-top: 2px; }
 
+  .foot-review { font-size:12.5px; color:var(--text-dim); text-decoration:underline; text-underline-offset:2px; transition:color .2s; }
+  .foot-review:hover { color:var(--text); }
+
   /* Footer directory badges — smaller and quieter than the hero's, and they
      lift to full opacity on hover so they read as links rather than decoration. */
   .foot-badges { display:flex; align-items:center; gap:10px; flex-wrap:wrap; flex-shrink:0; }
@@ -1833,6 +1836,7 @@ and they stick with it for ninety days.
           </div>
         </div>
       </div>
+  </div>
 </section>
 
 <!-- SAAS BROWSER REVIEWS
@@ -2005,6 +2009,7 @@ and they stick with it for ninety days.
     <!-- Directory listings live down here. They're credibility for anyone who
          goes looking, not a reason to sign up, so they don't belong beside the
          hero CTA. Nick Launches stays up there as the one recognisable mark. -->
+    <a href="#" class="foot-review" onclick="sonaLeaveReview(event)">Leave a review</a>
     <div class="foot-badges">
       <a class="ph-badge ph-crop" href="https://www.producthunt.com/products/sona-8?embed=true&utm_source=badge-featured&utm_medium=badge&utm_campaign=badge-sona-12" target="_blank" rel="noopener noreferrer"><img src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=1233391&theme=neutral&t=1787771481484" alt="Sona - Draft ideas in your voice at the speed of light | Product Hunt" width="250" height="54" /></a>
       <a href="https://saasbrowser.com/en/saas/1574324/sona" target="_blank" rel="nofollow noopener noreferrer"><img src="https://static-files.saasbrowser.com/saas-browser-badge-16.svg" alt="Sona - Compare B2B SaaS" width="613" height="119" loading="lazy"></a>
@@ -2411,6 +2416,37 @@ and they stick with it for ninety days.
       })
       .catch(function () { /* offline or blocked: stay hidden */ });
   })();
+</script>
+<script>
+  // ─── Leave a review (SaaS Browser collection widget) ───
+  // The script is fetched on the first click, not on page load: it's ~9KB of
+  // third-party JS that most visitors will never trigger, and it renders
+  // nothing until requestReview() is called anyway.
+  window.sonaLeaveReview = function (ev) {
+    if (ev) ev.preventDefault();
+    var PROFILE = '5eb2057e-3cb0-4025-9d5a-74ac8a966fe7';
+var mode = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+
+    function open() {
+      if (!window.SaaSBrowser) return;
+      // init() must run before requestReview(); the script only self-inits from
+      // its own data-* attributes, which a lazily injected tag doesn't have.
+      if (!window.SaaSBrowser._config) {
+        window.SaaSBrowser.init({ siteId: PROFILE, mode: mode, position: 'left' });
+      }
+      window.SaaSBrowser.requestReview();
+    }
+
+    if (window.SaaSBrowser) return open();
+    var s = document.createElement('script');
+    s.src = 'https://assets.saasbrowser.com/widgets/collection.min.js';
+    s.async = true;
+    s.setAttribute('data-profile', PROFILE);
+    s.setAttribute('data-mode', mode);
+    s.setAttribute('data-position', 'left');
+    s.onload = open;
+    document.body.appendChild(s);
+  };
 </script>
 </body>
 </html>

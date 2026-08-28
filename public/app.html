@@ -1469,6 +1469,12 @@
                 <div class="stat-row"><span>Storage</span><b id="account-storage">Local + Supabase</b></div>
                 <div class="stat-row"><span>Workspace</span><b id="account-workspace">Personal brand</b></div>
               </div>
+              <!-- Asked here rather than on the marketing site: a visitor who
+                   hasn't used Sona has nothing to review. -->
+              <div class="actions-row" style="margin-top:16px">
+                <button class="btn btn-ghost" type="button" onclick="sonaLeaveReview(event)">Leave a review</button>
+                <span class="status-note">Used Sona for a bit? A line from you helps more than anything we could write.</span>
+              </div>
             </section>
 
             <!-- PREFERENCES -->
@@ -4138,5 +4144,36 @@
   });
 </script>
 <script src="/signin-bg.js" defer></script>
+<script>
+  // ─── Leave a review (SaaS Browser collection widget) ───
+  // The script is fetched on the first click, not on page load: it's ~9KB of
+  // third-party JS that most visitors will never trigger, and it renders
+  // nothing until requestReview() is called anyway.
+  window.sonaLeaveReview = function (ev) {
+    if (ev) ev.preventDefault();
+    var PROFILE = '5eb2057e-3cb0-4025-9d5a-74ac8a966fe7';
+var mode = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+
+    function open() {
+      if (!window.SaaSBrowser) return;
+      // init() must run before requestReview(); the script only self-inits from
+      // its own data-* attributes, which a lazily injected tag doesn't have.
+      if (!window.SaaSBrowser._config) {
+        window.SaaSBrowser.init({ siteId: PROFILE, mode: mode, position: 'left' });
+      }
+      window.SaaSBrowser.requestReview();
+    }
+
+    if (window.SaaSBrowser) return open();
+    var s = document.createElement('script');
+    s.src = 'https://assets.saasbrowser.com/widgets/collection.min.js';
+    s.async = true;
+    s.setAttribute('data-profile', PROFILE);
+    s.setAttribute('data-mode', mode);
+    s.setAttribute('data-position', 'left');
+    s.onload = open;
+    document.body.appendChild(s);
+  };
+</script>
 </body>
 </html>
