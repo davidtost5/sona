@@ -474,6 +474,34 @@
   .draft-foot .counts { margin-left:auto; font-family:'Geist Mono',monospace; }
   .draft-foot .counts b { color:var(--text-mid); font-weight:500; }
 
+  /* ─── Playbook, pinned beside the editor ─── */
+  .work-side { display:flex; flex-direction:column; gap:14px; min-width:0; }
+  .pb-pin-head { display:flex; align-items:center; gap:10px; margin-bottom:4px; }
+  .pb-pin-head h2 { font-size:15px; }
+  .pb-pin-head .btn { margin-left:auto; padding:5px 11px; font-size:12px; }
+  .pb-sec { margin-top:14px; }
+  .pb-sec-label {
+    font-family:'Geist Mono',monospace; font-size:9px; letter-spacing:.8px;
+    text-transform:uppercase; color:var(--text-dim); margin-bottom:6px;
+  }
+  .pb-sec li { font-size:12.5px; color:var(--text-mid); line-height:1.55; margin-bottom:4px; list-style:none; padding-left:12px; position:relative; }
+  .pb-sec li::before { content:'·'; position:absolute; left:2px; color:var(--accent); }
+  .pb-ban { display:flex; flex-wrap:wrap; gap:5px; }
+  .pb-ban span {
+    font-size:11px; padding:3px 8px; border-radius:100px;
+    color:#e08a8a; background:rgba(224,138,138,.10); border:1px solid rgba(224,138,138,.25);
+  }
+  .pb-empty { font-size:12.5px; color:var(--text-dim); line-height:1.55; }
+  /* Live banned-phrase check on the draft body. */
+  .pb-flags { margin-top:10px; }
+  .pb-flag {
+    display:flex; align-items:center; gap:7px; font-size:12px; color:#e08a8a;
+    padding:7px 10px; border-radius:9px; margin-bottom:5px;
+    background:rgba(224,138,138,.08); border:1px solid rgba(224,138,138,.22);
+  }
+  .pb-flag b { font-weight:600; }
+  .pb-clean { font-size:12px; color:var(--accent); }
+
   /* ─── App shell ─── */
   .shell { display:grid; grid-template-columns:260px 1fr; height:100vh; }
   .side { background:var(--bg-soft); border-right:1px solid var(--border); padding:18px 14px; display:flex; flex-direction:column; gap:18px; overflow-y:auto; }
@@ -1234,11 +1262,26 @@
               </div>
             </form>
           </section>
+          <!-- .work-grid is two columns, so a third child would start a new row
+               under the editor. Both panels share the right column instead. -->
+          <div class="work-side">
           <aside class="panel">
             <h2>Your drafts</h2>
             <p>Tap a draft to keep editing.</p>
             <div class="queue-list" id="drafts-list" style="margin-top:14px"></div>
           </aside>
+
+          <!-- The playbook has always claimed to be "pinned beside every draft".
+               It wasn't — it rendered only into its own view and nothing else
+               ever read it. This is that claim made true. -->
+          <aside class="panel pb-pin" id="pb-pin">
+            <div class="pb-pin-head">
+              <h2>Your voice</h2>
+              <button type="button" class="btn btn-ghost" onclick="switchView('voice')">Edit</button>
+            </div>
+            <div id="pb-pin-body"></div>
+          </aside>
+          </div>
         </div>
       </div>
 
@@ -2568,6 +2611,7 @@
     setText2('stat-signature', lines(styleGuide.signatureLines));
     setText2('stat-banned', csv(styleGuide.bannedPhrases));
     renderPlaybookCards();
+    renderPinnedPlaybook();
     const preview = document.getElementById('style-preview');
     if (preview) {
       const firstHook = (styleGuide.hookPatterns || '').split('\n').find(x => x.trim());
@@ -4181,11 +4225,69 @@
       wEl.textContent = all ? all.split(/\s+/).length : 0;
       cEl.textContent = text.length;
     }
-    body.addEventListener('input', counts);
+    body.addEventListener('input', function () { counts(); checkBannedPhrases(); });
     if (title) title.addEventListener('input', counts);
     counts();
     window.syncDraftCounts = counts;
   })();
+
+
+  // ─── Playbook, pinned beside the editor ───
+  // Renders the saved playbook next to the draft, and checks the body against
+  // the banned list as you type. Entirely local — no model call, so it works
+  // regardless of API credit.
+  function renderPinnedPlaybook() {
+    const host = document.getElementById('pb-pin-body');
+    if (!host) return;
+    const lines = v => (v || '').split('\n').map(x => x.trim()).filter(Boolean);
+    const csv   = v => (v || '').split(',').map(x => x.trim()).filter(Boolean);
+
+    const rules = lines(styleGuide.voiceRules);
+    const sigs  = lines(styleGuide.signatureLines);
+    const hooks = lines(styleGuide.hookPatterns);
+    const ban   = csv(styleGuide.bannedPhrases);
+
+    if (!rules.length && !sigs.length && !hooks.length && !ban.length) {
+      host.innerHTML = '<p class="pb-empty">Nothing here yet. Add a few voice rules and the phrases you never use — they\'ll sit beside every draft and flag themselves if you slip.</p>';
+      return;
+    }
+
+    const sec = (label, items, cls) => items.length
+      ? '<div class="pb-sec"><div class="pb-sec-label">' + label + '</div>' +
+        (cls === 'ban'
+          ? '<div class="pb-ban">' + items.map(x => '<span>' + escapeHtml(x) + '</span>').join('') + '</div>'
+          : '<ul>' + items.slice(0, 4).map(x => '<li>' + escapeHtml(x) + '</li>').join('') + '</ul>')
+        + '</div>'
+      : '';
+
+    host.innerHTML =
+      sec('Voice rules', rules) +
+      sec('Signature lines', sigs) +
+      sec('Your hooks', hooks) +
+      sec('Never say', ban, 'ban') +
+      '<div class="pb-flags" id="pb-flags"></div>';
+    checkBannedPhrases();
+  }
+
+  // Flags anything from the banned list that appears in the draft body.
+  // Word-boundary matched so "AI" doesn't fire inside "again".
+  function checkBannedPhrases() {
+    const flags = document.getElementById('pb-flags');
+    const body = document.getElementById('draft-body');
+    if (!flags || !body) return;
+    const ban = (styleGuide.bannedPhrases || '').split(',').map(x => x.trim()).filter(Boolean);
+    if (!ban.length) { flags.innerHTML = ''; return; }
+
+    const text = body.value || '';
+    if (!text.trim()) { flags.innerHTML = ''; return; }
+
+    const esc = s => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const hits = ban.filter(p => new RegExp('\\b' + esc(p) + '\\b', 'i').test(text));
+
+    flags.innerHTML = hits.length
+      ? hits.map(h => '<div class="pb-flag">⚠ You said <b>' + escapeHtml(h) + '</b> — it\'s on your never-say list.</div>').join('')
+      : '<p class="pb-clean">✓ Nothing from your never-say list.</p>';
+  }
 
   function syncNavCounts() {
     document.querySelectorAll('.nav-item .pill-n').forEach(el => {
