@@ -177,6 +177,13 @@
     [data-split] .w, .mask-reveal, .eyebrow.line::before { transition: none !important; transform: none !important; opacity: 1 !important; clip-path: none !important; }
   }
 
+  /* SaaS Browser reviews — revealed only when the profile has any. */
+  .reviews-sec[hidden] { display: none; }
+  #saas-browser-reviews { max-width: 1140px; margin: 0 auto; padding: 0 36px; }
+  .sb-verified { text-align: center; margin-top: 18px; font-size: 12.5px; }
+  .sb-verified a { color: var(--text-dim); text-decoration: underline; text-underline-offset: 2px; }
+  .sb-verified a:hover { color: var(--text); }
+
   /* ─── MID-PAGE CTA ─── */
   .midcta { text-align:center; padding:0 24px 104px; }
   .midcta-line { font-size:clamp(22px,3.4vw,31px); font-weight:600; letter-spacing:-.8px;
@@ -1828,6 +1835,23 @@ and they stick with it for ninety days.
       </div>
 </section>
 
+<!-- SAAS BROWSER REVIEWS
+     Hidden until the profile actually has one. The widget ships an .empty state,
+     so installing it unconditionally would put a "no reviews" box on the page —
+     weaker than showing nothing, the same reason the Product Hunt vote counter
+     is cropped. This asks the API first and only then loads the widget, so it
+     turns itself on the day a review lands, with nothing left to remember. -->
+<section class="section reviews-sec" id="sb-reviews" hidden>
+  <div class="sec-head" data-r>
+    <span class="eyebrow accent line">Reviews</span>
+    <h2>What people <span class="quiet">actually say.</span></h2>
+  </div>
+  <div id="saas-browser-reviews"></div>
+  <p class="sb-verified">
+    <a href="https://saasbrowser.com/en/saas/1574324/sona" target="_blank" rel="nofollow noopener noreferrer">We're verified on SaaS Browser</a>
+  </p>
+</section>
+
 <!-- HOW IT WORKS / TIMELINE -->
 <section class="section" id="how">
   <div class="sec-head" data-r>
@@ -2356,6 +2380,37 @@ and they stick with it for ninety days.
     b.style.setProperty('--mx', ((e.clientX - r.left) / r.width * 100) + '%');
     b.style.setProperty('--my', ((e.clientY - r.top) / r.height * 100) + '%');
   }, { passive: true });
+</script>
+<script>
+  // Load the SaaS Browser widget only if the profile has reviews. One cheap
+  // request; on zero it does nothing and the section stays hidden, so the page
+  // never shows an empty reviews box. data-mode follows the site theme rather
+  // than being pinned to light, which would glare on the dark palette.
+  (function () {
+    var PROFILE = '5eb2057e-3cb0-4025-9d5a-74ac8a966fe7';
+    var sec = document.getElementById('sb-reviews');
+    if (!sec) return;
+
+    function mode() {
+      return document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+    }
+
+    fetch('https://saasbrowser.com/api/reviews/' + PROFILE)
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (data) {
+        var n = data && data.aggregate && data.aggregate.count;
+        if (!n) return;                     // no reviews yet — leave it hidden
+        var s = document.createElement('script');
+        s.src = 'https://assets.saasbrowser.com/widgets/display.min.js';
+        s.async = true;
+        s.setAttribute('data-profile', PROFILE);
+        s.setAttribute('data-layout', 'carousel');
+        s.setAttribute('data-mode', mode());
+        s.onload = function () { sec.hidden = false; };
+        document.body.appendChild(s);
+      })
+      .catch(function () { /* offline or blocked: stay hidden */ });
+  })();
 </script>
 </body>
 </html>
