@@ -872,7 +872,12 @@
       if (window.__authScriptsLoaded) return;
       window.__authScriptsLoaded = true;
       const authScript = document.createElement('script');
-      authScript.src = "auth.js";
+      // Versioned URL. A response cached under the old max-age=86400 keeps that
+      // lifetime and will not revalidate, so browsers that loaded auth.js before
+      // the header fix stay on a stale copy for up to a day — which is exactly how
+      // a fixed auth modal kept rendering empty. A new URL sidesteps the cache
+      // entirely. Bump this string whenever auth.js changes.
+      authScript.src = "auth.js?v=20260828a";
       authScript.defer = true;
       document.head.appendChild(authScript);
     };
