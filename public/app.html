@@ -379,6 +379,11 @@
   .ir-foot b { color:var(--text-mid); }
 
   /* ─── Create-or-search pill + command palette ─── */
+  /* [hidden] loses to .search's explicit display, so it needs saying outright.
+     The field stays in the DOM because applySearch() and the palette's
+     "Search the feed" action both still drive it. */
+  .search[hidden] { display: none !important; }
+
   .cmd-trigger {
     display:flex; align-items:center; gap:9px; width:100%; cursor:pointer;
     padding:10px 12px; margin-bottom:6px; border-radius:100px;
@@ -431,6 +436,43 @@
   .recent-item .age { margin-left:auto; font-size:10.5px; color:var(--text-dim); flex-shrink:0; }
 
   @media (max-width:768px) { .cmd-back { padding:8vh 14px 14px; } }
+
+  /* ─── "Let's make something" entry cards ─── */
+  .lc { margin-bottom: 22px; }
+  .lc-head { display:flex; align-items:center; gap:10px; margin-bottom:14px; }
+  .lc-mark { width:20px; height:20px; color:var(--accent); flex-shrink:0; }
+  .lc-mark svg { width:100%; height:100%; display:block; }
+  .lc-head h2 { font-size:19px; font-weight:600; letter-spacing:-.4px; }
+  .lc-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(190px,1fr)); gap:12px; }
+  .lc-card {
+    display:flex; flex-direction:column; align-items:flex-start; gap:4px;
+    padding:18px 16px 16px; min-height:132px; cursor:pointer; text-align:left;
+    background:var(--bg-soft); border:1px solid var(--border); border-radius:15px;
+    font-family:inherit; transition:border-color .2s ease, transform .2s ease;
+  }
+  .lc-card:hover { border-color:var(--border-strong); transform:translateY(-2px); }
+  .lc-card:focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
+  .lc-ico {
+    width:36px; height:36px; border-radius:10px; margin-bottom:auto;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .lc-ico svg { width:17px; height:17px; }
+  /* Per-card accent, like the reference — one hue each so the row scans fast. */
+  .lc-green  { background:rgba(95,184,150,.14);  color:#5fb896; }
+  .lc-blue   { background:rgba(90,150,255,.14);  color:#6f9dff; }
+  .lc-amber  { background:rgba(230,170,70,.14);  color:#e2a94a; }
+  .lc-violet { background:rgba(150,120,240,.14); color:#9b83f0; }
+  .lc-card b { font-size:14px; color:var(--text); margin-top:14px; }
+  .lc-card small { font-size:12px; color:var(--text-dim); line-height:1.45; }
+
+  /* Editor footer: created date on the left, live counts on the right. */
+  .draft-foot {
+    display:flex; align-items:center; gap:12px; flex-wrap:wrap;
+    margin-top:14px; padding-top:13px; border-top:1px solid var(--border);
+    font-size:11.5px; color:var(--text-dim);
+  }
+  .draft-foot .counts { margin-left:auto; font-family:'Geist Mono',monospace; }
+  .draft-foot .counts b { color:var(--text-mid); font-weight:500; }
 
   /* ─── App shell ─── */
   .shell { display:grid; grid-template-columns:260px 1fr; height:100vh; }
@@ -1110,6 +1152,40 @@
 
       <!-- DRAFTS (formerly Studio) -->
       <div class="view" data-view="studio">
+        <!-- LET'S CREATE
+             Four ways in, mapped to the loop the product actually runs:
+             find -> understand -> make it yours -> keep your voice. No chat
+             card; a surface that writes for you is the one thing Sona says it
+             won't do. -->
+        <div class="lc">
+          <div class="lc-head">
+            <span class="lc-mark"><svg viewBox="0 0 24 24" fill="none"><path d="M5 15 Q8 9 12 12 Q16 15 19 9" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" fill="none"/><path d="M19 3.6 C19.15 5.1 20.3 6.25 21.8 6.4 C20.3 6.55 19.15 7.7 19 9.2 C18.85 7.7 17.7 6.55 16.2 6.4 C17.7 6.25 18.85 5.1 19 3.6 Z" fill="currentColor"/></svg></span>
+            <h2>Let's make something</h2>
+          </div>
+          <div class="lc-grid">
+            <button type="button" class="lc-card" data-go="decode">
+              <span class="lc-ico lc-green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3M16 3h3a2 2 0 0 1 2 2v3M8 21H5a2 2 0 0 1-2-2v-3M16 21h3a2 2 0 0 0 2-2v-3"/><path d="M7 12h10"/></svg></span>
+              <b>Decode a post</b>
+              <small>Paste anything that worked</small>
+            </button>
+            <button type="button" class="lc-card" data-go="discover">
+              <span class="lc-ico lc-blue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg></span>
+              <b>Find an outlier</b>
+              <small>See what's beating its baseline</small>
+            </button>
+            <button type="button" class="lc-card" data-go="draft">
+              <span class="lc-ico lc-amber"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg></span>
+              <b>Start a draft</b>
+              <small>Write it in your own words</small>
+            </button>
+            <button type="button" class="lc-card" data-go="voice">
+              <span class="lc-ico lc-violet"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></span>
+              <b>Set your voice</b>
+              <small>Teach Sona how you sound</small>
+            </button>
+          </div>
+        </div>
+
         <div class="work-grid">
           <section class="panel">
             <div class="panel-head">
@@ -1151,6 +1227,10 @@
                 <button class="btn btn-ghost" type="button" id="draft-copy">Copy</button>
                 <button class="btn btn-ghost" type="button" id="draft-delete">Delete</button>
                 <span class="status-note" id="draft-status">No unsaved changes.</span>
+              </div>
+              <div class="draft-foot">
+                <span id="draft-created">Not saved yet</span>
+                <span class="counts"><b id="draft-words">0</b>w · <b id="draft-chars">0</b>c</span>
               </div>
             </form>
           </section>
@@ -2277,6 +2357,10 @@
     document.getElementById('draft-platform').value = d.platform || 'X';
     document.getElementById('draft-heading').textContent = d.title || 'Untitled draft';
     document.getElementById('draft-meta').textContent = `Saved ${new Date(d.updatedAt).toLocaleString()}`;
+    var cr = document.getElementById('draft-created');
+    if (cr) cr.textContent = 'Created ' + new Date(d.createdAt || d.updatedAt)
+      .toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+    if (window.syncDraftCounts) window.syncDraftCounts();
     document.getElementById('draft-status').textContent = 'Loaded.';
     renderDrafts();
   }
@@ -2287,6 +2371,9 @@
     document.getElementById('draft-platform').value = 'X';
     document.getElementById('draft-heading').textContent = 'New draft';
     document.getElementById('draft-meta').textContent = 'Unsaved';
+    var _cr = document.getElementById('draft-created');
+    if (_cr) _cr.textContent = 'Not saved yet';
+    if (window.syncDraftCounts) window.syncDraftCounts();
     document.getElementById('draft-status').textContent = 'No unsaved changes.';
     renderDrafts();
   }
@@ -2867,6 +2954,9 @@
     body.value = `${h.pattern}\n\nExample: ${h.eg}\n\n— your version (fill the brackets in your voice) —\n`;
     document.getElementById('draft-heading').textContent = 'New draft';
     document.getElementById('draft-meta').textContent = 'Unsaved';
+    var _cr = document.getElementById('draft-created');
+    if (_cr) _cr.textContent = 'Not saved yet';
+    if (window.syncDraftCounts) window.syncDraftCounts();
     document.getElementById('draft-status').textContent = 'Hook loaded. Make it yours.';
     switchView('studio');
     setTimeout(() => body.focus(), 50);
@@ -2956,6 +3046,9 @@
     body.value = `${tpl}\n\nWhy it works: ${p.why || ''}\n\n— your version (fill the brackets in your voice) —\n`;
     document.getElementById('draft-heading').textContent = 'New draft';
     document.getElementById('draft-meta').textContent = 'Unsaved';
+    var _cr = document.getElementById('draft-created');
+    if (_cr) _cr.textContent = 'Not saved yet';
+    if (window.syncDraftCounts) window.syncDraftCounts();
     document.getElementById('draft-status').textContent = 'Pattern loaded. Make it yours.';
     switchView('studio');
     setTimeout(() => body.focus(), 50);
@@ -3300,6 +3393,9 @@
     document.getElementById('draft-body').value = n.text || '';
     document.getElementById('draft-heading').textContent = 'New draft';
     document.getElementById('draft-meta').textContent = 'Unsaved';
+    var _cr = document.getElementById('draft-created');
+    if (_cr) _cr.textContent = 'Not saved yet';
+    if (window.syncDraftCounts) window.syncDraftCounts();
     document.getElementById('draft-status').textContent = 'Loaded from canvas. Rewrite in your voice.';
     switchView('studio');
     setTimeout(() => document.getElementById('draft-body').focus(), 50);
@@ -4056,6 +4152,41 @@
     });
   })();
 
+
+  // ─── "Let's make something" cards + live editor counts ───
+  (function initCreateRow() {
+    document.querySelectorAll('.lc-card[data-go]').forEach(function (card) {
+      card.addEventListener('click', function () {
+        var go = card.dataset.go;
+        if (go === 'draft') {
+          // Already on this view; just put the cursor where writing starts.
+          var t = document.getElementById('draft-title');
+          if (t) { t.focus(); t.scrollIntoView({ block: 'center', behavior: 'smooth' }); }
+          return;
+        }
+        switchView(go);
+      });
+    });
+
+    var body = document.getElementById('draft-body');
+    var title = document.getElementById('draft-title');
+    var wEl = document.getElementById('draft-words');
+    var cEl = document.getElementById('draft-chars');
+    if (!body || !wEl || !cEl) return;
+
+    function counts() {
+      var text = body.value || '';
+      // Count title words too — a hook is part of the piece.
+      var all = ((title && title.value ? title.value + ' ' : '') + text).trim();
+      wEl.textContent = all ? all.split(/\s+/).length : 0;
+      cEl.textContent = text.length;
+    }
+    body.addEventListener('input', counts);
+    if (title) title.addEventListener('input', counts);
+    counts();
+    window.syncDraftCounts = counts;
+  })();
+
   function syncNavCounts() {
     document.querySelectorAll('.nav-item .pill-n').forEach(el => {
       const n = parseInt(el.textContent, 10);
@@ -4339,6 +4470,9 @@
        `Original (for reference):\n"${i.text}"\n`;
      document.getElementById('draft-heading').textContent = 'New draft';
      document.getElementById('draft-meta').textContent = 'Unsaved';
+    var _cr = document.getElementById('draft-created');
+    if (_cr) _cr.textContent = 'Not saved yet';
+    if (window.syncDraftCounts) window.syncDraftCounts();
      document.getElementById('draft-status').textContent = 'Pattern loaded. Rewrite in your voice.';
      closeDecoder();
      switchView('studio');
