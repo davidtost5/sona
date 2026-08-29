@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script>(function(){try{var h=new Date().getHours();var dark=h<7||h>=19;document.documentElement.setAttribute('data-theme',dark?'dark':'light');}catch(e){}})();</script>
+<meta name="color-scheme" content="light dark">
+<link rel="icon" type="image/svg+xml" href="/logo.svg">
+<link rel="apple-touch-icon" href="/logo.svg">
+<title>Sona — Privacy Policy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Geist+Mono:wght@500&display=swap" rel="stylesheet" media="print" onload="this.media='all'"><noscript><link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Geist+Mono:wght@500&display=swap" rel="stylesheet"></noscript>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --bg: #f3f3f0; --bg-soft: #ecebe6; --surface: #fcfcfa;
+    --border: rgba(26,26,26,0.09); --border-strong: rgba(26,26,26,0.16);
+    --text: #1a1a1a; --text-mid: #55554f; --text-dim: #71716a;
+    --accent: #28775c; --accent-soft: rgba(40,119,92,0.09);
+    --btn: #1a1a1a; --btn-text: #f3f3f0;
+  }
+  html[data-theme="dark"] {
+    --bg: #111312; --bg-soft: #171918; --surface: #1b1e1c;
+    --border: rgba(255,255,255,0.09); --border-strong: rgba(255,255,255,0.18);
+    --text: #f3f3f0; --text-mid: #a5a59e; --text-dim: #8b8b84;
+    --accent: #5fb896; --accent-soft: rgba(95,184,150,0.13);
+    --btn: #f3f3f0; --btn-text: #1a1a1a;
+  }
+  body {
+    font-family: 'Aeonik Pro', 'Aeonik', 'DM Sans', -apple-system, sans-serif;
+    background: var(--bg); color: var(--text); -webkit-font-smoothing: antialiased;
+    line-height: 1.5; min-height: 100vh; display: flex; flex-direction: column;
+    transition: background .5s, color .5s;
+  }
+  a { color: inherit; }
+  nav {
+    position: sticky; top: 0; z-index: 50; display: flex; align-items: center;
+    justify-content: space-between; padding: 18px 30px;
+    border-bottom: 1px solid var(--border); background: color-mix(in srgb, var(--bg) 88%, transparent);
+    backdrop-filter: blur(12px);
+  }
+  .logo { display: inline-flex; align-items: center; gap: 9px; text-decoration: none; font-weight: 600; letter-spacing: -.4px; }
+  .logo svg { width: 24px; height: 24px; }
+  .nav-cta {
+    padding: 9px 17px; border-radius: 100px; background: var(--btn); color: var(--btn-text);
+    text-decoration: none; font-size: 14px; font-weight: 500; transition: opacity .2s;
+  }
+  .nav-cta:hover { opacity: .85; }
+  main { flex: 1; width: 100%; max-width: 720px; margin: 0 auto; padding: 72px 26px 90px; }
+  .eyebrow {
+    font-family: 'Geist Mono', monospace; font-size: 11px; letter-spacing: 1.4px;
+    text-transform: uppercase; color: var(--accent); display: inline-block; margin-bottom: 16px;
+  }
+  h1 { font-size: clamp(32px, 5vw, 46px); font-weight: 600; letter-spacing: -1.6px; line-height: 1.08; margin-bottom: 14px; }
+  .updated { font-family: 'Geist Mono', monospace; font-size: 12px; color: var(--text-dim); margin-bottom: 34px; }
+  .note {
+    border: 1px solid var(--border-strong); background: var(--surface); border-radius: 12px;
+    padding: 15px 17px; font-size: 14px; color: var(--text-mid); line-height: 1.6; margin-bottom: 34px;
+  }
+  h2 { font-size: 19px; font-weight: 600; letter-spacing: -.5px; margin: 34px 0 10px; }
+  p { color: var(--text-mid); font-size: 15.5px; line-height: 1.68; margin-bottom: 13px; }
+  ul { margin: 0 0 13px 19px; }
+  li { color: var(--text-mid); font-size: 15.5px; line-height: 1.68; margin-bottom: 6px; }
+  a.inline { color: var(--accent); text-decoration: underline; text-underline-offset: 2px; }
+  footer {
+    border-top: 1px solid var(--border); padding: 24px 30px;
+    display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap;
+    font-size: 13px; color: var(--text-dim);
+  }
+  footer .links { display: flex; gap: 18px; }
+  footer a { text-decoration: none; }
+  footer a:hover { color: var(--text); }
+  @media (max-width: 640px) {
+    nav { padding: 15px 18px; }
+    main { padding: 48px 20px 64px; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="/index.html" class="logo">
+    <svg viewBox="0 0 24 24" fill="none"><path d="M5 15 Q8 9 12 12 Q16 15 19 9" stroke="#28775c" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M19 3.6 C19.15 5.1 20.3 6.25 21.8 6.4 C20.3 6.55 19.15 7.7 19 9.2 C18.85 7.7 17.7 6.55 16.2 6.4 C17.7 6.25 18.85 5.1 19 3.6 Z" fill="#28775c"/></svg>
+    <span>Sona</span>
+  </a>
+  <a href="/index.html#pricing" class="nav-cta">Start free</a>
+</nav>
+
+<main>
+  <span class="eyebrow">Privacy</span>
+  <h1>Privacy Policy</h1>
+  <div class="updated">Last updated: 13 August 2026</div>
+  <div class="note">This is a summary of our current practice, published so nothing on this site links nowhere. It is not yet a complete legal document — the full privacy policy is being finalised. For anything not covered here, email <a class="inline" href="mailto:david@buildwithsona.com">david@buildwithsona.com</a> and we will answer directly.</div>
+  <h2>What we collect</h2>
+  <p>If you request access or contact us, we collect the name, email address and the details you type into that form. If you create an account, we store your email address and the content you create in Sona — your saved ideas, lists, drafts and playbook.</p>
+
+  <h2>Why we collect it</h2>
+  <p>To reply to you, to give you access to your account, and to keep your work available to you across sessions. We do not sell your data, and we do not use it to train models.</p>
+
+  <h2>Who processes it</h2>
+  <p>We use third-party providers to run the product. Today those are Supabase (accounts, sign-in emails and stored content), Vercel (hosting), Stripe (payments), and Spacemail or Resend (email delivery). Each processes data on our behalf under its own terms.</p>
+
+  <h2>Your choices</h2>
+  <ul>
+    <li>Ask for a copy of what we hold about you.</li>
+    <li>Ask us to correct or delete it.</li>
+    <li>Withdraw consent and close your account at any time.</li>
+  </ul>
+  <p>Email <a class="inline" href="mailto:david@buildwithsona.com">david@buildwithsona.com</a> and we will action any of the above.</p>
+
+  <h2>Cookies</h2>
+  <p>We use a session token to keep you signed in. We do not run third-party advertising or cross-site tracking.</p>
+
+</main>
+
+<footer>
+  <span>&copy; 2026 Sona Labs Inc.</span>
+  <div class="links">
+    <a href="/privacy.html">Privacy</a>
+    <a href="/terms.html">Terms</a>
+    <a href="/security.html">Security</a>
+    <a href="/contact.html">Contact</a>
+  </div>
+</footer>
+
+<script>
+  setInterval(function () {
+    var h = new Date().getHours();
+    document.documentElement.setAttribute('data-theme', (h < 7 || h >= 19) ? 'dark' : 'light');
+  }, 60 * 1000);
+</script>
+</body>
+</html>
