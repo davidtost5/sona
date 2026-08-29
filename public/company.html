@@ -841,6 +841,14 @@
       authScript.src = "auth.js?v=20260828d";
       authScript.defer = true;
       document.head.appendChild(authScript);
+
+      // Clerk layer, loaded after auth.js so it can capture the Supabase
+      // implementation and delegate to it while CLERK_PUBLISHABLE_KEY is unset.
+      // Deferred scripts run in insertion order, so this always parses second.
+      const clerkScript = document.createElement('script');
+      clerkScript.src = "clerk-auth.js?v=20260829a";
+      clerkScript.defer = true;
+      document.head.appendChild(clerkScript);
     };
 
     // Auto-load if user has a cached session in localStorage
@@ -849,6 +857,10 @@
       for (let i = 0; i < localStorage.length; i++) {
         const key = localStorage.key(i);
         if (key && key.startsWith('sb-') && key.endsWith('-auth-token')) {
+          hasSession = true;
+          break;
+        }
+        if (key && key.indexOf('clerk') !== -1) {
           hasSession = true;
           break;
         }
