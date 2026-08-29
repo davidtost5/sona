@@ -137,9 +137,9 @@
       .auth-overlay {
         position: fixed;
         inset: 0;
-        background: rgba(15, 31, 15, 0.18);
-        backdrop-filter: blur(10px);
-        -webkit-backdrop-filter: blur(10px);
+        background: rgba(12, 24, 18, 0.30);
+        backdrop-filter: blur(14px) saturate(120%);
+        -webkit-backdrop-filter: blur(14px) saturate(120%);
         z-index: 10000;
         display: flex;
         align-items: center;
@@ -147,7 +147,7 @@
         padding: 20px;
         opacity: 0;
         pointer-events: none;
-        transition: opacity 0.35s ease;
+        transition: opacity .4s cubic-bezier(.2, .8, .2, 1);
       }
       .auth-overlay.open {
         opacity: 1;
@@ -156,19 +156,52 @@
       .auth-modal {
         background: var(--bg);
         border: 1px solid var(--border);
-        border-radius: 24px;
-        padding: 44px 40px 40px;
+        border-radius: 26px;
+        padding: 40px 38px 36px;
         width: 100%;
         max-width: 400px;
         max-height: calc(100vh - 40px);
         overflow-y: auto;
         position: relative;
-        transform: translateY(16px) scale(0.98);
-        transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
-        box-shadow: var(--shadow-lg);
+        transform: translateY(18px) scale(0.975);
+        transition: transform .5s cubic-bezier(.16, 1, .3, 1);
+        /* Layered rather than one flat drop: a lit top edge, a close contact
+           shadow, and a wide soft one. That is what reads as depth. */
+        box-shadow:
+          inset 0 1px 0 color-mix(in srgb, var(--text) 6%, transparent),
+          0 1px 2px rgba(0,0,0,.06),
+          0 24px 60px -12px rgba(0,0,0,.28);
       }
       .auth-overlay.open .auth-modal {
         transform: translateY(0) scale(1);
+      }
+
+      /* ─── Entrance ───
+         The card lifts, then its contents follow one at a time. Staggering the
+         children is what separates "a box appeared" from "a screen arrived";
+         the delays are short enough that it never feels like waiting. */
+      .auth-overlay.open .auth-modal > div:not([style*="none"]) > * {
+        animation: authRise .52s cubic-bezier(.2, .85, .25, 1) backwards;
+      }
+      .auth-overlay.open .auth-modal > div > *:nth-child(1) { animation-delay: .06s; }
+      .auth-overlay.open .auth-modal > div > *:nth-child(2) { animation-delay: .11s; }
+      .auth-overlay.open .auth-modal > div > *:nth-child(3) { animation-delay: .16s; }
+      .auth-overlay.open .auth-modal > div > *:nth-child(4) { animation-delay: .21s; }
+      .auth-overlay.open .auth-modal > div > *:nth-child(5) { animation-delay: .26s; }
+      .auth-overlay.open .auth-modal > div > *:nth-child(6) { animation-delay: .31s; }
+      @keyframes authRise {
+        from { opacity: 0; transform: translateY(9px); filter: blur(2px); }
+        to   { opacity: 1; transform: none;            filter: none; }
+      }
+
+      /* The close control fades in last and stays quiet until hovered. */
+      .auth-overlay.open .auth-close { animation: authRise .5s cubic-bezier(.2,.85,.25,1) .34s backwards; }
+
+      /* The mark gets a slow, single sweep on entry — brand, not decoration. */
+      .auth-overlay.open .auth-logo-icon svg { animation: markDraw 1.1s ease-out .18s backwards; }
+      @keyframes markDraw {
+        from { opacity: 0; transform: scale(.82) rotate(-6deg); }
+        to   { opacity: 1; transform: none; }
       }
       .auth-close {
         position: absolute;
@@ -252,7 +285,17 @@
         outline: none;
         transition: border-color 0.3s;
       }
-      .auth-field input:focus { border-bottom-color: #5fb896; }
+      .auth-field { position: relative; }
+      /* A hairline that grows from the centre, instead of the border simply
+         changing colour. Cheap, and it makes the field feel responsive. */
+      .auth-field::after {
+        content: ''; position: absolute; left: 50%; bottom: 0; height: 1.5px; width: 0;
+        background: linear-gradient(90deg, transparent, #5fb896, transparent);
+        transform: translateX(-50%);
+        transition: width .42s cubic-bezier(.2, .8, .2, 1);
+      }
+      .auth-field:focus-within::after { width: 100%; }
+      .auth-field input:focus { border-bottom-color: transparent; }
       .auth-field input::placeholder { color: var(--text-dim); opacity: .55; }
       .auth-submit {
         font-family: 'Geist', -apple-system, sans-serif;
@@ -269,7 +312,48 @@
         transition: transform 0.2s, background 0.2s;
         margin-top: 26px;
       }
+      .auth-submit {
+        position: relative; overflow: hidden; isolation: isolate;
+      }
+      /* Light passes across the button on hover — the same gesture the hero
+         pill uses, so the two surfaces feel related. */
+      .auth-submit::after {
+        content: ''; position: absolute; inset: 0; z-index: -1;
+        background: linear-gradient(115deg, transparent 30%, rgba(255,255,255,.38), transparent 70%);
+        transform: translateX(-130%);
+        transition: transform .62s cubic-bezier(.2, .8, .2, 1);
+      }
+      .auth-submit:hover::after { transform: translateX(130%); }
       .auth-submit:hover { transform: translateY(-1px); background: #6fc7a5; }
+      .auth-submit:active { transform: translateY(0) scale(.985); transition-duration: .09s; }
+
+      /* Secondary links grow their underline rather than snapping it on. */
+      .auth-toggle a { position: relative; text-decoration: none; }
+      .auth-toggle a::after {
+        content: ''; position: absolute; left: 0; right: 0; bottom: -2px; height: 1px;
+        background: currentColor; transform: scaleX(0); transform-origin: right;
+        transition: transform .3s cubic-bezier(.2, .8, .2, 1);
+      }
+      .auth-toggle a:hover { text-decoration: none; }
+      .auth-toggle a:hover::after { transform: scaleX(1); transform-origin: left; }
+
+      /* ─── Reduced motion ───
+         Everything above is decoration. Someone who has asked for less of it
+         still needs the modal to appear and the field to show focus. */
+      @media (prefers-reduced-motion: reduce) {
+        .auth-overlay, .auth-modal,
+        .auth-overlay.open .auth-modal > div > *,
+        .auth-overlay.open .auth-close,
+        .auth-overlay.open .auth-logo-icon svg {
+          animation: none !important;
+          transition: opacity .01s linear !important;
+          transform: none !important;
+          filter: none !important;
+        }
+        .auth-field::after, .auth-submit::after, .auth-toggle a::after { transition: none !important; }
+        .auth-field:focus-within::after { width: 100%; }
+        .auth-field input:focus { border-bottom-color: #5fb896; }
+      }
       .auth-submit:active { transform: translateY(0); filter: brightness(0.96); }
       .auth-submit:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
       /* Waitlist success card */
