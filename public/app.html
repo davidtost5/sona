@@ -511,6 +511,54 @@
   }
   .ir-use:hover { border-color:var(--accent); color:var(--accent); }
 
+  /* ─── Home ─── */
+  .hm-head { display:flex; align-items:center; gap:12px; margin-bottom:22px; }
+  .hm-mark { width:26px; height:26px; color:var(--accent); flex-shrink:0; }
+  .hm-mark svg { width:100%; height:100%; display:block; }
+  .hm-head h2 { font-size:28px; font-weight:600; letter-spacing:-.8px; }
+  .hm-sec { font-size:15px; font-weight:600; margin:30px 0 12px; }
+  .hm-recents {
+    display:grid; grid-template-columns:minmax(240px,340px) 1fr;
+    border:1px solid var(--border); border-radius:16px; overflow:hidden; background:var(--bg-soft);
+  }
+  .hm-promo { padding:24px; border-right:1px solid var(--border); }
+  .hm-ico {
+    width:38px; height:38px; border-radius:11px; margin-bottom:16px;
+    display:flex; align-items:center; justify-content:center;
+    background:var(--surface); border:1px solid var(--border); color:var(--text-mid);
+  }
+  .hm-ico svg { width:18px; height:18px; }
+  .hm-promo b { display:block; font-size:16px; margin-bottom:7px; }
+  .hm-promo p { font-size:13px; color:var(--text-mid); line-height:1.6; margin-bottom:18px; }
+  .hm-cta {
+    display:inline-flex; align-items:center; gap:8px; cursor:pointer;
+    padding:9px 16px; border-radius:100px; font-family:inherit; font-size:13px;
+    background:var(--surface); border:1px solid var(--border); color:var(--text);
+    transition:border-color .2s;
+  }
+  .hm-cta:hover { border-color:var(--accent); }
+  .hm-list { padding:8px; }
+  .hm-item {
+    display:flex; align-items:center; gap:13px; width:100%; text-align:left;
+    padding:13px 14px; border:0; border-radius:11px; cursor:pointer;
+    background:none; font-family:inherit; font-size:14px; color:var(--text);
+    transition:background .18s;
+  }
+  .hm-item:hover { background:var(--surface); }
+  .hm-item .ic {
+    width:30px; height:30px; border-radius:8px; flex-shrink:0;
+    display:flex; align-items:center; justify-content:center;
+    background:var(--surface); border:1px solid var(--border); color:var(--text-dim);
+  }
+  .hm-item .ic svg { width:14px; height:14px; }
+  .hm-item .t { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .hm-item .age { margin-left:auto; font-size:11.5px; color:var(--text-dim); flex-shrink:0; }
+  .hm-none { padding:34px 20px; text-align:center; font-size:13px; color:var(--text-dim); line-height:1.6; }
+  @media (max-width:900px) {
+    .hm-recents { grid-template-columns:1fr; }
+    .hm-promo { border-right:0; border-bottom:1px solid var(--border); }
+  }
+
   /* ─── App shell ─── */
   .shell { display:grid; grid-template-columns:260px 1fr; height:100vh; }
   .side { background:var(--bg-soft); border-right:1px solid var(--border); padding:18px 14px; display:flex; flex-direction:column; gap:18px; overflow-y:auto; }
@@ -1016,7 +1064,11 @@
     <div class="nav-groups">
     <div class="section-label nav-group">Find</div>
     <nav class="nav">
-      <button class="nav-item active" data-view="discover">
+      <button class="nav-item active" data-view="home">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/></svg>
+        Home
+      </button>
+      <button class="nav-item" data-view="discover">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m14.5 9.5-5 1.5 1.5 5 5-1.5z"/></svg>
         Discover<span class="pill-n" id="discover-count">24</span>
       </button>
@@ -1149,7 +1201,57 @@
         <div class="lib-grid" id="lib-grid"></div>
       </div>
 
-      <div class="view active" data-view="discover">
+      <!-- HOME
+           Sona opened straight into Discover, so nothing said "here's where you
+           were". One greeting, four ways in, and what you touched last. -->
+      <div class="view active" data-view="home">
+        <div class="hm-head">
+          <span class="hm-mark"><svg viewBox="0 0 24 24" fill="none"><path d="M5 15 Q8 9 12 12 Q16 15 19 9" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" fill="none"/><path d="M19 3.6 C19.15 5.1 20.3 6.25 21.8 6.4 C20.3 6.55 19.15 7.7 19 9.2 C18.85 7.7 17.7 6.55 16.2 6.4 C17.7 6.25 18.85 5.1 19 3.6 Z" fill="currentColor"/></svg></span>
+          <h2 id="hm-greeting">Welcome back</h2>
+        </div>
+
+        <div class="lc">
+          <div class="lc-head">
+            <span class="lc-mark"><svg viewBox="0 0 24 24" fill="none"><path d="M5 15 Q8 9 12 12 Q16 15 19 9" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" fill="none"/><path d="M19 3.6 C19.15 5.1 20.3 6.25 21.8 6.4 C20.3 6.55 19.15 7.7 19 9.2 C18.85 7.7 17.7 6.55 16.2 6.4 C17.7 6.25 18.85 5.1 19 3.6 Z" fill="currentColor"/></svg></span>
+            <h2>Let's make something</h2>
+          </div>
+          <div class="lc-grid">
+            <button type="button" class="lc-card" data-go="decode">
+              <span class="lc-ico lc-green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3M16 3h3a2 2 0 0 1 2 2v3M8 21H5a2 2 0 0 1-2-2v-3M16 21h3a2 2 0 0 0 2-2v-3"/><path d="M7 12h10"/></svg></span>
+              <b>Decode a post</b>
+              <small>Paste anything that worked</small>
+            </button>
+            <button type="button" class="lc-card" data-go="discover">
+              <span class="lc-ico lc-blue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg></span>
+              <b>Find an outlier</b>
+              <small>See what's beating its baseline</small>
+            </button>
+            <button type="button" class="lc-card" data-go="draft">
+              <span class="lc-ico lc-amber"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg></span>
+              <b>Start a draft</b>
+              <small>Write it in your own words</small>
+            </button>
+            <button type="button" class="lc-card" data-go="voice">
+              <span class="lc-ico lc-violet"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></span>
+              <b>Set your voice</b>
+              <small>Teach Sona how you sound</small>
+            </button>
+          </div>
+        </div>
+
+        <h3 class="hm-sec">Recents</h3>
+        <div class="hm-recents">
+          <div class="hm-promo">
+            <span class="hm-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>
+            <b>Pick up where you left off</b>
+            <p>Jump back into a recent draft — everything you've touched lately, in one list.</p>
+            <button type="button" class="hm-cta" onclick="switchView('studio')">View all drafts <span>&rarr;</span></button>
+          </div>
+          <div class="hm-list" id="hm-recent-list"></div>
+        </div>
+      </div>
+
+      <div class="view" data-view="discover">
         <div class="filters">
           <button class="filter active" data-filter="all">All</button>
           <button class="filter" data-filter="founders">Founders</button>
@@ -1189,40 +1291,6 @@
 
       <!-- DRAFTS (formerly Studio) -->
       <div class="view" data-view="studio">
-        <!-- LET'S CREATE
-             Four ways in, mapped to the loop the product actually runs:
-             find -> understand -> make it yours -> keep your voice. No chat
-             card; a surface that writes for you is the one thing Sona says it
-             won't do. -->
-        <div class="lc">
-          <div class="lc-head">
-            <span class="lc-mark"><svg viewBox="0 0 24 24" fill="none"><path d="M5 15 Q8 9 12 12 Q16 15 19 9" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" fill="none"/><path d="M19 3.6 C19.15 5.1 20.3 6.25 21.8 6.4 C20.3 6.55 19.15 7.7 19 9.2 C18.85 7.7 17.7 6.55 16.2 6.4 C17.7 6.25 18.85 5.1 19 3.6 Z" fill="currentColor"/></svg></span>
-            <h2>Let's make something</h2>
-          </div>
-          <div class="lc-grid">
-            <button type="button" class="lc-card" data-go="decode">
-              <span class="lc-ico lc-green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3M16 3h3a2 2 0 0 1 2 2v3M8 21H5a2 2 0 0 1-2-2v-3M16 21h3a2 2 0 0 0 2-2v-3"/><path d="M7 12h10"/></svg></span>
-              <b>Decode a post</b>
-              <small>Paste anything that worked</small>
-            </button>
-            <button type="button" class="lc-card" data-go="discover">
-              <span class="lc-ico lc-blue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg></span>
-              <b>Find an outlier</b>
-              <small>See what's beating its baseline</small>
-            </button>
-            <button type="button" class="lc-card" data-go="draft">
-              <span class="lc-ico lc-amber"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg></span>
-              <b>Start a draft</b>
-              <small>Write it in your own words</small>
-            </button>
-            <button type="button" class="lc-card" data-go="voice">
-              <span class="lc-ico lc-violet"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></span>
-              <b>Set your voice</b>
-              <small>Teach Sona how you sound</small>
-            </button>
-          </div>
-        </div>
-
         <div class="work-grid">
           <section class="panel">
             <div class="panel-head">
@@ -2310,6 +2378,7 @@
     loadPatterns(); // async — renders itself when the aggregate lands
     renderLibrary();
     renderRecentDrafts();
+    renderHomeRecents();
     syncNavCounts();
     maybeAskNiche();
   }
@@ -2367,6 +2436,7 @@
   }
   function renderDrafts() {
     renderRecentDrafts();
+    renderHomeRecents();
     document.getElementById('drafts-count').textContent = drafts.length;
     const list = document.getElementById('drafts-list');
     if (!list) return;
@@ -3593,6 +3663,7 @@
       swipe:['Idea swipe','Review and save outliers'],
       settings:['Settings','Account and workspace'],
       decode:['Decode a post','Paste anything that worked'],
+      home:['Home','Where you left off'],
     };
     const title = titles[v];
     if (!title) return;
@@ -4324,6 +4395,36 @@
     }
   });
 
+
+  // ─── Home: recents ───
+  // Only drafts carry timestamps. Saved ideas and lists have none, and
+  // inventing an order for them would misreport what you touched last.
+  function renderHomeRecents() {
+    const host = document.getElementById('hm-recent-list');
+    if (!host) return;
+    const DOC = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3v5h5"/><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg>';
+    const recent = (typeof drafts !== 'undefined' ? drafts : [])
+      .slice().sort((a, b) => b.updatedAt - a.updatedAt).slice(0, 5);
+    if (!recent.length) {
+      host.innerHTML = '<p class="hm-none">Nothing yet. Decode a post or start a draft and it\'ll show up here.</p>';
+      return;
+    }
+    host.innerHTML = recent.map(d =>
+      '<button type="button" class="hm-item" data-draft-id="' + escapeHtml(d.id) + '">' +
+        '<span class="ic">' + DOC + '</span>' +
+        '<span class="t">' + escapeHtml(d.title || 'Untitled') + '</span>' +
+        '<span class="age">' + escapeHtml(relAge(d.updatedAt)) + '</span></button>').join('');
+    host.querySelectorAll('[data-draft-id]').forEach(b =>
+      b.addEventListener('click', () => { loadDraft(b.dataset.draftId); switchView('studio'); }));
+  }
+
+  (function greet() {
+    const el = document.getElementById('hm-greeting');
+    if (!el) return;
+    const h = new Date().getHours();
+    el.textContent = h < 12 ? 'Good morning' : h < 18 ? 'Welcome back' : 'Good evening';
+  })();
+
   function syncNavCounts() {
     document.querySelectorAll('.nav-item .pill-n').forEach(el => {
       const n = parseInt(el.textContent, 10);
@@ -4625,7 +4726,7 @@
 
   initApp().then(() => {
     const initialView = location.hash.replace('#', '');
-    if (initialView) switchView(initialView);
+    switchView(initialView || 'home');
   });
 </script>
 <script src="/signin-bg.js" defer></script>
