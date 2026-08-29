@@ -211,25 +211,87 @@
     return await getUser();
   }
 
-  // Reflects signed-in state into the page: hides [data-auth="out"], shows
-  // [data-auth="in"], fills [data-auth-email].
+  // Swaps the nav between signed-out and signed-in.
+  //
+  // This deliberately drives `.nav-right` and `.mobile-menu-cta`, the same hooks
+  // auth.js uses, rather than a data-auth convention — the site has no
+  // data-auth attributes anywhere, so an attribute-based version would leave a
+  // signed-in person still looking at a "Sign in" button.
   function paint(user) {
-    document.querySelectorAll('[data-auth="in"]').forEach(function (el) {
-      el.hidden = !user;
-    });
-    document.querySelectorAll('[data-auth="out"]').forEach(function (el) {
-      el.hidden = Boolean(user);
-    });
-    if (user && user.email) {
-      document.querySelectorAll('[data-auth-email]').forEach(function (el) {
-        el.textContent = user.email;
+    document.querySelectorAll('.nav-right').forEach(function (navRight) {
+      if (!navRight.dataset.loggedOutHtml) {
+        navRight.dataset.loggedOutHtml = navRight.innerHTML;
+      }
+
+      if (!user) {
+        if (navRight.dataset.loggedOutHtml) {
+          navRight.innerHTML = navRight.dataset.loggedOutHtml;
+        }
+        return;
+      }
+
+      var initials = (user.name || user.email || 'U')
+        .split(' ').map(function (w) { return w[0]; }).join('').slice(0, 2).toUpperCase();
+
+      // Markup is static; the two account-derived values are set with
+      // textContent below. Interpolating a name or email into an innerHTML sink
+      // would let profile data be parsed as markup.
+      navRight.innerHTML =
+        '<div class="user-menu">' +
+          '<div class="user-avatar"></div>' +
+          '<div class="user-dropdown" id="user-dropdown">' +
+            '<div class="user-dropdown-email"></div>' +
+            '<button class="user-dropdown-item" id="auth-dashboard" type="button">Dashboard</button>' +
+            '<button class="user-dropdown-item" id="auth-account" type="button">Account</button>' +
+            '<button class="user-dropdown-item danger" id="auth-signout" type="button">Sign out</button>' +
+          '</div>' +
+        '</div>';
+      navRight.querySelector('.user-avatar').textContent = initials;
+      navRight.querySelector('.user-dropdown-email').textContent = user.email || '';
+
+      var dropdown = navRight.querySelector('.user-dropdown');
+      navRight.querySelector('.user-menu').addEventListener('click', function (e) {
+        e.stopPropagation();
+        dropdown.classList.toggle('open');
       });
-    }
+      document.addEventListener('click', function () { dropdown.classList.remove('open'); });
+
+      navRight.querySelector('#auth-dashboard').addEventListener('click', function (e) {
+        e.stopPropagation();
+        window.location.href = '/app';
+      });
+      // Clerk's own profile UI replaces the settings modal auth.js opened.
+      navRight.querySelector('#auth-account').addEventListener('click', async function (e) {
+        e.stopPropagation();
+        dropdown.classList.remove('open');
+        var clerk = await ensureClerk();
+        clerk.openUserProfile({ appearance: appearance() });
+      });
+      navRight.querySelector('#auth-signout').addEventListener('click', function (e) {
+        e.stopPropagation();
+        signOut();
+      });
+    });
+
+    document.querySelectorAll('.mobile-menu-cta').forEach(function (cta) {
+      if (user) {
+        cta.textContent = 'Dashboard';
+        cta.onclick = function (e) { e.preventDefault(); window.location.href = '/app'; };
+      } else {
+        cta.textContent = 'Log in';
+        cta.onclick = function (e) { e.preventDefault(); openSignIn(); };
+      }
+    });
   }
 
-  // The waitlist is not authentication — it posts to /api/waitlist and is kept
-  // here only so the existing SonaAuth.openWaitlist() calls keep working.
+  // The waitlist is not authentication — it posts to /api/waitlist. auth.js owns
+  // a proper modal for it, and that modal is still loaded under Clerk, so hand
+  // straight over rather than substituting a worse scroll-to-form. The fallback
+  // only matters if auth.js is ever removed entirely.
   function openWaitlist() {
+    if (previous && typeof previous.openWaitlist === 'function') {
+      return previous.openWaitlist();
+    }
     var form = document.getElementById('sub-form');
     if (form) {
       form.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -238,6 +300,12 @@
       return;
     }
     window.location.href = '/#pricing';
+  }
+
+  // Clerk's own profile UI stands in for auth.js's settings modal.
+  async function openSettings() {
+    var clerk = await ensureClerk();
+    clerk.openUserProfile({ appearance: appearance() });
   }
 
   // This file may sit alongside auth.js (the Supabase magic-link implementation)
@@ -271,6 +339,10 @@
     openSignup: route('openSignup', function () { return openSignUp(); }),
     openMagic:  route('openMagic',  function () { return openSignIn(); }), // legacy call sites
     openWaitlist: openWaitlist,
+    // Not called anywhere today, but auth.js exposes both — keeping the surface
+    // identical means a future call site can't break on the provider swap.
+    openSettings: route('openSettings', openSettings),
+    close: function () { return previous && previous.close ? previous.close() : undefined; },
     signOut:    route('signOut',    signOut),
     getUser:    route('getUser',    getUser),
     requireUser: requireUser,
