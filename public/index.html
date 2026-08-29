@@ -978,7 +978,7 @@
   .foot-wordmark { position: relative; }
   .foot-wordmark::before {
     content: ''; position: absolute; left: 50%; bottom: -10%;
-    width: min(1100px, 92%); height: 150%; transform: translateX(-50%);
+    width: min(1100px, 92%); height: 260%; transform: translateX(-50%);
     z-index: -1; pointer-events: none;
     background:
       radial-gradient(58% 80% at 50% 100%, color-mix(in srgb, var(--accent) 30%, transparent), transparent 68%),
@@ -990,8 +990,8 @@
     .foot-cta h2 { letter-spacing: -1px; }
   }
 
-  footer { margin-top: 160px; border-top: 1px solid var(--border); padding-top: 60px; overflow: hidden; position: relative; isolation: isolate; }
-  .foot-top { max-width: 1140px; margin: 0 auto; padding: 0 36px 50px; display: grid; grid-template-columns: 1.6fr 1fr 1fr; gap: 48px; }
+  footer { margin-top: 140px; border-top: 1px solid var(--border); padding-top: 56px; overflow: hidden; position: relative; isolation: isolate; }
+  .foot-top { max-width: 1140px; margin: 0 auto; padding: 0 36px 34px; display: grid; grid-template-columns: 1.7fr 1fr 1fr 1fr; gap: 40px; }
   .foot-brand p { font-size: 14px; color: var(--text-mid); line-height: 1.6; margin: 14px 0 22px; max-width: 280px; }
   .foot-sub { display: flex; gap: 8px; max-width: 320px; }
   .foot-sub input { flex: 1; padding: 11px 14px; font-family: inherit; font-size: 13px; background: var(--surface); border: 1px solid var(--border-strong); border-radius: 999px; color: var(--text); outline: none; transition: border-color .2s; }
@@ -1006,12 +1006,16 @@
   .foot-status .dot { width: 7px; height: 7px; border-radius: 50%; background: #2bbf6c; box-shadow: 0 0 0 3px rgba(43,191,108,.18); display: inline-block; }
 
   .foot-wordmark {
-    text-align: center; padding: 30px 36px 10px;
+    text-align: center; padding: 0 36px; margin-top: 30px;
     font-size: clamp(120px, 24vw, 320px); font-weight: 700; letter-spacing: -14px;
-    line-height: 0.85; user-select: none; pointer-events: none;
+    line-height: 0.72; user-select: none; pointer-events: none;
+    /* Crop to a band. The glyphs are ~150px tall inside a 272px line box, and
+       that leftover was the empty stripe between the columns and the mark. */
+    height: .55em; overflow: hidden;
+    display: flex; align-items: flex-start; justify-content: center;
   }
   .foot-wordmark span {
-    display: inline-block;
+    display: inline-block; margin-top: -.19em;
     color: transparent;
     -webkit-text-stroke: 1px var(--border-strong);
     background: linear-gradient(180deg, var(--text) -10%, transparent 90%);
@@ -1090,7 +1094,15 @@
   .foot-badges .ph-crop { width:126px; border-radius:6px; overflow:hidden; line-height:0; }
   @media (max-width:760px) { .foot-badges { justify-content:center; width:100%; } }
 
-  .foot-base { max-width: 1140px; margin: 0 auto; padding: 30px 36px 38px; display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; border-top: 1px solid var(--border); }
+  /* Outbound arrow, muted until hover so the column reads as a list first. */
+  .foot-col .ext { display:inline-block; font-size:11px; opacity:.45; transition:opacity .2s, transform .2s; }
+  .foot-col a:hover .ext { opacity:1; transform:translate(1px,-1px); }
+  @media (max-width: 900px) {
+    .foot-top { grid-template-columns: 1fr 1fr; gap: 32px 24px; }
+    .foot-brand { grid-column: 1 / -1; }
+  }
+
+  .foot-base { max-width: 1140px; margin: 0 auto; padding: 20px 36px 30px; display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; border-top: 1px solid var(--border); }
   .foot-base span { font-size: 12.5px; color: var(--text-dim); }
   .foot-base .links { display: flex; gap: 22px; }
   .foot-base a { font-size: 12.5px; color: var(--text-dim); text-decoration: none; transition: color .2s; }
@@ -1113,7 +1125,7 @@
     .mobile-menu { display: flex; }
     .hero { padding: 140px 20px 0; }
     .section { padding: 110px 22px 0; }
-    .foot-top { grid-template-columns: 1fr; gap: 36px; }
+    .foot-top { grid-template-columns: 1fr 1fr; gap: 30px 20px; }
     .foot-base { flex-direction: column; align-items: flex-start; }
     footer { margin-top: 110px; }
   }
@@ -1209,7 +1221,7 @@
     .foot-sub button { padding: 10px 16px; font-size: 12.5px; }
     .foot-col h4 { font-size: 11px; margin-bottom: 12px; }
     .foot-col a { font-size: 13.5px; padding: 4px 0; margin-bottom: 4px; } /* tap target */
-    .foot-wordmark { font-size: clamp(70px, 30vw, 200px); letter-spacing: -7px; padding: 18px 18px 0; }
+    .foot-wordmark { font-size: clamp(70px, 30vw, 200px); letter-spacing: -7px; padding: 0 18px; margin-top: 22px; }
     .foot-base { padding: 22px 18px max(28px, env(safe-area-inset-bottom)); gap: 12px; }
     .foot-base span, .foot-base a { font-size: 12px; }
   }
@@ -1993,12 +2005,23 @@ and they stick with it for ninety days.
       <a href="#features">Features</a>
       <a href="#how">How it works</a>
       <a href="#pricing">Pricing</a>
-      <a href="contact.html">Contact</a>
+      <a href="docs.html">Sona MCP</a>
+    </div>
+    <!-- Third column added: these pages already ship and nothing linked to
+         them from the footer, which is also why this row looked so sparse. -->
+    <div class="foot-col">
+      <h3>Resources</h3>
+      <a href="docs.html">Docs</a>
+      <a href="resources.html">Guides</a>
+      <a href="changelog.html">Changelog</a>
+      <a href="brand.html">Brand</a>
     </div>
     <div class="foot-col">
-      <h3>Built in public</h3>
-      <a href="https://github.com/davidtost5/sona" target="_blank" rel="noopener">GitHub repo ↗</a>
-      <a href="https://www.linkedin.com/in/davidtost/" target="_blank" rel="noopener">Founder ↗</a>
+      <h3>Company</h3>
+      <a href="company.html">About</a>
+      <a href="contact.html">Contact</a>
+      <a href="https://github.com/davidtost5/sona" target="_blank" rel="noopener">GitHub <span class="ext">&#8599;</span></a>
+      <a href="https://www.linkedin.com/in/davidtost/" target="_blank" rel="noopener">Founder <span class="ext">&#8599;</span></a>
     </div>
   </div>
 
