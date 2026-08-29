@@ -855,7 +855,7 @@
     createModal();
     await ensureInitialized();
     // Settings is gated on being logged in
-    if (view === 'settings' && !currentUser) view = 'login';
+    if (view === 'settings' && !currentUser) view = 'magic';
     // Mock mode (no Supabase): non-settings entry points become the waitlist
     else if (view !== 'settings' && (!configured || !supabase)) view = 'waitlist';
     switchView(view);
@@ -944,7 +944,7 @@
         cta.onclick = (e) => { e.preventDefault(); window.location.href = '/app.html'; };
       } else {
         cta.textContent = 'Log in';
-        cta.onclick = (e) => { e.preventDefault(); openAuthModal('login'); };
+        cta.onclick = (e) => { e.preventDefault(); openAuthModal('magic'); };
       }
     });
   }
@@ -956,7 +956,7 @@
       if (el.textContent.trim().toLowerCase() === 'log in') {
         el.addEventListener('click', (e) => {
           e.preventDefault();
-          openAuthModal('login');
+          openAuthModal('magic');
         });
       }
     });
@@ -990,7 +990,7 @@
             mobileMenu.classList.remove('open');
             document.body.style.overflow = '';
           }
-          openAuthModal('login');
+          openAuthModal('magic');
         });
       }
     });

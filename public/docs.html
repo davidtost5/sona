@@ -591,164 +591,116 @@
 
 <!-- Docs Layout -->
 <div class="docs-layout">
-  <!-- Sidebar -->
+  <!-- Sidebar. Sections mirror what the server actually exposes: three tools,
+       one endpoint. The previous page documented a transaction-enrichment API
+       at api.sona.dev that has never existed. -->
   <aside class="docs-sidebar">
     <div class="sidebar-section">
       <h4>Getting Started</h4>
       <ul>
-        <li><a href="#" class="active">Introduction</a></li>
-        <li><a href="#">Authentication</a></li>
-        <li><a href="#">Quick Start</a></li>
-        <li><a href="#">Rate Limits</a></li>
+        <li><a href="#intro" class="active">Introduction</a></li>
+        <li><a href="#connect">Connect to Claude</a></li>
+        <li><a href="#quickstart">Quick Start</a></li>
       </ul>
     </div>
     <div class="sidebar-section">
-      <h4>Core API</h4>
+      <h4>Tools</h4>
       <ul>
-        <li><a href="#">Transactions</a></li>
-        <li><a href="#">Enrichment</a></li>
-        <li><a href="#">Merchants</a></li>
-        <li><a href="#">Categories</a></li>
+        <li><a href="#search_outliers">search_outliers</a></li>
+        <li><a href="#get_outlier">get_outlier</a></li>
+        <li><a href="#decode_post">decode_post</a></li>
       </ul>
     </div>
     <div class="sidebar-section">
-      <h4>Webhooks</h4>
+      <h4>Reference</h4>
       <ul>
-        <li><a href="#">Event Types</a></li>
-        <li><a href="#">Delivery</a></li>
-        <li><a href="#">Signatures</a></li>
-      </ul>
-    </div>
-    <div class="sidebar-section">
-      <h4>SDKs</h4>
-      <ul>
-        <li><a href="#">Node.js</a></li>
-        <li><a href="#">Python</a></li>
-        <li><a href="#">Go</a></li>
+        <li><a href="#protocol">Protocol</a></li>
+        <li><a href="#errors">Errors</a></li>
       </ul>
     </div>
   </aside>
 
-  <!-- Content -->
-  <main class="docs-content" data-reveal>
-    <h1>Introduction</h1>
-    <p class="subtitle">The Sona API gives you programmatic access to real-time transaction enrichment, merchant identification, and categorization at scale.</p>
+  <main class="docs-content">
+    <h1 id="intro">Sona MCP</h1>
+    <p>Sona indexes high-performing posts and videos from entrepreneurs and creators, with real engagement figures. The MCP server exposes that index to any Model Context Protocol client — search it for proven hooks, then decode a post to get the reusable pattern behind it.</p>
 
     <div class="callout">
-      <p><strong>Base URL:</strong> All API requests are made to <code>https://api.sona.dev/v2</code></p>
+      <strong>Endpoint</strong>
+      <p><code>https://buildwithsona.com/api/mcp</code> — Streamable HTTP, JSON-RPC 2.0. No API key; the index is public and read-only.</p>
     </div>
 
-    <h2>Authentication</h2>
-    <p>Authenticate requests by including your API key in the Authorization header. You can manage API keys from your dashboard.</p>
+    <h2 id="connect">Connect to Claude</h2>
+    <p>Add Sona as a custom connector, then ask Claude to search your niche.</p>
+    <ol>
+      <li>Open Claude &rarr; <strong>Settings</strong> &rarr; <strong>Connectors</strong></li>
+      <li>Choose <strong>Add custom connector</strong></li>
+      <li>Paste <code>https://buildwithsona.com/api/mcp</code></li>
+      <li>Save. Claude will list three Sona tools.</li>
+    </ol>
+    <p>You can also copy the endpoint from <strong>Settings &rarr; MCP</strong> inside the studio.</p>
 
+    <h2 id="quickstart">Quick Start</h2>
+    <p>Every call is a JSON-RPC 2.0 POST. List the tools first:</p>
     <div class="code-block">
-      <div class="code-block-header">
-        <span class="code-block-label">Request Header</span>
-        <span class="code-block-lang">bash</span>
-      </div>
-      <pre><span class="punctuation">$</span> curl https://api.sona.dev/v2/enrich \
-  <span class="keyword">-H</span> <span class="string">"Authorization: Bearer cnp_sk_live_..."</span> \
-  <span class="keyword">-H</span> <span class="string">"Content-Type: application/json"</span></pre>
+      <div class="code-block-header"><span class="code-block-label">List tools</span><span class="code-block-lang">bash</span></div>
+      <pre>curl -X POST https://buildwithsona.com/api/mcp \
+  -H "Content-Type: application/json" \
+  -H "Accept: application/json, text/event-stream" \
+  -d '{"jsonrpc":"2.0","id":1,"method":"tools/list"}'</pre>
     </div>
 
-    <h2>Quick Start</h2>
-    <p>Enrich your first transaction in under 60 seconds. Send a POST request with the raw transaction data and receive structured intelligence back.</p>
-
-    <div class="endpoint">
-      <span class="method method-post">POST</span>
-      <span>/v2/transactions/enrich</span>
-    </div>
-
-    <div class="code-block">
-      <div class="code-block-header">
-        <span class="code-block-label">Example Request</span>
-        <span class="code-block-lang">json</span>
-      </div>
-      <pre><span class="punctuation">{</span>
-  <span class="keyword">"transaction_id"</span><span class="punctuation">:</span> <span class="string">"txn_8f2a9c"</span><span class="punctuation">,</span>
-  <span class="keyword">"description"</span><span class="punctuation">:</span> <span class="string">"AMZN MKTP US*2K7F94H"</span><span class="punctuation">,</span>
-  <span class="keyword">"amount"</span><span class="punctuation">:</span> -42.99<span class="punctuation">,</span>
-  <span class="keyword">"currency"</span><span class="punctuation">:</span> <span class="string">"USD"</span><span class="punctuation">,</span>
-  <span class="keyword">"date"</span><span class="punctuation">:</span> <span class="string">"2026-05-14"</span>
-<span class="punctuation">}</span></pre>
-    </div>
-
-    <div class="code-block">
-      <div class="code-block-header">
-        <span class="code-block-label">Response</span>
-        <span class="code-block-lang">json</span>
-      </div>
-      <pre><span class="punctuation">{</span>
-  <span class="keyword">"transaction_id"</span><span class="punctuation">:</span> <span class="string">"txn_8f2a9c"</span><span class="punctuation">,</span>
-  <span class="keyword">"merchant"</span><span class="punctuation">:</span> <span class="punctuation">{</span>
-    <span class="keyword">"name"</span><span class="punctuation">:</span> <span class="string">"Amazon"</span><span class="punctuation">,</span>
-    <span class="keyword">"category"</span><span class="punctuation">:</span> <span class="string">"Shopping"</span><span class="punctuation">,</span>
-    <span class="keyword">"logo_url"</span><span class="punctuation">:</span> <span class="string">"https://cdn.sona.dev/logos/amazon.svg"</span><span class="punctuation">,</span>
-    <span class="keyword">"confidence"</span><span class="punctuation">:</span> 0.994
-  <span class="punctuation">}</span><span class="punctuation">,</span>
-  <span class="keyword">"enrichment"</span><span class="punctuation">:</span> <span class="punctuation">{</span>
-    <span class="keyword">"is_recurring"</span><span class="punctuation">:</span> <span class="keyword">false</span><span class="punctuation">,</span>
-    <span class="keyword">"is_subscription"</span><span class="punctuation">:</span> <span class="keyword">false</span><span class="punctuation">,</span>
-    <span class="keyword">"channel"</span><span class="punctuation">:</span> <span class="string">"online"</span>
-  <span class="punctuation">}</span>
-<span class="punctuation">}</span></pre>
-    </div>
-
-    <h2>Rate Limits</h2>
-    <p>The API enforces rate limits based on your plan tier. All responses include rate limit headers.</p>
-
+    <h2 id="search_outliers">search_outliers</h2>
+    <p>Search the curated feed. Each result carries its real engagement figure and, where one was computed, an outlier multiple against that creator's own baseline.</p>
     <table class="docs-table">
-      <thead>
-        <tr>
-          <th>Plan</th>
-          <th>Requests/min</th>
-          <th>Burst</th>
-        </tr>
-      </thead>
+      <thead><tr><th>Parameter</th><th>Type</th><th>Notes</th></tr></thead>
       <tbody>
-        <tr>
-          <td>Starter</td>
-          <td>60</td>
-          <td>100</td>
-        </tr>
-        <tr>
-          <td>Growth</td>
-          <td>600</td>
-          <td>1,000</td>
-        </tr>
-        <tr>
-          <td>Enterprise</td>
-          <td>6,000</td>
-          <td>10,000</td>
-        </tr>
+        <tr><td><code>query</code></td><td>string</td><td>Free text matched against post text and creator</td></tr>
+        <tr><td><code>cat</code></td><td>string</td><td><code>founders</code>, <code>writers</code> or <code>creators</code></td></tr>
+        <tr><td><code>media_type</code></td><td>string</td><td><code>image</code> or <code>video</code></td></tr>
+        <tr><td><code>limit</code></td><td>integer</td><td>Maximum results to return</td></tr>
       </tbody>
     </table>
-
-    <h3>Response Headers</h3>
-    <p>Every response includes the following rate limit headers:</p>
-    <ul>
-      <li><code>X-RateLimit-Limit</code> — maximum requests per window</li>
-      <li><code>X-RateLimit-Remaining</code> — requests remaining</li>
-      <li><code>X-RateLimit-Reset</code> — Unix timestamp when window resets</li>
-    </ul>
-
-    <h2>Error Handling</h2>
-    <p>The API uses conventional HTTP response codes. Codes in the 2xx range indicate success. Codes in the 4xx range indicate client errors. Codes in the 5xx range indicate server errors.</p>
-
     <div class="code-block">
-      <div class="code-block-header">
-        <span class="code-block-label">Error Response</span>
-        <span class="code-block-lang">json</span>
-      </div>
-      <pre><span class="punctuation">{</span>
-  <span class="keyword">"error"</span><span class="punctuation">:</span> <span class="punctuation">{</span>
-    <span class="keyword">"code"</span><span class="punctuation">:</span> <span class="string">"invalid_request"</span><span class="punctuation">,</span>
-    <span class="keyword">"message"</span><span class="punctuation">:</span> <span class="string">"The 'amount' field is required."</span><span class="punctuation">,</span>
-    <span class="keyword">"doc_url"</span><span class="punctuation">:</span> <span class="string">"https://docs.sona.dev/errors#invalid_request"</span>
-  <span class="punctuation">}</span>
-<span class="punctuation">}</span></pre>
+      <div class="code-block-header"><span class="code-block-label">Call</span><span class="code-block-lang">json</span></div>
+      <pre>{
+  "jsonrpc": "2.0", "id": 2, "method": "tools/call",
+  "params": {
+    "name": "search_outliers",
+    "arguments": { "query": "one-person business", "cat": "founders", "limit": 5 }
+  }
+}</pre>
     </div>
 
+    <h2 id="get_outlier">get_outlier</h2>
+    <p>Fetch a single post by id, including its source URL and every stored field. Use it after <code>search_outliers</code> when you want the full record.</p>
+    <table class="docs-table">
+      <thead><tr><th>Parameter</th><th>Type</th><th>Notes</th></tr></thead>
+      <tbody><tr><td><code>id</code></td><td>string</td><td><strong>Required.</strong> The id returned by <code>search_outliers</code></td></tr></tbody>
+    </table>
+
+    <h2 id="decode_post">decode_post</h2>
+    <p>Break a post down into the mechanism that made it work: hook type, the tension that stops the scroll, the payoff, and a reusable pattern you can write from. Works on any text, not only posts in the index.</p>
+    <table class="docs-table">
+      <thead><tr><th>Parameter</th><th>Type</th><th>Notes</th></tr></thead>
+      <tbody><tr><td><code>text</code></td><td>string</td><td><strong>Required.</strong> The post to decode, 10&ndash;2000 characters</td></tr></tbody>
+    </table>
+    <div class="callout">
+      <strong>Decodes are cached</strong>
+      <p>Results are keyed by a hash of the text, so decoding the same post twice costs one call, not two.</p>
+    </div>
+
+    <h2 id="protocol">Protocol</h2>
+    <p>Streamable HTTP transport, JSON-RPC 2.0. Send <code>Accept: application/json, text/event-stream</code>; responses may arrive as either. <code>initialize</code> reports server name <code>sona-mcp</code>, version <code>1.0.0</code>.</p>
+
+    <h2 id="errors">Errors</h2>
+    <table class="docs-table">
+      <thead><tr><th>Code</th><th>Meaning</th></tr></thead>
+      <tbody>
+        <tr><td><code>-32601</code></td><td>Unknown method or tool name</td></tr>
+        <tr><td><code>-32602</code></td><td>Invalid parameters — a required field is missing or out of range</td></tr>
+        <tr><td><code>503</code></td><td><code>decode_post</code> only: the decoder is not configured or is out of credit</td></tr>
+      </tbody>
+    </table>
   </main>
 </div>
 
@@ -877,7 +829,7 @@
       // the header fix stay on a stale copy for up to a day — which is exactly how
       // a fixed auth modal kept rendering empty. A new URL sidesteps the cache
       // entirely. Bump this string whenever auth.js changes.
-      authScript.src = "auth.js?v=20260828b";
+      authScript.src = "auth.js?v=20260828c";
       authScript.defer = true;
       document.head.appendChild(authScript);
     };
