@@ -22,7 +22,7 @@
 | 📞 **Contact page** | `public/contact.html` — Supabase-backed form |
 | 🎛️ **Studio app** | `public/app.html` — authenticated dashboard with real CRUD on `saved_ideas` (RLS-secured) |
 | 🔐 **Auth modal** | `public/auth.js` — signup, signin, and early-access waitlist |
-| ⚙️ **Serverless APIs** | `api/*.js` — waitlist, contact, checkout (Stripe Payment Link), auth-config, founding-count |
+| ⚙️ **Serverless APIs** | `api/*.js` — waitlist, contact, checkout (Polar / Stripe), polar-webhook, stripe-webhook, auth-config, founding-count |
 | 🗄️ **Database schema** | `schema.sql` — Supabase tables + Row-Level-Security policies |
 | 🚀 **Deploy** | Vercel (`vercel.json`) — auto-routes for serverless functions + clean URLs |
 
@@ -31,7 +31,7 @@
 - **Frontend** — Vanilla HTML/CSS/JS, no framework, Geist + Geist Mono via Google Fonts
 - **Backend** — Supabase (Postgres + Auth + RLS)
 - **Hosting** — Vercel (static + serverless functions on Node.js)
-- **Payments** — Stripe Payment Links → `/api/checkout` redirect
+- **Payments** — Polar.so (or Stripe) Payment Links → `/api/checkout` redirect & webhooks
 - **Theme** — Clock-based auto switching (7am–7pm light, else dark) — no manual toggle
 
 ## Setup
@@ -60,7 +60,10 @@ Vercel → your project → **Settings → Environment Variables** → add:
 | `SUPABASE_URL` | Supabase → Settings → Data API → Project URL |
 | `SUPABASE_ANON_KEY` | Supabase → Settings → Data API → `anon · public` |
 | `SUPABASE_SERVICE_ROLE_KEY` | Supabase → Settings → Data API → `service_role · secret` (server-only) |
-| `STRIPE_PAYMENT_LINK` | Stripe → Products → create $99/yr founding-member product → Create Payment Link → copy URL |
+| `POLAR_CHECKOUT_URL` | Polar.so → Products → Founding Member product → Checkout link |
+| `POLAR_WEBHOOK_SECRET` | Polar.so → Webhooks → Endpoint secret (`whsec_...`) |
+| `STRIPE_PAYMENT_LINK` | *(Optional fallback)* Stripe → Products → Founding Member → Payment Link |
+| `STRIPE_WEBHOOK_SECRET` | *(Optional fallback)* Stripe → Webhooks → Signing secret (`whsec_...`) |
 
 ### 4. Deploy
 
@@ -77,7 +80,9 @@ Visit your domain. Sign up → land in `/app`. Click Save on any Discover card �
 ├── api/                     # Vercel serverless functions
 │   ├── _supabase.js         # shared admin client (server-only)
 │   ├── auth-config.js       # public Supabase config for the browser
-│   ├── checkout.js          # Stripe Payment Link redirect
+│   ├── checkout.js          # Polar / Stripe checkout redirect
+│   ├── polar-webhook.js     # Polar webhook handler (marks founding members)
+│   ├── stripe-webhook.js    # Stripe webhook handler
 │   ├── contact.js           # contact-form persistence
 │   ├── founding-count.js    # real seat counter (returns 0 until first sale)
 │   └── waitlist.js          # waitlist persistence

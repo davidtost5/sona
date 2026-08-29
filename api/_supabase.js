@@ -15,4 +15,13 @@ import { createClient } from '@supabase/supabase-js';
 const url = process.env.SUPABASE_URL;
 const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
-export const supabase = (url && key) ? createClient(url, key) : null;
+let client = null;
+try {
+  if (url && key) {
+    client = createClient(url, key);
+  }
+} catch (e) {
+  console.warn('Failed to create Supabase client:', e.message);
+}
+
+export const supabase = client;

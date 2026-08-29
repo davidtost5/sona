@@ -234,12 +234,17 @@ create table if not exists post_decodes (
 alter table post_decodes enable row level security;
 -- No policies: only the service role (api/decode.js) reads/writes this table.
 
--- ─── Founding members (Stripe webhook → /api/founding-count) ───
+-- ─── Founding members (Stripe or Polar webhook → /api/founding-count) ───
 create table if not exists founding_members (
   id uuid primary key default gen_random_uuid(),
   email text not null,
+  payment_provider text default 'stripe', -- 'stripe' or 'polar'
   stripe_customer_id text,
   stripe_session_id text unique,
+  polar_customer_id text,
+  polar_order_id text unique,
+  polar_checkout_id text,
+  polar_subscription_id text,
   amount_cents integer,
   created_at timestamptz default now()
 );
@@ -247,5 +252,11 @@ create table if not exists founding_members (
 create index if not exists founding_members_created_at_idx
   on founding_members (created_at desc);
 
--- No RLS policies: only service role (webhook + founding-count API) should touch this table.
+-- RLS enabled but only service role (webhooks + founding-count API) should touch this table.
+-- Service role bypasses RLS, so this policy only restricts anon/public access.
 alter table founding_members enable row level security;
+
+drop policy if exists "service role only access" on founding_members;
+create policy "service role only access"
+  on founding_members for all
+  using (false);

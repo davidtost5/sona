@@ -2,8 +2,14 @@
   "name": "sona",
   "version": "1.0.0",
   "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node test/polar.test.mjs && node test/mcp.test.mjs"
+  },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.70.0",
-    "@supabase/supabase-js": "^2.45.0"
+    "@supabase/supabase-js": "^2.45.0",
+    "@vercel/analytics": "^2.0.1",
+    "@vercel/speed-insights": "^2.0.0"
   }
 }

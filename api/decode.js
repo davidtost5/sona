@@ -107,7 +107,9 @@ export default async function handler(req, res) {
       supabase
         .from('post_decodes')
         .upsert({ id: key, decoded, model: MODEL })
-        .then(() => {}, () => {}); // fire-and-forget; don't block the response
+        .then(() => {}, (err) => {
+          console.error('Failed to cache decode result:', err?.message || err);
+        }); // log error but don't block the response
     }
 
     return res.status(200).json({ decoded, cached: false });

@@ -85,7 +85,17 @@ export default async function handler(req, res) {
 
   try {
     if (mode === 'replace') {
-      const { error: delErr } = await supabase.from('outliers').delete().neq('id', '');
+      // Only clear the hand-curated posts. Video rows come from /api/youtube on
+      // their own refresh cycle, so a daily publish here must not wipe them.
+      let { error: delErr } = await supabase
+        .from('outliers').delete()
+        .neq('id', '')
+        .or('media_type.is.null,media_type.eq.post');
+      // Falls back if the media_type column isn't migrated in yet, so deploying
+      // this before running the migration can't break the daily publish.
+      if (delErr && /media_type/i.test(delErr.message || '')) {
+        ({ error: delErr } = await supabase.from('outliers').delete().neq('id', ''));
+      }
       if (delErr) throw delErr;
     }
     const { error: insErr } = await supabase.from('outliers').upsert(rows, { onConflict: 'id' });

@@ -1,0 +1,66 @@
+<!-- Sona — Confirm signup email, dark "Eden-style" edition.
+     Paste into: Supabase → Authentication → Email Templates → Confirm signup (Message body).
+     Subject line: Confirm your email · Sona
+     {{ .ConfirmationURL }} is filled in by Supabase. -->
+<table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#0a0a0a;padding:48px 16px;">
+  <tr>
+    <td align="center">
+      <table width="480" cellpadding="0" cellspacing="0" border="0" style="max-width:480px;width:100%;">
+
+        <tr>
+          <td align="center" style="padding-bottom:32px;">
+            <img src="https://buildwithsona.com/logo-email.png" width="52" height="52" alt="Sona" style="display:block;border:0;border-radius:13px;">
+          </td>
+        </tr>
+
+        <tr>
+          <td style="background-color:#141414;border:1px solid #262626;border-radius:16px;padding:44px 38px;">
+            <table width="100%" cellpadding="0" cellspacing="0" border="0">
+              <tr>
+                <td style="font-family:Menlo,Consolas,'Courier New',monospace;font-size:10.5px;letter-spacing:2px;text-transform:uppercase;color:#a7dcb5;padding-bottom:18px;">
+                  01 &middot; Confirm
+                </td>
+              </tr>
+              <tr>
+                <td style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:26px;line-height:1.2;font-weight:700;color:#f4f4f0;letter-spacing:-0.5px;padding-bottom:14px;">
+                  One click between you<br>and the studio.
+                </td>
+              </tr>
+              <tr>
+                <td style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:15px;line-height:1.65;color:#9b9b93;padding-bottom:32px;">
+                  Confirm your email and step inside — proven ideas, decoded, written in your voice. Not a robot's.
+                </td>
+              </tr>
+              <tr>
+                <td align="center" style="padding-bottom:32px;">
+                  <a href="{{ .ConfirmationURL }}" target="_blank" style="display:inline-block;background-color:#a7dcb5;color:#0a0a0a;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:15px;font-weight:600;text-decoration:none;padding:14px 38px;border-radius:999px;">
+                    Confirm my email&nbsp;&nbsp;&#8594;
+                  </a>
+                </td>
+              </tr>
+              <tr>
+                <td style="font-family:Menlo,Consolas,'Courier New',monospace;font-size:11px;line-height:1.7;color:#6e6e66;border-top:1px solid #262626;padding-top:22px;">
+                  Button not working? Copy this link:<br>
+                  <a href="{{ .ConfirmationURL }}" style="color:#a7dcb5;word-break:break-all;text-decoration:underline;">{{ .ConfirmationURL }}</a>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+
+        <tr>
+          <td align="center" style="padding-top:28px;font-family:Menlo,Consolas,'Courier New',monospace;font-size:10.5px;letter-spacing:1px;line-height:2;color:#5c5c55;text-transform:uppercase;">
+            Sona &middot; Write at the speed of thought<br>
+            <a href="https://buildwithsona.com" style="color:#a7dcb5;text-decoration:none;">buildwithsona.com</a>
+          </td>
+        </tr>
+        <tr>
+          <td align="center" style="padding-top:18px;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:11.5px;line-height:1.7;color:#5c5c55;">
+            You're receiving this because you signed up for Sona.<br>If this wasn't you, you can safely ignore this email.
+          </td>
+        </tr>
+
+      </table>
+    </td>
+  </tr>
+</table>
