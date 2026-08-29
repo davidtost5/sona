@@ -2314,30 +2314,87 @@
     await showApp();
   }
 
+  // ─── Gate diagnostics ───
+  // Every await below used to be unbounded, so any one of them stalling left the
+  // gate showing "One sec…" forever with nothing to act on and nothing in the
+  // console. A stall is now capped, named, and shown to the person waiting.
+
+  function gateMsg(text) {
+    const el = document.getElementById('gate-msg');
+    if (el) el.textContent = text;
+  }
+
+  function gateFailed(step, err) {
+    console.error('[gate] ' + step + ' failed', err);
+    const el = document.getElementById('gate-msg');
+    if (!el) return;
+    el.innerHTML = '';
+    const p = document.createElement('span');
+    p.textContent = "Couldn't load your studio — " + step + '.';
+    const actions = document.createElement('span');
+    actions.style.cssText = 'display:block;margin-top:10px;font-size:13px;opacity:.75';
+    const retry = document.createElement('a');
+    retry.href = '/app';
+    retry.textContent = 'Try again';
+    retry.style.cssText = 'color:inherit;text-decoration:underline;cursor:pointer';
+    const sep = document.createTextNode('  ·  ');
+    const signin = document.createElement('a');
+    signin.href = '/?signin=1';
+    signin.textContent = 'Sign in again';
+    signin.style.cssText = 'color:inherit;text-decoration:underline';
+    actions.append(retry, sep, signin);
+    el.append(p, actions);
+  }
+
+  // Rejects instead of hanging. `label` names the step so the message and the
+  // console agree on what actually stalled.
+  function withTimeout(promise, ms, label) {
+    let timer;
+    return Promise.race([
+      promise.finally(() => clearTimeout(timer)),
+      new Promise((_, reject) => {
+        timer = setTimeout(() => reject(new Error(label + ' timed out after ' + ms + 'ms')), ms);
+      }),
+    ]);
+  }
+
   async function initApp() {
+    let step = 'starting up';
     try {
-      const res = await fetch('/api/auth-config', { cache: 'no-store' });
+      step = 'reaching the server';
+      const res = await withTimeout(
+        fetch('/api/auth-config', { cache: 'no-store' }), 8000, step);
       const cfg = await res.json();
       if (!cfg.configured) {
         await enterPreviewMode();
         return;
       }
-      
-      // Lazily load Supabase script from CDN if not already loaded
+
+      // Lazily load Supabase script from CDN if not already loaded.
+      // An ad blocker or a network that blocks jsdelivr fires onerror and lands
+      // in preview mode; one that black-holes the request fires nothing at all,
+      // which is what the timeout is for.
       if (typeof window.supabase === 'undefined' || !window.supabase.createClient) {
-        await new Promise((resolve, reject) => {
+        step = 'loading the editor';
+        gateMsg('Loading…');
+        await withTimeout(new Promise((resolve, reject) => {
           const script = document.createElement('script');
           script.src = "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js";
           script.onload = resolve;
           script.onerror = () => reject(new Error("Supabase script failed to load"));
           document.head.appendChild(script);
-        });
+        }), 10000, step);
       }
 
       sb = window.supabase.createClient(cfg.url, cfg.anonKey, {
         auth: { persistSession: true, autoRefreshToken: true },
       });
-      const { data: { session } } = await sb.auth.getSession();
+
+      // getSession() refreshes an expired token before it resolves, so a revoked
+      // refresh token or a slow auth host stalls here — the likeliest cause of a
+      // gate that never moves.
+      step = 'checking your session';
+      const { data: { session } } = await withTimeout(sb.auth.getSession(), 8000, step);
       if (!session) {
         window.location.href = '/?signin=1';
         return;
@@ -2345,10 +2402,32 @@
       user = session.user;
       await showApp();
     } catch (e) {
+      // A stalled session check means the stored token is unusable. Clearing it
+      // turns an infinite hang into a clean sign-in on the next load, instead of
+      // dropping someone who believes they are signed in into preview mode.
+      if (step === 'checking your session') {
+        try {
+          Object.keys(localStorage)
+            .filter((k) => k.startsWith('sb-') && k.endsWith('-auth-token'))
+            .forEach((k) => localStorage.removeItem(k));
+        } catch (_) { /* private mode */ }
+        gateFailed(step, e);
+        return;
+      }
       console.error('App init failed', e);
       await enterPreviewMode();
     }
   }
+
+  // Last resort. If some path nobody predicted leaves the gate up, say so rather
+  // than showing "One sec…" indefinitely.
+  setTimeout(function () {
+    const gate = document.getElementById('gate');
+    const msg = document.getElementById('gate-msg');
+    if (gate && !gate.classList.contains('hide') && msg && msg.textContent.indexOf("Couldn't") === -1) {
+      gateFailed('this is taking longer than it should', new Error('gate watchdog fired at 20s'));
+    }
+  }, 20000);
 
   async function showApp() {
     document.getElementById('gate').classList.add('hide');
