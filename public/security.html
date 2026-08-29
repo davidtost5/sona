@@ -96,7 +96,7 @@
   <p>Account data and the content you create are stored in Supabase (Postgres), protected by row-level security so one account cannot read another's rows. Traffic to this site and the studio is served over HTTPS.</p>
 
   <h2>Authentication</h2>
-  <p>Sign-in is handled by Supabase Auth using a one-time magic link sent to your email address. There is no password to store, lose or leak.</p>
+  <p>Sign-in is handled by Clerk. You receive a one-time code at your email address and enter it to sign in; we never see or store a password.</p>
 
   <h2>Access on our side</h2>
   <p>Sona is a small team. Administrative access to production data is limited to those who need it to operate the service, and admin write endpoints require a separate secret key that is not present in any client-side code.</p>
