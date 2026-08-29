@@ -248,8 +248,11 @@
   }
   .do-progress i.on { background:var(--accent); transform:scale(1.15); }
   .do-x {
-    background:none; border:0; cursor:pointer; padding:0 2px; flex-shrink:0;
+    background:none; border:0; cursor:pointer; flex-shrink:0;
     color:var(--text-dim); font-size:17px; line-height:1; transition:color .2s;
+    /* Padding grows the tap area to ~40px without moving the glyph; the
+       negative margin keeps the visual position where it was. */
+    padding:11px; margin:-11px -9px -11px -11px;
   }
   .do-x:hover { color:var(--text); }
   @media (max-width:768px) {
@@ -478,7 +481,8 @@
   .work-side { display:flex; flex-direction:column; gap:14px; min-width:0; }
   .pb-pin-head { display:flex; align-items:center; gap:10px; margin-bottom:4px; }
   .pb-pin-head h2 { font-size:15px; }
-  .pb-pin-head .btn { margin-left:auto; padding:5px 11px; font-size:12px; }
+  .pb-pin-head .btn { margin-left:auto; padding:7px 13px; font-size:12px; min-height:32px; }
+  @media (max-width:768px) { .pb-pin-head .btn { min-height:40px; padding:9px 16px; } }
   .pb-sec { margin-top:14px; }
   .pb-sec-label {
     font-family:'Geist Mono',monospace; font-size:9px; letter-spacing:.8px;
