@@ -819,7 +819,15 @@
     });
   }
 
+  const AUTH_VIEWS = ['login', 'magic', 'sent', 'waitlist', 'settings'];
+
   function switchView(view) {
+    // An unknown name used to hide every view, leaving an overlay with nothing
+    // in it but the close button. Fail into the primary view instead.
+    if (!AUTH_VIEWS.includes(view)) {
+      console.warn('[auth] unknown view "' + view + '" — falling back to magic');
+      view = 'magic';
+    }
     document.getElementById('auth-login-view').style.display = view === 'login' ? '' : 'none';
     document.getElementById('auth-magic-view').style.display = view === 'magic' ? '' : 'none';
     document.getElementById('auth-magic-sent').style.display = view === 'sent' ? '' : 'none';
@@ -954,12 +962,17 @@
     });
 
     // Request access / Sign up buttons
+    // [href="#"] is broad, and most of those buttons already carry an inline
+    // onclick calling SonaAuth. Binding a second handler meant one click ran
+    // openAuthModal twice, and whichever settled last won — which is how a
+    // stale 'signup' argument could hide every view.
     document.querySelectorAll('.auth-trigger-signup, [href="#"]').forEach(el => {
+      if ((el.getAttribute('onclick') || '').includes('SonaAuth')) return;
       const text = el.textContent.trim().toLowerCase();
       if (text === 'request access' || text === 'get started' || text === 'start free trial') {
         el.addEventListener('click', (e) => {
           e.preventDefault();
-          openAuthModal('signup');
+          openAuthModal('magic');
         });
       }
     });
