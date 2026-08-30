@@ -498,9 +498,48 @@
   .dc-top b { display: block; font-size: 12.5px; font-weight: 600; }
   .dc-top span { display: block; font-size: 10.5px; color: #6a6a63; }
   .dcard p { margin: 0; font-size: 12.5px; line-height: 1.5; color: #d4d4cf; }
-  .dc-foot { display: flex; align-items: center; gap: 8px; margin-top: 11px; font-size: 10.5px; color: #6a6a63; }
+  .dc-foot { display: flex; align-items: center; gap: 9px; margin-top: 11px; font-size: 10.5px; color: #6a6a63; }
   .dc-mult { padding: 2px 7px; border-radius: 5px; font-size: 10.5px; font-weight: 500; background: rgba(95,184,150,.14); color: #5fb896; }
   .dc-thumb { position: relative; aspect-ratio: 16/9; border-radius: 8px; margin-bottom: 10px; background: linear-gradient(135deg, #2a2f2c, #1b1f1d); border: 1px solid rgba(255,255,255,.06); }
+
+  /* ── Remix additions: search summary, tabs, richer card anatomy ── */
+  .dash-new {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 8px 10px; border-radius: 9px; font-size: 12px; color: #e9e9e4;
+    background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.09);
+  }
+  .dash-new kbd { font: inherit; font-size: 10px; color: #8b8b84; }
+
+  .dash-bar {
+    display: flex; align-items: center; gap: 10px; justify-content: space-between;
+    padding: 8px 12px; margin-bottom: 14px; border-radius: 10px;
+    background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.08);
+  }
+  .dash-q { font-size: 12.5px; color: #d4d4cf; }
+  .dash-filters { display: flex; align-items: center; gap: 7px; font-size: 10.5px; color: #8b8b84; white-space: nowrap; }
+  .dash-filters i { width: 6px; height: 6px; border-radius: 50%; background: #5fb896; display: block; }
+
+  /* Tabs carry the section, chips filter within it — two levels, like the
+     reference, and both map to views Sona actually has. */
+  .dash-tabs { display: flex; gap: 18px; margin-bottom: 12px; }
+  .dash-tabs span { font-size: 19px; font-weight: 600; letter-spacing: -.5px; color: #55554f; }
+  .dash-tabs span.on { color: #f3f3f0; }
+  .dash-chips span.add { color: #6a6a63; border-style: dashed; }
+
+  /* Three columns for the reference's density; the cards are short enough. */
+  .dash-grid { columns: 3; column-gap: 11px; }
+  @media (max-width: 1000px) { .dash-grid { columns: 2; } }
+  @media (max-width: 560px) { .dash-grid { columns: 1; } }
+
+  .dc-av { width: 28px; height: 28px; border-radius: 50%; flex: none; object-fit: cover; background: rgba(95,184,150,.16); }
+  .dc-ini { display: grid; place-items: center; color: #5fb896; font-size: 10.5px; font-weight: 600; }
+  .dc-top > div { min-width: 0; }
+  .dc-plat { width: 13px; height: 13px; margin-left: auto; flex: none; color: #55554f; }
+  .dc-eng { color: #6a6a63; }
+  .dc-foot .dc-mult { margin-left: auto; }
+  .dc-thumb { display: grid; place-items: center; }
+  .dc-play { font-size: 15px; color: rgba(255,255,255,.75); }
+
   .dc-dur { position: absolute; right: 6px; bottom: 6px; padding: 1px 5px; border-radius: 4px; background: rgba(0,0,0,.72); font-size: 10px; color: #e9e9e4; }
 
   /* Declared last on purpose: these override the base .dash rules above, and at
@@ -510,6 +549,10 @@
     .dash { grid-template-columns: 1fr; }
     .dash-side { display: none; }
     .dash-main { padding: 14px 14px 16px; }
+    /* nowrap inside a 297px bar just gets clipped by the panel's overflow —
+       drop the summary rather than show half of it. */
+    .dash-filters { display: none; }
+    .dash-tabs span { font-size: 17px; }
   }
 
   .mock-wrap { max-width: 1020px; margin: 96px auto 0; padding: 0 24px; position: relative; }
@@ -1333,55 +1376,107 @@
            pattern it yields on the right. This is the whole product in one
            frame — no app chrome to parse. The decode is hand-written and is
            what the app actually shows for this post. -->
-      <!-- The Discover view as it actually ships: real sidebar groups, real
-           category chips, real seed posts with their real outlier multiples.
-           Deliberately NOT the reference's Custom AI / Publish / Boards / Chats —
-           Sona has none of those, and a hero showing them would sell a product
-           that doesn't exist. -->
+      <!-- Remix of the reference: its density and chrome, Sona's actual product.
+           Tabs, chips, search summary and card anatomy all map to views and
+           columns that exist — Discover/Creators/Lists are real views, the
+           multiples and view counts are real outlier fields. No Custom AI,
+           Publish, Boards or Chats: Sona has none of those. -->
       <div class="dash">
         <aside class="dash-side">
           <div class="dash-brand">
             <span class="dash-mark"><svg viewBox="0 0 24 24" fill="none"><path d="M5 15 Q8 9 12 12 Q16 15 19 9" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" fill="none"/></svg></span>
             <span>Sona</span>
           </div>
-          <div class="dash-search mono"><span>Find ideas</span><kbd>&#8984;K</kbd></div>
+          <div class="dash-new mono"><span>+ Create new</span><kbd>&#8984;K</kbd></div>
           <nav class="dash-nav">
             <span class="dash-grp mono">Find</span>
             <a class="on"><i class="on"></i>Discover<em>30</em></a>
+            <a><i></i>Creators<em>12</em></a>
             <a><i></i>Lists<em>2</em></a>
             <a><i></i>Saved<em>2</em></a>
             <span class="dash-grp mono">Understand</span>
             <a><i></i>Playbook</a>
+            <a><i></i>Hooks<em>50</em></a>
             <span class="dash-grp mono">Make</span>
             <a><i></i>Drafts<em>3</em></a>
             <a><i></i>Personal brand</a>
           </nav>
         </aside>
+
         <div class="dash-main">
-          <div class="dash-head">
-            <span class="dash-title">Discover</span>
-            <div class="dash-chips"><span class="on">All</span><span>Founders</span><span>Writers</span><span>Creators</span></div>
+          <div class="dash-bar">
+            <span class="dash-q mono">build in public</span>
+            <span class="dash-filters mono">4 platforms &middot; Last 6 months &middot; 3&times;+ <i></i></span>
           </div>
+
+          <div class="dash-tabs">
+            <span class="on">Discover</span><span>Creators</span><span>Lists</span>
+          </div>
+
+          <div class="dash-chips">
+            <span class="on">All</span><span>Founders</span><span>Writers</span><span>Creators</span><span class="add">+ Add</span>
+          </div>
+
           <div class="dash-grid">
             <article class="dcard">
-              <div class="dc-top"><span class="dc-av">AH</span><div><b>Alex Hormozi</b><span class="mono">@AlexHormozi &middot; X</span></div></div>
+              <div class="dc-top">
+                <img class="dc-av" src="https://unavatar.io/x/AlexHormozi" alt="" width="28" height="28" decoding="async" onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'dc-av dc-ini',textContent:'AH'}))">
+                <div><b>Alex Hormozi</b><span class="mono">@AlexHormozi</span></div>
+                <svg class="dc-plat" viewBox="0 0 24 24" fill="currentColor" aria-label="X"><path d="M18.9 2H22l-7 8 8.2 12h-6.4l-5-7.3L5.9 22H2.8l7.5-8.6L2.4 2h6.6l4.5 6.6L18.9 2Z"/></svg>
+              </div>
               <p>Most founders post too much &mdash; not too little. The ones who break out pick one contrarian take and stick to it.</p>
-              <div class="dc-foot"><span class="dc-mult mono">12&times;</span><span class="mono">1.2M views</span></div>
+              <div class="dc-foot">
+                <span class="dc-eng mono">&#9825; 101K</span><span class="dc-eng mono">&#8646; 17K</span>
+                <span class="dc-mult mono">12&times;</span>
+              </div>
             </article>
+
             <article class="dcard">
-              <div class="dc-thumb"><span class="dc-dur mono">10:38</span></div>
+              <div class="dc-thumb"><span class="dc-dur mono">10:38</span><span class="dc-play">&#9654;</span></div>
               <p>How I Would Build a Service Business in 2026</p>
-              <div class="dc-foot"><span class="dc-mult mono">12&times;</span><span class="mono">131K views</span></div>
+              <div class="dc-foot">
+                <span class="dc-eng mono">131K views</span>
+                <span class="dc-mult mono">12&times;</span>
+              </div>
             </article>
+
             <article class="dcard">
-              <div class="dc-top"><span class="dc-av">SB</span><div><b>Sahil Bloom</b><span class="mono">@SahilBloom &middot; X</span></div></div>
-              <p>Your life has seasons. Each one is unique &mdash; and none of them last.</p>
-              <div class="dc-foot"><span class="dc-mult mono">8.4&times;</span><span class="mono">840K views</span></div>
+              <div class="dc-top">
+                <img class="dc-av" src="https://unavatar.io/x/SahilBloom" alt="" width="28" height="28" decoding="async" onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'dc-av dc-ini',textContent:'SB'}))">
+                <div><b>Sahil Bloom</b><span class="mono">@SahilBloom</span></div>
+                <svg class="dc-plat" viewBox="0 0 24 24" fill="currentColor" aria-label="X"><path d="M18.9 2H22l-7 8 8.2 12h-6.4l-5-7.3L5.9 22H2.8l7.5-8.6L2.4 2h6.6l4.5 6.6L18.9 2Z"/></svg>
+              </div>
+              <p>Your life has seasons. Each one is unique &mdash; its own weather, its own lessons. None of them last.</p>
+              <div class="dc-foot">
+                <span class="dc-eng mono">1.9M views</span>
+                <span class="dc-mult mono">3&times;</span>
+              </div>
             </article>
+
             <article class="dcard">
-              <div class="dc-top"><span class="dc-av">JW</span><div><b>Justin Welsh</b><span class="mono">@thejustinwelsh &middot; LinkedIn</span></div></div>
+              <div class="dc-top">
+                <img class="dc-av" src="https://unavatar.io/x/thejustinwelsh" alt="" width="28" height="28" decoding="async" onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'dc-av dc-ini',textContent:'JW'}))">
+                <div><b>Justin Welsh</b><span class="mono">@thejustinwelsh</span></div>
+                <svg class="dc-plat" viewBox="0 0 24 24" fill="currentColor" aria-label="LinkedIn"><path d="M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5ZM3 9h4v12H3V9Zm7 0h3.8v1.7h.05c.53-1 1.83-2.05 3.77-2.05C21.4 8.65 22 10.9 22 14v7h-4v-6.2c0-1.5-.03-3.4-2.08-3.4-2.08 0-2.4 1.62-2.4 3.3V21h-4V9Z"/></svg>
+              </div>
               <p>The people who win with AI are not the ones who generate the most. They&rsquo;re the ones who develop the clearest taste.</p>
-              <div class="dc-foot"><span class="dc-mult mono">7.3&times;</span><span class="mono">1.1K reactions</span></div>
+              <div class="dc-foot">
+                <span class="dc-eng mono">&#9825; 1.1K</span><span class="dc-eng mono">&#8646; 39</span>
+                <span class="dc-mult mono">7.3&times;</span>
+              </div>
+            </article>
+
+            <article class="dcard">
+              <div class="dc-top">
+                <img class="dc-av" src="https://unavatar.io/x/gregisenberg" alt="" width="28" height="28" decoding="async" onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'dc-av dc-ini',textContent:'GI'}))">
+                <div><b>Greg Isenberg</b><span class="mono">@gregisenberg</span></div>
+                <svg class="dc-plat" viewBox="0 0 24 24" fill="currentColor" aria-label="X"><path d="M18.9 2H22l-7 8 8.2 12h-6.4l-5-7.3L5.9 22H2.8l7.5-8.6L2.4 2h6.6l4.5 6.6L18.9 2Z"/></svg>
+              </div>
+              <p>The best businesses I know started as a spreadsheet nobody asked for.</p>
+              <div class="dc-foot">
+                <span class="dc-eng mono">412K views</span>
+                <span class="dc-mult mono">5.1&times;</span>
+              </div>
             </article>
           </div>
         </div>
