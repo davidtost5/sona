@@ -184,6 +184,37 @@
   .sb-verified a:hover { color: var(--text); }
 
   /* ─── MID-PAGE CTA ─── */
+
+  /* ─── Try it ─── */
+  .try-wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; max-width: 1000px; margin: 0 auto; align-items: start; }
+  @media (max-width: 860px) { .try-wrap { grid-template-columns: 1fr; } }
+
+  .try-in, .try-out { background: var(--surface); border: 1px solid var(--border-strong); border-radius: 14px; padding: 16px; }
+  .try-lab { display: block; font-size: 10.5px; letter-spacing: 1.1px; text-transform: uppercase; color: var(--text-dim); margin-bottom: 10px; }
+  .try-text {
+    width: 100%; border: none; outline: none; resize: vertical; background: transparent;
+    font-family: inherit; font-size: 15px; line-height: 1.6; color: var(--text); min-height: 150px;
+  }
+  .try-text::placeholder { color: var(--text-dim); }
+  .try-actions { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border); }
+  .try-eg {
+    font-family: inherit; font-size: 13px; padding: 7px 14px; border-radius: 999px; cursor: pointer;
+    background: var(--bg-soft); border: 1px solid var(--border-strong); color: var(--text); transition: background .2s;
+  }
+  .try-eg:hover { background: var(--surface); }
+  .try-count { font-size: 11px; color: var(--text-dim); }
+
+  .try-out { min-height: 220px; }
+  .try-empty { display: grid; place-items: center; min-height: 190px; }
+  .try-empty p { font-size: 14px; color: var(--text-dim); margin: 0; }
+  .try-row { display: grid; grid-template-columns: 78px 1fr; gap: 12px; padding: 10px 0; border-top: 1px solid var(--border); }
+  .try-row:first-child { border-top: none; padding-top: 0; }
+  .try-k { font-size: 10px; letter-spacing: 1px; text-transform: uppercase; color: var(--accent); padding-top: 3px; }
+  .try-row p { margin: 0; font-size: 14px; line-height: 1.55; color: var(--text-mid); white-space: pre-wrap; }
+  @media (max-width: 520px) { .try-row { grid-template-columns: 1fr; gap: 4px; } }
+
+  .try-foot { text-align: center; font-size: 13.5px; color: var(--text-dim); margin: 22px auto 0; max-width: 60ch; }
+
   .midcta { text-align:center; padding:0 24px 104px; }
   .midcta-line { font-size:clamp(22px,3.4vw,31px); font-weight:600; letter-spacing:-.8px;
     line-height:1.25; margin-bottom:22px; }
@@ -1296,6 +1327,7 @@
   [data-r], [data-stagger] { opacity: 1 !important; transform: none !important; }
   .mask-reveal { clip-path: none !important; }
 </style></noscript>
+<script src="local-decode.js?v=20260830a" defer></script>
 </head>
 <body>
 <svg width="0" height="0" aria-hidden="true" style="position:absolute">
@@ -1486,6 +1518,46 @@
 </header>
 
 <!-- WHO IT'S FOR -->
+<!-- Try it — the real analysis engine, on the public page, with no account.
+     This runs the same localDecode() the studio uses. It is entirely local, so
+     it costs nothing per use and cannot fail on an API balance. Placed high on
+     purpose: it is the only thing on this page that demonstrates rather than
+     claims. -->
+<section class="section" id="try">
+  <div class="sec-head" data-r>
+    <span class="eyebrow line">Try it</span>
+    <h2>Paste a post. See its shape.</h2>
+    <p class="sec-lede">No account, nothing sent anywhere &mdash; the analysis runs in your browser.</p>
+  </div>
+
+  <div class="try-wrap" data-r>
+    <div class="try-in">
+      <label class="try-lab mono" for="try-text">A post that worked</label>
+      <textarea id="try-text" class="try-text" rows="7" spellcheck="false"
+        placeholder="Paste any post here&#10;&#10;Or press &ldquo;Use an example&rdquo; below."></textarea>
+      <div class="try-actions">
+        <button type="button" class="try-eg" id="try-eg">Use an example</button>
+        <span class="try-count mono" id="try-count">0 words</span>
+      </div>
+    </div>
+
+    <div class="try-out" id="try-out" aria-live="polite">
+      <div class="try-empty" id="try-empty">
+        <p>The read appears here as you type.</p>
+      </div>
+      <div class="try-res" id="try-res" hidden>
+        <div class="try-row"><span class="try-k mono">Hook</span><p id="try-hook"></p></div>
+        <div class="try-row"><span class="try-k mono">Turn</span><p id="try-tension"></p></div>
+        <div class="try-row"><span class="try-k mono">Lands on</span><p id="try-payoff"></p></div>
+        <div class="try-row"><span class="try-k mono">Shape</span><p id="try-why"></p></div>
+        <div class="try-row"><span class="try-k mono">Reusable</span><p id="try-pattern"></p></div>
+      </div>
+    </div>
+  </div>
+
+  <p class="try-foot" data-r>This is the free read. Signing in adds saving, your playbook, and drafting in your voice.</p>
+</section>
+
 <section class="section" id="who">
   <div class="sec-head" data-r>
     <span class="eyebrow accent line">01 · Who it's for</span>
@@ -2640,6 +2712,40 @@ var mode = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dar
     s.onload = open;
     document.body.appendChild(s);
   };
+
+  // ─── Try it ───
+  // Same engine the studio runs, on the public page, with no account. Debounced
+  // because it re-reads the whole post on every keystroke; 180ms is below the
+  // threshold where it stops feeling live.
+  // local-decode.js is deferred, so it has not executed while this inline
+  // script is being parsed. Deferred scripts run before DOMContentLoaded, so
+  // binding there guarantees window.SonaDecode exists — checking for it inline
+  // silently bailed and left the example button dead.
+  document.addEventListener('DOMContentLoaded', function () {
+    const ta = document.getElementById('try-text');
+    if (!ta || !window.SonaDecode) return;
+    const out = document.getElementById('try-res');
+    const empty = document.getElementById('try-empty');
+    const count = document.getElementById('try-count');
+    const F = { hook: 'try-hook', tension: 'try-tension', payoff: 'try-payoff', why: 'try-why', pattern: 'try-pattern' };
+
+    const EXAMPLE = "Most founders raise before they need to.\n\nBut the ones who survive raise when they already have revenue.\n\nI watched 40 companies go through this. The 12 that waited are still alive.\n\nStop optimising for the round.";
+
+    let t;
+    function run() {
+      const text = ta.value.trim();
+      const words = text ? text.split(/\s+/).length : 0;
+      count.textContent = words + (words === 1 ? ' word' : ' words');
+      if (words < 4) { out.hidden = true; empty.hidden = false; return; }
+      const d = window.SonaDecode.decode(text, {});
+      for (const k in F) document.getElementById(F[k]).textContent = d[k] || '—';
+      empty.hidden = true; out.hidden = false;
+    }
+    ta.addEventListener('input', () => { clearTimeout(t); t = setTimeout(run, 180); });
+    document.getElementById('try-eg').addEventListener('click', () => {
+      ta.value = EXAMPLE; ta.focus(); run();
+    });
+  });
 </script>
 </body>
 </html>
