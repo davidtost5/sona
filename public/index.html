@@ -293,51 +293,7 @@
   .hero-inner { max-width: 880px; margin: 0 auto; position: relative; z-index: 1; }
 
 
-  /* Hero decode — one real post resolved into one reusable pattern. */
-  /* Columns stretch to a shared height, then centre their own content — the two
-     halves read as balanced regardless of which one is taller. */
-  .dsplit { display:grid; grid-template-columns:1fr auto 1fr; align-items:stretch; gap:4px;
-    background:#0a0a0b; padding:30px 26px; text-align:left; min-height:300px; }
-  .ds-col { min-width:0; display:flex; flex-direction:column; justify-content:center; }
-  .ds-lab { display:block; font-size:9px; letter-spacing:.9px; text-transform:uppercase;
-    color:#6f6f78; margin-bottom:9px; }
-  .ds-col .ds-lab + * + .ds-lab { margin-top:18px; }
 
-  .ds-post { background:#121213; border:1px solid rgba(255,255,255,.07); border-radius:13px; padding:15px; }
-  .ds-top { display:flex; align-items:center; gap:9px; margin-bottom:11px; }
-  .ds-av { width:26px; height:26px; border-radius:50%; background:linear-gradient(135deg,#2a2a31,#1a1a1f);
-    display:flex; align-items:center; justify-content:center; flex-shrink:0;
-    font-size:9px; font-weight:700; color:#8a8a96; }
-  .ds-name { font-size:13px; font-weight:600; color:#f4f4f6; line-height:1.2; }
-  .ds-handle { font-size:10px; color:#6f6f78; }
-  .ds-tag { margin-left:auto; font-size:9.5px; color:#5fb896;
-    background:rgba(95,184,150,.13); border-radius:100px; padding:3px 9px; white-space:nowrap; }
-  .ds-text { font-size:14px; line-height:1.6; color:#e4e4ea; margin-bottom:11px; }
-  .ds-meta { font-size:9.5px; color:#6f6f78; }
-
-  /* The connector carries the argument: this becomes that. */
-  .ds-flow { display:flex; flex-direction:column; align-items:center; gap:9px;
-    padding:0 22px; align-self:center; height:56%; }
-  .ds-line { width:1px; flex:1; min-height:22px; background:linear-gradient(transparent, rgba(95,184,150,.55)); }
-  .ds-flow .ds-line:last-child { background:linear-gradient(rgba(95,184,150,.55), transparent); }
-  .ds-chev { font-size:17px; color:#5fb896; line-height:1; }
-
-  .ds-why { font-size:12.5px; line-height:1.65; color:#a8a8b2; }
-  .ds-pattern { font-size:12.5px; line-height:1.7; color:#5fb896;
-    background:rgba(95,184,150,.08); border-left:2px solid rgba(95,184,150,.4);
-    border-radius:0 7px 7px 0; padding:11px 13px; }
-  .ds-yours { margin-top:14px; font-size:11px; color:#6f6f78; }
-
-  @media (max-width: 900px) {
-    /* Stack, and turn the connector on its side so it still reads as a flow. */
-    .dsplit { grid-template-columns:1fr; gap:0; padding:20px 18px; min-height:0; }
-    .ds-flow { flex-direction:row; padding:16px 0; width:100%; height:auto; align-self:auto; }
-    .ds-line { width:auto; height:1px; flex:1; min-height:0;
-      background:linear-gradient(90deg, #1e1e22, rgba(95,184,150,.35)); }
-    .ds-flow .ds-line:last-child { background:linear-gradient(90deg, rgba(95,184,150,.35), #1e1e22); }
-    .ds-chev { transform:rotate(90deg); }
-    .ds-text { font-size:13px; }
-  }
 
   /* (Trust microbar removed) */
 
@@ -504,6 +460,58 @@
 
   .hero-badge img { display: block; max-width: 100%; height: 54px; width: auto; border-radius: 8px; opacity: .92; transition: opacity .2s, transform .2s; }
   .hero-badge a:hover img { opacity: 1; transform: translateY(-1px); }
+
+  /* ─── Hero dashboard ───
+     A dark panel on a light page. The app is dark, so showing it in its own
+     skin reads as a real screen rather than a diagram redrawn in the site's
+     palette. Colours are fixed rather than tokenised on purpose: this is a
+     picture of the product and must not flip with the visitor's theme. */
+  .dash { display: grid; grid-template-columns: 186px 1fr; background: #0f1211; color: #e9e9e4; font-size: 13px; text-align: left; }
+
+  .dash-side { padding: 16px 12px; border-right: 1px solid rgba(255,255,255,.07); display: flex; flex-direction: column; gap: 14px; }
+  .dash-brand { display: flex; align-items: center; gap: 8px; font-weight: 600; letter-spacing: -.3px; font-size: 14px; }
+  .dash-mark { width: 22px; height: 22px; border-radius: 6px; background: rgba(95,184,150,.14); display: grid; place-items: center; color: #5fb896; }
+  .dash-mark svg { width: 14px; height: 14px; }
+  .dash-search { display: flex; align-items: center; justify-content: space-between; padding: 7px 9px; border-radius: 8px; font-size: 11.5px; background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.07); color: #8b8b84; }
+  .dash-search kbd { font: inherit; font-size: 10px; padding: 1px 5px; border-radius: 4px; background: rgba(255,255,255,.06); }
+  .dash-nav { display: flex; flex-direction: column; gap: 1px; }
+  .dash-grp { font-size: 9.5px; letter-spacing: 1.1px; text-transform: uppercase; color: #6a6a63; margin: 10px 0 3px 9px; }
+  .dash-nav a { display: flex; align-items: center; gap: 8px; padding: 6px 9px; border-radius: 7px; color: #a8a8a1; font-size: 12.5px; }
+  .dash-nav a.on { background: rgba(255,255,255,.06); color: #f3f3f0; }
+  .dash-nav a em { margin-left: auto; font-style: normal; font-size: 10.5px; color: #6a6a63; }
+  .dash-nav i { width: 13px; height: 13px; border-radius: 3.5px; background: rgba(255,255,255,.13); flex: none; }
+  .dash-nav i.on { background: #5fb896; }
+
+  .dash-main { padding: 16px 18px 20px; min-width: 0; }
+  .dash-head { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; margin-bottom: 14px; }
+  .dash-title { font-size: 19px; font-weight: 600; letter-spacing: -.5px; }
+  .dash-chips { display: flex; gap: 6px; flex-wrap: wrap; }
+  .dash-chips span { padding: 4px 11px; border-radius: 999px; font-size: 11.5px; color: #a8a8a1; border: 1px solid rgba(255,255,255,.09); }
+  .dash-chips span.on { background: #f3f3f0; color: #141715; border-color: transparent; font-weight: 500; }
+
+  /* Columns, not grid: the cards are different heights, and masonry stops the
+     media card dictating a row height for everything beside it. */
+  .dash-grid { columns: 2; column-gap: 12px; }
+  @media (max-width: 560px) { .dash-grid { columns: 1; } }
+  .dcard { break-inside: avoid; margin-bottom: 12px; padding: 13px; background: #171a19; border: 1px solid rgba(255,255,255,.07); border-radius: 12px; }
+  .dc-top { display: flex; align-items: center; gap: 8px; margin-bottom: 9px; }
+  .dc-av { width: 26px; height: 26px; border-radius: 50%; flex: none; background: rgba(95,184,150,.16); color: #5fb896; display: grid; place-items: center; font-size: 10.5px; font-weight: 600; }
+  .dc-top b { display: block; font-size: 12.5px; font-weight: 600; }
+  .dc-top span { display: block; font-size: 10.5px; color: #6a6a63; }
+  .dcard p { margin: 0; font-size: 12.5px; line-height: 1.5; color: #d4d4cf; }
+  .dc-foot { display: flex; align-items: center; gap: 8px; margin-top: 11px; font-size: 10.5px; color: #6a6a63; }
+  .dc-mult { padding: 2px 7px; border-radius: 5px; font-size: 10.5px; font-weight: 500; background: rgba(95,184,150,.14); color: #5fb896; }
+  .dc-thumb { position: relative; aspect-ratio: 16/9; border-radius: 8px; margin-bottom: 10px; background: linear-gradient(135deg, #2a2f2c, #1b1f1d); border: 1px solid rgba(255,255,255,.06); }
+  .dc-dur { position: absolute; right: 6px; bottom: 6px; padding: 1px 5px; border-radius: 4px; background: rgba(0,0,0,.72); font-size: 10px; color: #e9e9e4; }
+
+  /* Declared last on purpose: these override the base .dash rules above, and at
+     equal specificity the later rule wins. Placed before them, the sidebar's own
+     `display: flex` silently beat this `display: none` on phones. */
+  @media (max-width: 760px) {
+    .dash { grid-template-columns: 1fr; }
+    .dash-side { display: none; }
+    .dash-main { padding: 14px 14px 16px; }
+  }
 
   .mock-wrap { max-width: 1020px; margin: 96px auto 0; padding: 0 24px; position: relative; }
   .mock-wrap::before { content:''; position:absolute; inset: 25% 8% 0; background: radial-gradient(ellipse at center, var(--accent-soft), transparent 70%); filter: blur(50px); z-index:0; pointer-events:none; }
@@ -976,15 +984,6 @@
      The reference bleeds colour up from behind the wordmark. Sona green rather
      than its pink, and sitting under the letters so they stay crisp. */
   .foot-wordmark { position: relative; }
-  .foot-wordmark::before {
-    content: ''; position: absolute; left: 50%; bottom: -10%;
-    width: min(1100px, 92%); height: 260%; transform: translateX(-50%);
-    z-index: -1; pointer-events: none;
-    background:
-      radial-gradient(58% 80% at 50% 100%, color-mix(in srgb, var(--accent) 30%, transparent), transparent 68%),
-      radial-gradient(38% 60% at 22% 100%, color-mix(in srgb, var(--accent) 16%, transparent), transparent 70%);
-    filter: blur(6px);
-  }
   @media (max-width: 760px) {
     .foot-cta { padding: 0 20px 40px; }
     .foot-cta h2 { letter-spacing: -1px; }
@@ -1016,23 +1015,20 @@
   }
   .foot-wordmark span {
     display: inline-block; margin-top: -.19em;
-    color: transparent;
-    -webkit-text-stroke: 1px var(--border-strong);
-    background: linear-gradient(180deg, var(--text) -10%, transparent 90%);
-    -webkit-background-clip: text; background-clip: text;
+    color: var(--text);
     opacity: 0; transform: translateY(60px);
     transition: opacity 1.1s cubic-bezier(.16,.86,.21,1), transform 1.1s cubic-bezier(.16,.86,.21,1);
     will-change: opacity, transform;
   }
-  .foot-wordmark.in span { opacity: .14; transform: none; }
+  .foot-wordmark.in span { opacity: .06; transform: none; }
   .foot-wordmark.in span:nth-child(1) { transition-delay: 0s; }
   .foot-wordmark.in span:nth-child(2) { transition-delay: .12s; }
   .foot-wordmark.in span:nth-child(3) { transition-delay: .24s; }
   .foot-wordmark.in span:nth-child(4) { transition-delay: .36s; }
-  html[data-theme="dark"] .foot-wordmark.in span { opacity: .22; }
+  html[data-theme="dark"] .foot-wordmark.in span { opacity: .09; }
   @media (prefers-reduced-motion: reduce) {
-    .foot-wordmark span { opacity: .14 !important; transform: none !important; transition: none !important; }
-    html[data-theme="dark"] .foot-wordmark span { opacity: .22 !important; }
+    .foot-wordmark span { opacity: .06 !important; transform: none !important; transition: none !important; }
+    html[data-theme="dark"] .foot-wordmark span { opacity: .09 !important; }
   }
 
   /* Hero scroll-dissolve — text fades + lifts as you scroll past, panel stays anchored */
@@ -1334,35 +1330,57 @@
            pattern it yields on the right. This is the whole product in one
            frame — no app chrome to parse. The decode is hand-written and is
            what the app actually shows for this post. -->
-      <div class="dsplit">
-        <div class="ds-col">
-          <span class="ds-lab mono">A post that outperformed</span>
-          <div class="ds-post">
-            <div class="ds-top">
-              <span class="ds-av">AH</span>
-              <div>
-                <div class="ds-name">Alex Hormozi</div>
-                <div class="ds-handle mono">@AlexHormozi · X</div>
-              </div>
-              <span class="ds-tag mono">12× outlier</span>
-            </div>
-            <p class="ds-text">Most founders post too much — not too little. The ones who break out pick one contrarian take and stick to it.</p>
-            <div class="ds-meta mono">1.2M views · 12× this creator's baseline</div>
+      <!-- The Discover view as it actually ships: real sidebar groups, real
+           category chips, real seed posts with their real outlier multiples.
+           Deliberately NOT the reference's Custom AI / Publish / Boards / Chats —
+           Sona has none of those, and a hero showing them would sell a product
+           that doesn't exist. -->
+      <div class="dash">
+        <aside class="dash-side">
+          <div class="dash-brand">
+            <span class="dash-mark"><svg viewBox="0 0 24 24" fill="none"><path d="M5 15 Q8 9 12 12 Q16 15 19 9" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" fill="none"/></svg></span>
+            <span>Sona</span>
           </div>
-        </div>
-
-        <div class="ds-flow" aria-hidden="true">
-          <span class="ds-line"></span>
-          <span class="ds-chev">→</span>
-          <span class="ds-line"></span>
-        </div>
-
-        <div class="ds-col">
-          <span class="ds-lab mono">Why it worked</span>
-          <p class="ds-why">Opens with a category most people belong to, then strips out 99% of them. The reader self-identifies into the elite 1%.</p>
-          <span class="ds-lab mono">The pattern underneath</span>
-          <p class="ds-pattern mono">Most [group] [common belief]. The ones who break out [contrarian action].</p>
-          <p class="ds-yours">Yours to write — Sona never writes it for you.</p>
+          <div class="dash-search mono"><span>Find ideas</span><kbd>&#8984;K</kbd></div>
+          <nav class="dash-nav">
+            <span class="dash-grp mono">Find</span>
+            <a class="on"><i class="on"></i>Discover<em>30</em></a>
+            <a><i></i>Lists<em>2</em></a>
+            <a><i></i>Saved<em>2</em></a>
+            <span class="dash-grp mono">Understand</span>
+            <a><i></i>Playbook</a>
+            <span class="dash-grp mono">Make</span>
+            <a><i></i>Drafts<em>3</em></a>
+            <a><i></i>Personal brand</a>
+          </nav>
+        </aside>
+        <div class="dash-main">
+          <div class="dash-head">
+            <span class="dash-title">Discover</span>
+            <div class="dash-chips"><span class="on">All</span><span>Founders</span><span>Writers</span><span>Creators</span></div>
+          </div>
+          <div class="dash-grid">
+            <article class="dcard">
+              <div class="dc-top"><span class="dc-av">AH</span><div><b>Alex Hormozi</b><span class="mono">@AlexHormozi &middot; X</span></div></div>
+              <p>Most founders post too much &mdash; not too little. The ones who break out pick one contrarian take and stick to it.</p>
+              <div class="dc-foot"><span class="dc-mult mono">12&times;</span><span class="mono">1.2M views</span></div>
+            </article>
+            <article class="dcard">
+              <div class="dc-thumb"><span class="dc-dur mono">10:38</span></div>
+              <p>How I Would Build a Service Business in 2026</p>
+              <div class="dc-foot"><span class="dc-mult mono">12&times;</span><span class="mono">131K views</span></div>
+            </article>
+            <article class="dcard">
+              <div class="dc-top"><span class="dc-av">SB</span><div><b>Sahil Bloom</b><span class="mono">@SahilBloom &middot; X</span></div></div>
+              <p>Your life has seasons. Each one is unique &mdash; and none of them last.</p>
+              <div class="dc-foot"><span class="dc-mult mono">8.4&times;</span><span class="mono">840K views</span></div>
+            </article>
+            <article class="dcard">
+              <div class="dc-top"><span class="dc-av">JW</span><div><b>Justin Welsh</b><span class="mono">@thejustinwelsh &middot; LinkedIn</span></div></div>
+              <p>The people who win with AI are not the ones who generate the most. They&rsquo;re the ones who develop the clearest taste.</p>
+              <div class="dc-foot"><span class="dc-mult mono">7.3&times;</span><span class="mono">1.1K reactions</span></div>
+            </article>
+          </div>
         </div>
       </div>
     </div>
