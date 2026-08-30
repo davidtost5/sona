@@ -171,7 +171,6 @@
   .mask-reveal.in { clip-path: inset(0); }
 
   /* Subtle parallax on the hero glow — drives off CSS var the scroll handler updates */
-  .mock-wrap::before { transform: translateY(var(--sp-y, 0px)); transition: transform .1s linear; }
 
   @media (prefers-reduced-motion: reduce) {
     [data-split] .w, .mask-reveal, .eyebrow.line::before { transition: none !important; transform: none !important; opacity: 1 !important; clip-path: none !important; }
@@ -514,7 +513,6 @@
   }
 
   .mock-wrap { max-width: 1020px; margin: 96px auto 0; padding: 0 24px; position: relative; }
-  .mock-wrap::before { content:''; position:absolute; inset: 25% 8% 0; background: radial-gradient(ellipse at center, var(--accent-soft), transparent 70%); filter: blur(50px); z-index:0; pointer-events:none; }
   .panel { position: relative; z-index: 1; background: var(--surface); border: 1px solid var(--border); border-radius: 18px; box-shadow: var(--shadow-lg); overflow: hidden; }
   .panel-bar { display: flex; align-items: center; gap: 8px; padding: 14px 18px; border-bottom: 1px solid var(--border); }
   .panel-bar i { width: 10px; height: 10px; border-radius: 50%; background: var(--border-strong); display: block; }
@@ -1243,7 +1241,6 @@
 
   /* Mobile perf: kill hero parallax + word-stagger delay */
   @media (max-width: 768px) {
-    .mock-wrap::before { transform: none !important; }
     [data-split] .w { transition-delay: 0s !important; }
   }
 
@@ -1327,10 +1324,10 @@
     </div>
   </div>
 
-  <div class="mock-wrap" data-r>
+  <div class="mock-wrap">
     <!-- The real Discover view, not an abstract mock: same sidebar groups, same
          card anatomy, same outlier badges and Decode/Save actions the app ships. -->
-    <div class="panel mask-reveal" data-r id="hero-panel">
+    <div class="panel" id="hero-panel">
       <div class="panel-bar"><i></i><i></i><i></i><span class="u mono">buildwithsona.com/app</span></div>
       <!-- One decode, start to finish: a real post on the left, the reusable
            pattern it yields on the right. This is the whole product in one
