@@ -1967,7 +1967,7 @@
   // If the `outliers` table has curated rows, the Discover feed uses them instead
   // of the static seed above. We mutate SEED_IDEAS in place so every downstream
   // reference (Discover, Saved, Swipe, decoder, drafts insert) keeps working
-  // unchanged. DB rows carry no static `decoded`, so they use the live /api/decode
+  // unchanged. DB rows carry no static `decoded`, so they are read by localDecode()
   // path (which itself falls back gracefully when no API key is set).
   async function loadOutliers() {
     if (!sb) return; // demo / no Supabase → keep the static seed
@@ -4087,7 +4087,7 @@
       const id = 'paste_' + Date.now().toString(36);
 
       // A synthetic idea with no `decoded`, which is exactly what sends
-      // openDecoder down the live /api/decode path.
+      // openDecoder down the localDecode() path.
       SEED_IDEAS.unshift({
         id, cat: 'founders',
         name: author || 'Pasted post',
@@ -4156,7 +4156,14 @@
       const eg = new Set(irContent(h.eg || ''));
       const shared = cw.filter(w => eg.has(w)).length;
       const egSim = eg.size ? shared / Math.min(eg.size, Math.max(cw.length, 1)) : 0;
-      return { h, score: (hit / skel.length) * 0.55 + (inOrder / skel.length) * 0.30 + egSim * 0.15 };
+      const raw = (hit / skel.length) * 0.55 + (inOrder / skel.length) * 0.30 + egSim * 0.15;
+      // A two-word skeleton matches almost anything — "[N] things I do before
+      // [x]" reduces to ["i","before"], and two common-word hits scored it 0.73,
+      // above the contrarian template that actually fit. Ratios over tiny
+      // denominators are not evidence, so confidence scales with how much
+      // skeleton there was to match against.
+      const evidence = Math.min(1, skel.length / 4);
+      return { h, score: raw * evidence };
     });
     return scored.filter(x => x.score > 0.18).sort((a, b) => b.score - a.score).slice(0, topN || 3);
   }
@@ -4184,6 +4191,107 @@
         .replace(/\b\d[\d,.]*\s?(?:%|k|m|x|×)\b/gi, '[number]')
         .replace(/\b\d[\d,.]*\b/g, '[number]'),
     };
+  }
+
+
+  // ─── Local decode ───
+  // Produces the same {hook, tension, payoff, pattern, why, apply} shape the
+  // decoder modal renders, computed entirely in the browser. No network, no
+  // model, no credit — so it works on every post in the feed, forever, and it
+  // cannot 502.
+  //
+  // The honesty line matters: this does not claim to know why a post worked.
+  // It reports what the post structurally IS — where it turns, how specific it
+  // is, what skeleton it leaves behind — and lets the reader draw the causal
+  // conclusion. Every claim below is measured from the text itself.
+
+  // Words that mark the sentence where a post changes direction. This is the
+  // single most useful structural signal in short-form writing: the turn is
+  // where the reader decides to keep going.
+  const LD_PIVOT = /^(but|however|until|then|yet|except|instead|turns out|the problem|the truth|here'?s|so |and yet|that changed|what nobody|most people|everyone)/i;
+  const LD_CTA = /(follow|subscribe|comment|share|link in|dm me|sign up|join|check out|read more|full breakdown)/i;
+
+  function ldSentences(text) {
+    return String(text).trim()
+      .split(/\n+|(?<=[.!?])\s+/)
+      .map(s => s.trim())
+      .filter(s => s.length > 1);
+  }
+
+  function ldLabel(sentences) {
+    // Assigns each sentence a structural role. Order matters more than keywords:
+    // the first line is always the hook, the last is always the landing.
+    return sentences.map((s, idx) => {
+      if (idx === 0) return { s, role: 'Hook' };
+      if (LD_CTA.test(s) && idx >= sentences.length - 2) return { s, role: 'Ask' };
+      if (idx === sentences.length - 1) return { s, role: 'Landing' };
+      if (LD_PIVOT.test(s)) return { s, role: 'Turn' };
+      if (/\d/.test(s)) return { s, role: 'Proof' };
+      return { s, role: 'Context' };
+    });
+  }
+
+  function localDecode(text, meta) {
+    const t = String(text || '').trim();
+    const sentences = ldSentences(t);
+    if (!sentences.length) {
+      return { hook: '—', tension: 'Nothing to read here yet.', payoff: '—',
+               pattern: '—', why: 'Paste a post to see its shape.', apply: '—' };
+    }
+
+    const st = irStructure(t);
+    const labelled = ldLabel(sentences);
+    const turn = labelled.find(x => x.role === 'Turn');
+    const proof = labelled.filter(x => x.role === 'Proof');
+    const landing = labelled[labelled.length - 1];
+    const match = irMatchHooks(t, 1)[0];
+
+    // ── hook ── what the opening does, plus the library template it echoes
+    const hookBits = [`${st.opening} opener, ${st.firstLineWords} words.`];
+    // Naming a shape the post doesn't actually have reads worse than naming
+    // none, so a weak match stays quiet.
+    if (match && match.score >= 0.35) {
+      hookBits.push(`Closest known shape: ${match.h.cat} — "${match.h.pattern}"`);
+    }
+    const hook = `${sentences[0]}\n\n${hookBits.join(' ')}`;
+
+    // ── tension ── where it turns, or an honest note that it doesn't
+    const tension = turn
+      ? `Turns at: "${turn.s}"`
+      : sentences.length > 2
+        ? 'No explicit turn — it builds in one direction the whole way. That works when the opening promise is strong enough to carry it.'
+        : 'Too short to have a turn. Single-beat post.';
+
+    // ── payoff ── where it lands
+    const payoff = `Lands on: "${landing.s}"${
+      LD_CTA.test(landing.s) ? '\n\nEnds on an ask rather than an idea.' : ''}`;
+
+    // ── pattern ── the reusable skeleton, specifics bracketed out
+    const pattern = st.template || sentences.slice(0, 2).join(' ');
+
+    // ── why ── measurable observations only
+    const shape = labelled.map(x => x.role);
+    const why = [
+      `Structure: ${shape.join(' → ')}`,
+      `${st.words} words, ~${st.avgSentence} per sentence.`,
+      st.specifics
+        ? `${st.specifics} concrete number${st.specifics === 1 ? '' : 's'} — specificity is doing work here.`
+        : 'No numbers anywhere. It runs on assertion, which needs a stronger opening to survive.',
+      st.firstLineWords <= 12
+        ? 'Short first line — it gets read before anyone decides to scroll.'
+        : 'Long first line — it asks for commitment before it has earned any.',
+    ].join('\n');
+
+    // ── apply ── a fill-in-the-blank version of this exact post
+    const apply = [
+      `1. Open ${st.opening.toLowerCase()}, in ${st.firstLineWords} words or fewer.`,
+      turn ? '2. Turn it once, roughly halfway.' : '2. Hold one direction — no turn.',
+      proof.length ? `3. Carry ${proof.length} concrete detail${proof.length === 1 ? '' : 's'}.`
+                   : '3. Add one concrete detail; this post has none.',
+      `4. Land on ${LD_CTA.test(landing.s) ? 'an ask' : 'the idea, not an ask'}.`,
+    ].join('\n');
+
+    return { hook, tension, payoff, pattern, why, apply };
   }
 
   function renderInstantRead(text) {
@@ -4715,30 +4823,14 @@
       return;
     }
 
-    // Real/new post (e.g. from the ingest pipeline) — call the cached Claude endpoint.
-    fillDecoder(LOADING_DECODE);
+    // Everything else is read locally. This used to POST /api/decode, which
+    // meant every post in the feed depended on an API balance and returned 502
+    // when it ran dry. localDecode() is synchronous, free and offline-capable,
+    // so there is no loading state and no failure mode to handle.
+    i.decoded = localDecode(i.text, { author: i.name, handle: i.handle });
+    fillDecoder(i.decoded);
     document.getElementById('decoder-back').classList.add('show');
-    // Initialize focus trap after modal is shown
     requestAnimationFrame(() => trapDecoderFocus());
-    try {
-      const res = await fetch('/api/decode', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ text: i.text, author: i.name, platform: (i.handle || '').split('·').pop().trim() }),
-      });
-      const json = await res.json();
-      // Still on the same post? (user may have closed/switched)
-      if (document.getElementById('decoder-back').dataset.idea !== id) return;
-      if (json.decoded) {
-        i.decoded = json.decoded; // memoize so re-opening is instant
-        fillDecoder(json.decoded);
-      } else {
-        fillDecoder({ hook:'Unavailable', tension:'Couldn\'t decode this one right now.', payoff:'—', pattern:'—', why:'Try again shortly.', apply:'—' });
-      }
-    } catch (_) {
-      if (document.getElementById('decoder-back').dataset.idea !== id) return;
-      fillDecoder({ hook:'Offline', tension:'Decoder is unavailable right now.', payoff:'—', pattern:'—', why:'Check your connection.', apply:'—' });
-    }
   };
    window.closeDecoder = function() {
      document.getElementById('decoder-back').classList.remove('show');
