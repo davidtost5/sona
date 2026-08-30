@@ -169,6 +169,9 @@
   .filter-sep { width:1px; align-self:stretch; background:var(--border); margin:0 4px; flex-shrink:0; }
   .disc-plat { width:13px; height:13px; opacity:.5; flex-shrink:0; }
   .disc-mult {
+  .disc-new { display:inline-flex; align-items:center; padding:2px 8px; border-radius:6px;
+    font-family:'Geist Mono', monospace; font-size:10.5px; font-weight:500;
+    background:color-mix(in srgb, var(--accent) 16%, transparent); color:var(--accent); }
   .disc-pct { display:inline-flex; align-items:center; padding:2px 8px; border-radius:6px;
     font-family:'Geist Mono', monospace; font-size:10.5px; font-weight:500; letter-spacing:.2px;
     background:color-mix(in srgb, #8b5cf6 14%, transparent); color:#8b5cf6; }
@@ -1999,6 +2002,7 @@
           duration: r.duration || '',
           likes: r.likes || '',
           reposts: r.reposts || '',
+          captured: r.captured_at || null,   // drives the New marker and daily order
           // no `decoded` → live decode path
         }));
         // Lead with curated rows, then keep the built-in set behind them.
@@ -3285,6 +3289,31 @@
     return Math.max(1, Math.ceil(((better + 1) / _pctCache.length) * 100));
   }
 
+  // Two different things make a feed worth opening daily. New posts actually
+  // arriving is the ingest's job — a cron runs it every morning. This is the
+  // other half: what the visitor sees first should not be identical to
+  // yesterday, even on a day when nothing new landed.
+  //
+  // A rotation rather than a shuffle. Relative order is preserved, so a strong
+  // post never gets buried by randomness; only the starting point moves, and it
+  // moves by date so it is stable within a day and the same for everyone.
+  const FRESH_MS = 48 * 3600 * 1000;
+  function isFresh(i) {
+    if (!i.captured) return false;
+    return Date.now() - new Date(i.captured).getTime() < FRESH_MS;
+  }
+  function dayIndex() {
+    const d = new Date();
+    return d.getUTCFullYear() * 10000 + (d.getUTCMonth() + 1) * 100 + d.getUTCDate();
+  }
+  function dailyOrder(list) {
+    const fresh = list.filter(isFresh);
+    const rest = list.filter(i => !isFresh(i));
+    if (rest.length < 4) return [...fresh, ...rest];
+    const offset = dayIndex() % rest.length;
+    return [...fresh, ...rest.slice(offset), ...rest.slice(0, offset)];
+  }
+
   function applyDiscSort(list) {
     if (discSort === 'breakouts') return [...list].sort((a, b) => multOf(b) - multOf(a));
     if (discSort === 'viral')     return [...list].sort((a, b) => viewsOf(b) - viewsOf(a));
@@ -3364,6 +3393,7 @@
         ${engageBlock(i)}
         <div class="disc-meta">
           ${multOf(i) ? `<span class="disc-mult">${multOf(i)}×</span>` : ''}
+          ${isFresh(i) ? '<span class="disc-new">New</span>' : ''}
           ${pctRank(i) && pctRank(i) <= 10 ? `<span class="disc-pct" title="Top ${pctRank(i)}% of the posts loaded in your feed, ranked by outlier multiple">Top ${pctRank(i)}%</span>` : ''}
           <span class="disc-tag">${platIcon(i.handle)}${(i.views || '').replace(' views','')}</span>
           <div class="disc-actions">

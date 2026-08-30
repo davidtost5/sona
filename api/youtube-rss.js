@@ -143,13 +143,20 @@ async function collect(handle, minMultiple) {
 }
 
 export default async function handler(req, res) {
-  const raw = req.query.handles || (req.body && req.body.handles) || '';
+  const DEFAULT_HANDLES = 'AlexHormozi,ChrisWillx,thejustinwelsh,gregisenberg,SahilBloom';
+  const raw =
+    req.query.handles ||
+    (req.body && req.body.handles) ||
+    // A cron request has no query string; INGEST_HANDLES is how the daily run
+    // is configured without redeploying.
+    process.env.INGEST_HANDLES ||
+    DEFAULT_HANDLES;
   const handles = (Array.isArray(raw) ? raw : String(raw).split(','))
     .map((h) => String(h).trim()).filter(Boolean).slice(0, 12);
 
   if (!handles.length) {
     return res.status(400).json({
-      error: 'Pass ?handles=@name,@name (or a JSON body with handles: [...])',
+      error: 'Pass ?handles=@name,@name (or set INGEST_HANDLES)',
     });
   }
 
@@ -170,8 +177,16 @@ export default async function handler(req, res) {
 
   const rows = results.flatMap((r) => r.rows);
 
-  // GET previews. Nothing is written until an authenticated POST.
-  if (req.method !== 'POST') {
+  // Vercel Cron invokes with GET and an Authorization bearer, not a POST with
+  // the admin key, so the daily run is authorised on that instead. Everything
+  // else about a cron run is a normal write.
+  const cronSecret = process.env.CRON_SECRET;
+  const isCron = Boolean(
+    cronSecret && req.headers.authorization === `Bearer ${cronSecret}`
+  );
+
+  // GET previews. Nothing is written until an authenticated POST — or a cron.
+  if (req.method !== 'POST' && !isCron) {
     return res.status(200).json({
       preview: true,
       minMultiple,
@@ -181,9 +196,11 @@ export default async function handler(req, res) {
     });
   }
 
-  const adminKey = process.env.ADMIN_KEY;
-  if (!adminKey || req.headers['x-admin-key'] !== adminKey) {
-    return res.status(401).json({ error: 'Unauthorized' });
+  if (!isCron) {
+    const adminKey = process.env.ADMIN_KEY;
+    if (!adminKey || req.headers['x-admin-key'] !== adminKey) {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
   }
   if (!supabase) return res.status(503).json({ error: 'Database not configured' });
   if (!rows.length) {

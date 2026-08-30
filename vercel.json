@@ -90,5 +90,11 @@
         }
       ]
     }
+  ],
+  "crons": [
+    {
+      "path": "/api/youtube-rss",
+      "schedule": "0 6 * * *"
+    }
   ]
 }
