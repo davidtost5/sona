@@ -169,6 +169,10 @@
   .filter-sep { width:1px; align-self:stretch; background:var(--border); margin:0 4px; flex-shrink:0; }
   .disc-plat { width:13px; height:13px; opacity:.5; flex-shrink:0; }
   .disc-mult {
+  .disc-pct { display:inline-flex; align-items:center; padding:2px 8px; border-radius:6px;
+    font-family:'Geist Mono', monospace; font-size:10.5px; font-weight:500; letter-spacing:.2px;
+    background:color-mix(in srgb, #8b5cf6 14%, transparent); color:#8b5cf6; }
+  html[data-theme="dark"] .disc-pct { background:rgba(167,139,250,.16); color:#a78bfa; }
     font-family:'Geist Mono',monospace; font-size:10px; font-weight:500;
     color:#d9a441; background:rgba(217,164,65,.13); border:1px solid rgba(217,164,65,.22);
     border-radius:100px; padding:2px 8px; white-space:nowrap;
@@ -1266,6 +1270,7 @@
           <button class="filter" data-sort="breakouts" title="Highest multiple against the creator's own baseline">Breakouts</button>
           <button class="filter" data-sort="gems" title="Beat their baseline hard without going mega-viral">Hidden gems</button>
           <button class="filter" data-sort="viral" title="Most views in absolute terms">Viral now</button>
+          <button class="filter" data-sort="greats" title="Biggest absolute reach — 500K views and up">All-time greats</button>
         </div>
         <!-- First-run nudge. A new feed gives no instruction on what to do
              first; this names one concrete action and shows progress toward it.
@@ -3262,9 +3267,36 @@
     const n = parseFloat(m[1]) || 0;
     return m[2] === 'M' ? n * 1e6 : m[2] === 'K' ? n * 1e3 : n;
   };
+  // Where this post ranks by multiple among everything currently loaded.
+  // Scoped to the feed, not the platform: Sona has no platform-wide corpus to
+  // rank against, so a bare "Top 1%" would be a number with nothing behind it.
+  // The tooltip states what the percentage is over.
+    //
+    // Only rendered for the top decile. Every row in this feed is already an
+    // outlier, so ranking within it spreads evenly across 1-100% and most cards
+    // would carry a badge reading "Top 80%" — which reads as a criticism rather
+    // than a highlight. A badge that is not a distinction should not be shown.
+  let _pctCache = null;
+  function pctRank(i) {
+    if (!_pctCache) _pctCache = SEED_IDEAS.map(multOf).filter(m => m > 0).sort((a, b) => b - a);
+    const m = multOf(i);
+    if (!m || !_pctCache.length) return 0;
+    const better = _pctCache.filter(x => x > m).length;
+    return Math.max(1, Math.ceil(((better + 1) / _pctCache.length) * 100));
+  }
+
   function applyDiscSort(list) {
     if (discSort === 'breakouts') return [...list].sort((a, b) => multOf(b) - multOf(a));
     if (discSort === 'viral')     return [...list].sort((a, b) => viewsOf(b) - viewsOf(a));
+    // Greats are judged on reach actually achieved, whether or not it beat the
+    // creator's own baseline — the opposite question to Breakouts.
+    // Top fifth by reach rather than a fixed view cutoff: an absolute threshold
+    // is a no-op on a feed of famous creators and excludes everything on a feed
+    // of small ones. Relative stays selective on either.
+    if (discSort === 'greats') {
+      const ranked = [...list].sort((a, b) => viewsOf(b) - viewsOf(a));
+      return ranked.slice(0, Math.max(3, Math.ceil(ranked.length * 0.2)));
+    }
     // A hidden gem beat its own baseline hard without being a monster in raw
     // reach — high multiple, comparatively modest views.
     if (discSort === 'gems')      return [...list]
@@ -3309,6 +3341,7 @@
   }
 
   function renderDiscover() {
+  _pctCache = null;   // the feed may have changed since the last render
     const grid = document.getElementById('disc-grid');
     const countEl = document.getElementById('discover-count');
     if (countEl) countEl.textContent = SEED_IDEAS.length;
@@ -3331,6 +3364,7 @@
         ${engageBlock(i)}
         <div class="disc-meta">
           ${multOf(i) ? `<span class="disc-mult">${multOf(i)}×</span>` : ''}
+          ${pctRank(i) && pctRank(i) <= 10 ? `<span class="disc-pct" title="Top ${pctRank(i)}% of the posts loaded in your feed, ranked by outlier multiple">Top ${pctRank(i)}%</span>` : ''}
           <span class="disc-tag">${platIcon(i.handle)}${(i.views || '').replace(' views','')}</span>
           <div class="disc-actions">
             <button class="disc-action decode" onclick="openDecoder('${i.id}')" title="See why this post worked">
