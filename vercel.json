@@ -1,39 +1,93 @@
 {
   "outputDirectory": "public",
   "rewrites": [
-    { "source": "/api/contact", "destination": "/api/contact.js" },
-    { "source": "/api/waitlist", "destination": "/api/waitlist.js" },
-    { "source": "/api/auth-config", "destination": "/api/auth-config.js" },
-    { "source": "/api/checkout", "destination": "/api/checkout.js" },
-    { "source": "/api/founding-count", "destination": "/api/founding-count.js" },
-    { "source": "/api/decode", "destination": "/api/decode.js" },
-    { "source": "/api/outliers", "destination": "/api/outliers.js" },
-    { "source": "/api/patterns", "destination": "/api/patterns.js" },
-    { "source": "/api/email-debug", "destination": "/api/email-debug.js" },
-    { "source": "/api/stripe-webhook", "destination": "/api/stripe-webhook.js" },
-    { "source": "/app", "destination": "/app.html" }
+    {
+      "source": "/api/contact",
+      "destination": "/api/contact.js"
+    },
+    {
+      "source": "/api/waitlist",
+      "destination": "/api/waitlist.js"
+    },
+    {
+      "source": "/api/auth-config",
+      "destination": "/api/auth-config.js"
+    },
+    {
+      "source": "/api/checkout",
+      "destination": "/api/checkout.js"
+    },
+    {
+      "source": "/api/founding-count",
+      "destination": "/api/founding-count.js"
+    },
+    {
+      "source": "/api/outliers",
+      "destination": "/api/outliers.js"
+    },
+    {
+      "source": "/api/patterns",
+      "destination": "/api/patterns.js"
+    },
+    {
+      "source": "/api/stripe-webhook",
+      "destination": "/api/stripe-webhook.js"
+    },
+    {
+      "source": "/api/clerk-webhook",
+      "destination": "/api/clerk-webhook.js"
+    },
+    {
+      "source": "/api/youtube-rss",
+      "destination": "/api/youtube-rss.js"
+    },
+    {
+      "source": "/app",
+      "destination": "/app.html"
+    }
   ],
   "headers": [
     {
       "source": "/(.*)",
       "headers": [
-        { "key": "X-Content-Type-Options", "value": "nosniff" },
-        { "key": "X-Frame-Options", "value": "DENY" },
-        { "key": "X-XSS-Protection", "value": "1; mode=block" },
-        { "key": "Referrer-Policy", "value": "no-referrer" },
-        { "key": "Content-Security-Policy", "value": "frame-ancestors 'none'" }
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "DENY"
+        },
+        {
+          "key": "X-XSS-Protection",
+          "value": "1; mode=block"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "no-referrer"
+        },
+        {
+          "key": "Content-Security-Policy",
+          "value": "frame-ancestors 'none'"
+        }
       ]
     },
     {
       "source": "/(.*)\\.(jpg|jpeg|png|gif|webp|svg|ico)",
       "headers": [
-        { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
       ]
     },
     {
       "source": "/(.*)\\.(js)",
       "headers": [
-        { "key": "Cache-Control", "value": "public, max-age=0, must-revalidate" }
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=0, must-revalidate"
+        }
       ]
     }
   ]
