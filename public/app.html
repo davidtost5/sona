@@ -2386,20 +2386,47 @@
         }), 10000, step);
       }
 
-      sb = window.supabase.createClient(cfg.url, cfg.anonKey, {
-        auth: { persistSession: true, autoRefreshToken: true },
-      });
-
-      // getSession() refreshes an expired token before it resolves, so a revoked
-      // refresh token or a slow auth host stalls here — the likeliest cause of a
-      // gate that never moves.
-      step = 'checking your session';
-      const { data: { session } } = await withTimeout(sb.auth.getSession(), 8000, step);
-      if (!session) {
-        window.location.href = '/?signin=1';
-        return;
+      if (cfg.authProvider === 'clerk') {
+        // Clerk mints the session; Supabase is only the database. clerk-auth.js
+        // builds the client with an `accessToken` hook so every PostgREST
+        // request carries Clerk's JWT, which the RLS policies read as
+        // auth.jwt()->>'sub'. Supabase's own auth methods are unavailable on
+        // that client by design — the two session sources would conflict.
+        //
+        // app.html has its own inline gate and never loaded auth.js, so
+        // clerk-auth.js is pulled in here and awaited before the gate runs.
+        if (!window.SonaAuth || !window.SonaAuth.requireUser) {
+          step = 'loading sign-in';
+          await withTimeout(new Promise((resolve, reject) => {
+            const s = document.createElement('script');
+            s.src = 'clerk-auth.js?v=20260829a';
+            s.onload = resolve;
+            s.onerror = () => reject(new Error('clerk-auth.js failed to load'));
+            document.head.appendChild(s);
+          }), 10000, step);
+        }
+        // Clerk reaches its own frontend API here, so this can stall for the
+        // same reasons the Supabase path could. Same budget, same named step.
+        step = 'checking your session';
+        const clerkUser = await withTimeout(window.SonaAuth.requireUser('/?signin=1'), 8000, step);
+        if (!clerkUser) return;               // requireUser already redirected
+        sb = await window.SonaAuth.getSupabase();
+        if (!sb) throw new Error('Supabase client unavailable under Clerk');
+        user = { id: clerkUser.id, email: clerkUser.email };
+      } else {
+        sb = window.supabase.createClient(cfg.url, cfg.anonKey, {
+          auth: { persistSession: true, autoRefreshToken: true },
+        });
+        // getSession() refreshes an expired token before it resolves, so a revoked
+        // refresh token or a slow auth host stalls here.
+        step = 'checking your session';
+        const { data: { session } } = await withTimeout(sb.auth.getSession(), 8000, step);
+        if (!session) {
+          window.location.href = '/?signin=1';
+          return;
+        }
+        user = session.user;
       }
-      user = session.user;
       await showApp();
     } catch (e) {
       // A stalled session check means the stored token is unusable. Clearing it

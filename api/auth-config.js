@@ -13,9 +13,17 @@ export default function handler(req, res) {
   const url = process.env.SUPABASE_URL || '';
   const anonKey = process.env.SUPABASE_ANON_KEY || '';
 
+  // Clerk's publishable key is public by design — it identifies the instance to
+  // the browser and grants nothing on its own. Serving it from the environment
+  // rather than hardcoding it keeps the dev instance out of production builds.
+  // CLERK_SECRET_KEY must never be read here, or anywhere that reaches a client.
+  const clerkPublishableKey = process.env.CLERK_PUBLISHABLE_KEY || '';
+
   return res.status(200).json({
     url,
     anonKey,
+    clerkPublishableKey,
     configured: Boolean(url && anonKey),
+    authProvider: clerkPublishableKey ? 'clerk' : 'supabase',
   });
 }
