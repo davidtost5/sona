@@ -17,7 +17,16 @@ export default function handler(req, res) {
   // the browser and grants nothing on its own. Serving it from the environment
   // rather than hardcoding it keeps the dev instance out of production builds.
   // CLERK_SECRET_KEY must never be read here, or anywhere that reaches a client.
-  const clerkPublishableKey = process.env.CLERK_PUBLISHABLE_KEY || '';
+  //
+  // Both names are accepted. Clerk's dashboard asks which framework you use and
+  // then prints NEXT_PUBLIC_-prefixed names; that prefix is a Next.js build
+  // convention and means nothing here, but it is what gets copied into Vercel.
+  // Reading either spelling turns a silent "Clerk never activates" into a
+  // non-event.
+  const clerkPublishableKey =
+    process.env.CLERK_PUBLISHABLE_KEY ||
+    process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY ||
+    '';
 
   return res.status(200).json({
     url,
