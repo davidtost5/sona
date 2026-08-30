@@ -1250,6 +1250,12 @@
   .lg-wave { stroke: #28775c; }
   html[data-theme="dark"] .lg-wave { stroke: #5fb896; }
 </style>
+<noscript><style>
+  /* No script means no observer, so the reveal never happens and the page is
+     blank. Ship the content unanimated instead. */
+  [data-r], [data-stagger] { opacity: 1 !important; transform: none !important; }
+  .mask-reveal { clip-path: none !important; }
+</style></noscript>
 </head>
 <body>
 <svg width="0" height="0" aria-hidden="true" style="position:absolute">
@@ -2175,10 +2181,47 @@ and they stick with it for ninety days.
   });
 
   // Reveal — single observer, no Lenis. Handles both single-block (data-r) and staggered children (data-stagger).
+  let ioEverFired = false;
   const io = new IntersectionObserver(es => es.forEach(e => {
-    if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+    if (e.isIntersecting) { ioEverFired = true; e.target.classList.add('in'); io.unobserve(e.target); }
   }), { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
   document.querySelectorAll('[data-r], [data-stagger]').forEach(el => io.observe(el));
+
+  // ── Reveal fallback ──
+  // Everything with [data-r] starts at opacity 0, and .mask-reveal starts
+  // clipped to zero height, so the page is invisible until this observer runs.
+  // That makes an animation load-bearing: if the observer never fires — a
+  // browser that throttles it, an extension, an error earlier in this file —
+  // the visitor gets a blank page with no error to explain it. That is exactly
+  // what happened to the hero panel.
+  //
+  // Two safety nets. First: anything already on screen at load is revealed
+  // directly, without waiting to be told.
+  function revealVisible() {
+    document.querySelectorAll('[data-r]:not(.in), [data-stagger]:not(.in)').forEach(el => {
+      const r = el.getBoundingClientRect();
+      if (r.top < window.innerHeight && r.bottom > 0) el.classList.add('in');
+    });
+  }
+  revealVisible();
+
+  // The hero panel is the first thing anyone judges the product on. Waiting for
+  // a scroll to un-clip it means the top of the page can show an empty frame.
+  requestAnimationFrame(() => {
+    document.querySelectorAll('.mock-wrap, #hero-panel').forEach(el => el.classList.add('in'));
+  });
+
+  // Second: if nothing at all has been revealed shortly after load, the
+  // observer is not working. Show everything rather than leave a blank page —
+  // losing the animation is a far better failure than losing the content.
+  setTimeout(() => {
+    // Checks the observer itself, not whether anything has .in — revealVisible()
+    // above adds .in, so an "is anything revealed" test would always pass and
+    // this net would never catch a dead observer.
+    if (!ioEverFired) {
+      document.querySelectorAll('[data-r], [data-stagger], .mask-reveal').forEach(el => el.classList.add('in'));
+    }
+  }, 1500);
 
   // Eyebrow line-draw — separate observer (eyebrows aren't always inside data-r containers)
   const lineIo = new IntersectionObserver(es => es.forEach(e => {
