@@ -113,6 +113,18 @@
     .cell-msg { max-width: 180px; }
     thead { display: none; }
   }
+  .yt-pull { border:1px solid var(--border); border-radius:12px; padding:16px; margin-bottom:20px; background:var(--bg-soft); }
+  .yt-head { margin-bottom:10px; }
+  .yt-head b { display:block; font-size:14.5px; }
+  .yt-head span { display:block; font-size:12.5px; color:var(--text-mid); margin-top:3px; }
+  .yt-pull textarea { width:100%; font:inherit; font-size:13px; padding:9px 11px; border:1px solid var(--border); border-radius:8px; background:var(--bg); color:var(--text); resize:vertical; }
+  .yt-row { display:flex; align-items:center; gap:10px; margin-top:10px; flex-wrap:wrap; font-size:13px; }
+  .yt-row label { display:flex; align-items:center; gap:6px; color:var(--text-mid); }
+  .yt-row select { font:inherit; font-size:13px; padding:6px 8px; border:1px solid var(--border); border-radius:7px; background:var(--bg); color:var(--text); }
+  #yt-status { font-size:13px; color:var(--text-mid); }
+  .yt-result { margin-top:12px; font-size:12.5px; line-height:1.7; color:var(--text-mid); border-top:1px solid var(--border); padding-top:10px; }
+  .yt-result b { color:var(--text); }
+  .yt-result .bad { color:#c85050; }
 </style>
 </head>
 <body>
@@ -164,7 +176,32 @@
       <span id="ol-key-state" style="font-size:13px;color:var(--text-light)"></span>
     </div>
 
-    <p style="font-size:13px;color:var(--text-mid);line-height:1.7;margin-bottom:10px">
+    <!-- One-click YouTube pull. Same endpoint the daily cron uses, same key the
+       manual publish already has — so filling the feed is a button, not a
+       terminal command. -->
+  <div class="yt-pull">
+    <div class="yt-head">
+      <b>Pull from YouTube</b>
+      <span>Public RSS — no API key, no quota. Scores each video against its own channel's median.</span>
+    </div>
+    <textarea id="yt-handles" rows="2" spellcheck="false">@AlexHormozi, @ChrisWillx, @gregisenberg, @aliabdaal, @MyFirstMillionPod, @ycombinator, @ThomasFrank, @ImanGadzhi</textarea>
+    <div class="yt-row">
+      <label>Min multiple
+        <select id="yt-min">
+          <option value="1.4">1.4× — most</option>
+          <option value="1.6" selected>1.6× — balanced</option>
+          <option value="2">2× — strict</option>
+          <option value="3">3× — only standouts</option>
+        </select>
+      </label>
+      <button class="btn" id="yt-preview" type="button">Preview</button>
+      <button class="btn" id="yt-pull" type="button">Pull into feed</button>
+      <span id="yt-status"></span>
+    </div>
+    <div id="yt-result" class="yt-result" hidden></div>
+  </div>
+
+  <p style="font-size:13px;color:var(--text-mid);line-height:1.7;margin-bottom:10px">
       One per line, fields separated by <code>|</code>:<br>
       <code>creator | @handle · X | avatarHandle | post text | 12× outlier | 1.2M views | founders</code><br>
       Required: <b>creator</b>, <b>handle</b>, <b>text</b>. <code>cat</code> = founders / writers / creators. <code>avatarHandle</code> blank = derived from handle. Lines starting with <code>#</code> are ignored.<br>
@@ -417,6 +454,68 @@ Dan Koe | @thedankoe · X | thedankoe | Three questions I ask before writing any
   renderWaitlist();
   renderContacts();
   loadLiveOutliers();
+
+  // ── Pull from YouTube ──
+  // Preview is a GET and writes nothing; Pull is the same POST the curl would
+  // send, with the key already in the page.
+  (function () {
+    const handlesEl = document.getElementById('yt-handles');
+    if (!handlesEl) return;
+    const statusEl = document.getElementById('yt-status');
+    const resultEl = document.getElementById('yt-result');
+
+    const qs = () => {
+      const handles = handlesEl.value.split(/[,\n]/).map(h => h.trim()).filter(Boolean).join(',');
+      const min = document.getElementById('yt-min').value;
+      return `handles=${encodeURIComponent(handles)}&minMultiple=${min}`;
+    };
+
+    function render(d, wrote) {
+      const lines = [];
+      if (wrote != null) lines.push(`<b>Wrote ${wrote} rows.</b>`);
+      for (const c of d.channels || []) {
+        lines.push(`${c.author} — baseline ${c.baseline.toLocaleString()} views → <b>${c.wouldWrite}</b> outliers`);
+      }
+      for (const f of d.failed || []) {
+        lines.push(`<span class="bad">${f.handle} — no YouTube channel at that handle</span>`);
+      }
+      if (d.rows) lines.push(`<b>${d.rows.length}</b> total would be written.`);
+      resultEl.innerHTML = lines.join('<br>');
+      resultEl.hidden = false;
+    }
+
+    document.getElementById('yt-preview').addEventListener('click', async () => {
+      statusEl.textContent = 'Checking…'; resultEl.hidden = true;
+      try {
+        const r = await fetch('/api/youtube-rss?' + qs());
+        const ct = r.headers.get('content-type') || '';
+        if (!ct.includes('json')) {
+          // Static preview servers have no /api, so this comes back as HTML.
+          statusEl.textContent = `Endpoint returned ${r.status} (not JSON) — is this running on the deployed site?`;
+          return;
+        }
+        const d = await r.json();
+        statusEl.textContent = '';
+        render(d, null);
+      } catch (e) { statusEl.textContent = 'Request failed: ' + e.message; }
+    });
+
+    document.getElementById('yt-pull').addEventListener('click', async () => {
+      if (!adminKey()) { statusEl.textContent = 'Enter your admin key above first.'; return; }
+      statusEl.textContent = 'Pulling…'; resultEl.hidden = true;
+      try {
+        const r = await fetch('/api/youtube-rss?' + qs() + '&mode=append', {
+          method: 'POST',
+          headers: { 'x-admin-key': adminKey() },
+        });
+        const d = await r.json();
+        if (!r.ok) { statusEl.textContent = d.error || 'Failed.'; return; }
+        statusEl.textContent = '';
+        render({ failed: d.failed }, d.written);
+        if (typeof loadLiveOutliers === 'function') loadLiveOutliers();
+      } catch (e) { statusEl.textContent = 'Pull failed: ' + e.message; }
+    });
+  })();
 </script>
 </body>
 </html>
