@@ -143,7 +143,18 @@ async function collect(handle, minMultiple) {
 }
 
 export default async function handler(req, res) {
-  const DEFAULT_HANDLES = 'AlexHormozi,ChrisWillx,thejustinwelsh,gregisenberg,SahilBloom';
+  // Eight channels publish a few videos a day between them, and a video only
+  // becomes an outlier once it beats its channel's median — which takes days.
+  // Genuine daily turnover is a function of how many creators are watched, so
+  // the default list is wide rather than tidy.
+  // Every handle here was checked to resolve; four candidates (@ThePeterAttiaDrive,
+  // @AliAbdaalPodcast, @TheColinandSamirShow, @nathanielldrew) 404 on YouTube and
+  // were dropped rather than shipped as silent failures in the daily run.
+  const DEFAULT_HANDLES = [
+    'AlexHormozi', 'ChrisWillx', 'gregisenberg', 'aliabdaal', 'MyFirstMillionPod',
+    'ycombinator', 'ThomasFrank', 'ImanGadzhi', 'lexfridman', 'GaryVee',
+    'noahkagan', 'NathanBarry', 'FinancialTimes', 'MattDAvella', 'StartupIdeasPod',
+  ].join(',');
   const raw =
     req.query.handles ||
     (req.body && req.body.handles) ||
@@ -152,7 +163,7 @@ export default async function handler(req, res) {
     process.env.INGEST_HANDLES ||
     DEFAULT_HANDLES;
   const handles = (Array.isArray(raw) ? raw : String(raw).split(','))
-    .map((h) => String(h).trim()).filter(Boolean).slice(0, 12);
+    .map((h) => String(h).trim()).filter(Boolean).slice(0, 40);
 
   if (!handles.length) {
     return res.status(400).json({
@@ -164,15 +175,27 @@ export default async function handler(req, res) {
     req.query.minMultiple || (req.body && req.body.minMultiple) || 1.8
   );
 
+  // Channels are fetched in parallel batches, not one after another. Sequential
+  // took 4.8s for eight handles, and Vercel caps a function at 10s — so the old
+  // loop hit the ceiling at roughly sixteen channels. Since "something new every
+  // day" is a function of how many creators are watched, that ceiling was the
+  // real constraint on the feature, not the ingest logic.
+  //
+  // Batched rather than one big Promise.all: forty simultaneous requests to
+  // YouTube is a good way to start getting rate-limited or blocked.
+  const CONCURRENCY = 6;
   const results = [];
   const failed = [];
-  for (const h of handles) {
-    try {
-      results.push(await collect(h, minMultiple));
-    } catch (e) {
-      // One dead handle must not lose the other eleven.
-      failed.push({ handle: h, error: e.message });
-    }
+  for (let i = 0; i < handles.length; i += CONCURRENCY) {
+    const batch = handles.slice(i, i + CONCURRENCY);
+    const settled = await Promise.allSettled(
+      batch.map((h) => collect(h, minMultiple))
+    );
+    settled.forEach((r, idx) => {
+      // One dead handle must not lose the rest of the batch.
+      if (r.status === 'fulfilled') results.push(r.value);
+      else failed.push({ handle: batch[idx], error: r.reason.message });
+    });
   }
 
   const rows = results.flatMap((r) => r.rows);
