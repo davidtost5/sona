@@ -1,25 +1,29 @@
-// Ingest real YouTube outliers into the Discover feed — with no API key.
+// Ingest real outliers into the Discover feed — with no API keys.
 //
-// WHY THIS EXISTS ALONGSIDE api/youtube.js
-// The other ingest needs YOUTUBE_API_KEY: free, but it means a Google Cloud
-// project, an enabled API and a key to rotate. This one uses the public RSS
-// feed every channel already publishes — no key, no quota, no account.
+// Two sources, both free and unauthenticated:
 //
-//   https://www.youtube.com/feeds/videos.xml?channel_id=UC...
+//   YouTube   the public RSS feed every channel publishes. 15 recent videos
+//             with view counts.
+//               https://www.youtube.com/feeds/videos.xml?channel_id=UC...
 //
-// It returns the 15 most recent videos with view counts and rating counts,
-// which is everything the feed renders.
+//   Substack  the archive JSON every publication exposes. Carries
+//             reaction_count, restacks and comment_count.
+//               https://<pub>.substack.com/api/v1/archive?sort=new
 //
-// It also produces a HONEST outlier multiple, which the keyed version could
-// not. An outlier is only meaningful relative to the channel's own baseline,
-// so each video is scored against the median views of those 15. A video with
-// 10× the channel's median is a real outlier; raw view count is just channel
-// size. That is the number the Discover feed is supposed to be showing.
+//             Note the RSS feed is NOT usable here: it has no engagement data
+//             at all, so there is nothing to compute a multiple from. The words
+//             "like" and "restack" appear in it only as button labels.
 //
-//   GET  ?handles=@AlexHormozi,@ChrisWillx     → preview, writes nothing
-//   POST { handles: [...], mode, minMultiple } → writes; needs x-admin-key
+// Both score a post against its own author's median rather than an absolute
+// number, because an outlier is only meaningful relative to a baseline. 10x a
+// channel's median is a real outlier; a big raw number is just a big account.
 //
-// Env: none required. ADMIN_KEY only gates the write path.
+//   GET  ?handles=@a,@b&substacks=x,y   → preview, writes nothing
+//   POST same + x-admin-key             → writes
+//   GET  with a Vercel Cron bearer      → writes (the daily run)
+//
+// Env: ADMIN_KEY gates manual writes, CRON_SECRET the scheduled one,
+// INGEST_HANDLES / INGEST_SUBSTACKS configure the daily run.
 
 import { supabase } from './_supabase.js';
 
@@ -142,6 +146,47 @@ async function collect(handle, minMultiple) {
   return { handle, channelId, author, baseline, considered: entries.length, rows };
 }
 
+// Substack: same question as YouTube, different metric. Reactions stand in for
+// views because they are what the archive exposes, and a post is an outlier
+// when it beat its own publication's median.
+async function collectSubstack(pub, minMultiple) {
+  const name = String(pub).trim().replace(/^@/, '').replace(/\.substack\.com$/, '');
+  const url = `https://${encodeURIComponent(name)}.substack.com/api/v1/archive?sort=new&limit=24`;
+  const posts = JSON.parse(await get(url));
+  if (!Array.isArray(posts) || !posts.length) {
+    return { handle: '@' + name, author: name, baseline: 0, considered: 0, rows: [] };
+  }
+
+  const byline = (posts[0].publishedBylines || [])[0] || {};
+  const author = byline.name || name;
+  const baseline = median(posts.map((p) => p.reaction_count || 0));
+
+  const rows = posts
+    .map((p) => ({ p, multiple: baseline ? (p.reaction_count || 0) / baseline : 0 }))
+    .filter(({ p, multiple }) => multiple >= minMultiple && (p.reaction_count || 0) > 0)
+    .sort((a, b) => b.multiple - a.multiple)
+    .map(({ p, multiple }, idx) => ({
+      id: `sub_${slug(name)}_${slug(p.slug || String(p.id))}`,
+      cat: 'writers',                       // Substack is the writers source
+      creator_name: author,
+      handle: `@${name} · Substack`,
+      avatar_handle: byline.handle || name,
+      // Subtitle carries the actual argument more often than the title does.
+      text: p.subtitle ? `${p.title} — ${p.subtitle}` : p.title,
+      outlier_tag: `${multiple.toFixed(1)}× outlier`,
+      views: `${compact(p.reaction_count || 0)} reactions`,
+      source_url: p.canonical_url || `https://${name}.substack.com/p/${p.slug}`,
+      media_type: p.cover_image ? 'image' : null,
+      thumb_url: p.cover_image || null,
+      duration: null,
+      likes: compact(p.reaction_count || 0),
+      reposts: p.restacks ? compact(p.restacks) : null,
+      position: idx,
+    }));
+
+  return { handle: '@' + name, author, baseline, considered: posts.length, rows };
+}
+
 export default async function handler(req, res) {
   // Eight channels publish a few videos a day between them, and a video only
   // becomes an outlier once it beats its channel's median — which takes days.
@@ -165,6 +210,21 @@ export default async function handler(req, res) {
   const handles = (Array.isArray(raw) ? raw : String(raw).split(','))
     .map((h) => String(h).trim()).filter(Boolean).slice(0, 40);
 
+  // Substack fills the writers category, which YouTube barely touches — its
+  // channels categorise almost entirely as creators.
+  // Verified to return a real archive with reaction counts. Dropped:
+  // lennysnewsletter and thebrowser (no archive JSON), every / stratechery /
+  // creatorscience (1-2 posts, so the median is the post itself and every
+  // multiple comes out 1.0x — a baseline of one is not a baseline).
+  const DEFAULT_SUBSTACKS = 'thedankoe,oneusefulthing,platformer,noahpinion,astralcodexten,thegeneralist';
+  const rawSubs =
+    req.query.substacks ||
+    (req.body && req.body.substacks) ||
+    process.env.INGEST_SUBSTACKS ||
+    DEFAULT_SUBSTACKS;
+  const substacks = (Array.isArray(rawSubs) ? rawSubs : String(rawSubs).split(','))
+    .map((h) => String(h).trim()).filter(Boolean).slice(0, 20);
+
   if (!handles.length) {
     return res.status(400).json({
       error: 'Pass ?handles=@name,@name (or set INGEST_HANDLES)',
@@ -186,15 +246,19 @@ export default async function handler(req, res) {
   const CONCURRENCY = 6;
   const results = [];
   const failed = [];
-  for (let i = 0; i < handles.length; i += CONCURRENCY) {
-    const batch = handles.slice(i, i + CONCURRENCY);
-    const settled = await Promise.allSettled(
-      batch.map((h) => collect(h, minMultiple))
-    );
+
+  // One queue for both sources so the batching and the 10s budget are shared.
+  const jobs = [
+    ...handles.map((h) => ({ label: h, run: () => collect(h, minMultiple) })),
+    ...substacks.map((p) => ({ label: p + ' (substack)', run: () => collectSubstack(p, minMultiple) })),
+  ];
+  for (let i = 0; i < jobs.length; i += CONCURRENCY) {
+    const batch = jobs.slice(i, i + CONCURRENCY);
+    const settled = await Promise.allSettled(batch.map((j) => j.run()));
     settled.forEach((r, idx) => {
-      // One dead handle must not lose the rest of the batch.
+      // One dead source must not lose the rest of the batch.
       if (r.status === 'fulfilled') results.push(r.value);
-      else failed.push({ handle: batch[idx], error: r.reason.message });
+      else failed.push({ handle: batch[idx].label, error: r.reason.message });
     });
   }
 
@@ -234,7 +298,7 @@ export default async function handler(req, res) {
   // curated hand-picked feed is never wiped by an ingest run.
   const mode = (req.query.mode || (req.body && req.body.mode) || 'append').toLowerCase();
   if (mode === 'replace') {
-    const { error } = await supabase.from('outliers').delete().like('id', 'yt\\_%');
+    const { error } = await supabase.from('outliers').delete().or('id.like.yt\\_%,id.like.sub\\_%');
     if (error) return res.status(500).json({ error: 'Clear failed: ' + error.message });
   }
 

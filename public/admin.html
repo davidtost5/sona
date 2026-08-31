@@ -118,6 +118,7 @@
   .yt-head b { display:block; font-size:14.5px; }
   .yt-head span { display:block; font-size:12.5px; color:var(--text-mid); margin-top:3px; }
   .yt-pull textarea { width:100%; font:inherit; font-size:13px; padding:9px 11px; border:1px solid var(--border); border-radius:8px; background:var(--bg); color:var(--text); resize:vertical; }
+  .yt-sub-lab { display:block; font-size:12px; color:var(--text-mid); margin:12px 0 5px; }
   .yt-row { display:flex; align-items:center; gap:10px; margin-top:10px; flex-wrap:wrap; font-size:13px; }
   .yt-row label { display:flex; align-items:center; gap:6px; color:var(--text-mid); }
   .yt-row select { font:inherit; font-size:13px; padding:6px 8px; border:1px solid var(--border); border-radius:7px; background:var(--bg); color:var(--text); }
@@ -181,10 +182,13 @@
        terminal command. -->
   <div class="yt-pull">
     <div class="yt-head">
-      <b>Pull from YouTube</b>
-      <span>Public RSS — no API key, no quota. Scores each video against its own channel's median.</span>
+      <b>Pull outliers</b>
+      <span>YouTube RSS and Substack archives — no API keys, no quotas. Each post is scored against its own author's median, so the multiple means something.</span>
     </div>
+    <label class="yt-sub-lab" style="margin-top:0">YouTube channels</label>
     <textarea id="yt-handles" rows="3" spellcheck="false">@AlexHormozi, @ChrisWillx, @gregisenberg, @aliabdaal, @MyFirstMillionPod, @ycombinator, @ThomasFrank, @ImanGadzhi, @lexfridman, @GaryVee, @noahkagan, @NathanBarry, @FinancialTimes, @MattDAvella, @StartupIdeasPod</textarea>
+    <label class="yt-sub-lab">Substack publications — fills the writers category</label>
+    <textarea id="yt-subs" rows="2" spellcheck="false">thedankoe, oneusefulthing, platformer, noahpinion, astralcodexten, thegeneralist</textarea>
     <div class="yt-row">
       <label>Min multiple
         <select id="yt-min">
@@ -464,10 +468,12 @@ Dan Koe | @thedankoe · X | thedankoe | Three questions I ask before writing any
     const statusEl = document.getElementById('yt-status');
     const resultEl = document.getElementById('yt-result');
 
+    const list = el => el.value.split(/[,\n]/).map(h => h.trim()).filter(Boolean).join(',');
     const qs = () => {
-      const handles = handlesEl.value.split(/[,\n]/).map(h => h.trim()).filter(Boolean).join(',');
+      const handles = list(handlesEl);
+      const subs = list(document.getElementById('yt-subs'));
       const min = document.getElementById('yt-min').value;
-      return `handles=${encodeURIComponent(handles)}&minMultiple=${min}`;
+      return `handles=${encodeURIComponent(handles)}&substacks=${encodeURIComponent(subs)}&minMultiple=${min}`;
     };
 
     function render(d, wrote) {
@@ -487,7 +493,7 @@ Dan Koe | @thedankoe · X | thedankoe | Three questions I ask before writing any
     document.getElementById('yt-preview').addEventListener('click', async () => {
       statusEl.textContent = 'Checking…'; resultEl.hidden = true;
       try {
-        const r = await fetch('/api/youtube-rss?' + qs());
+        const r = await fetch('/api/ingest?' + qs());
         const ct = r.headers.get('content-type') || '';
         if (!ct.includes('json')) {
           // Static preview servers have no /api, so this comes back as HTML.
@@ -504,7 +510,7 @@ Dan Koe | @thedankoe · X | thedankoe | Three questions I ask before writing any
       if (!adminKey()) { statusEl.textContent = 'Enter your admin key above first.'; return; }
       statusEl.textContent = 'Pulling…'; resultEl.hidden = true;
       try {
-        const r = await fetch('/api/youtube-rss?' + qs() + '&mode=append', {
+        const r = await fetch('/api/ingest?' + qs() + '&mode=append', {
           method: 'POST',
           headers: { 'x-admin-key': adminKey() },
         });

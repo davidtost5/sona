@@ -38,8 +38,8 @@
       "destination": "/api/clerk-webhook.js"
     },
     {
-      "source": "/api/youtube-rss",
-      "destination": "/api/youtube-rss.js"
+      "source": "/api/ingest",
+      "destination": "/api/ingest.js"
     },
     {
       "source": "/app",
@@ -93,7 +93,7 @@
   ],
   "crons": [
     {
-      "path": "/api/youtube-rss",
+      "path": "/api/ingest",
       "schedule": "0 6 * * *"
     }
   ]
