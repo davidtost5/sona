@@ -497,24 +497,24 @@
      palette. Colours are fixed rather than tokenised on purpose: this is a
      picture of the product and must not flip with the visitor's theme. */
   #hero-panel { background: #0f1211; text-align: left; }
-  .dash { display: grid; grid-template-columns: 186px 1fr; background: #0f1211; color: #e9e9e4; font-size: 13px; text-align: left; }
+  .dash { display: flex; align-items: stretch; background: #0f1211; color: #e9e9e4; font-size: 13px; text-align: left; }
   .dash-side, .dash-main { background: #0f1211; text-align: left; }
 
-  .dash-side { padding: 16px 12px; border-right: 1px solid rgba(255,255,255,.07); display: flex; flex-direction: column; gap: 14px; }
+  .dash-side { width: 186px; flex: 0 0 186px; padding: 16px 12px; border-right: 1px solid rgba(255,255,255,.07); display: flex; flex-direction: column; align-items: stretch; gap: 14px; }
   .dash-brand { display: flex; align-items: center; gap: 8px; font-weight: 600; letter-spacing: -.3px; font-size: 14px; }
   .dash-mark { width: 22px; height: 22px; border-radius: 6px; background: rgba(95,184,150,.14); display: grid; place-items: center; color: #5fb896; }
   .dash-mark svg { width: 14px; height: 14px; }
   .dash-search { display: flex; align-items: center; justify-content: space-between; padding: 7px 9px; border-radius: 8px; font-size: 11.5px; background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.07); color: #8b8b84; }
   .dash-search kbd { font: inherit; font-size: 10px; padding: 1px 5px; border-radius: 4px; background: rgba(255,255,255,.06); }
-  .dash-nav { display: flex; flex-direction: column; gap: 1px; }
+  .dash-nav { display: flex; flex-direction: column; align-items: stretch; gap: 1px; text-align: left; }
   .dash-grp { font-size: 9.5px; letter-spacing: 1.1px; text-transform: uppercase; color: #6a6a63; margin: 10px 0 3px 9px; }
-  .dash-nav a { display: flex; align-items: center; gap: 8px; padding: 6px 9px; border-radius: 7px; color: #a8a8a1; font-size: 12.5px; }
+  .dash-nav a { display: flex; align-items: center; justify-content: flex-start; gap: 8px; padding: 6px 9px; border-radius: 7px; color: #a8a8a1; font-size: 12.5px; text-align: left; }
   .dash-nav a.on { background: rgba(255,255,255,.06); color: #f3f3f0; }
   .dash-nav a em { margin-left: auto; font-style: normal; font-size: 10.5px; color: #6a6a63; }
   .dash-nav i { width: 13px; height: 13px; border-radius: 3.5px; background: rgba(255,255,255,.13); flex: none; }
   .dash-nav i.on { background: #5fb896; }
 
-  .dash-main { padding: 16px 18px 20px; min-width: 0; }
+  .dash-main { flex: 1 1 auto; padding: 16px 18px 20px; min-width: 0; }
   .dash-head { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; margin-bottom: 14px; }
   .dash-title { font-size: 19px; font-weight: 600; letter-spacing: -.5px; }
   .dash-chips { display: flex; gap: 6px; flex-wrap: wrap; }
@@ -579,7 +579,7 @@
      equal specificity the later rule wins. Placed before them, the sidebar's own
      `display: flex` silently beat this `display: none` on phones. */
   @media (max-width: 760px) {
-    .dash { grid-template-columns: 1fr; }
+    .dash { flex-direction: column; }
     .dash-side { display: none; }
     .dash-main { padding: 14px 14px 16px; }
     /* nowrap inside a 297px bar just gets clipped by the panel's overflow —
