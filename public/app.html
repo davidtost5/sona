@@ -2372,7 +2372,7 @@
           step = 'loading sign-in';
           await withTimeout(new Promise((resolve, reject) => {
             const s = document.createElement('script');
-            s.src = 'clerk-auth.js?v=20260829a';
+            s.src = 'clerk-auth.js?v=20260830b';
             s.onload = resolve;
             s.onerror = () => reject(new Error('clerk-auth.js failed to load'));
             document.head.appendChild(s);

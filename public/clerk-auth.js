@@ -114,8 +114,9 @@
   }
 
   // ─── Appearance ───
-  // Matches the site: Sona green accent, pill radius, inherited type. Reads the
-  // live theme so the modal doesn't arrive in the wrong palette.
+  // Matches the site: Sona green accent, inherited type, pills only on the
+  // primary button. Reads the live theme so the modal doesn't arrive in the
+  // wrong palette.
 
   function appearance() {
     var dark = document.documentElement.getAttribute('data-theme') === 'dark';
@@ -127,11 +128,21 @@
         colorTextSecondary: dark ? '#a8a8a1' : '#55554f',
         colorInputBackground: 'transparent',
         colorInputText: dark ? '#f3f3f0' : '#1a1a1a',
-        borderRadius: '100px',
+        // Card radius, NOT pill radius. Clerk applies this variable to every
+        // rounded element including the modal card, so the 100px this used to
+        // carry rounded a 640px-wide card into an oval and clipped the form
+        // inside it. Pills are applied per-element below, where they belong.
+        borderRadius: '12px',
         fontFamily: 'inherit',
       },
       elements: {
-        card: { boxShadow: 'none', border: '1px solid ' + (dark ? 'rgba(255,255,255,.12)' : 'rgba(26,26,26,.12)') },
+        card: {
+          boxShadow: 'none',
+          borderRadius: '16px',
+          border: '1px solid ' + (dark ? 'rgba(255,255,255,.12)' : 'rgba(26,26,26,.12)'),
+        },
+        formButtonPrimary: { borderRadius: '999px' },
+        formFieldInput: { borderRadius: '10px' },
         footerAction: { display: 'none' },
       },
     };
