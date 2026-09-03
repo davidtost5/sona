@@ -474,6 +474,56 @@
   .hero h1 .quiet { color: var(--text-dim); font-weight: 500; }
   .hero-sub { font-size: clamp(17px, 2.1vw, 21px); color: var(--text-mid); max-width: 560px; margin: 0 auto 42px; line-height: 1.55; }
   .hero-cta { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; margin-bottom: 18px; align-items: center; }
+
+  /* ─── Vanish input ─── */
+  .vi {
+    position: relative; display: flex; align-items: center;
+    width: 100%; max-width: 520px; height: 52px; margin: 22px auto 0;
+    background: var(--surface); border: 1px solid var(--border-strong);
+    border-radius: 999px; overflow: hidden;
+    transition: border-color .2s, box-shadow .2s;
+  }
+  .vi:focus-within { border-color: var(--accent); box-shadow: 0 0 0 4px var(--accent-soft); }
+  .vi input {
+    flex: 1; min-width: 0; height: 100%; padding: 0 56px 0 22px;
+    border: none; outline: none; background: transparent;
+    font-family: inherit; font-size: 15px; color: var(--text);
+  }
+  /* The real text hides while the particles stand in for it. */
+  .vi-animating input { color: transparent; caret-color: transparent; }
+
+  .vi-canvas { position: absolute; inset: 0; pointer-events: none; opacity: 0; }
+  .vi-animating .vi-canvas { opacity: 1; }
+
+  /* Placeholder is an element, not the attribute, so it can animate between
+     values. Hidden the moment there is real text to avoid double-reading. */
+  .vi-ghost {
+    position: absolute; left: 22px; right: 60px;
+    font-size: 15px; color: var(--text-dim); pointer-events: none;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    opacity: 1; transform: translateY(0);
+    transition: opacity .18s linear, transform .18s linear;
+  }
+  .vi-ghost.out { opacity: 0; transform: translateY(-8px); }
+  .vi-has-value .vi-ghost, .vi-animating .vi-ghost { opacity: 0; transition: none; }
+
+  .vi button {
+    position: absolute; right: 7px; top: 50%; transform: translateY(-50%);
+    width: 38px; height: 38px; border: none; border-radius: 50%;
+    background: var(--btn-bg); color: var(--btn-fg);
+    display: grid; place-items: center; cursor: pointer;
+    transition: opacity .2s, background .2s;
+  }
+  .vi button:disabled { opacity: .35; cursor: default; }
+  .vi button svg { width: 17px; height: 17px; }
+  /* The shaft draws itself in once there is something to submit. */
+  .vi-shaft { stroke-dasharray: 14; stroke-dashoffset: 14; transition: stroke-dashoffset .3s linear; }
+  .vi-has-value .vi-shaft { stroke-dashoffset: 0; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .vi-ghost, .vi-shaft { transition: none; }
+  }
+
   .hero-note { font-size: 13px; color: var(--text-dim); }
   .hero-badge { margin-top: 26px; display: flex; align-items: center; gap: 14px; flex-wrap: wrap; justify-content: center; }
   /* Product Hunt's featured.svg renders a live vote counter on the right. Until
@@ -1330,6 +1380,7 @@
   .mask-reveal { clip-path: none !important; }
 </style></noscript>
 <script src="local-decode.js?v=20260830a" defer></script>
+<script src="vanish-input.js?v=20260830a" defer></script>
 </head>
 <body>
 <svg width="0" height="0" aria-hidden="true" style="position:absolute">
@@ -1395,6 +1446,16 @@
       <a href="#" class="btn btn-liquid" onclick="event.preventDefault(); SonaAuth.openSignup();">Start free <span class="btn-arrow">→</span></a>
       <a href="#how" class="quiet-link">See how it works <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12l7 7 7-7"/></svg></a>
     </div>
+    <form class="vi" id="hero-vanish" data-r autocomplete="off">
+      <canvas class="vi-canvas" aria-hidden="true"></canvas>
+      <span class="vi-ghost" aria-hidden="true"></span>
+      <input type="text" aria-label="Paste a post to read its shape" spellcheck="false">
+      <button type="submit" aria-label="Read this post">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path class="vi-shaft" d="M5 12h14"/><path d="M13 18l6-6"/><path d="M13 6l6 6"/>
+        </svg>
+      </button>
+    </form>
     <div class="hero-note" data-r>No credit card required.</div>
     <div class="hero-badge" data-r>
       <a href="https://nicklaunches.com/products/sona/?utm_source=buildwithsona.com&utm_medium=badge&utm_campaign=featured" target="_blank" rel="noopener"><img src="https://nicklaunches.com/badges/featured.png" alt="Sona on Nick Launches" width="244" height="56" /></a>
@@ -2746,6 +2807,30 @@ var mode = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dar
     ta.addEventListener('input', () => { clearTimeout(t); t = setTimeout(run, 180); });
     document.getElementById('try-eg').addEventListener('click', () => {
       ta.value = EXAMPLE; ta.focus(); run();
+    });
+  });
+
+  // ─── Hero vanish input ───
+  // Gives the effect a job: whatever you type is handed to the #try section,
+  // which already runs the real analysis engine, and the page scrolls to it.
+  document.addEventListener('DOMContentLoaded', function () {
+    var form = document.getElementById('hero-vanish');
+    if (!form || !window.SonaVanishInput) return;
+
+    window.SonaVanishInput.mount(form, {
+      placeholders: [
+        'Most founders post too much — not too little…',
+        'I spent 3 years building in public. Here is what worked…',
+        'Stop optimising your morning. Optimise your next 6 hours…',
+        'Paste any post and see the shape underneath it',
+      ],
+      onSubmit: function (value) {
+        var ta = document.getElementById('try-text');
+        if (!ta) return;
+        ta.value = value;
+        ta.dispatchEvent(new Event('input', { bubbles: true }));
+        document.getElementById('try').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      },
     });
   });
 </script>
