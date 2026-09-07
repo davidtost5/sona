@@ -796,6 +796,36 @@
   .script-card h4 { font-size:14px; font-weight:600; margin-bottom:3px; }
   .script-card .fmt-note { font-size:12px; color:var(--text-dim); margin-bottom:12px; }
   .script-card pre { white-space:pre-wrap; font-family:inherit; font-size:13px; line-height:1.65; color:var(--text); margin-bottom:12px; }
+  /* ─── Content calendar ─── */
+  .cal-actions { display:flex; align-items:center; gap:10px; }
+  .cal-actions select { font:inherit; font-size:12.5px; padding:7px 10px; border:1px solid var(--border); border-radius:8px; background:var(--bg-soft); color:var(--text); }
+  .cal-group { margin-bottom:22px; border:1px solid var(--border); border-radius:12px; overflow:hidden; }
+  .cal-ghead { display:flex; align-items:center; gap:9px; padding:11px 14px; background:var(--bg-soft); border-bottom:1px solid var(--border); }
+  .cal-chip { padding:2px 9px; border-radius:6px; font-size:11.5px; font-weight:600; }
+  .cal-n { font-size:11.5px; color:var(--text-dim); }
+  .cal-table { width:100%; border-collapse:collapse; font-size:13px; }
+  .cal-table th { text-align:left; padding:9px 14px; font-family:'Geist Mono',monospace; font-size:10px; letter-spacing:.9px; text-transform:uppercase; color:var(--text-dim); font-weight:500; border-bottom:1px solid var(--border); }
+  .cal-table td { padding:10px 14px; border-bottom:1px solid var(--border); vertical-align:middle; color:var(--text-mid); }
+  .cal-table tr:last-child td { border-bottom:none; }
+  .cal-table tr:hover td { background:var(--bg-soft); }
+  .cal-name { color:var(--text); font-weight:600; cursor:pointer; }
+  .cal-name:hover { color:var(--accent); }
+  /* Status and format are edited in place — a calendar you have to open a modal
+     to change is a calendar nobody updates. */
+  .cal-table select { font:inherit; font-size:12px; padding:3px 7px; border:1px solid transparent; border-radius:6px; background:transparent; color:inherit; cursor:pointer; }
+  .cal-table select:hover { border-color:var(--border); background:var(--bg-soft); }
+  .cal-table input[type="date"] { font:inherit; font-size:12px; padding:3px 6px; border:1px solid transparent; border-radius:6px; background:transparent; color:var(--text-mid); cursor:pointer; }
+  .cal-table input[type="date"]:hover { border-color:var(--border); background:var(--bg-soft); }
+  .cal-week { font-family:'Geist Mono',monospace; font-size:11.5px; color:var(--text-dim); }
+  .cal-del { opacity:0; border:none; background:none; color:var(--text-dim); cursor:pointer; font-size:15px; line-height:1; padding:2px 6px; border-radius:5px; }
+  .cal-table tr:hover .cal-del { opacity:1; }
+  .cal-del:hover { color:#c85050; background:var(--bg-soft); }
+  @media (max-width:760px) {
+    .cal-table th:nth-child(2), .cal-table td:nth-child(2),
+    .cal-table th:nth-child(6), .cal-table td:nth-child(6) { display:none; }
+    .panel-head { flex-direction:column; align-items:flex-start; gap:12px; }
+  }
+
   .script-results { display:none; }
   .script-results.show { display:block; }
 
@@ -1114,7 +1144,11 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 1 1 3 3L7 19l-4 1 1-4Z"/></svg>
         Drafts<span class="pill-n" id="drafts-count">0</span>
       </button>
-      <button class="nav-item" data-view="scripts">
+      <button class="nav-item" data-view="calendar">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+          Calendar<span class="pill-n" id="cal-count">0</span>
+        </button>
+        <button class="nav-item" data-view="scripts">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="14" height="12" rx="2"/><path d="M16 10l6-4v12l-6-4"/></svg>
         Scripts
       </button>
@@ -1441,6 +1475,24 @@
 
       <!-- HOOKS LIBRARY -->
       <!-- SCRIPTS -->
+      <div class="view" data-view="calendar">
+        <div class="panel-head">
+          <div>
+            <h2>Content calendar</h2>
+            <p class="sub">Every draft with a date on it. Grouped by platform.</p>
+          </div>
+          <div class="cal-actions">
+            <select id="cal-group" aria-label="Group by">
+              <option value="platform">Group: Platform</option>
+              <option value="status">Group: Status</option>
+              <option value="week">Group: Week</option>
+            </select>
+            <button type="button" class="btn" id="cal-add">+ Add item</button>
+          </div>
+        </div>
+        <div id="cal-body"></div>
+      </div>
+
       <div class="view" data-view="scripts">
         <div class="script-form">
           <div class="field">
@@ -2473,6 +2525,9 @@
       title: r.title || '',
       body: r.body || '',
       platform: r.platform || 'X',
+      format: r.format || '',
+      status: r.status || 'Idea',
+      publishDate: r.publish_date || '',   // 'YYYY-MM-DD', or '' when unscheduled
       createdAt: r.created_at ? Date.parse(r.created_at) : Date.now(),
       updatedAt: r.updated_at ? Date.parse(r.updated_at) : Date.now(),
     };
@@ -2607,6 +2662,8 @@
         if (d.id) {
           const { data, error } = await sb.from('drafts').update({
             title: d.title, body: d.body, platform: d.platform,
+            format: d.format || null, status: d.status || 'Idea',
+            publish_date: d.publishDate || null,
             updated_at: new Date().toISOString(),
           }).eq('id', d.id).eq('user_id', user.id).select().single();
           if (error) throw error;
@@ -2615,6 +2672,8 @@
         } else {
           const { data, error } = await sb.from('drafts').insert({
             user_id: user.id, title: d.title, body: d.body, platform: d.platform,
+            format: d.format || null, status: d.status || 'Idea',
+            publish_date: d.publishDate || null,
           }).select().single();
           if (error) throw error;
           drafts.unshift(draftFromRow(data));
@@ -3802,6 +3861,10 @@
       settings:['Settings','Account and workspace'],
       decode:['Decode a post','Paste anything that worked'],
       home:['Home','Where you left off'],
+      calendar:['Content calendar', (() => {
+        const dated = drafts.filter(d => d.publishDate).length;
+        return dated ? `${dated} scheduled of ${drafts.length}` : 'Nothing scheduled yet';
+      })()],
     };
     const title = titles[v];
     if (!title) return;
@@ -3812,6 +3875,7 @@
     // Hidden views report zero-size rects, so edges drawn while off-screen land at (0,0). Redraw on entry.
     if (v === 'canvas') requestAnimationFrame(drawCanvasEdges);
     if (v === 'library') renderLibrary();
+    if (v === 'calendar') renderCalendar();
   };
 
   function renderSwipe() {
@@ -4834,6 +4898,195 @@ var mode = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dar
     s.onload = open;
     document.body.appendChild(s);
   };
+
+  // ─── Content calendar ───
+  // A view over `drafts`, not a separate store. Every row here is a draft, so a
+  // piece you schedule is the same object you write — clicking the name opens
+  // it in the editor rather than showing a copy of it.
+
+  const CAL_STATUS = ['Idea', 'Draft', 'Review', 'Scheduled', 'Published'];
+  const CAL_FORMAT = ['Essay', 'Thread', 'Post', 'Video', 'Newsletter'];
+  const CAL_PLATFORM = ['X', 'LinkedIn', 'Substack', 'YouTube', 'Instagram'];
+
+  // Colours carry meaning: cool for not-started, warm for in-flight, green for
+  // done. Scanning the column should tell you where the week stands.
+  const CAL_STATUS_TONE = {
+    Idea:      { bg: 'rgba(90,150,200,.16)',  fg: '#5a96c8' },
+    Draft:     { bg: 'rgba(120,120,220,.16)', fg: '#7878dc' },
+    Review:    { bg: 'rgba(200,150,90,.16)',  fg: '#c8965a' },
+    Scheduled: { bg: 'rgba(210,90,140,.16)',  fg: '#d25a8c' },
+    Published: { bg: 'rgba(60,170,120,.16)',  fg: '#3caa78' },
+  };
+
+  // ISO week, so a "Week 1" here matches what every calendar app calls week 1.
+  function calWeek(iso) {
+    if (!iso) return '';
+    const d = new Date(iso + 'T00:00:00Z');
+    if (isNaN(d)) return '';
+    const t = new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate()));
+    t.setUTCDate(t.getUTCDate() + 4 - (t.getUTCDay() || 7));
+    const start = new Date(Date.UTC(t.getUTCFullYear(), 0, 1));
+    return Math.ceil(((t - start) / 86400000 + 1) / 7);
+  }
+  function calDateLabel(iso) {
+    if (!iso) return '—';
+    const d = new Date(iso + 'T00:00:00Z');
+    return isNaN(d) ? '—' : d.toLocaleDateString(undefined, { month: 'short', day: 'numeric', timeZone: 'UTC' });
+  }
+
+  function calGroupsOf(list, key) {
+    const map = new Map();
+    for (const d of list) {
+      let g;
+      if (key === 'platform') g = d.platform || 'Unassigned';
+      else if (key === 'status') g = d.status || 'Idea';
+      else g = d.publishDate ? 'Week ' + calWeek(d.publishDate) : 'Unscheduled';
+      if (!map.has(g)) map.set(g, []);
+      map.get(g).push(d);
+    }
+    // Unscheduled work sinks: the point of the view is what is dated.
+    return [...map.entries()].sort((a, b) => {
+      const au = /Unscheduled|Unassigned/.test(a[0]), bu = /Unscheduled|Unassigned/.test(b[0]);
+      if (au !== bu) return au ? 1 : -1;
+      return a[0].localeCompare(b[0], undefined, { numeric: true });
+    });
+  }
+
+  function calSelect(cls, id, field, options, value) {
+    return `<select class="${cls}" data-cal-id="${id}" data-cal-field="${field}">` +
+      options.map(o => `<option${o === value ? ' selected' : ''}>${escapeHtml(o)}</option>`).join('') +
+      `</select>`;
+  }
+
+  function renderCalendar() {
+    const body = document.getElementById('cal-body');
+    const countEl = document.getElementById('cal-count');
+    if (countEl) countEl.textContent = drafts.length;
+    if (!body) return;
+
+    if (!drafts.length) {
+      body.innerHTML = '<div class="empty"><h3>Nothing planned yet</h3><p>Add an item, or start a draft — every draft shows up here.</p></div>';
+      return;
+    }
+
+    const key = (document.getElementById('cal-group') || {}).value || 'platform';
+    const groups = calGroupsOf(drafts, key);
+
+    body.innerHTML = groups.map(([name, items]) => {
+      const tone = CAL_STATUS_TONE[name];
+      const chipStyle = tone ? `background:${tone.bg};color:${tone.fg}` : 'background:var(--accent-soft);color:var(--accent)';
+      const rows = items
+        .slice()
+        .sort((a, b) => (a.publishDate || '9999').localeCompare(b.publishDate || '9999'))
+        .map(d => {
+          const st = CAL_STATUS_TONE[d.status] || CAL_STATUS_TONE.Idea;
+          return `<tr>
+            <td><span class="cal-name" data-cal-open="${d.id}">${escapeHtml(d.title || 'Untitled')}</span></td>
+            <td>${calSelect('', d.id, 'platform', CAL_PLATFORM, d.platform)}</td>
+            <td>${calSelect('', d.id, 'format', ['—', ...CAL_FORMAT], d.format || '—')}</td>
+            <td><span class="cal-chip" style="${`background:${st.bg};color:${st.fg}`}">${calSelect('', d.id, 'status', CAL_STATUS, d.status)}</span></td>
+            <td><input type="date" value="${escapeHtml(d.publishDate || '')}" data-cal-id="${d.id}" data-cal-field="publishDate" title="${calDateLabel(d.publishDate)}"></td>
+            <td class="cal-week">${d.publishDate ? calWeek(d.publishDate) : '—'}</td>
+            <td style="width:34px"><button type="button" class="cal-del" data-cal-del="${d.id}" title="Delete">&times;</button></td>
+          </tr>`;
+        }).join('');
+
+      return `<div class="cal-group">
+        <div class="cal-ghead">
+          <span class="cal-chip" style="${chipStyle}">${escapeHtml(name)}</span>
+          <span class="cal-n">${items.length} item${items.length === 1 ? '' : 's'}</span>
+        </div>
+        <table class="cal-table">
+          <thead><tr><th>Name</th><th>Platform</th><th>Format</th><th>Status</th><th>Publish date</th><th>Week</th><th></th></tr></thead>
+          <tbody>${rows}</tbody>
+        </table>
+      </div>`;
+    }).join('');
+  }
+
+  // One delegated listener rather than per-row handlers, because the table is
+  // rebuilt on every change and re-binding each time leaks listeners.
+  document.addEventListener('change', async (e) => {
+    const el = e.target.closest('[data-cal-field]');
+    if (!el) return;
+    const d = drafts.find(x => String(x.id) === el.dataset.calId);
+    if (!d) return;
+    let v = el.value;
+    if (el.dataset.calField === 'format' && v === '—') v = '';
+    d[el.dataset.calField] = v;
+    d.updatedAt = Date.now();
+    await persistDraft(d);
+    renderCalendar();
+    renderDrafts();
+  });
+
+  document.addEventListener('click', async (e) => {
+    const open = e.target.closest('[data-cal-open]');
+    if (open) {
+      // Same object, so this opens the draft rather than a copy of it.
+      activeDraftId = open.dataset.calOpen;
+      const d = drafts.find(x => String(x.id) === activeDraftId);
+      if (d) {
+        const t = document.getElementById('draft-title'), b = document.getElementById('draft-body');
+        if (t) t.value = d.title || '';
+        if (b) b.value = d.body || '';
+      }
+      switchView('drafts');
+      return;
+    }
+    const del = e.target.closest('[data-cal-del]');
+    if (del) {
+      const id = del.dataset.calDel;
+      const d = drafts.find(x => String(x.id) === id);
+      if (!d || !confirm(`Delete "${d.title || 'Untitled'}"? This removes the draft too.`)) return;
+      drafts = drafts.filter(x => String(x.id) !== id);
+      if (sb && user && !demoMode) {
+        try { await sb.from('drafts').delete().eq('id', id).eq('user_id', user.id); }
+        catch (err) { console.warn('calendar delete failed', err); }
+      }
+      saveDraftsLocal();
+      renderCalendar();
+      renderDrafts();
+    }
+  });
+
+  // Persist one row. Mirrors saveDraft's shape without touching the editor.
+  async function persistDraft(d) {
+    if (demoMode || !sb || !user) { saveDraftsLocal(); return; }
+    try {
+      await sb.from('drafts').update({
+        platform: d.platform, format: d.format || null,
+        status: d.status || 'Idea', publish_date: d.publishDate || null,
+        updated_at: new Date().toISOString(),
+      }).eq('id', d.id).eq('user_id', user.id);
+    } catch (e) { console.warn('calendar save failed', e); }
+  }
+
+  const calGroupEl = document.getElementById('cal-group');
+  if (calGroupEl) calGroupEl.addEventListener('change', renderCalendar);
+
+  const calAddEl = document.getElementById('cal-add');
+  if (calAddEl) calAddEl.addEventListener('click', async () => {
+    const title = prompt('What are you planning?');
+    if (!title || !title.trim()) return;
+    const today = new Date().toISOString().slice(0, 10);
+    const d = { id: 'local_' + Date.now(), title: title.trim(), body: '', platform: 'X',
+                format: '', status: 'Idea', publishDate: today,
+                createdAt: Date.now(), updatedAt: Date.now() };
+    if (sb && user && !demoMode) {
+      try {
+        const { data, error } = await sb.from('drafts').insert({
+          user_id: user.id, title: d.title, body: '', platform: d.platform,
+          status: d.status, publish_date: d.publishDate,
+        }).select().single();
+        if (!error && data) Object.assign(d, draftFromRow(data));
+      } catch (e) { console.warn('calendar insert failed', e); }
+    }
+    drafts.unshift(d);
+    saveDraftsLocal();
+    renderCalendar();
+    renderDrafts();
+  });
 </script>
 </body>
 </html>
