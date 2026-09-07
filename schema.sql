@@ -1,5 +1,23 @@
 -- Sona — Supabase schema
 -- Idempotent: safe to re-run in Supabase SQL Editor.
+--
+-- ── Identity lives in Clerk, not in Supabase Auth ──
+-- Supabase is the database; Clerk mints the session token. Supabase is
+-- configured to trust it as a third-party auth provider, so inside a policy
+-- auth.jwt()->>'sub' is the Clerk user id — a string like user_2abc, not a
+-- uuid. That is why every user_id column is text and why nothing references
+-- auth.users: a Clerk user is not a row in it.
+--
+-- Two consequences worth knowing before editing this file:
+--   auth.uid() returns NULL against a Clerk token. A policy written with it
+--   does not error — it silently matches nothing, and the app looks empty.
+--
+--   Dropping the auth.users foreign keys also dropped their delete cascade.
+--   api/clerk-webhook.js replaces it, on Clerk's user.deleted event.
+--
+-- This file describes the live database. It reached its current shape via
+-- migration-clerk-auth.sql and migration-content-calendar.sql; running it
+-- fresh produces the same result.
 
 -- ─── Public forms (server-side via service role) ───
 create table if not exists waitlist (
@@ -28,7 +46,7 @@ create table if not exists contacts (
 -- ─── Per-user saved ideas (/app Discover ↔ Saved) ───
 create table if not exists saved_ideas (
   id uuid primary key default gen_random_uuid(),
-  user_id uuid not null references auth.users(id) on delete cascade,
+  user_id text not null,   -- Clerk user id (user_2abc…), not a uuid
   idea_id text not null,
   created_at timestamptz default now(),
   unique (user_id, idea_id)
@@ -39,21 +57,21 @@ alter table saved_ideas enable row level security;
 drop policy if exists "users see their own saves" on saved_ideas;
 create policy "users see their own saves"
   on saved_ideas for select
-  using (auth.uid() = user_id);
+  using ((auth.jwt()->>'sub') = user_id);
 
 drop policy if exists "users insert their own saves" on saved_ideas;
 create policy "users insert their own saves"
   on saved_ideas for insert
-  with check (auth.uid() = user_id);
+  with check ((auth.jwt()->>'sub') = user_id);
 
 drop policy if exists "users delete their own saves" on saved_ideas;
 create policy "users delete their own saves"
   on saved_ideas for delete
-  using (auth.uid() = user_id);
+  using ((auth.jwt()->>'sub') = user_id);
 
 -- ─── Profiles (auto-created on signup) ───
 create table if not exists profiles (
-  id uuid primary key references auth.users(id) on delete cascade,
+  id text primary key,     -- Clerk user id; matches auth.jwt()->>'sub'
   full_name text,
   style_guide jsonb default '{}'::jsonb,
   workspace jsonb default '{}'::jsonb,
@@ -69,17 +87,17 @@ alter table profiles enable row level security;
 drop policy if exists "users read own profile" on profiles;
 create policy "users read own profile"
   on profiles for select
-  using (auth.uid() = id);
+  using ((auth.jwt()->>'sub') = id);
 
 drop policy if exists "users update own profile" on profiles;
 create policy "users update own profile"
   on profiles for update
-  using (auth.uid() = id);
+  using ((auth.jwt()->>'sub') = id);
 
 drop policy if exists "users insert own profile" on profiles;
 create policy "users insert own profile"
   on profiles for insert
-  with check (auth.uid() = id);
+  with check ((auth.jwt()->>'sub') = id);
 
 -- Auto-create profile row when a user signs up
 create or replace function public.handle_new_user()
@@ -107,13 +125,23 @@ create trigger on_auth_user_created
 -- ─── Drafts (Studio editor in /app) ───
 create table if not exists drafts (
   id uuid primary key default gen_random_uuid(),
-  user_id uuid not null references auth.users(id) on delete cascade,
+  user_id text not null,   -- Clerk user id (user_2abc…), not a uuid
   title text default '',
   body text default '',
   platform text default 'X',
+  -- Content calendar. A calendar entry is a draft with a date on it, so these
+  -- live here rather than in a table of their own.
+  format text,               -- Essay | Thread | Post | Video | Newsletter
+  status text default 'Idea',-- Idea | Draft | Review | Scheduled | Published
+  publish_date date,
   created_at timestamptz default now(),
-  updated_at timestamptz default now()
+  updated_at timestamptz default now(),
+  constraint drafts_status_check check (status is null or status in ('Idea','Draft','Review','Scheduled','Published')),
+  constraint drafts_format_check check (format is null or format in ('Essay','Thread','Post','Video','Newsletter'))
 );
+
+-- The calendar reads by user and orders by date.
+create index if not exists drafts_user_publish_idx on drafts (user_id, publish_date);
 
 create index if not exists drafts_user_updated_idx
   on drafts (user_id, updated_at desc);
@@ -122,24 +150,24 @@ alter table drafts enable row level security;
 
 drop policy if exists "users see own drafts" on drafts;
 create policy "users see own drafts"
-  on drafts for select using (auth.uid() = user_id);
+  on drafts for select using ((auth.jwt()->>'sub') = user_id);
 
 drop policy if exists "users insert own drafts" on drafts;
 create policy "users insert own drafts"
-  on drafts for insert with check (auth.uid() = user_id);
+  on drafts for insert with check ((auth.jwt()->>'sub') = user_id);
 
 drop policy if exists "users update own drafts" on drafts;
 create policy "users update own drafts"
-  on drafts for update using (auth.uid() = user_id);
+  on drafts for update using ((auth.jwt()->>'sub') = user_id);
 
 drop policy if exists "users delete own drafts" on drafts;
 create policy "users delete own drafts"
-  on drafts for delete using (auth.uid() = user_id);
+  on drafts for delete using ((auth.jwt()->>'sub') = user_id);
 
 -- ─── Lists + creators (Lists view in /app) ───
 create table if not exists lists (
   id uuid primary key default gen_random_uuid(),
-  user_id uuid not null references auth.users(id) on delete cascade,
+  user_id text not null,   -- Clerk user id (user_2abc…), not a uuid
   name text not null default 'Untitled list',
   created_at timestamptz default now()
 );
@@ -148,18 +176,18 @@ create index if not exists lists_user_created_idx on lists (user_id, created_at)
 
 alter table lists enable row level security;
 drop policy if exists "users see own lists" on lists;
-create policy "users see own lists" on lists for select using (auth.uid() = user_id);
+create policy "users see own lists" on lists for select using ((auth.jwt()->>'sub') = user_id);
 drop policy if exists "users insert own lists" on lists;
-create policy "users insert own lists" on lists for insert with check (auth.uid() = user_id);
+create policy "users insert own lists" on lists for insert with check ((auth.jwt()->>'sub') = user_id);
 drop policy if exists "users update own lists" on lists;
-create policy "users update own lists" on lists for update using (auth.uid() = user_id);
+create policy "users update own lists" on lists for update using ((auth.jwt()->>'sub') = user_id);
 drop policy if exists "users delete own lists" on lists;
-create policy "users delete own lists" on lists for delete using (auth.uid() = user_id);
+create policy "users delete own lists" on lists for delete using ((auth.jwt()->>'sub') = user_id);
 
 -- Custom creators a user pasted in (outside the built-in directory)
 create table if not exists custom_creators (
   id text primary key,                 -- e.g. cc_handle_abc123
-  user_id uuid not null references auth.users(id) on delete cascade,
+  user_id text not null,   -- Clerk user id (user_2abc…), not a uuid
   name text,
   handle text,
   platform text,
@@ -169,11 +197,11 @@ create table if not exists custom_creators (
 
 alter table custom_creators enable row level security;
 drop policy if exists "users see own custom creators" on custom_creators;
-create policy "users see own custom creators" on custom_creators for select using (auth.uid() = user_id);
+create policy "users see own custom creators" on custom_creators for select using ((auth.jwt()->>'sub') = user_id);
 drop policy if exists "users insert own custom creators" on custom_creators;
-create policy "users insert own custom creators" on custom_creators for insert with check (auth.uid() = user_id);
+create policy "users insert own custom creators" on custom_creators for insert with check ((auth.jwt()->>'sub') = user_id);
 drop policy if exists "users delete own custom creators" on custom_creators;
-create policy "users delete own custom creators" on custom_creators for delete using (auth.uid() = user_id);
+create policy "users delete own custom creators" on custom_creators for delete using ((auth.jwt()->>'sub') = user_id);
 
 -- Membership: which creators belong to which list (creator_id = directory id 'c_…' or custom 'cc_…')
 create table if not exists list_creators (
@@ -191,13 +219,13 @@ alter table list_creators enable row level security;
 -- Scope through the parent list's owner
 drop policy if exists "users see own list_creators" on list_creators;
 create policy "users see own list_creators" on list_creators for select
-  using (exists (select 1 from lists l where l.id = list_id and l.user_id = auth.uid()));
+  using (exists (select 1 from lists l where l.id = list_id and l.user_id = (auth.jwt()->>'sub')));
 drop policy if exists "users insert own list_creators" on list_creators;
 create policy "users insert own list_creators" on list_creators for insert
-  with check (exists (select 1 from lists l where l.id = list_id and l.user_id = auth.uid()));
+  with check (exists (select 1 from lists l where l.id = list_id and l.user_id = (auth.jwt()->>'sub')));
 drop policy if exists "users delete own list_creators" on list_creators;
 create policy "users delete own list_creators" on list_creators for delete
-  using (exists (select 1 from lists l where l.id = list_id and l.user_id = auth.uid()));
+  using (exists (select 1 from lists l where l.id = list_id and l.user_id = (auth.jwt()->>'sub')));
 
 -- ─── Outliers (Discover feed) ───
 -- The real, curated outlier posts the Discover feed reads from. This is the
