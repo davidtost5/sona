@@ -201,35 +201,24 @@
     <div class="info" data-reveal>
       <span class="eyebrow">Contact</span>
       <h1>Let's talk.</h1>
-      <p>Questions, partnerships, or feedback — we read everything and reply within one business day.</p>
+      <p>Questions, feedback, or just saying hello. I read every message.</p>
       <div class="channels">
         <div class="channel"><div class="k">Email</div><a href="mailto:david@buildwithsona.com" class="v channel-v">david@buildwithsona.com</a></div>
-        <div class="channel"><div class="k">Social</div><a href="#" class="v channel-v">@aria · X (Twitter)</a></div>
+        <div class="channel"><div class="k">X</div><a href="https://x.com/davidtostscale" class="v channel-v" target="_blank" rel="noopener">@davidtostscale</a></div>
       </div>
     </div>
-
     <div class="form-card" data-reveal style="transition-delay:.08s">
       <div class="form-msg" id="form-msg"></div>
+      <!-- Name, email, message — the three the API actually requires. Company
+           and Topic were optional on both sides: work asked of the sender that
+           nothing downstream read. -->
       <form class="form" id="contact-form" autocomplete="on">
         <div class="row2">
-          <div class="field"><label for="c-name">Name</label><input type="text" id="c-name" placeholder="Jane Smith" required autocomplete="name"></div>
-          <div class="field"><label for="c-email">Email</label><input type="email" id="c-email" placeholder="jane@company.com" required autocomplete="email"></div>
+          <div class="field"><label for="c-name">Name</label><input type="text" id="c-name" placeholder="Your name" required autocomplete="name"></div>
+          <div class="field"><label for="c-email">Email</label><input type="email" id="c-email" placeholder="you@email.com" required autocomplete="email"></div>
         </div>
-        <div class="row2">
-          <div class="field"><label for="c-company">Company</label><input type="text" id="c-company" placeholder="Optional" autocomplete="organization"></div>
-          <div class="field"><label for="c-subject">Topic</label>
-            <select id="c-subject">
-              <option value="general">General</option>
-              <option value="demo">Request a demo</option>
-              <option value="partnership">Partnership</option>
-              <option value="support">Support</option>
-              <option value="press">Press</option>
-            </select>
-          </div>
-        </div>
-        <div class="field"><label for="c-message">Message</label><textarea id="c-message" placeholder="How can we help?" required></textarea></div>
+        <div class="field"><label for="c-message">Message</label><textarea id="c-message" placeholder="What's on your mind?" required></textarea></div>
         <button type="submit" class="submit" id="c-submit">Send message</button>
-        <div class="form-foot">We typically reply within one business day.</div>
       </form>
     </div>
   </div>
@@ -342,8 +331,6 @@
     const result = await window.SonaData.submitContact({
       name: document.getElementById('c-name').value,
       email: document.getElementById('c-email').value,
-      company: document.getElementById('c-company').value,
-      subject: document.getElementById('c-subject').value,
       message: document.getElementById('c-message').value,
     });
     if (result.ok) { msg.textContent = result.message; msg.className = 'form-msg success'; form.reset(); }
