@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <!-- Theme bootstrap — runs before paint so there's no flash of wrong theme.
      Follows the wall clock (7am–7pm light, else dark), same as the live site. -->
-<script>(function(){try{var h=new Date().getHours();var dark=h<7||h>=19;document.documentElement.setAttribute('data-theme',dark?'dark':'light');}catch(e){}})();</script>
+<script>(function(){try{var h=new Date().getHours();var dark=h<7||h>=19;document.documentElement.setAttribute('data-theme',dark?'dark':'light');document.documentElement.classList.add('js');}catch(e){}})();</script>
 <meta name="color-scheme" content="light dark">
 <link rel="icon" type="image/svg+xml" href="/logo.svg">
 <title>Sona — Find proven ideas. Write in your voice.</title>
@@ -289,13 +289,13 @@
   .foot-links a:hover { color:var(--text); }
   .foot-word { font-size:clamp(60px,16vw,190px); font-weight:800; letter-spacing:-0.05em; line-height:.9; color:var(--text); opacity:.06; text-align:center; margin-top:40px; user-select:none; }
 
-  /* ── Reveal ── */
-  [data-r] { opacity:0; transform:translateY(22px); transition:opacity .7s cubic-bezier(.2,.7,.2,1), transform .7s cubic-bezier(.2,.7,.2,1); }
-  [data-r].in { opacity:1; transform:none; }
-  [data-stagger].in > * { animation:rise .7s cubic-bezier(.2,.7,.2,1) both; }
-  [data-stagger].in > *:nth-child(2){animation-delay:.06s} [data-stagger].in > *:nth-child(3){animation-delay:.12s}
-  [data-stagger].in > *:nth-child(4){animation-delay:.18s} [data-stagger].in > *:nth-child(5){animation-delay:.24s}
-  [data-stagger].in > *:nth-child(6){animation-delay:.3s}
+  /* ── Reveal (only when JS is ready, so content is never stuck hidden) ── */
+  html.js [data-r] { opacity:0; transform:translateY(22px); transition:opacity .7s cubic-bezier(.2,.7,.2,1), transform .7s cubic-bezier(.2,.7,.2,1); }
+  html.js [data-r].in { opacity:1; transform:none; }
+  html.js [data-stagger].in > * { animation:rise .7s cubic-bezier(.2,.7,.2,1) both; }
+  html.js [data-stagger].in > *:nth-child(2){animation-delay:.06s} html.js [data-stagger].in > *:nth-child(3){animation-delay:.12s}
+  html.js [data-stagger].in > *:nth-child(4){animation-delay:.18s} html.js [data-stagger].in > *:nth-child(5){animation-delay:.24s}
+  html.js [data-stagger].in > *:nth-child(6){animation-delay:.3s}
   @keyframes rise { from{opacity:0;transform:translateY(22px)} to{opacity:1;transform:none} }
 
   /* ── Mobile ── */
@@ -364,18 +364,18 @@
 <!-- ══ HERO ══ -->
 <header class="hero">
   <div class="wrap hero-inner">
-    <span class="pill" data-r><span class="dot"></span> Sona MCP · <a href="#mcp">Connect Claude to Sona →</a></span>
-    <h1 data-r>Stop guessing<br><span class="quiet">what to <span class="rotator" id="rotator">post.</span></span></h1>
-    <p class="lede" data-r>Sona surfaces the content already winning in your niche, decodes <em>why</em> it worked, and helps you turn it into original posts in your voice.</p>
-    <div class="hero-cta" data-r>
+    <span class="pill"><span class="dot"></span> Sona MCP · <a href="#mcp">Connect Claude to Sona →</a></span>
+    <h1>Stop guessing<br><span class="quiet">what to <span class="rotator" id="rotator">post.</span></span></h1>
+    <p class="lede">Sona surfaces the content already winning in your niche, decodes <em>why</em> it worked, and helps you turn it into original posts in your voice.</p>
+    <div class="hero-cta">
       <a class="btn btn-primary btn-lg" href="/app">Start free <span class="arr">→</span></a>
       <a class="btn btn-ghost btn-lg" href="#decode">Try the decoder</a>
     </div>
-    <div class="hero-note" data-r>No credit card required.</div>
+    <div class="hero-note">No credit card required.</div>
   </div>
 
   <div class="wrap">
-    <div class="frame hero-frame" data-r>
+    <div class="frame hero-frame">
       <div class="frame-bar"><i></i><i></i><i></i><span class="frame-url mono">buildwithsona.com/app</span></div>
       <div class="app">
         <aside class="app-side">
