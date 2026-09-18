@@ -44,6 +44,10 @@
     {
       "source": "/app",
       "destination": "/app.html"
+    },
+    {
+      "source": "/redesign",
+      "destination": "/redesign.html"
     }
   ],
   "headers": [

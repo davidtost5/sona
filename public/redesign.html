@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- Theme bootstrap — runs before paint so there's no flash of wrong theme.
+     Follows the wall clock (7am–7pm light, else dark), same as the live site. -->
+<script>(function(){try{var h=new Date().getHours();var dark=h<7||h>=19;document.documentElement.setAttribute('data-theme',dark?'dark':'light');}catch(e){}})();</script>
+<meta name="color-scheme" content="light dark">
+<link rel="icon" type="image/svg+xml" href="/logo.svg">
+<title>Sona — Find proven ideas. Write in your voice.</title>
+<meta name="description" content="Sona surfaces the content already winning in your niche, decodes why it worked, and helps you turn it into original posts in your voice.">
+<meta name="robots" content="noindex"><!-- redesign preview, not for search yet -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700;9..40,800&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *,*::before,*::after { margin:0; padding:0; box-sizing:border-box; }
+
+  :root {
+    --bg:#f4f4f1; --bg-soft:#ecebe6; --surface:#fcfcfa; --surface-2:#f7f6f2;
+    --border:rgba(26,26,26,0.10); --border-strong:rgba(26,26,26,0.17);
+    --text:#161615; --text-mid:#55554f; --text-dim:#77776f;
+    --accent:#28775c; --accent-2:#1d5c47; --accent-soft:rgba(40,119,92,0.10);
+    --btn-bg:#161615; --btn-fg:#f4f4f1;
+    --shadow-sm:0 1px 2px rgba(26,26,26,0.05);
+    --shadow:0 10px 40px rgba(26,26,26,0.09);
+    --shadow-lg:0 40px 90px rgba(26,26,26,0.14);
+    --radius:18px; --radius-lg:26px;
+    --maxw:1180px;
+  }
+  html[data-theme="dark"] {
+    --bg:#0e100f; --bg-soft:#141615; --surface:#1a1d1b; --surface-2:#171918;
+    --border:rgba(255,255,255,0.10); --border-strong:rgba(255,255,255,0.18);
+    --text:#f4f4f1; --text-mid:#a7a7a0; --text-dim:#8b8b83;
+    --accent:#5fb896; --accent-2:#4fa183; --accent-soft:rgba(95,184,150,0.14);
+    --btn-bg:#f4f4f1; --btn-fg:#161615;
+    --shadow-sm:0 1px 2px rgba(0,0,0,0.4);
+    --shadow:0 10px 40px rgba(0,0,0,0.45);
+    --shadow-lg:0 40px 90px rgba(0,0,0,0.6);
+  }
+
+  html { scroll-behavior:smooth; -webkit-text-size-adjust:100%; }
+  body {
+    font-family:'DM Sans',-apple-system,BlinkMacSystemFont,sans-serif;
+    background:var(--bg); color:var(--text);
+    -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
+    line-height:1.55; overflow-x:hidden;
+  }
+  a { color:inherit; text-decoration:none; }
+  ::selection { background:var(--accent-soft); }
+  .mono { font-family:'Geist Mono',ui-monospace,monospace; }
+  img { max-width:100%; display:block; }
+
+  .wrap { max-width:var(--maxw); margin:0 auto; padding:0 28px; }
+
+  /* ── Typography ── */
+  h1,h2,h3 { letter-spacing:-0.025em; line-height:1.04; font-weight:700; }
+  h1 { font-size:clamp(42px,7vw,86px); }
+  h2 { font-size:clamp(32px,4.6vw,56px); }
+  h3 { font-size:clamp(20px,2.4vw,27px); letter-spacing:-0.02em; }
+  .quiet { color:var(--text-dim); }
+  .lede { font-size:clamp(17px,1.7vw,20px); color:var(--text-mid); line-height:1.6; }
+
+  .eyebrow {
+    font-family:'Geist Mono',monospace; font-size:12px; font-weight:500;
+    letter-spacing:1.4px; text-transform:uppercase; color:var(--text-dim);
+    display:inline-flex; align-items:center; gap:10px; margin-bottom:20px;
+  }
+  .eyebrow.accent { color:var(--accent); }
+  .eyebrow .num { color:var(--accent); }
+  .eyebrow::before { content:""; width:22px; height:1px; background:var(--border-strong); display:inline-block; }
+
+  /* ── Buttons ── */
+  .btn {
+    display:inline-flex; align-items:center; gap:9px; cursor:pointer;
+    font-family:inherit; font-size:15.5px; font-weight:600; line-height:1;
+    padding:14px 22px; border-radius:999px; border:1px solid transparent;
+    transition:transform .18s cubic-bezier(.2,.7,.2,1), background .2s, box-shadow .2s, border-color .2s;
+    white-space:nowrap;
+  }
+  .btn:hover { transform:translateY(-2px); }
+  .btn-primary { background:var(--btn-bg); color:var(--btn-fg); box-shadow:var(--shadow-sm); }
+  .btn-primary:hover { box-shadow:var(--shadow); }
+  .btn-ghost { background:transparent; color:var(--text); border-color:var(--border-strong); }
+  .btn-ghost:hover { background:var(--surface); }
+  .btn .arr { transition:transform .2s; }
+  .btn:hover .arr { transform:translateX(3px); }
+  .btn-lg { padding:16px 26px; font-size:16px; }
+
+  /* ── Nav ── */
+  .nav {
+    position:sticky; top:0; z-index:50;
+    backdrop-filter:saturate(1.4) blur(14px); -webkit-backdrop-filter:saturate(1.4) blur(14px);
+    background:color-mix(in srgb,var(--bg) 78%,transparent);
+    border-bottom:1px solid transparent; transition:border-color .3s, background .3s;
+  }
+  .nav.scrolled { border-color:var(--border); }
+  .nav-in { display:flex; align-items:center; justify-content:space-between; height:68px; }
+  .brand { display:flex; align-items:center; gap:10px; font-weight:700; font-size:19px; letter-spacing:-0.02em; }
+  .brand img { width:30px; height:30px; }
+  .nav-links { display:flex; align-items:center; gap:30px; }
+  .nav-links a.link { font-size:14.5px; color:var(--text-mid); font-weight:500; transition:color .2s; }
+  .nav-links a.link:hover { color:var(--text); }
+  .nav-actions { display:flex; align-items:center; gap:12px; }
+  .nav-actions .signin { font-size:14.5px; font-weight:600; color:var(--text); padding:9px 6px; }
+  .burger { display:none; background:none; border:1px solid var(--border-strong); border-radius:10px; width:40px; height:40px; color:var(--text); cursor:pointer; font-size:20px; }
+
+  /* ── Hero ── */
+  .hero { padding:74px 0 40px; text-align:center; position:relative; }
+  .hero-inner { max-width:900px; margin:0 auto; }
+  .pill {
+    display:inline-flex; align-items:center; gap:9px; padding:7px 14px 7px 11px;
+    background:var(--surface); border:1px solid var(--border-strong); border-radius:999px;
+    font-size:13px; font-weight:500; color:var(--text-mid); margin-bottom:30px; box-shadow:var(--shadow-sm);
+  }
+  .pill .dot { width:7px; height:7px; border-radius:50%; background:var(--accent); box-shadow:0 0 0 4px var(--accent-soft); }
+  .pill a { color:var(--accent); font-weight:600; }
+  .hero h1 { margin-bottom:22px; }
+  .rotator { color:var(--accent); display:inline-block; }
+  .hero .lede { max-width:620px; margin:0 auto 34px; }
+  .hero-cta { display:flex; gap:14px; justify-content:center; align-items:center; flex-wrap:wrap; }
+  .hero-note { margin-top:16px; font-size:13px; color:var(--text-dim); font-family:'Geist Mono',monospace; letter-spacing:.4px; }
+
+  /* ── Browser frame / product mock ── */
+  .frame {
+    background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-lg);
+    box-shadow:var(--shadow-lg); overflow:hidden;
+  }
+  .frame-bar { display:flex; align-items:center; gap:7px; padding:13px 16px; border-bottom:1px solid var(--border); background:var(--surface-2); }
+  .frame-bar i { width:11px; height:11px; border-radius:50%; background:var(--border-strong); }
+  .frame-url { margin-left:12px; font-size:12px; color:var(--text-dim); font-family:'Geist Mono',monospace; }
+  .hero-frame { max-width:1040px; margin:60px auto 0; }
+
+  /* Discover feed inside frames */
+  .feed-head { display:flex; align-items:center; justify-content:space-between; padding:16px 20px 0; flex-wrap:wrap; gap:10px; }
+  .feed-q { font-family:'Geist Mono',monospace; font-size:13px; color:var(--text); background:var(--surface-2); border:1px solid var(--border); padding:7px 12px; border-radius:8px; }
+  .feed-meta { font-family:'Geist Mono',monospace; font-size:11.5px; color:var(--text-dim); }
+  .tabs { display:flex; gap:4px; padding:14px 20px 0; }
+  .tabs span { font-size:13.5px; font-weight:600; color:var(--text-dim); padding:7px 13px; border-radius:8px; cursor:pointer; transition:.2s; }
+  .tabs span.on { color:var(--text); background:var(--surface-2); }
+  .chips { display:flex; gap:8px; padding:14px 20px; flex-wrap:wrap; }
+  .chips span { font-size:12.5px; font-weight:500; color:var(--text-mid); padding:6px 12px; border:1px solid var(--border); border-radius:999px; cursor:pointer; transition:.2s; }
+  .chips span.on { background:var(--text); color:var(--bg); border-color:var(--text); }
+  .chips span.add { color:var(--text-dim); }
+
+  .grid { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; padding:6px 20px 22px; }
+  .card {
+    background:var(--surface-2); border:1px solid var(--border); border-radius:14px; padding:15px;
+    display:flex; flex-direction:column; gap:11px; transition:transform .2s, box-shadow .2s, border-color .2s;
+  }
+  .card:hover { transform:translateY(-3px); box-shadow:var(--shadow); border-color:var(--border-strong); }
+  .card-top { display:flex; align-items:center; gap:9px; }
+  .av { width:30px; height:30px; border-radius:50%; background:var(--accent-soft); color:var(--accent); font-size:11px; font-weight:700; display:flex; align-items:center; justify-content:center; flex-shrink:0; font-family:'Geist Mono',monospace; }
+  .card-top b { font-size:13.5px; display:block; letter-spacing:-0.01em; }
+  .card-top .h { font-size:11px; color:var(--text-dim); font-family:'Geist Mono',monospace; }
+  .card-top .plat { margin-left:auto; width:15px; height:15px; color:var(--text-dim); }
+  .card p { font-size:13.5px; color:var(--text); line-height:1.5; }
+  .card-foot { margin-top:auto; display:flex; align-items:center; gap:12px; padding-top:4px; }
+  .card-foot .eng { font-size:11.5px; color:var(--text-dim); font-family:'Geist Mono',monospace; }
+  .mult { margin-left:auto; font-family:'Geist Mono',monospace; font-size:12px; font-weight:600; color:var(--accent); background:var(--accent-soft); padding:3px 8px; border-radius:6px; }
+  .thumb { position:relative; aspect-ratio:16/9; border-radius:10px; background:linear-gradient(135deg,var(--accent-soft),var(--border)); display:flex; align-items:center; justify-content:center; }
+  .thumb .play { width:38px; height:38px; border-radius:50%; background:color-mix(in srgb,var(--surface) 85%,transparent); display:flex; align-items:center; justify-content:center; color:var(--text); font-size:13px; }
+  .thumb .dur { position:absolute; right:8px; bottom:8px; font-family:'Geist Mono',monospace; font-size:10.5px; background:rgba(0,0,0,.6); color:#fff; padding:2px 6px; border-radius:5px; }
+
+  /* ── Sections ── */
+  section { padding:96px 0; }
+  .sec-head { max-width:680px; margin-bottom:52px; }
+  .sec-head.center { margin-left:auto; margin-right:auto; text-align:center; }
+  .sec-head h2 { margin-bottom:18px; }
+
+  /* Split feature row */
+  .split { display:grid; grid-template-columns:1.05fr 1.35fr; gap:56px; align-items:center; }
+  .split.rev .split-copy { order:2; }
+  .split-copy h2 { font-size:clamp(28px,3.4vw,42px); margin-bottom:18px; }
+  .split-list { list-style:none; margin:22px 0 28px; display:flex; flex-direction:column; gap:16px; }
+  .split-list li { display:flex; gap:12px; font-size:15px; color:var(--text-mid); }
+  .split-list li b { color:var(--text); font-weight:600; }
+  .split-list svg { width:19px; height:19px; color:var(--accent); flex-shrink:0; margin-top:2px; }
+
+  /* ── Decode (interactive) ── */
+  .decode { display:grid; grid-template-columns:1fr 1fr; gap:0; border:1px solid var(--border); border-radius:var(--radius-lg); overflow:hidden; box-shadow:var(--shadow); background:var(--surface); }
+  .decode-in { padding:26px; border-right:1px solid var(--border); display:flex; flex-direction:column; }
+  .decode-in textarea {
+    flex:1; min-height:230px; resize:none; border:none; background:transparent; color:var(--text);
+    font-family:inherit; font-size:16px; line-height:1.6; outline:none; width:100%;
+  }
+  .decode-tools { display:flex; align-items:center; justify-content:space-between; margin-top:14px; padding-top:14px; border-top:1px solid var(--border); }
+  .decode-eg { font-size:13px; font-weight:600; color:var(--accent); background:var(--accent-soft); border:none; padding:8px 14px; border-radius:999px; cursor:pointer; font-family:inherit; }
+  .decode-count { font-family:'Geist Mono',monospace; font-size:11.5px; color:var(--text-dim); }
+  .decode-out { padding:26px; background:var(--surface-2); }
+  .decode-empty { color:var(--text-dim); font-size:14.5px; height:100%; display:flex; align-items:center; text-align:center; justify-content:center; }
+  .drow { padding:13px 0; border-bottom:1px dashed var(--border); }
+  .drow:last-child { border-bottom:none; }
+  .drow .k { font-family:'Geist Mono',monospace; font-size:11px; text-transform:uppercase; letter-spacing:1px; color:var(--accent); display:block; margin-bottom:5px; }
+  .drow p { font-size:14.5px; color:var(--text); line-height:1.5; }
+
+  /* ── Chat / MCP mock ── */
+  .chat { padding:20px; display:flex; flex-direction:column; gap:14px; }
+  .msg { max-width:82%; padding:13px 16px; border-radius:16px; font-size:14px; line-height:1.55; }
+  .msg.user { align-self:flex-end; background:var(--text); color:var(--bg); border-bottom-right-radius:5px; }
+  .msg.bot { align-self:flex-start; background:var(--surface-2); border:1px solid var(--border); border-bottom-left-radius:5px; }
+  .tool-call { align-self:flex-start; display:inline-flex; align-items:center; gap:8px; font-family:'Geist Mono',monospace; font-size:11.5px; color:var(--accent); background:var(--accent-soft); padding:6px 12px; border-radius:999px; }
+  .tool-call .sp { width:6px; height:6px; border-radius:50%; background:var(--accent); }
+
+  /* ── Comparison table ── */
+  .compare { border:1px solid var(--border); border-radius:var(--radius-lg); overflow:hidden; background:var(--surface); box-shadow:var(--shadow); }
+  .crow { display:grid; grid-template-columns:1.4fr 1fr auto; gap:16px; align-items:center; padding:16px 22px; border-bottom:1px solid var(--border); }
+  .crow:last-child { border-bottom:none; }
+  .crow .tool { font-weight:600; font-size:15px; }
+  .crow .repl { font-size:13px; color:var(--text-dim); }
+  .crow .cost { font-family:'Geist Mono',monospace; font-size:14px; color:var(--text-mid); text-align:right; text-decoration:line-through; text-decoration-color:var(--border-strong); }
+  .crow.total { background:var(--surface-2); }
+  .crow.total .tool { color:var(--text-dim); font-weight:500; font-size:13.5px; text-transform:uppercase; letter-spacing:1px; font-family:'Geist Mono',monospace; }
+  .crow.total .cost { text-decoration:none; color:var(--text); font-size:19px; font-weight:600; }
+  .crow.sona { background:var(--accent-soft); }
+  .crow.sona .tool { color:var(--accent-2); font-weight:700; font-size:17px; }
+  .crow.sona .cost { text-decoration:none; color:var(--accent-2); font-size:22px; font-weight:700; }
+  html[data-theme="dark"] .crow.sona .tool, html[data-theme="dark"] .crow.sona .cost { color:var(--accent); }
+
+  /* ── Founder ── */
+  .founder { display:grid; grid-template-columns:auto 1fr; gap:38px; align-items:center; max-width:920px; margin:0 auto; }
+  .founder-photo { width:190px; height:230px; border-radius:var(--radius); object-fit:cover; box-shadow:var(--shadow); border:1px solid var(--border); }
+  .founder blockquote { font-size:clamp(21px,2.6vw,30px); font-weight:600; letter-spacing:-0.02em; line-height:1.3; margin-bottom:22px; }
+  .founder .who { font-size:14px; color:var(--text-dim); }
+  .founder .who b { color:var(--text); display:block; font-size:15px; }
+
+  /* ── Stat proof ── */
+  .stats { display:grid; grid-template-columns:repeat(4,1fr); gap:20px; text-align:center; }
+  .stat .n { font-size:clamp(34px,4.5vw,52px); font-weight:700; letter-spacing:-0.03em; color:var(--accent); }
+  .stat .l { font-size:13.5px; color:var(--text-mid); margin-top:4px; }
+
+  /* ── Pricing ── */
+  .tiers { display:grid; grid-template-columns:repeat(3,1fr); gap:20px; align-items:start; }
+  .tier { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-lg); padding:28px; position:relative; transition:transform .2s, box-shadow .2s; }
+  .tier.feat { border-color:var(--accent); box-shadow:var(--shadow); }
+  .tier:hover { transform:translateY(-4px); box-shadow:var(--shadow); }
+  .tier-badge { position:absolute; top:-11px; left:28px; background:var(--accent); color:#fff; font-size:11px; font-weight:700; letter-spacing:.5px; text-transform:uppercase; padding:5px 11px; border-radius:999px; }
+  html[data-theme="dark"] .tier-badge { color:#0e100f; }
+  .tier-name { font-weight:700; font-size:17px; margin-bottom:10px; }
+  .tier-price { display:flex; align-items:baseline; gap:4px; margin-bottom:6px; }
+  .tier-price .amt { font-size:44px; font-weight:700; letter-spacing:-0.03em; }
+  .tier-price .unit { color:var(--text-dim); font-size:15px; }
+  .tier-sub { font-size:13px; color:var(--text-dim); margin-bottom:18px; min-height:18px; }
+  .tier-feats { list-style:none; display:flex; flex-direction:column; gap:12px; margin-bottom:24px; }
+  .tier-feats li { display:flex; gap:10px; font-size:14px; color:var(--text-mid); }
+  .tier-feats li.key { color:var(--text); font-weight:600; }
+  .tier-feats svg { width:17px; height:17px; color:var(--accent); flex-shrink:0; margin-top:2px; }
+  .tier .btn { width:100%; justify-content:center; }
+
+  /* ── Final CTA ── */
+  .final { text-align:center; }
+  .final h2 { font-size:clamp(38px,6vw,72px); margin-bottom:26px; }
+
+  /* ── Footer ── */
+  footer { border-top:1px solid var(--border); padding:60px 0 40px; }
+  .foot-in { display:flex; align-items:center; justify-content:space-between; gap:20px; flex-wrap:wrap; }
+  .foot-links { display:flex; gap:24px; flex-wrap:wrap; }
+  .foot-links a { font-size:14px; color:var(--text-mid); }
+  .foot-links a:hover { color:var(--text); }
+  .foot-word { font-size:clamp(60px,16vw,190px); font-weight:800; letter-spacing:-0.05em; line-height:.9; color:var(--text); opacity:.06; text-align:center; margin-top:40px; user-select:none; }
+
+  /* ── Reveal ── */
+  [data-r] { opacity:0; transform:translateY(22px); transition:opacity .7s cubic-bezier(.2,.7,.2,1), transform .7s cubic-bezier(.2,.7,.2,1); }
+  [data-r].in { opacity:1; transform:none; }
+  [data-stagger].in > * { animation:rise .7s cubic-bezier(.2,.7,.2,1) both; }
+  [data-stagger].in > *:nth-child(2){animation-delay:.06s} [data-stagger].in > *:nth-child(3){animation-delay:.12s}
+  [data-stagger].in > *:nth-child(4){animation-delay:.18s} [data-stagger].in > *:nth-child(5){animation-delay:.24s}
+  [data-stagger].in > *:nth-child(6){animation-delay:.3s}
+  @keyframes rise { from{opacity:0;transform:translateY(22px)} to{opacity:1;transform:none} }
+
+  /* ── Mobile ── */
+  .mobile-menu { position:fixed; inset:0; z-index:60; background:var(--bg); padding:80px 28px; display:none; flex-direction:column; gap:8px; }
+  .mobile-menu.open { display:flex; }
+  .mobile-menu a { font-size:22px; font-weight:600; padding:14px 0; border-bottom:1px solid var(--border); }
+  .mobile-menu .close { position:absolute; top:22px; right:24px; background:none; border:none; font-size:34px; color:var(--text); cursor:pointer; }
+
+  @media (max-width:920px) {
+    .nav-links { display:none; }
+    .burger { display:block; }
+    .split, .founder { grid-template-columns:1fr; gap:32px; }
+    .split.rev .split-copy { order:0; }
+    .founder-photo { width:150px; height:180px; }
+    .grid { grid-template-columns:repeat(2,1fr); }
+    .decode { grid-template-columns:1fr; }
+    .decode-in { border-right:none; border-bottom:1px solid var(--border); }
+    .tiers { grid-template-columns:1fr; }
+    .stats { grid-template-columns:repeat(2,1fr); gap:32px 20px; }
+    .crow { grid-template-columns:1fr auto; }
+    .crow .repl { display:none; }
+  }
+  @media (max-width:560px) {
+    .grid { grid-template-columns:1fr; }
+    .hero { padding:48px 0 20px; }
+    section { padding:70px 0; }
+  }
+  @media (prefers-reduced-motion:reduce) {
+    [data-r],[data-stagger].in>* { opacity:1!important; transform:none!important; animation:none!important; transition:none!important; }
+    html { scroll-behavior:auto; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ══ NAV ══ -->
+<nav class="nav" id="nav">
+  <div class="wrap nav-in">
+    <a class="brand" href="/redesign"><img src="/logo.svg" alt=""> Sona</a>
+    <div class="nav-links">
+      <a class="link" href="#discover">Discover</a>
+      <a class="link" href="#decode">Decode</a>
+      <a class="link" href="#mcp">MCP</a>
+      <a class="link" href="#pricing">Pricing</a>
+    </div>
+    <div class="nav-actions">
+      <a class="signin" href="/app">Sign in</a>
+      <a class="btn btn-primary" href="/app">Start free <span class="arr">→</span></a>
+      <button class="burger" id="burger" aria-label="Open menu">☰</button>
+    </div>
+  </div>
+</nav>
+
+<div class="mobile-menu" id="mobileMenu">
+  <button class="close" id="menuClose" aria-label="Close">&times;</button>
+  <a href="#discover">Discover</a>
+  <a href="#decode">Decode</a>
+  <a href="#mcp">MCP</a>
+  <a href="#pricing">Pricing</a>
+  <a href="/contact.html">Contact</a>
+  <a class="btn btn-primary btn-lg" href="/app" style="margin-top:20px;justify-content:center;">Start free →</a>
+</div>
+
+<!-- ══ HERO ══ -->
+<header class="hero">
+  <div class="wrap hero-inner">
+    <span class="pill" data-r><span class="dot"></span> Sona MCP · <a href="#mcp">Connect Claude to Sona →</a></span>
+    <h1 data-r>Stop guessing<br><span class="quiet">what to <span class="rotator" id="rotator">post.</span></span></h1>
+    <p class="lede" data-r>Sona surfaces the content already winning in your niche, decodes <em>why</em> it worked, and helps you turn it into original posts in your voice.</p>
+    <div class="hero-cta" data-r>
+      <a class="btn btn-primary btn-lg" href="/app">Start free <span class="arr">→</span></a>
+      <a class="btn btn-ghost btn-lg" href="#decode">Try the decoder</a>
+    </div>
+    <div class="hero-note" data-r>No credit card required.</div>
+  </div>
+
+  <div class="wrap">
+    <div class="frame hero-frame" data-r>
+      <div class="frame-bar"><i></i><i></i><i></i><span class="frame-url mono">buildwithsona.com/app</span></div>
+      <div class="feed-head">
+        <span class="feed-q mono">build in public</span>
+        <span class="feed-meta">4 platforms · Last 6 months · 3×+</span>
+      </div>
+      <div class="tabs"><span class="on">Discover</span><span>Creators</span><span>Lists</span></div>
+      <div class="chips"><span class="on">All</span><span>Founders</span><span>Writers</span><span>Creators</span><span class="add">+ Add</span></div>
+      <div class="grid" id="heroGrid"></div>
+    </div>
+  </div>
+</header>
+
+<!-- ══ 01 · DISCOVER ══ -->
+<section id="discover">
+  <div class="wrap">
+    <div class="split">
+      <div class="split-copy">
+        <span class="eyebrow accent"><span class="num">01</span> Discover what's working</span>
+        <h2>Find ideas people already care about.</h2>
+        <p class="lede">Search high-performing posts across every major platform, filtered by topic and format, ranked by how far each one outperformed its own creator's baseline.</p>
+        <ul class="split-list">
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg><span><b>Real outlier math.</b> Every card shows the true engagement and the multiple over that creator's norm — not vanity totals.</span></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg><span><b>Your niche, not the whole feed.</b> Filter by Founders, Writers, or Creators and only see what maps to your audience.</span></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg><span><b>Open the catalog for free.</b> The two read tools are public — even an AI client can query it over MCP.</span></li>
+        </ul>
+        <a class="btn btn-ghost" href="/app">Search the outliers <span class="arr">→</span></a>
+      </div>
+      <div class="frame" data-r>
+        <div class="frame-bar"><i></i><i></i><i></i><span class="frame-url mono">Discover · Founders</span></div>
+        <div class="grid" id="discGrid" style="grid-template-columns:repeat(2,1fr);"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ 02 · DECODE (interactive) ══ -->
+<section id="decode" style="background:var(--bg-soft);">
+  <div class="wrap">
+    <div class="sec-head center">
+      <span class="eyebrow accent" style="justify-content:center;"><span class="num">02</span> Reverse-engineer any post</span>
+      <h2>Paste a post. See its shape.</h2>
+      <p class="lede">This is the actual engine the studio runs — no account, no API, no cost. Break any post into its hook, turn, and payoff, then get the reusable template underneath.</p>
+    </div>
+    <div class="decode" data-r>
+      <div class="decode-in">
+        <textarea id="decodeText" spellcheck="false" placeholder="Paste a post that broke out — or hit “Use an example”…"></textarea>
+        <div class="decode-tools">
+          <button class="decode-eg" id="decodeEg" type="button">Use an example</button>
+          <span class="decode-count mono" id="decodeCount">0 words</span>
+        </div>
+      </div>
+      <div class="decode-out" id="decodeOut">
+        <div class="decode-empty" id="decodeEmpty">Your breakdown appears here — hook, turn, landing, and a template you can reuse.</div>
+        <div id="decodeRes" hidden>
+          <div class="drow"><span class="k">Hook</span><p id="dHook"></p></div>
+          <div class="drow"><span class="k">Turn</span><p id="dTurn"></p></div>
+          <div class="drow"><span class="k">Lands on</span><p id="dPay"></p></div>
+          <div class="drow"><span class="k">Shape</span><p id="dWhy"></p></div>
+          <div class="drow"><span class="k">Reusable template</span><p id="dPat"></p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ 03 · MCP ══ -->
+<section id="mcp">
+  <div class="wrap">
+    <div class="split rev">
+      <div class="split-copy">
+        <span class="eyebrow accent"><span class="num">03</span> Research from your AI</span>
+        <h2>Connect Claude to Sona.</h2>
+        <p class="lede">Sona exposes its research over the Model Context Protocol, so your AI client can query the outlier corpus directly — no copy-pasting into a chat.</p>
+        <ul class="split-list">
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg><span><b><code>search_outliers</code></b> — find posts that beat their creator's baseline, with the real figures.</span></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg><span><b><code>get_outlier</code></b> — pull one post in full, including the source URL.</span></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg><span><b><code>decode_post</code></b> — break a post into hook, tension, payoff, and template.</span></li>
+        </ul>
+        <a class="btn btn-ghost" href="/docs.html">Explore Sona MCP <span class="arr">→</span></a>
+      </div>
+      <div class="frame" data-r>
+        <div class="frame-bar"><i></i><i></i><i></i><span class="frame-url mono">Claude · Sona connector</span></div>
+        <div class="chat">
+          <div class="msg user">What's working in “build in public” on X this month?</div>
+          <div class="tool-call"><span class="sp"></span> search_outliers("build in public", platform:"x")</div>
+          <div class="msg bot">Top outlier: <b>Alex Hormozi</b> — “Most founders post too much…” at <b>1.2M views (12×)</b>. The pattern is a one-line contrarian take. Want it decoded?</div>
+          <div class="msg user">Yes — decode it and give me the template.</div>
+          <div class="tool-call"><span class="sp"></span> decode_post("o_hormozi_1")</div>
+          <div class="msg bot"><b>Hook:</b> contrarian claim. <b>Turn:</b> names the real behaviour. <b>Template:</b> “Most [group] [common belief]. The ones who break out [contrarian move].”</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ COMPARISON ══ -->
+<section style="background:var(--bg-soft);">
+  <div class="wrap">
+    <div class="sec-head center">
+      <span class="eyebrow" style="justify-content:center;">What you can cancel</span>
+      <h2>One tab instead of six.</h2>
+      <p class="lede">Discovery tools, a swipe file, a hooks library, an AI writer, and an MCP connector — Sona is the one place the whole loop lives.</p>
+    </div>
+    <div class="compare" data-r>
+      <div class="crow"><span class="tool">Outlier / discovery tool</span><span class="repl">find what's working</span><span class="cost">$39/mo</span></div>
+      <div class="crow"><span class="tool">Swipe-file &amp; saving app</span><span class="repl">keep what you like</span><span class="cost">$13/mo</span></div>
+      <div class="crow"><span class="tool">Hooks &amp; template library</span><span class="repl">reusable patterns</span><span class="cost">$15/mo</span></div>
+      <div class="crow"><span class="tool">AI writing assistant</span><span class="repl">draft in your voice</span><span class="cost">$20/mo</span></div>
+      <div class="crow"><span class="tool">Post scheduler add-on</span><span class="repl">ship everywhere</span><span class="cost">$10/mo</span></div>
+      <div class="crow total"><span class="tool">The usual stack</span><span class="repl"></span><span class="cost">$97/mo</span></div>
+      <div class="crow sona"><span class="tool">Sona Creator</span><span class="repl"></span><span class="cost">$19/mo</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ PROOF STATS ══ -->
+<section>
+  <div class="wrap">
+    <div class="sec-head center">
+      <span class="eyebrow accent" style="justify-content:center;">Case in point</span>
+      <h2>Four platforms. Four hooks. <span class="quiet">21M views.</span></h2>
+    </div>
+    <div class="stats" data-stagger>
+      <div class="stat"><div class="n">18×</div><div class="l">Best outlier multiple in the feed</div></div>
+      <div class="stat"><div class="n">2.4M</div><div class="l">Views on the top decoded post</div></div>
+      <div class="stat"><div class="n">40+</div><div class="l">Reusable hook templates</div></div>
+      <div class="stat"><div class="n">3</div><div class="l">MCP tools, two of them free</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ FOUNDER ══ -->
+<section style="background:var(--bg-soft);">
+  <div class="wrap">
+    <div class="founder" data-r>
+      <img class="founder-photo" src="/david.jpg" alt="David Tost, founder of Sona">
+      <div>
+        <span class="eyebrow accent">Why Sona exists</span>
+        <blockquote>“I was tired of staring at a blank page while great ideas were sitting one search away. So I built the studio I wished I had.”</blockquote>
+        <div class="who"><b>David Tost</b>Founder of Sona</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ PRICING ══ -->
+<section id="pricing">
+  <div class="wrap">
+    <div class="sec-head center">
+      <span class="eyebrow accent" style="justify-content:center;">Pricing</span>
+      <h2>Start free. <span class="quiet">Go further with Pro.</span></h2>
+      <p class="lede">Pay monthly or save two months on annual — cancel anytime.</p>
+    </div>
+    <div class="tiers" data-stagger>
+      <div class="tier">
+        <div class="tier-name">Free</div>
+        <div class="tier-price"><span class="amt">$0</span></div>
+        <div class="tier-sub">For trying Sona</div>
+        <ul class="tier-feats">
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Browse the outlier feed</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Save up to 10 ideas</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Decode a few posts</li>
+        </ul>
+        <a class="btn btn-ghost" href="/app">Start free</a>
+      </div>
+      <div class="tier feat">
+        <span class="tier-badge">Most popular</span>
+        <div class="tier-name">Creator</div>
+        <div class="tier-price"><span class="amt">$19</span><span class="unit">/mo</span></div>
+        <div class="tier-sub">or $190/year — 2 months free</div>
+        <ul class="tier-feats">
+          <li class="key"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Decode any post — unlimited</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Unlimited saved ideas &amp; drafts</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>The full hooks library</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Track the creators you learn from</li>
+        </ul>
+        <a class="btn btn-primary" href="/app">Start creating <span class="arr">→</span></a>
+      </div>
+      <div class="tier">
+        <div class="tier-name">Creator Pro</div>
+        <div class="tier-price"><span class="amt">$39</span><span class="unit">/mo</span></div>
+        <div class="tier-sub">or $390/year — 2 months free</div>
+        <ul class="tier-feats">
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Everything in Creator</li>
+          <li class="key"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Pattern library across every decode</li>
+          <li class="key"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Sona MCP — query from Claude</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Multiple brands &amp; playbooks</li>
+        </ul>
+        <a class="btn btn-ghost" href="/app">Go Pro <span class="arr">→</span></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ FINAL CTA ══ -->
+<section class="final">
+  <div class="wrap">
+    <span class="eyebrow accent" style="justify-content:center;" data-r>Everything you need, in one place</span>
+    <h2 data-r>Stop guessing<br><span class="quiet">what to post.</span></h2>
+    <div class="hero-cta" data-r>
+      <a class="btn btn-primary btn-lg" href="/app">Start free <span class="arr">→</span></a>
+      <a class="btn btn-ghost btn-lg" href="#decode">Try the decoder</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-in">
+      <a class="brand" href="/redesign"><img src="/logo.svg" alt="" style="width:26px;height:26px;"> Sona</a>
+      <div class="foot-links">
+        <a href="#discover">Discover</a>
+        <a href="#decode">Decode</a>
+        <a href="#mcp">MCP</a>
+        <a href="#pricing">Pricing</a>
+        <a href="/contact.html">Contact</a>
+      </div>
+    </div>
+    <div class="foot-word">Sona</div>
+  </div>
+</footer>
+
+<script src="/local-decode.js"></script>
+<script>
+(function(){
+  'use strict';
+
+  // ── Real outlier data (mirrors outliers-seed.sql + the live hero) ──
+  var POSTS = [
+    { ini:'AH', name:'Alex Hormozi', handle:'@AlexHormozi', plat:'x',
+      text:'Most founders post too much — not too little. The ones who break out pick one contrarian take and stick to it.',
+      eng:['♡ 101K','⇄ 17K'], mult:'12×' },
+    { ini:'DK', name:'Dan Koe', handle:'@thedankoe', plat:'x',
+      text:'Three questions I ask before writing anything. They\u2019ve saved me hundreds of bad drafts.',
+      eng:['2.4M views'], mult:'18×' },
+    { ini:'SB', name:'Sahil Bloom', handle:'@SahilBloom', plat:'x',
+      text:'Your life has seasons. Each one is unique — its own weather, its own lessons. None of them last.',
+      eng:['1.9M views'], mult:'3×' },
+    { ini:'JW', name:'Justin Welsh', handle:'@thejustinwelsh', plat:'in',
+      text:'The people who win with AI are not the ones who generate the most. They\u2019re the ones who develop the clearest taste.',
+      eng:['♡ 1.1K','⇄ 39'], mult:'7.3×' },
+    { ini:'GI', name:'Greg Isenberg', handle:'@gregisenberg', plat:'x',
+      text:'The best businesses I know started as a spreadsheet nobody asked for.',
+      eng:['412K views'], mult:'5.1×' },
+    { ini:'', name:'', handle:'', plat:'yt', video:true, dur:'10:38',
+      text:'How I Would Build a Service Business in 2026', eng:['131K views'], mult:'12×' }
+  ];
+
+  var PLAT = {
+    x:'<path d="M18.9 2H22l-7 8 8.2 12h-6.4l-5-7.3L5.9 22H2.8l7.5-8.6L2.4 2h6.6l4.5 6.6L18.9 2Z"/>',
+    in:'<path d="M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5ZM3 9h4v12H3V9Zm7 0h3.8v1.7h.05c.53-1 1.83-2.05 3.77-2.05C21.4 8.65 22 10.9 22 14v7h-4v-6.2c0-1.5-.03-3.4-2.08-3.4-2.08 0-2.4 1.62-2.4 3.3V21h-4V9Z"/>',
+    yt:'<path d="M23 12s0-3.4-.4-5c-.3-1-1-1.8-2-2C18.7 4.5 12 4.5 12 4.5s-6.7 0-8.6.5c-1 .2-1.7 1-2 2C1 8.6 1 12 1 12s0 3.4.4 5c.3 1 1 1.8 2 2 1.9.5 8.6.5 8.6.5s6.7 0 8.6-.5c1-.2 1.7-1 2-2 .4-1.6.4-5 .4-5Z"/>'
+  };
+
+  function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+  function cardHTML(p){
+    if (p.video){
+      return '<article class="card">'
+        + '<div class="thumb"><span class="play">▶</span><span class="dur mono">'+p.dur+'</span></div>'
+        + '<p>'+esc(p.text)+'</p>'
+        + '<div class="card-foot"><span class="eng mono">'+p.eng[0]+'</span><span class="mult mono">'+p.mult+'</span></div>'
+        + '</article>';
+    }
+    var eng = p.eng.map(function(e){ return '<span class="eng mono">'+e+'</span>'; }).join('');
+    return '<article class="card">'
+      + '<div class="card-top"><span class="av">'+p.ini+'</span>'
+      + '<div><b>'+esc(p.name)+'</b><span class="h mono">'+esc(p.handle)+'</span></div>'
+      + '<svg class="plat" viewBox="0 0 24 24" fill="currentColor">'+(PLAT[p.plat]||'')+'</svg></div>'
+      + '<p>'+esc(p.text)+'</p>'
+      + '<div class="card-foot">'+eng+'<span class="mult mono">'+p.mult+'</span></div>'
+      + '</article>';
+  }
+
+  var heroGrid = document.getElementById('heroGrid');
+  if (heroGrid) heroGrid.innerHTML = POSTS.map(cardHTML).join('');
+  var discGrid = document.getElementById('discGrid');
+  if (discGrid) discGrid.innerHTML = POSTS.slice(0,4).map(cardHTML).join('');
+
+  // ── Headline rotator ──
+  var words = ['post.','write.','film.','publish.','ship.'];
+  var rot = document.getElementById('rotator');
+  if (rot){
+    var i = 0;
+    setInterval(function(){
+      i = (i+1) % words.length;
+      rot.style.opacity = '0';
+      setTimeout(function(){ rot.textContent = words[i]; rot.style.opacity = '1'; }, 220);
+    }, 2600);
+    rot.style.transition = 'opacity .22s ease';
+  }
+
+  // ── Scroll reveal ──
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){ if (e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
+  }, { threshold:0.12, rootMargin:'0px 0px -8% 0px' });
+  document.querySelectorAll('[data-r],[data-stagger]').forEach(function(el){ io.observe(el); });
+
+  // ── Nav shadow on scroll ──
+  var nav = document.getElementById('nav');
+  var onScroll = function(){ nav.classList.toggle('scrolled', window.scrollY > 8); };
+  onScroll(); window.addEventListener('scroll', onScroll, { passive:true });
+
+  // ── Mobile menu ──
+  var mm = document.getElementById('mobileMenu');
+  document.getElementById('burger').addEventListener('click', function(){ mm.classList.add('open'); });
+  document.getElementById('menuClose').addEventListener('click', function(){ mm.classList.remove('open'); });
+  mm.querySelectorAll('a').forEach(function(a){ a.addEventListener('click', function(){ mm.classList.remove('open'); }); });
+
+  // ── Interactive decoder (reuses window.SonaDecode, same engine as /app) ──
+  var EXAMPLE = 'Most founders think they need to post more. They don\u2019t.\n\nThe ones who actually break out do the opposite: they pick one contrarian take and repeat it until it sticks.\n\nStop chasing volume. Start owning an angle.';
+  var ta = document.getElementById('decodeText');
+  var count = document.getElementById('decodeCount');
+  var empty = document.getElementById('decodeEmpty');
+  var res = document.getElementById('decodeRes');
+
+  function render(){
+    var text = ta.value.trim();
+    count.textContent = (text ? text.split(/\s+/).length : 0) + ' words';
+    if (!text || !window.SonaDecode){ res.hidden = true; empty.style.display = 'flex'; return; }
+    var d = window.SonaDecode.decode(text, {});
+    document.getElementById('dHook').textContent = d.hook || '—';
+    document.getElementById('dTurn').textContent = d.tension || '—';
+    document.getElementById('dPay').textContent = d.payoff || '—';
+    document.getElementById('dWhy').textContent = d.why || '—';
+    document.getElementById('dPat').textContent = d.pattern || '—';
+    empty.style.display = 'none'; res.hidden = false;
+  }
+  ta.addEventListener('input', render);
+  document.getElementById('decodeEg').addEventListener('click', function(){ ta.value = EXAMPLE; render(); ta.focus(); });
+})();
+</script>
+</body>
+</html>
