@@ -162,10 +162,17 @@
   .mult { margin-left:auto; font-family:'Geist Mono',monospace; font-size:12px; font-weight:600; color:var(--accent); background:var(--accent-soft); padding:3px 8px; border-radius:6px; }
   /* Video card — real thumbnail image, Eden-style (title + creator below) */
   .card.vid { padding:0; overflow:hidden; }
-  .cover { position:relative; aspect-ratio:16/9; background:linear-gradient(135deg,var(--accent),var(--accent-2)); overflow:hidden; }
-  .cover img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; display:block; transition:transform .35s cubic-bezier(.2,.7,.2,1); }
+  .cover { position:relative; aspect-ratio:16/9; overflow:hidden;
+    background:linear-gradient(135deg,var(--accent),var(--accent-2)); }
+  /* Self-contained designed cover — always visible, so a video card never
+     shows blank/gray even if the photo is blocked or slow to load. */
+  .cover .cover-title { position:absolute; inset:0; z-index:1; display:flex; align-items:flex-end;
+    padding:14px; color:#fff; font-size:15px; font-weight:700; line-height:1.25; letter-spacing:-0.01em;
+    text-shadow:0 1px 10px rgba(0,0,0,.35); background:
+      radial-gradient(120% 120% at 15% 0%, rgba(255,255,255,.18), transparent 60%); }
+  .cover img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; display:block; z-index:1; transition:transform .35s cubic-bezier(.2,.7,.2,1); }
   .card.vid:hover .cover img { transform:scale(1.05); }
-  .cover::after { content:""; position:absolute; inset:0; background:linear-gradient(180deg,transparent 45%,rgba(0,0,0,.5)); }
+  .cover::after { content:""; position:absolute; inset:0; z-index:1; background:linear-gradient(180deg,transparent 45%,rgba(0,0,0,.5)); }
   .cover .play { position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); width:46px; height:46px; border-radius:50%; background:rgba(255,255,255,.92); display:flex; align-items:center; justify-content:center; color:#111; font-size:15px; padding-left:3px; z-index:2; box-shadow:0 6px 18px rgba(0,0,0,.35); transition:transform .2s; }
   .card.vid:hover .cover .play { transform:translate(-50%,-50%) scale(1.08); }
   .cover .dur { position:absolute; right:8px; bottom:8px; z-index:2; font-family:'Geist Mono',monospace; font-size:10.5px; background:rgba(0,0,0,.75); color:#fff; padding:2px 7px; border-radius:5px; }
@@ -656,13 +663,13 @@
       eng:['♡ 101K','⇄ 17K'], mult:'12×' },
     { video:true, ini:'GI', name:'Greg Isenberg', plat:'yt',
       title:'How I\u2019d Build a Service Business in 2026', dur:'10:38',
-      img:IMG+'1553877522-43269d4ea984'+THUMB, badge:'Top 2%', eng:'131K views', mult:'12×' },
+      img:IMG+'1553877522-43269d4ea984'+THUMB, grad:'linear-gradient(135deg,#28775c,#153f31)', badge:'Top 2%', eng:'131K views', mult:'12×' },
     { ini:'DK', name:'Dan Koe', handle:'@thedankoe', plat:'x',
       text:'Three questions I ask before writing anything. They\u2019ve saved me hundreds of bad drafts.',
       eng:['2.4M views'], mult:'18×' },
     { video:true, ini:'AA', name:'Ali Abdaal', plat:'yt',
       title:'How I Got My Focus Back (my deep-work system)', dur:'12:20',
-      img:IMG+'1517245386807-bb43f82c33c4'+THUMB, badge:'Top 3%', eng:'451K views', mult:'28×' },
+      img:IMG+'1517245386807-bb43f82c33c4'+THUMB, grad:'linear-gradient(135deg,#3b5bdb,#3a2d8f)', badge:'Top 3%', eng:'451K views', mult:'28×' },
     { ini:'JW', name:'Justin Welsh', handle:'@thejustinwelsh', plat:'in',
       text:'The people who win with AI are not the ones who generate the most. They\u2019re the ones who develop the clearest taste.',
       eng:['♡ 1.1K','⇄ 39'], mult:'7.3×' },
@@ -671,7 +678,7 @@
       eng:['1.9M views'], mult:'3×' },
     { video:true, ini:'MG', name:'Matt Gray', plat:'yt',
       title:'Build a Personal Brand in 30 Days', dur:'19:18',
-      img:IMG+'1499750310107-5fef28a66643'+THUMB, badge:'Top 1%', eng:'390K views', mult:'76×' }
+      img:IMG+'1499750310107-5fef28a66643'+THUMB, grad:'linear-gradient(135deg,#e8590c,#a23408)', badge:'Top 1%', eng:'390K views', mult:'76×' }
   ];
 
   var PLAT = {
@@ -685,8 +692,9 @@
   function cardHTML(p){
     if (p.video){
       return '<article class="card vid">'
-        + '<div class="cover">'
-        +   (p.img ? '<img src="'+p.img+'" alt="" loading="lazy" onerror="this.style.display=\'none\'">' : '')
+        + '<div class="cover"'+(p.grad ? ' style="background:'+p.grad+'"' : '')+'>'
+        +   '<span class="cover-title">'+esc(p.title)+'</span>'
+        +   (p.img ? '<img src="'+p.img+'" alt="" onerror="this.style.display=\'none\'">' : '')
         +   (p.badge ? '<span class="badge">'+esc(p.badge)+'</span>' : '')
         +   '<span class="play">▶</span>'
         +   '<span class="dur mono">'+p.dur+'</span>'
