@@ -108,6 +108,7 @@
 
   /* ── Hero ── */
   .hero { padding:74px 0 40px; text-align:center; position:relative; }
+  .hero::before { content:""; position:absolute; left:50%; top:300px; transform:translateX(-50%); width:min(1120px,94vw); height:560px; background:radial-gradient(ellipse 60% 50% at center, var(--accent-soft), transparent 72%); filter:blur(28px); z-index:-1; pointer-events:none; }
   .hero-inner { max-width:900px; margin:0 auto; }
   .pill {
     display:inline-flex; align-items:center; gap:9px; padding:7px 14px 7px 11px;
@@ -162,6 +163,34 @@
   .thumb { position:relative; aspect-ratio:16/9; border-radius:10px; background:linear-gradient(135deg,var(--accent-soft),var(--border)); display:flex; align-items:center; justify-content:center; }
   .thumb .play { width:38px; height:38px; border-radius:50%; background:color-mix(in srgb,var(--surface) 85%,transparent); display:flex; align-items:center; justify-content:center; color:var(--text); font-size:13px; }
   .thumb .dur { position:absolute; right:8px; bottom:8px; font-family:'Geist Mono',monospace; font-size:10.5px; background:rgba(0,0,0,.6); color:#fff; padding:2px 6px; border-radius:5px; }
+
+  /* ── App shell (Eden-style dashboard mock) ── */
+  .app { display:grid; grid-template-columns:238px 1fr; min-height:540px; }
+  .app-side { border-right:1px solid var(--border); background:var(--surface-2); padding:15px 13px; display:flex; flex-direction:column; overflow:hidden; }
+  .app-brand { display:flex; align-items:center; gap:8px; padding:2px 6px 14px; }
+  .app-brand svg { width:22px; height:22px; }
+  .app-brand .nm { font-weight:700; font-size:15px; letter-spacing:-0.02em; }
+  .app-brand .bd { margin-left:2px; font-family:'Geist Mono',monospace; font-size:9px; font-weight:500; letter-spacing:.5px; text-transform:uppercase; color:var(--accent); background:var(--accent-soft); padding:2px 6px; border-radius:5px; }
+  .cmd { display:flex; align-items:center; gap:8px; padding:9px 11px; border:1px solid var(--border); border-radius:10px; background:var(--surface); font-size:12.5px; color:var(--text-mid); margin-bottom:6px; box-shadow:var(--shadow-sm); }
+  .cmd svg { width:14px; height:14px; }
+  .cmd .kbd { margin-left:auto; font-family:'Geist Mono',monospace; font-size:9.5px; color:var(--text-dim); border:1px solid var(--border); border-radius:5px; padding:2px 5px; }
+  .app-nav { display:flex; flex-direction:column; gap:1px; overflow:hidden; }
+  .grp { font-family:'Geist Mono',monospace; font-size:9px; letter-spacing:1.2px; text-transform:uppercase; color:var(--text-dim); padding:13px 7px 5px; }
+  .nav-i { display:flex; align-items:center; gap:10px; padding:7px 9px; border-radius:8px; font-size:12.5px; color:var(--text-mid); cursor:pointer; transition:background .15s, color .15s; white-space:nowrap; }
+  .nav-i:hover { color:var(--text); background:var(--surface); }
+  .nav-i svg { width:15px; height:15px; flex-shrink:0; opacity:.8; }
+  .nav-i.on { background:var(--surface); color:var(--text); font-weight:600; box-shadow:var(--shadow-sm); }
+  .nav-i .n { margin-left:auto; font-family:'Geist Mono',monospace; font-size:9.5px; color:var(--text-dim); }
+  .app-user { margin-top:auto; display:flex; align-items:center; gap:9px; padding:12px 6px 2px; border-top:1px solid var(--border); }
+  .app-user .ua { width:26px; height:26px; border-radius:50%; background:var(--accent); color:#fff; font-size:11px; font-weight:700; display:flex; align-items:center; justify-content:center; }
+  html[data-theme="dark"] .app-user .ua { color:#0e100f; }
+  .app-user .un { font-size:12px; font-weight:600; line-height:1.2; }
+  .app-user .ue { font-size:10.5px; color:var(--text-dim); font-family:'Geist Mono',monospace; }
+
+  .app-main { display:flex; flex-direction:column; min-width:0; }
+  .app-head { padding:16px 20px 0; display:flex; align-items:flex-end; justify-content:space-between; gap:10px; }
+  .app-head h4 { font-size:20px; font-weight:700; letter-spacing:-0.02em; }
+  .app-head .sub { font-size:11.5px; color:var(--text-dim); font-family:'Geist Mono',monospace; }
 
   /* ── Sections ── */
   section { padding:96px 0; }
@@ -288,6 +317,8 @@
     .stats { grid-template-columns:repeat(2,1fr); gap:32px 20px; }
     .crow { grid-template-columns:1fr auto; }
     .crow .repl { display:none; }
+    .app { grid-template-columns:1fr; }
+    .app-side { display:none; }
   }
   @media (max-width:560px) {
     .grid { grid-template-columns:1fr; }
@@ -346,13 +377,45 @@
   <div class="wrap">
     <div class="frame hero-frame" data-r>
       <div class="frame-bar"><i></i><i></i><i></i><span class="frame-url mono">buildwithsona.com/app</span></div>
-      <div class="feed-head">
-        <span class="feed-q mono">build in public</span>
-        <span class="feed-meta">4 platforms · Last 6 months · 3×+</span>
+      <div class="app">
+        <aside class="app-side">
+          <div class="app-brand">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M5 15 Q8 9 12 12 Q16 15 19 9" stroke="var(--accent)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M19 3.6 C19.15 5.1 20.3 6.25 21.8 6.4 C20.3 6.55 19.15 7.7 19 9.2 C18.85 7.7 17.7 6.55 16.2 6.4 C17.7 6.25 18.85 5.1 19 3.6 Z" fill="var(--accent)"/></svg>
+            <span class="nm">Sona</span><span class="bd">Beta</span>
+          </div>
+          <div class="cmd">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+            Create or search <span class="kbd">⌘K</span>
+          </div>
+          <div class="app-nav">
+            <div class="grp">Find</div>
+            <div class="nav-i on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m14.5 9.5-5 1.5 1.5 5 5-1.5z"/></svg>Discover<span class="n">24</span></div>
+            <div class="nav-i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/></svg>Home</div>
+            <div class="nav-i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5V4.5A2.5 2.5 0 0 1 6.5 2H18a2 2 0 0 1 2 2v18l-3-1.5-3 1.5-3-1.5-3 1.5-3-1.5Z"/><path d="M8 7h8M8 11h8M8 15h5"/></svg>Digest</div>
+            <div class="nav-i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/><circle cx="17" cy="7" r="3"/></svg>Lists</div>
+            <div class="grp">Understand</div>
+            <div class="nav-i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3M16 3h3a2 2 0 0 1 2 2v3M8 21H5a2 2 0 0 1-2-2v-3M16 21h3a2 2 0 0 0 2-2v-3"/><path d="M7 12h10"/></svg>Decode a post</div>
+            <div class="nav-i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>Patterns</div>
+            <div class="nav-i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z"/></svg>Hooks</div>
+            <div class="grp">Make</div>
+            <div class="nav-i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 1 1 3 3L7 19l-4 1 1-4Z"/></svg>Drafts</div>
+            <div class="nav-i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>Calendar</div>
+            <div class="nav-i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>Playbook</div>
+          </div>
+          <div class="app-user">
+            <span class="ua">D</span>
+            <span><span class="un">David</span><br><span class="ue">Creator plan</span></span>
+          </div>
+        </aside>
+        <div class="app-main">
+          <div class="app-head">
+            <div><h4>Discover</h4></div>
+            <span class="sub">4 platforms · Last 6 months · 3×+</span>
+          </div>
+          <div class="chips"><span class="on">All</span><span>Founders</span><span>Writers</span><span>Creators</span><span class="add">+ Add</span></div>
+          <div class="grid" id="heroGrid"></div>
+        </div>
       </div>
-      <div class="tabs"><span class="on">Discover</span><span>Creators</span><span>Lists</span></div>
-      <div class="chips"><span class="on">All</span><span>Founders</span><span>Writers</span><span>Creators</span><span class="add">+ Add</span></div>
-      <div class="grid" id="heroGrid"></div>
     </div>
   </div>
 </header>
