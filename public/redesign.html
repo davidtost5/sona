@@ -160,9 +160,21 @@
   .card-foot { margin-top:auto; display:flex; align-items:center; gap:12px; padding-top:4px; }
   .card-foot .eng { font-size:11.5px; color:var(--text-dim); font-family:'Geist Mono',monospace; }
   .mult { margin-left:auto; font-family:'Geist Mono',monospace; font-size:12px; font-weight:600; color:var(--accent); background:var(--accent-soft); padding:3px 8px; border-radius:6px; }
-  .thumb { position:relative; aspect-ratio:16/9; border-radius:10px; background:linear-gradient(135deg,var(--accent-soft),var(--border)); display:flex; align-items:center; justify-content:center; }
-  .thumb .play { width:38px; height:38px; border-radius:50%; background:color-mix(in srgb,var(--surface) 85%,transparent); display:flex; align-items:center; justify-content:center; color:var(--text); font-size:13px; }
-  .thumb .dur { position:absolute; right:8px; bottom:8px; font-family:'Geist Mono',monospace; font-size:10.5px; background:rgba(0,0,0,.6); color:#fff; padding:2px 6px; border-radius:5px; }
+  /* Video card — real thumbnail image, Eden-style (title + creator below) */
+  .card.vid { padding:0; overflow:hidden; }
+  .cover { position:relative; aspect-ratio:16/9; background:linear-gradient(135deg,var(--accent),var(--accent-2)); overflow:hidden; }
+  .cover img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; display:block; transition:transform .35s cubic-bezier(.2,.7,.2,1); }
+  .card.vid:hover .cover img { transform:scale(1.05); }
+  .cover::after { content:""; position:absolute; inset:0; background:linear-gradient(180deg,transparent 45%,rgba(0,0,0,.5)); }
+  .cover .play { position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); width:46px; height:46px; border-radius:50%; background:rgba(255,255,255,.92); display:flex; align-items:center; justify-content:center; color:#111; font-size:15px; padding-left:3px; z-index:2; box-shadow:0 6px 18px rgba(0,0,0,.35); transition:transform .2s; }
+  .card.vid:hover .cover .play { transform:translate(-50%,-50%) scale(1.08); }
+  .cover .dur { position:absolute; right:8px; bottom:8px; z-index:2; font-family:'Geist Mono',monospace; font-size:10.5px; background:rgba(0,0,0,.75); color:#fff; padding:2px 7px; border-radius:5px; }
+  .cover .badge { position:absolute; left:8px; top:8px; z-index:2; font-family:'Geist Mono',monospace; font-size:10px; font-weight:600; background:color-mix(in srgb,var(--accent) 90%,#000); color:#fff; padding:3px 7px; border-radius:6px; letter-spacing:.3px; }
+  .vbody { padding:13px 15px 14px; display:flex; flex-direction:column; gap:9px; }
+  .vtitle { font-size:14px; font-weight:700; line-height:1.32; letter-spacing:-0.01em; color:var(--text); }
+  .vby { display:flex; align-items:center; gap:8px; font-size:12px; color:var(--text-mid); }
+  .vby .av { width:22px; height:22px; font-size:9px; }
+  .vby .plat { width:13px; height:13px; margin-left:auto; color:var(--text-dim); }
 
   /* ── App shell (Eden-style dashboard mock) ── */
   .app { display:grid; grid-template-columns:238px 1fr; min-height:540px; }
@@ -636,24 +648,30 @@
   'use strict';
 
   // ── Real outlier data (mirrors outliers-seed.sql + the live hero) ──
+  var IMG = 'https://images.unsplash.com/photo-';
+  var THUMB = '?auto=format&fit=crop&w=640&h=360&q=70';
   var POSTS = [
     { ini:'AH', name:'Alex Hormozi', handle:'@AlexHormozi', plat:'x',
       text:'Most founders post too much — not too little. The ones who break out pick one contrarian take and stick to it.',
       eng:['♡ 101K','⇄ 17K'], mult:'12×' },
+    { video:true, ini:'GI', name:'Greg Isenberg', plat:'yt',
+      title:'How I\u2019d Build a Service Business in 2026', dur:'10:38',
+      img:IMG+'1553877522-43269d4ea984'+THUMB, badge:'Top 2%', eng:'131K views', mult:'12×' },
     { ini:'DK', name:'Dan Koe', handle:'@thedankoe', plat:'x',
       text:'Three questions I ask before writing anything. They\u2019ve saved me hundreds of bad drafts.',
       eng:['2.4M views'], mult:'18×' },
-    { ini:'SB', name:'Sahil Bloom', handle:'@SahilBloom', plat:'x',
-      text:'Your life has seasons. Each one is unique — its own weather, its own lessons. None of them last.',
-      eng:['1.9M views'], mult:'3×' },
+    { video:true, ini:'AA', name:'Ali Abdaal', plat:'yt',
+      title:'How I Got My Focus Back (my deep-work system)', dur:'12:20',
+      img:IMG+'1517245386807-bb43f82c33c4'+THUMB, badge:'Top 3%', eng:'451K views', mult:'28×' },
     { ini:'JW', name:'Justin Welsh', handle:'@thejustinwelsh', plat:'in',
       text:'The people who win with AI are not the ones who generate the most. They\u2019re the ones who develop the clearest taste.',
       eng:['♡ 1.1K','⇄ 39'], mult:'7.3×' },
-    { ini:'GI', name:'Greg Isenberg', handle:'@gregisenberg', plat:'x',
-      text:'The best businesses I know started as a spreadsheet nobody asked for.',
-      eng:['412K views'], mult:'5.1×' },
-    { ini:'', name:'', handle:'', plat:'yt', video:true, dur:'10:38',
-      text:'How I Would Build a Service Business in 2026', eng:['131K views'], mult:'12×' }
+    { ini:'SB', name:'Sahil Bloom', handle:'@SahilBloom', plat:'x',
+      text:'Your life has seasons. Each one is unique — its own weather, its own lessons. None of them last.',
+      eng:['1.9M views'], mult:'3×' },
+    { video:true, ini:'MG', name:'Matt Gray', plat:'yt',
+      title:'Build a Personal Brand in 30 Days', dur:'19:18',
+      img:IMG+'1499750310107-5fef28a66643'+THUMB, badge:'Top 1%', eng:'390K views', mult:'76×' }
   ];
 
   var PLAT = {
@@ -666,10 +684,19 @@
 
   function cardHTML(p){
     if (p.video){
-      return '<article class="card">'
-        + '<div class="thumb"><span class="play">▶</span><span class="dur mono">'+p.dur+'</span></div>'
-        + '<p>'+esc(p.text)+'</p>'
-        + '<div class="card-foot"><span class="eng mono">'+p.eng[0]+'</span><span class="mult mono">'+p.mult+'</span></div>'
+      return '<article class="card vid">'
+        + '<div class="cover">'
+        +   (p.img ? '<img src="'+p.img+'" alt="" loading="lazy" onerror="this.style.display=\'none\'">' : '')
+        +   (p.badge ? '<span class="badge">'+esc(p.badge)+'</span>' : '')
+        +   '<span class="play">▶</span>'
+        +   '<span class="dur mono">'+p.dur+'</span>'
+        + '</div>'
+        + '<div class="vbody">'
+        +   '<div class="vtitle">'+esc(p.title)+'</div>'
+        +   '<div class="vby"><span class="av">'+p.ini+'</span> '+esc(p.name)
+        +     '<svg class="plat" viewBox="0 0 24 24" fill="currentColor">'+(PLAT[p.plat]||'')+'</svg></div>'
+        +   '<div class="card-foot"><span class="eng mono">'+p.eng+'</span><span class="mult mono">'+p.mult+'</span></div>'
+        + '</div>'
         + '</article>';
     }
     var eng = p.eng.map(function(e){ return '<span class="eng mono">'+e+'</span>'; }).join('');
