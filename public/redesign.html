@@ -109,6 +109,15 @@
   /* ── Hero ── */
   .hero { padding:74px 0 40px; text-align:center; position:relative; }
   .hero::before { content:""; position:absolute; left:50%; top:300px; transform:translateX(-50%); width:min(1120px,94vw); height:560px; background:radial-gradient(ellipse 60% 50% at center, var(--accent-soft), transparent 72%); filter:blur(28px); z-index:-1; pointer-events:none; }
+  /* Faint dotted grid backdrop that fades out — cursor.com-flavored */
+  .hero::after { content:""; position:absolute; inset:0 0 auto 0; height:560px; z-index:-2; pointer-events:none;
+    background-image:radial-gradient(circle at center, color-mix(in srgb, var(--text) 9%, transparent) 1px, transparent 1.6px);
+    background-size:24px 24px;
+    -webkit-mask-image:radial-gradient(ellipse 72% 60% at 50% 28%, #000, transparent 76%);
+    mask-image:radial-gradient(ellipse 72% 60% at 50% 28%, #000, transparent 76%); }
+  .trust { margin-top:24px; font-size:12.5px; color:var(--text-dim); }
+  .trust .lbl { text-transform:uppercase; font-size:10px; letter-spacing:1.2px; margin-right:10px; }
+  .trust b { color:var(--text-mid); font-weight:600; }
   .hero-inner { max-width:900px; margin:0 auto; }
   .pill {
     display:inline-flex; align-items:center; gap:9px; padding:7px 14px 7px 11px;
@@ -210,6 +219,26 @@
   .app-head { padding:16px 20px 0; display:flex; align-items:flex-end; justify-content:space-between; gap:10px; }
   .app-head h4 { font-size:20px; font-weight:700; letter-spacing:-0.02em; }
   .app-head .sub { font-size:11.5px; color:var(--text-dim); font-family:'Geist Mono',monospace; }
+  /* Switchable views — click a sidebar item to change the main panel */
+  .app-view { display:none; }
+  .app-view.on { display:block; animation:vfade .28s ease both; }
+  @keyframes vfade { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:none} }
+  .dv-pad { padding:16px 20px 20px; }
+  .dv-post { background:var(--surface-2); border:1px solid var(--border); border-radius:12px; padding:16px; font-size:14px; line-height:1.55; color:var(--text); }
+  .dv-post .dv-src { display:block; margin-top:11px; font-size:11px; color:var(--text-dim); }
+  .dv-break { margin-top:12px; display:grid; gap:8px; }
+  .dv-row { display:flex; gap:14px; align-items:baseline; background:var(--surface-2); border:1px solid var(--border); border-radius:10px; padding:11px 14px; }
+  .dv-row .k { color:var(--accent); font-size:10px; text-transform:uppercase; letter-spacing:1px; min-width:60px; flex-shrink:0; }
+  .dv-row p { font-size:13px; color:var(--text); }
+  .dv-list { display:grid; gap:9px; }
+  .dv-item { display:flex; align-items:center; gap:14px; }
+  .dv-name { font-size:13px; min-width:170px; color:var(--text); }
+  .dv-bar { flex:1; height:7px; background:var(--surface-2); border:1px solid var(--border); border-radius:999px; overflow:hidden; }
+  .dv-bar i { display:block; height:100%; background:var(--accent); }
+  .dv-n { font-size:11px; color:var(--text-dim); min-width:26px; text-align:right; }
+  .dv-hook { display:flex; align-items:center; gap:12px; background:var(--surface-2); border:1px solid var(--border); border-radius:10px; padding:11px 14px; }
+  .dv-hook p { font-size:13px; color:var(--text); flex:1; }
+  .dv-tag { font-size:10px; color:var(--accent); background:var(--accent-soft); padding:3px 9px; border-radius:6px; flex-shrink:0; }
 
   /* ── Sections ── */
   section { padding:96px 0; }
@@ -278,6 +307,23 @@
   .stat .n { font-size:clamp(34px,4.5vw,52px); font-weight:700; letter-spacing:-0.03em; color:var(--accent); }
   .stat .l { font-size:13.5px; color:var(--text-mid); margin-top:4px; }
 
+  /* ── Testimonial wall (cursor.com-style) ── */
+  .tgrid { columns:3; column-gap:18px; }
+  .tcard { break-inside:avoid; margin:0 0 18px; background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:20px; box-shadow:var(--shadow-sm); }
+  .tcard p { font-size:14.5px; line-height:1.55; color:var(--text); }
+  .tcard .who { display:flex; align-items:center; gap:10px; margin-top:15px; }
+  .tcard .who b { font-size:13.5px; display:block; line-height:1.2; letter-spacing:-0.01em; }
+  .tcard .who .h { font-size:12px; color:var(--text-dim); font-family:'Geist Mono',monospace; }
+
+  /* ── Changelog (cursor.com-style) ── */
+  .log { border:1px solid var(--border); border-radius:var(--radius-lg); overflow:hidden; background:var(--surface); }
+  .log-row { display:grid; grid-template-columns:130px 1fr auto; gap:20px; padding:18px 22px; border-bottom:1px solid var(--border); align-items:baseline; }
+  .log-row:last-child { border-bottom:none; }
+  .log-date { font-family:'Geist Mono',monospace; font-size:12px; color:var(--text-dim); }
+  .log-body h3 { font-size:16px; margin-bottom:5px; letter-spacing:-0.01em; }
+  .log-body p { font-size:13.5px; color:var(--text-mid); }
+  .log-tag { font-family:'Geist Mono',monospace; font-size:10px; color:var(--accent); background:var(--accent-soft); padding:4px 9px; border-radius:6px; white-space:nowrap; }
+
   /* ── Pricing ── */
   .tiers { display:grid; grid-template-columns:repeat(3,1fr); gap:20px; align-items:start; }
   .tier { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-lg); padding:28px; position:relative; transition:transform .2s, box-shadow .2s; }
@@ -338,6 +384,8 @@
     .crow .repl { display:none; }
     .app { grid-template-columns:1fr; }
     .app-side { display:none; }
+    .tgrid { columns:1; }
+    .log-row { grid-template-columns:1fr; gap:6px; }
   }
   @media (max-width:560px) {
     .grid { grid-template-columns:1fr; }
@@ -391,6 +439,7 @@
       <a class="btn btn-ghost btn-lg" href="#decode">Try the decoder</a>
     </div>
     <div class="hero-note">No credit card required.</div>
+    <div class="trust mono"><span class="lbl">Works with</span> <b>X · LinkedIn · YouTube · Substack · Threads</b></div>
   </div>
 
   <div class="wrap">
@@ -408,14 +457,14 @@
           </div>
           <div class="app-nav">
             <div class="grp">Find</div>
-            <div class="nav-i on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m14.5 9.5-5 1.5 1.5 5 5-1.5z"/></svg>Discover<span class="n">24</span></div>
+            <div class="nav-i on" data-view="discover"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m14.5 9.5-5 1.5 1.5 5 5-1.5z"/></svg>Discover<span class="n">24</span></div>
             <div class="nav-i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/></svg>Home</div>
             <div class="nav-i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5V4.5A2.5 2.5 0 0 1 6.5 2H18a2 2 0 0 1 2 2v18l-3-1.5-3 1.5-3-1.5-3 1.5-3-1.5Z"/><path d="M8 7h8M8 11h8M8 15h5"/></svg>Digest</div>
             <div class="nav-i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/><circle cx="17" cy="7" r="3"/></svg>Lists</div>
             <div class="grp">Understand</div>
-            <div class="nav-i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3M16 3h3a2 2 0 0 1 2 2v3M8 21H5a2 2 0 0 1-2-2v-3M16 21h3a2 2 0 0 0 2-2v-3"/><path d="M7 12h10"/></svg>Decode a post</div>
-            <div class="nav-i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>Patterns</div>
-            <div class="nav-i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z"/></svg>Hooks</div>
+            <div class="nav-i" data-view="decode"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3M16 3h3a2 2 0 0 1 2 2v3M8 21H5a2 2 0 0 1-2-2v-3M16 21h3a2 2 0 0 0 2-2v-3"/><path d="M7 12h10"/></svg>Decode a post</div>
+            <div class="nav-i" data-view="patterns"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>Patterns</div>
+            <div class="nav-i" data-view="hooks"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z"/></svg>Hooks</div>
             <div class="grp">Make</div>
             <div class="nav-i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 1 1 3 3L7 19l-4 1 1-4Z"/></svg>Drafts</div>
             <div class="nav-i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>Calendar</div>
@@ -428,11 +477,46 @@
         </aside>
         <div class="app-main">
           <div class="app-head">
-            <div><h4>Discover</h4></div>
-            <span class="sub">4 platforms · Last 6 months · 3×+</span>
+            <div><h4 id="viewTitle">Discover</h4></div>
+            <span class="sub" id="viewSub">4 platforms · Last 6 months · 3×+</span>
           </div>
-          <div class="chips"><span class="on">All</span><span>Founders</span><span>Writers</span><span>Creators</span><span class="add">+ Add</span></div>
-          <div class="grid" id="heroGrid"></div>
+
+          <div class="app-view on" data-view="discover">
+            <div class="chips"><span class="on">All</span><span>Founders</span><span>Writers</span><span>Creators</span><span class="add">+ Add</span></div>
+            <div class="grid" id="heroGrid"></div>
+          </div>
+
+          <div class="app-view" data-view="decode">
+            <div class="dv-pad">
+              <div class="dv-post">“Most founders post too much — not too little. The ones who break out pick one contrarian take and stick to it.”<span class="dv-src mono">@AlexHormozi · 1.2M views · 12× outlier</span></div>
+              <div class="dv-break">
+                <div class="dv-row"><span class="k mono">Hook</span><p>Contrarian claim aimed straight at a group.</p></div>
+                <div class="dv-row"><span class="k mono">Turn</span><p>Names the real behaviour behind the win.</p></div>
+                <div class="dv-row"><span class="k mono">Lands on</span><p>One memorable instruction to repeat.</p></div>
+                <div class="dv-row"><span class="k mono">Template</span><p>Most [group] [common belief]. The ones who break out [contrarian move].</p></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="app-view" data-view="patterns">
+            <div class="dv-pad dv-list">
+              <div class="dv-item"><span class="dv-name">Contrarian one-liner</span><span class="dv-bar"><i style="width:92%"></i></span><span class="dv-n mono">×14</span></div>
+              <div class="dv-item"><span class="dv-name">3-question framework</span><span class="dv-bar"><i style="width:64%"></i></span><span class="dv-n mono">×9</span></div>
+              <div class="dv-item"><span class="dv-name">Season / phase metaphor</span><span class="dv-bar"><i style="width:48%"></i></span><span class="dv-n mono">×6</span></div>
+              <div class="dv-item"><span class="dv-name">"You don't have X, you have Y"</span><span class="dv-bar"><i style="width:40%"></i></span><span class="dv-n mono">×5</span></div>
+              <div class="dv-item"><span class="dv-name">Story: low point → result</span><span class="dv-bar"><i style="width:33%"></i></span><span class="dv-n mono">×4</span></div>
+            </div>
+          </div>
+
+          <div class="app-view" data-view="hooks">
+            <div class="dv-pad dv-list">
+              <div class="dv-hook"><p>Most [group] [common belief]. The ones who break out [contrarian move].</p><span class="dv-tag mono">contrarian</span></div>
+              <div class="dv-hook"><p>[N] [things] I [do] before [important action]:</p><span class="dv-tag mono">list</span></div>
+              <div class="dv-hook"><p>[Time] ago I [low point]. Today I [result]. Here's what changed:</p><span class="dv-tag mono">story</span></div>
+              <div class="dv-hook"><p>You don't have [named problem]. You have [the real problem].</p><span class="dv-tag mono">mistake</span></div>
+              <div class="dv-hook"><p>Every [winning output] follows the same shape: [a], [b], [c].</p><span class="dv-tag mono">framework</span></div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -568,6 +652,41 @@
         <blockquote>“I was tired of staring at a blank page while great ideas were sitting one search away. So I built the studio I wished I had.”</blockquote>
         <div class="who"><b>David Tost</b>Founder of Sona</div>
       </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ TESTIMONIAL WALL ══ -->
+<section>
+  <div class="wrap">
+    <div class="sec-head center">
+      <span class="eyebrow accent" style="justify-content:center;">Loved by people who post</span>
+      <h2>The unfair advantage <span class="quiet">creators talk about.</span></h2>
+    </div>
+    <div class="tgrid" data-r>
+      <div class="tcard"><p>“Sona is the first tool that shows me <em>why</em> a post worked, not just that it did. My hooks got sharper in a week.”</p><div class="who"><span class="av">MR</span><span><b>Maya Reyes</b><span class="h">@mayawrites</span></span></div></div>
+      <div class="tcard"><p>“I stopped doom-scrolling for ideas. The outlier feed is my morning coffee now.”</p><div class="who"><span class="av">DK</span><span><b>Devin Kerr</b><span class="h">@devinbuilds</span></span></div></div>
+      <div class="tcard"><p>“The decoder is scary good. Paste a breakout post, get the template, done.”</p><div class="who"><span class="av">AP</span><span><b>Ana Petrović</b><span class="h">@anacreates</span></span></div></div>
+      <div class="tcard"><p>“Connected it to Claude over MCP and now my research just… happens while I sleep.”</p><div class="who"><span class="av">TL</span><span><b>Tom Lind</b><span class="h">@tomml</span></span></div></div>
+      <div class="tcard"><p>“One place instead of five tabs. It quietly replaced three subscriptions.”</p><div class="who"><span class="av">SV</span><span><b>Sara Voss</b><span class="h">@saravoices</span></span></div></div>
+      <div class="tcard"><p>“Went from 200 to 12k followers in three months. Sona did the heavy thinking.”</p><div class="who"><span class="av">MD</span><span><b>Marko Dujmović</b><span class="h">@markod</span></span></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ CHANGELOG ══ -->
+<section style="background:var(--bg-soft);">
+  <div class="wrap">
+    <div class="sec-head center">
+      <span class="eyebrow accent" style="justify-content:center;">Shipping every week</span>
+      <h2>Always getting sharper.</h2>
+      <p class="lede">A steady stream of upgrades — because what's working changes, and so should the tool.</p>
+    </div>
+    <div class="log" data-r>
+      <div class="log-row"><span class="log-date mono">Sep 12, 2026</span><div class="log-body"><h3>Pattern library</h3><p>See what recurs across every decode — hooks surface on their own instead of being read once and forgotten.</p></div><span class="log-tag">Shipped</span></div>
+      <div class="log-row"><span class="log-date mono">Sep 5, 2026</span><div class="log-body"><h3>Sona MCP</h3><p>Query the outlier corpus and decode posts straight from Claude, or any MCP client.</p></div><span class="log-tag">Shipped</span></div>
+      <div class="log-row"><span class="log-date mono">Aug 28, 2026</span><div class="log-body"><h3>Video outliers</h3><p>The feed now surfaces breakout videos with real thumbnails, not just text posts.</p></div><span class="log-tag">Shipped</span></div>
+      <div class="log-row"><span class="log-date mono">Aug 20, 2026</span><div class="log-body"><h3>Voice-matched drafts</h3><p>Turn a saved idea into a draft that actually sounds like you, from your own writing.</p></div><span class="log-tag">Shipped</span></div>
     </div>
   </div>
 </section>
@@ -751,6 +870,28 @@
   document.getElementById('burger').addEventListener('click', function(){ mm.classList.add('open'); });
   document.getElementById('menuClose').addEventListener('click', function(){ mm.classList.remove('open'); });
   mm.querySelectorAll('a').forEach(function(a){ a.addEventListener('click', function(){ mm.classList.remove('open'); }); });
+
+  // ── Interactive dashboard: clicking a sidebar item switches the main view ──
+  var VIEW_META = {
+    discover: ['Discover', '4 platforms · Last 6 months · 3×+'],
+    decode:   ['Decode a post', 'Paste anything · instant breakdown'],
+    patterns: ['Patterns', 'What recurs across every decode'],
+    hooks:    ['Hooks', '40+ reusable templates']
+  };
+  var vTitle = document.getElementById('viewTitle');
+  var vSub = document.getElementById('viewSub');
+  var allNav = document.querySelectorAll('.app-side .nav-i');
+  var allViews = document.querySelectorAll('.app-view');
+  document.querySelectorAll('.app-side .nav-i[data-view]').forEach(function(item){
+    item.addEventListener('click', function(){
+      var v = item.getAttribute('data-view');
+      allNav.forEach(function(n){ n.classList.remove('on'); });
+      item.classList.add('on');
+      allViews.forEach(function(vw){ vw.classList.toggle('on', vw.getAttribute('data-view') === v); });
+      var meta = VIEW_META[v];
+      if (meta) { vTitle.textContent = meta[0]; vSub.textContent = meta[1]; }
+    });
+  });
 
   // ── Interactive decoder (reuses window.SonaDecode, same engine as /app) ──
   var EXAMPLE = 'Most founders think they need to post more. They don\u2019t.\n\nThe ones who actually break out do the opposite: they pick one contrarian take and repeat it until it sticks.\n\nStop chasing volume. Start owning an angle.';
