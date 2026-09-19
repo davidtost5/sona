@@ -203,6 +203,8 @@ const server = http.createServer(async (rawReq, res) => {
 
   applySecurityHeaders(res);
   res.setHeader('Content-Type', MIME[path.extname(file)] || 'application/octet-stream');
+  // Edits must show on reload; browsers otherwise heuristically cache header-less responses.
+  res.setHeader('Cache-Control', 'no-store');
   if (rawReq.method === 'HEAD') { res.status(200).end(); return; }
   fs.createReadStream(file).pipe(res);
   console.log(`GET ${pathname} → ${path.relative(ROOT, file)}`);
