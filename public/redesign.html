@@ -302,18 +302,15 @@
   .founder .who { font-size:14px; color:var(--text-dim); }
   .founder .who b { color:var(--text); display:block; font-size:15px; }
 
-  /* ── Stat proof ── */
-  .stats { display:grid; grid-template-columns:repeat(4,1fr); gap:20px; text-align:center; }
-  .stat .n { font-size:clamp(34px,4.5vw,52px); font-weight:700; letter-spacing:-0.03em; color:var(--accent); }
-  .stat .l { font-size:13.5px; color:var(--text-mid); margin-top:4px; }
-
-  /* ── Testimonial wall (cursor.com-style) ── */
-  .tgrid { columns:3; column-gap:18px; }
-  .tcard { break-inside:avoid; margin:0 0 18px; background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:20px; box-shadow:var(--shadow-sm); }
-  .tcard p { font-size:14.5px; line-height:1.55; color:var(--text); }
-  .tcard .who { display:flex; align-items:center; gap:10px; margin-top:15px; }
-  .tcard .who b { font-size:13.5px; display:block; line-height:1.2; letter-spacing:-0.01em; }
-  .tcard .who .h { font-size:12px; color:var(--text-dim); font-family:'Geist Mono',monospace; }
+  /* ── Feature grid (Eden-style capability list) ── */
+  .fgrid { display:grid; grid-template-columns:repeat(3,1fr); gap:1px; background:var(--border); border:1px solid var(--border); border-radius:var(--radius-lg); overflow:hidden; }
+  .fcell { background:var(--surface); padding:26px 24px 28px; display:flex; flex-direction:column; gap:9px; transition:background .18s; }
+  .fcell:hover { background:var(--surface-2); }
+  .fcell .ic { width:30px; height:30px; border-radius:9px; display:grid; place-items:center; background:var(--accent-soft); color:var(--accent); margin-bottom:3px; }
+  .fcell .ic svg { width:16px; height:16px; }
+  .fcell h3 { font-size:16px; letter-spacing:-0.02em; line-height:1.3; }
+  .fcell p { font-size:13.5px; line-height:1.55; color:var(--text-mid); }
+  .fcell .tag { font-family:'Geist Mono',monospace; font-size:9.5px; letter-spacing:1.1px; text-transform:uppercase; color:var(--text-dim); }
 
   /* ── Changelog (cursor.com-style) ── */
   .log { border:1px solid var(--border); border-radius:var(--radius-lg); overflow:hidden; background:var(--surface); }
@@ -379,16 +376,16 @@
     .decode { grid-template-columns:1fr; }
     .decode-in { border-right:none; border-bottom:1px solid var(--border); }
     .tiers { grid-template-columns:1fr; }
-    .stats { grid-template-columns:repeat(2,1fr); gap:32px 20px; }
+    .fgrid { grid-template-columns:repeat(2,1fr); }
     .crow { grid-template-columns:1fr auto; }
     .crow .repl { display:none; }
     .app { grid-template-columns:1fr; }
     .app-side { display:none; }
-    .tgrid { columns:1; }
     .log-row { grid-template-columns:1fr; gap:6px; }
   }
   @media (max-width:560px) {
     .grid { grid-template-columns:1fr; }
+    .fgrid { grid-template-columns:1fr; }
     .hero { padding:48px 0 20px; }
     section { padding:70px 0; }
   }
@@ -626,18 +623,51 @@
   </div>
 </section>
 
-<!-- ══ PROOF STATS ══ -->
+<!-- ══ EVERYTHING ELSE (Eden-style capability grid) ══ -->
 <section>
   <div class="wrap">
     <div class="sec-head center">
-      <span class="eyebrow accent" style="justify-content:center;">Case in point</span>
-      <h2>Four platforms. Four hooks. <span class="quiet">21M views.</span></h2>
+      <span class="eyebrow accent" style="justify-content:center;">Everything else</span>
+      <h2>The whole studio. <span class="quiet">Not a graveyard of tabs.</span></h2>
+      <p class="lede">Each of these is a room in the same house. Research flows into drafts, drafts flow into the calendar, and nothing needs copy-paste.</p>
     </div>
-    <div class="stats" data-stagger>
-      <div class="stat"><div class="n">18×</div><div class="l">Best outlier multiple in the feed</div></div>
-      <div class="stat"><div class="n">2.4M</div><div class="l">Views on the top decoded post</div></div>
-      <div class="stat"><div class="n">40+</div><div class="l">Reusable hook templates</div></div>
-      <div class="stat"><div class="n">3</div><div class="l">MCP tools, two of them free</div></div>
+    <div class="fgrid" data-r>
+      <div class="fcell">
+        <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5V4.5A2.5 2.5 0 0 1 6.5 2H18a2 2 0 0 1 2 2v18l-3-1.5-3 1.5-3-1.5-3 1.5-3-1.5Z"/><path d="M8 7h8M8 11h8M8 15h5"/></svg></span>
+        <span class="tag">Digest</span>
+        <h3>Wake up to what broke out overnight.</h3>
+        <p>One short brief every morning: the posts that beat their author’s baseline in your niche, already sorted by why they worked.</p>
+      </div>
+      <div class="fcell">
+        <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/><circle cx="17" cy="7" r="3"/></svg></span>
+        <span class="tag">Lists</span>
+        <h3>Follow the creators you actually learn from.</h3>
+        <p>Build lists of the accounts worth studying. Sona watches them for you and tells you the moment one of them lands a hit.</p>
+      </div>
+      <div class="fcell">
+        <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 4 12 8-12 8V4z"/></svg></span>
+        <span class="tag">Saved &amp; Library</span>
+        <h3>A swipe file that stays organised.</h3>
+        <p>Save any post, decode, or hook once. It lands in a library you can search by pattern instead of scrolling a folder of screenshots.</p>
+      </div>
+      <div class="fcell">
+        <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 1 1 3 3L7 19l-4 1 1-4Z"/></svg></span>
+        <span class="tag">Drafts &amp; Scripts</span>
+        <h3>Write next to your research, not away from it.</h3>
+        <p>Open a draft with the decoded template beside it. Hook, tension, payoff — the structure is already on the page waiting for your story.</p>
+      </div>
+      <div class="fcell">
+        <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></span>
+        <span class="tag">Playbook</span>
+        <h3>Teach it your voice once.</h3>
+        <p>Your positioning, your phrasing, the things you refuse to say. Every draft after that sounds like you wrote it, because you did.</p>
+      </div>
+      <div class="fcell">
+        <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></span>
+        <span class="tag">Calendar</span>
+        <h3>See the week before you live it.</h3>
+        <p>Drag a draft onto a day and the week stops being a guess. What’s ready, what’s thin, what still needs a hook.</p>
+      </div>
     </div>
   </div>
 </section>
@@ -652,24 +682,6 @@
         <blockquote>“I was tired of staring at a blank page while great ideas were sitting one search away. So I built the studio I wished I had.”</blockquote>
         <div class="who"><b>David Tost</b>Founder of Sona</div>
       </div>
-    </div>
-  </div>
-</section>
-
-<!-- ══ TESTIMONIAL WALL ══ -->
-<section>
-  <div class="wrap">
-    <div class="sec-head center">
-      <span class="eyebrow accent" style="justify-content:center;">Loved by people who post</span>
-      <h2>The unfair advantage <span class="quiet">creators talk about.</span></h2>
-    </div>
-    <div class="tgrid" data-r>
-      <div class="tcard"><p>“Sona is the first tool that shows me <em>why</em> a post worked, not just that it did. My hooks got sharper in a week.”</p><div class="who"><span class="av">MR</span><span><b>Maya Reyes</b><span class="h">@mayawrites</span></span></div></div>
-      <div class="tcard"><p>“I stopped doom-scrolling for ideas. The outlier feed is my morning coffee now.”</p><div class="who"><span class="av">DK</span><span><b>Devin Kerr</b><span class="h">@devinbuilds</span></span></div></div>
-      <div class="tcard"><p>“The decoder is scary good. Paste a breakout post, get the template, done.”</p><div class="who"><span class="av">AP</span><span><b>Ana Petrović</b><span class="h">@anacreates</span></span></div></div>
-      <div class="tcard"><p>“Connected it to Claude over MCP and now my research just… happens while I sleep.”</p><div class="who"><span class="av">TL</span><span><b>Tom Lind</b><span class="h">@tomml</span></span></div></div>
-      <div class="tcard"><p>“One place instead of five tabs. It quietly replaced three subscriptions.”</p><div class="who"><span class="av">SV</span><span><b>Sara Voss</b><span class="h">@saravoices</span></span></div></div>
-      <div class="tcard"><p>“Went from 200 to 12k followers in three months. Sona did the heavy thinking.”</p><div class="who"><span class="av">MD</span><span><b>Marko Dujmović</b><span class="h">@markod</span></span></div></div>
     </div>
   </div>
 </section>
