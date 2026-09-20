@@ -340,6 +340,16 @@ async function resolveSubstackNote(noteId) {
   };
 }
 
+// A bare "404 from substack.com" tells the person holding the link nothing they
+// can act on. Upstream refusals are translated per source; anything else (a
+// timeout, a blocked host) already reads as a sentence and is passed through.
+function friendly(message) {
+  return (err) => {
+    const raw = String((err && err.message) || err);
+    throw new Error(/^(401|403|404|410)\b/.test(raw) ? message : raw);
+  };
+}
+
 export default async function handler(req, res) {
   // This endpoint makes outbound requests on a caller's behalf, so it is the
   // kind of thing worth keeping on a short leash even though it costs no money.
@@ -368,19 +378,25 @@ export default async function handler(req, res) {
   try {
     const videoId = youtubeId(url);
     if (videoId) {
-      const out = await resolveYouTube(videoId);
+      const out = await resolveYouTube(videoId).catch(
+        friendly('YouTube will not show that video — it may be private or deleted')
+      );
       return res.status(200).json({ ok: true, ...out });
     }
 
     const noteId = substackNoteId(url);
     if (noteId) {
-      const out = await resolveSubstackNote(noteId);
+      const out = await resolveSubstackNote(noteId).catch(
+        friendly('Substack has no public note at that link')
+      );
       return res.status(200).json({ ok: true, ...out });
     }
 
     const postSlug = substackPostSlug(url);
     if (postSlug) {
-      const out = await resolveSubstackPost(url, postSlug);
+      const out = await resolveSubstackPost(url, postSlug).catch(
+        friendly('That Substack post is not public, or the link has a typo')
+      );
       return res.status(200).json({ ok: true, ...out });
     }
 

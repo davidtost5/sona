@@ -205,6 +205,18 @@
   .disc-engage span { display:inline-flex; align-items:center; gap:5px; }
   .disc-engage svg { width:12px; height:12px; opacity:.65; }
 
+  /* Substack notes. A note has no title and no cover image — the text IS the
+     post — so it gets the shape Substack gives it: the words, then a rule, then
+     who wrote it and when. */
+  .disc-card.note .disc-text { font-size:15.5px; margin-bottom:0; }
+  .disc-note-foot {
+    display:flex; align-items:center; justify-content:space-between; gap:10px;
+    margin:13px 0 11px; padding-top:11px; border-top:1px solid var(--border);
+    font-family:'Geist Mono',monospace; font-size:10px; letter-spacing:.07em;
+    text-transform:uppercase; color:var(--text-dim);
+  }
+  .disc-action.open { text-decoration:none; }
+
   /* ─── Focus ───
      There was no focus indicator anywhere: three outline:none declarations and
      zero :focus-visible rules, so keyboard users had no idea where they were.
@@ -672,11 +684,14 @@
   .disc-handle { font-size:13px; color:var(--text-dim); }
   .disc-text { font-size:15px; color:var(--text); line-height:1.62; margin-bottom:15px; white-space:pre-wrap; }
   .disc-card mark { background: var(--accent-soft); color: var(--accent); padding: 1px 3px; border-radius: 3px; font-weight: 600; }
-  .disc-meta { display:flex; align-items:center; justify-content:space-between; gap:10px; }
+  /* Wraps rather than overflows: a card can carry a multiple, a New marker, a
+     percentile, its platform tag and three actions, which is more than 300px of
+     column holds in one line. */
+  .disc-meta { display:flex; align-items:center; gap:8px; flex-wrap:wrap; row-gap:8px; }
   .disc-meta-left { display:flex; align-items:center; gap:9px; min-width:0; }
   .disc-tag { font-family:'Geist Mono',monospace; font-size:10.5px; color:var(--accent); background:var(--accent-soft); padding:3px 8px; border-radius:100px; font-weight:500; white-space:nowrap; }
   .disc-views { font-family:'Geist Mono',monospace; font-size:11px; color:var(--text-dim); white-space:nowrap; }
-  .disc-actions { display:flex; gap:6px; flex-shrink:0; }
+  .disc-actions { display:flex; gap:6px; flex-shrink:0; margin-left:auto; }
   .disc-disclaimer { margin:18px 2px 0; font-size:11px; line-height:1.5; color:var(--text-dim); max-width:640px; }
   /* Hooks library */
   .hooks-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(300px,1fr)); gap:12px; }
@@ -776,6 +791,8 @@
    .decoder-close:hover { color:var(--text); border-color:var(--border-strong); }
    .decoder-quote { margin:18px 0 22px; padding:14px 16px; border-left:3px solid var(--accent); background:var(--bg-soft); border-radius:0 8px 8px 0; font-size:15px; color:var(--text); }
    .decoder-quote small { display:block; color:var(--text-mid); font-size:11px; margin-top:6px; font-family:'Geist Mono',monospace; }
+   .decoder-quote small a { color:var(--accent); text-decoration:none; border-bottom:1px solid transparent; }
+   .decoder-quote small a:hover { border-bottom-color:currentColor; }
    .decoder-row { display:grid; grid-template-columns:120px 1fr; gap:14px; padding:14px 0; border-top:1px solid var(--border); }
    .decoder-row:last-of-type { border-bottom:1px solid var(--border); }
    .decoder-label { font-family:'Geist Mono',monospace; font-size:11px; letter-spacing:1px; text-transform:uppercase; color:var(--text-mid); padding-top:2px; }
@@ -1538,10 +1555,10 @@
       <div class="view" data-view="decode">
         <div class="dec-wrap">
           <h2 class="dec-h">What worked?</h2>
-          <p class="dec-sub">Paste a post that outperformed — yours or anyone's. Sona names the mechanism underneath it. It won't write it for you.</p>
+          <p class="dec-sub">Paste a post that outperformed — yours or anyone's — or just the link to it. Sona names the mechanism underneath it. It won't write it for you.</p>
 
           <form class="dec-form" id="dec-form">
-            <textarea id="dec-text" rows="5" placeholder="Paste the post here…" spellcheck="false" aria-label="Post text"></textarea>
+            <textarea id="dec-text" rows="5" placeholder="Paste the post here — or a link to it (YouTube, Substack post or note)…" spellcheck="false" aria-label="Post text"></textarea>
             <div class="dec-row">
               <input type="text" id="dec-author" placeholder="Author (optional)" autocomplete="off" aria-label="Author">
               <select id="dec-platform" aria-label="Platform">
@@ -2044,7 +2061,10 @@
           id: r.id,
           cat: r.cat || 'founders',
           name: r.creator_name,
-          av: r.avatar_handle ? AV(r.avatar_handle) : AV((r.handle || '').replace(/^@/, '').split(' ')[0]),
+          // unavatar guesses an avatar from an X handle, which is wrong for a
+          // writer who only publishes on Substack — avatar_url is the real one
+          // when the source handed one over.
+          av: r.avatar_url || (r.avatar_handle ? AV(r.avatar_handle) : AV((r.handle || '').replace(/^@/, '').split(' ')[0])),
           handle: r.handle,
           text: r.text,
           tag: r.outlier_tag || '',
@@ -2054,6 +2074,13 @@
           duration: r.duration || '',
           likes: r.likes || '',
           reposts: r.reposts || '',
+          comments: r.comments || '',
+          readTime: r.read_time || '',
+          publication: r.publication || '',
+          // The link back to the post itself. Every card that has one offers to
+          // open it: a feed of posts you cannot go and read is a dead end.
+          src: r.source_url || '',
+          posted: r.posted_at || null,
           captured: r.captured_at || null,   // drives the New marker and daily order
           // no `decoded` → live decode path
         }));
@@ -3398,11 +3425,14 @@
     yt: '<svg class="disc-plat" viewBox="0 0 24 24" fill="currentColor"><path d="M23 12s0-3.5-.45-5.15a2.7 2.7 0 0 0-1.9-1.9C19 4.5 12 4.5 12 4.5s-7 0-8.65.45a2.7 2.7 0 0 0-1.9 1.9C1 8.5 1 12 1 12s0 3.5.45 5.15a2.7 2.7 0 0 0 1.9 1.9C5 19.5 12 19.5 12 19.5s7 0 8.65-.45a2.7 2.7 0 0 0 1.9-1.9C23 15.5 23 12 23 12zM9.75 15.25v-6.5L15.5 12z"/></svg>',
     sub: '<svg class="disc-plat" viewBox="0 0 24 24" fill="currentColor"><path d="M4 3h16v2.5H4zM4 7.5h16V10H4zM4 12.5 12 17l8-4.5V21l-8-4.5L4 21z"/></svg>',
   };
+  // The seed posts spell the platform short ("· X", "· YT") and the ingest
+  // spells it out ("· YouTube", "· Substack"), so both have to be read here or
+  // every ingested row loses its platform icon.
   function platIcon(handle) {
     const tail = String(handle || '').split('·').pop().trim().toLowerCase();
-    if (tail === 'x') return PLAT_ICON.x;
-    if (tail === 'in') return PLAT_ICON.in;
-    if (tail === 'yt') return PLAT_ICON.yt;
+    if (tail === 'x' || tail === 'twitter') return PLAT_ICON.x;
+    if (tail === 'in' || tail === 'linkedin') return PLAT_ICON.in;
+    if (tail.startsWith('y')) return PLAT_ICON.yt;
     if (tail.startsWith('sub')) return PLAT_ICON.sub;
     return '';
   }
@@ -3420,12 +3450,68 @@
       ${isVideo && i.duration ? `<span class="disc-dur">${escapeHtml(i.duration)}</span>` : ''}
     </div>`;
   }
+  const COMMENT = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.4 8.4 0 0 1-9 8.4 9.1 9.1 0 0 1-3.8-.8L3 21l1.9-5A8.4 8.4 0 0 1 12 3a8.4 8.4 0 0 1 9 8.5z"/></svg>';
+  const CLOCK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg>';
+  const OPEN = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><path d="M15 3h6v6"/><path d="M10 14 21 3"/></svg>';
+
+  // Read time, likes and replies are the line Substack itself puts under every
+  // post, and they are how a reader decides whether to open one. Shown in that
+  // order for the same reason.
   function engageBlock(i) {
-    if (!i.likes && !i.reposts) return '';
+    if (!i.likes && !i.reposts && !i.comments && !i.readTime) return '';
     return `<div class="disc-engage">
+      ${i.readTime ? `<span>${CLOCK}${escapeHtml(i.readTime)}</span>` : ''}
       ${i.likes ? `<span>${HEART}${escapeHtml(i.likes)}</span>` : ''}
+      ${i.comments ? `<span>${COMMENT}${escapeHtml(i.comments)}</span>` : ''}
       ${i.reposts ? `<span>${REPOST}${escapeHtml(i.reposts)}</span>` : ''}
     </div>`;
+  }
+
+  // Substack shows the writer and the publication as two different things —
+  // "Stijn Noorman" writes "The Stoic Solopreneur" — so when a row carries a
+  // publication it takes the second line, with the platform kept alongside it.
+  function subline(i) {
+    return i.publication ? `${i.publication} · Substack` : i.handle;
+  }
+
+  const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  function postedLabel(i) {
+    if (!i.posted) return '';
+    const d = new Date(i.posted);
+    if (Number.isNaN(d.getTime())) return '';
+    const sameYear = d.getFullYear() === new Date().getFullYear();
+    return `${d.getDate()} ${MONTHS[d.getMonth()]}${sameYear ? '' : ' ' + d.getFullYear()}`;
+  }
+
+  // A note is not an article with the title missing: it is the whole post,
+  // written to be read as it stands. It gets the card Substack gives it —
+  // the text, then the writer's handle and the date it went out.
+  function noteFoot(i) {
+    if (i.mediaType !== 'note') return '';
+    const date = postedLabel(i);
+    const handle = String(i.handle || '').split('·')[0].trim();
+    return `<div class="disc-note-foot">
+      <span>${escapeHtml(date || 'note')}</span>
+      <span>substack.com/${escapeHtml(handle)}</span>
+    </div>`;
+  }
+
+  // The top-right slot in a card head holds the one thing that decides whether
+  // to open the post. For a video that is its reach; for a Substack post it is
+  // when it went out, the way Substack's own feed shows it. A note carries its
+  // date in the footer instead, so the slot stays empty there.
+  function headMeta(i) {
+    if (i.mediaType === 'note') return '';
+    if (i.readTime || /(likes|reactions)$/.test(i.views || '')) return postedLabel(i);
+    return i.views || '';
+  }
+
+  // Ingested and resolved rows know where they came from. Seed posts do not,
+  // so the link is only offered when there is something real to open.
+  function sourceLink(i) {
+    if (!i.src) return '';
+    return `<a class="disc-action open" href="${escapeHtml(i.src)}" target="_blank" rel="noopener noreferrer"
+      title="Open the original post" onclick="event.stopPropagation()">${OPEN}Open</a>`;
   }
 
   function renderDiscover() {
@@ -3445,10 +3531,11 @@
       return;
     }
     grid.innerHTML = items.map(i => `
-      <div class="disc-card">
+      <div class="disc-card${i.mediaType === 'note' ? ' note' : ''}">
         ${mediaBlock(i)}
-        <div class="disc-head"><span class="disc-av" style="background:url('${i.av}') center/cover no-repeat, linear-gradient(135deg,var(--accent),var(--accent-soft))"></span><div><div class="disc-name">${highlight(i.name)}</div><div class="disc-handle">${highlight(i.handle)}</div></div>${i.views ? `<span class="disc-views">${i.views}</span>` : ''}</div>
+        <div class="disc-head"><span class="disc-av" style="background:url('${i.av}') center/cover no-repeat, linear-gradient(135deg,var(--accent),var(--accent-soft))"></span><div><div class="disc-name">${highlight(i.name)}</div><div class="disc-handle">${highlight(subline(i))}</div></div>${headMeta(i) ? `<span class="disc-views">${headMeta(i)}</span>` : ''}</div>
         <div class="disc-text">${highlight(i.text)}</div>
+        ${noteFoot(i)}
         ${engageBlock(i)}
         <div class="disc-meta">
           ${multOf(i) ? `<span class="disc-mult">${multOf(i)}×</span>` : ''}
@@ -3456,6 +3543,7 @@
           ${pctRank(i) && pctRank(i) <= 10 ? `<span class="disc-pct" title="Top ${pctRank(i)}% of the posts loaded in your feed, ranked by outlier multiple">Top ${pctRank(i)}%</span>` : ''}
           <span class="disc-tag">${platIcon(i.handle)}${(i.views || '').replace(' views','')}</span>
           <div class="disc-actions">
+            ${sourceLink(i)}
             <button class="disc-action decode" onclick="openDecoder('${i.id}')" title="See why this post worked">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 1v6M12 17v6M4.22 4.22l4.24 4.24M15.54 15.54l4.24 4.24M1 12h6M17 12h6M4.22 19.78l4.24-4.24M15.54 8.46l4.24-4.24"/></svg>
               Decode
@@ -3486,12 +3574,15 @@
       return;
     }
     grid.innerHTML = items.map(i => `
-      <div class="disc-card">
-        <div class="disc-head"><span class="disc-av" style="background:url('${i.av}') center/cover no-repeat, linear-gradient(135deg,var(--accent),var(--accent-soft))"></span><div><div class="disc-name">${highlight(i.name)}</div><div class="disc-handle">${highlight(i.handle)}</div></div>${i.views ? `<span class="disc-views">${i.views}</span>` : ''}</div>
+      <div class="disc-card${i.mediaType === 'note' ? ' note' : ''}">
+        <div class="disc-head"><span class="disc-av" style="background:url('${i.av}') center/cover no-repeat, linear-gradient(135deg,var(--accent),var(--accent-soft))"></span><div><div class="disc-name">${highlight(i.name)}</div><div class="disc-handle">${highlight(subline(i))}</div></div>${headMeta(i) ? `<span class="disc-views">${headMeta(i)}</span>` : ''}</div>
         <div class="disc-text">${highlight(i.text)}</div>
+        ${noteFoot(i)}
+        ${engageBlock(i)}
         <div class="disc-meta">
           <span class="disc-tag">${i.tag}</span>
           <div class="disc-actions">
+            ${sourceLink(i)}
             <button class="disc-action decode" onclick="openDecoder('${i.id}')" title="See why this post worked">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 1v6M12 17v6M4.22 4.22l4.24 4.24M15.54 15.54l4.24 4.24M1 12h6M17 12h6M4.22 19.78l4.24-4.24M15.54 8.46l4.24-4.24"/></svg>
               Decode
@@ -4181,6 +4272,124 @@
       });
     }
 
+    // openDecoder memoises the result onto the idea; poll briefly for it so the
+    // session list can show the hook it found.
+    function watchDecode(id, text, btn, note, { clearInput = true, keepNote = false } = {}) {
+      btn.disabled = true;
+      if (!keepNote) note.textContent = 'Decoding…';
+      openDecoder(id);
+
+      const started = Date.now();
+      const tick = setInterval(() => {
+        const idea = SEED_IDEAS.find(x => x.id === id);
+        const done = idea && idea.decoded;
+        if (done || Date.now() - started > 20000) {
+          clearInterval(tick);
+          btn.disabled = false;
+          if (done) {
+            if (!keepNote) note.textContent = '';
+            if (clearInput) document.getElementById('dec-text').value = '';
+            recent.unshift({ id, text, hook: idea.decoded.hook });
+            renderRecent();
+          } else {
+            note.textContent = 'The decoder didn\'t answer. Check the modal for details.';
+            note.classList.add('err');
+          }
+        }
+      }, 400);
+    }
+
+    // Nothing but a link, whitespace either side. Anything else is treated as a
+    // post, including a post that happens to contain a URL.
+    const LINK_ONLY = /^https?:\/\/[^\s]+$/i;
+    const SOURCE_LABEL = {
+      youtube: 'YouTube video',
+      substack: 'Substack post',
+      'substack-note': 'Substack note',
+    };
+
+    // The row /api/resolve answers with is the same shape the Discover feed
+    // reads, so a resolved link becomes a card like any other: real numbers,
+    // real avatar, and a way back to the original.
+    function ideaFromRow(r) {
+      return {
+        id: r.id,
+        cat: r.cat || 'writers',
+        name: r.creator_name || 'Unknown',
+        av: r.avatar_url || (r.avatar_handle ? AV(r.avatar_handle) : ''),
+        handle: r.handle || '',
+        text: r.text || '',
+        tag: r.outlier_tag || 'from a link',
+        views: r.views || '',
+        mediaType: r.media_type || null,
+        thumb: r.thumb_url || '',
+        duration: r.duration || '',
+        likes: r.likes || '',
+        reposts: r.reposts || '',
+        comments: r.comments || '',
+        readTime: r.read_time || '',
+        publication: r.publication || '',
+        src: r.source_url || '',
+        posted: r.posted_at || null,
+        captured: new Date().toISOString(),
+      };
+    }
+
+    async function decodeLink(url, btn, note) {
+      btn.disabled = true;
+      note.textContent = 'Fetching that post…';
+
+      let payload;
+      try {
+        const res = await fetch('/api/resolve?url=' + encodeURIComponent(url));
+        payload = await res.json().catch(() => ({}));
+        if (!res.ok || !payload.ok) {
+          throw new Error(payload.error || `That link didn't resolve (${res.status})`);
+        }
+      } catch (err) {
+        note.textContent = err.message || 'That link didn\'t resolve.';
+        note.classList.add('err');
+        btn.disabled = false;
+        return;
+      }
+
+      const idea = ideaFromRow(payload.row);
+      if (!idea.text) {
+        note.textContent = 'That link resolved, but the post had no text to read.';
+        note.classList.add('err');
+        btn.disabled = false;
+        return;
+      }
+
+      // Resolving the same link twice should move the card, not duplicate it.
+      const already = SEED_IDEAS.findIndex(x => x.id === idea.id);
+      if (already > -1) SEED_IDEAS.splice(already, 1);
+      SEED_IDEAS.unshift(idea);
+
+      // The feed is usually filtered to one category, and a resolved post is
+      // often in another — a YouTube video landing behind a Writers filter is
+      // added and then invisible, which reads as the feature not working. Move
+      // the feed to where the card actually is, and say where that is.
+      const CAT_LABEL = { founders: 'Founders', writers: 'Writers', creators: 'Creators' };
+      let landed = 'the top of Discover';
+      if (currentFilter !== 'all' && currentFilter !== idea.cat) {
+        applyNiche(idea.cat);
+        landed = `the top of Discover, under ${CAT_LABEL[idea.cat] || idea.cat}`;
+      } else if (document.getElementById('disc-grid')) {
+        renderDiscover();
+      }
+
+      const numbers = [idea.views, idea.readTime, idea.tag !== 'from a link' ? idea.tag : '']
+        .filter(Boolean).join(' · ');
+      note.textContent =
+        `${SOURCE_LABEL[payload.source] || 'Link'} — ${idea.name}${numbers ? ' · ' + numbers : ''}. ` +
+        `Added to ${landed}.`;
+
+      document.getElementById('dec-text').value = idea.text;
+      renderInstantRead(idea.text);
+      watchDecode(idea.id, idea.text, btn, note, { clearInput: false, keepNote: true });
+    }
+
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
       const note = document.getElementById('dec-note');
@@ -4188,10 +4397,18 @@
       const text = document.getElementById('dec-text').value.trim();
       note.classList.remove('err');
 
+      // A link is not a post. Rather than decoding the URL string, Sona goes
+      // and gets the post behind it — the whole point of somebody sending you
+      // one — then decodes that.
+      if (LINK_ONLY.test(text)) {
+        await decodeLink(text, btn, note);
+        return;
+      }
+
       // Matches the endpoint's own floor, so a too-short post fails here with a
       // useful message instead of a 400 from the server.
       if (text.length < 10) {
-        note.textContent = 'Paste a bit more — at least 10 characters.';
+        note.textContent = 'Paste a bit more — at least 10 characters, or a link to the post.';
         note.classList.add('err');
         return;
       }
@@ -4214,30 +4431,7 @@
         text, tag: 'pasted', views: '',
       });
 
-      btn.disabled = true;
-      note.textContent = 'Decoding…';
-      openDecoder(id);
-
-      // openDecoder memoises onto the idea; poll briefly for the result so the
-      // session list can show the hook it found.
-      const started = Date.now();
-      const tick = setInterval(() => {
-        const idea = SEED_IDEAS.find(x => x.id === id);
-        const done = idea && idea.decoded;
-        if (done || Date.now() - started > 20000) {
-          clearInterval(tick);
-          btn.disabled = false;
-          if (done) {
-            note.textContent = '';
-            document.getElementById('dec-text').value = '';
-            recent.unshift({ id, text, hook: idea.decoded.hook });
-            renderRecent();
-          } else {
-            note.textContent = 'The decoder didn\'t answer. Check the modal for details.';
-            note.classList.add('err');
-          }
-        }
-      }, 400);
+      watchDecode(id, text, btn, note);
     });
   })();
 
@@ -4775,7 +4969,10 @@
     document.getElementById('decoder-back').dataset.idea = id;
     document.getElementById('decoder-tag').textContent = `${i.tag} · ${i.cat}`;
     document.getElementById('decoder-name').textContent = i.name;
-    document.getElementById('decoder-quote').innerHTML = `${escapeHtml(i.text)}<small>${escapeHtml(i.handle)}</small>`;
+    const credit = i.src
+      ? `${escapeHtml(i.handle)} · <a href="${escapeHtml(i.src)}" target="_blank" rel="noopener noreferrer">Open original</a>`
+      : escapeHtml(i.handle);
+    document.getElementById('decoder-quote').innerHTML = `${escapeHtml(i.text)}<small>${credit}</small>`;
 
     // Static decode (the 8 seed posts) — instant, free, no API call.
     if (i.decoded) {
