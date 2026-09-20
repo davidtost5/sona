@@ -681,7 +681,11 @@
   .disc-head .disc-views { margin-left:auto; flex-shrink:0; }
   .disc-av { width:38px; height:38px; border-radius:50%; background:linear-gradient(135deg,var(--accent),var(--accent-soft)); flex-shrink:0; }
   .disc-name { font-size:14.5px; font-weight:600; letter-spacing:-.2px; }
-  .disc-handle { font-size:13px; color:var(--text-dim); }
+  /* A publication name is long enough to wrap onto a second line in the narrow
+     Digest column, which pushes the card head out of shape. Substack truncates
+     it; so do we. */
+  .disc-head > div { min-width:0; }
+  .disc-handle { font-size:13px; color:var(--text-dim); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
   .disc-text { font-size:15px; color:var(--text); line-height:1.62; margin-bottom:15px; white-space:pre-wrap; }
   .disc-card mark { background: var(--accent-soft); color: var(--accent); padding: 1px 3px; border-radius: 3px; font-weight: 600; }
   /* Wraps rather than overflows: a card can carry a multiple, a New marker, a
@@ -3692,12 +3696,15 @@
 
   function digestCard(i) {
     return `
-      <div class="disc-card">
-        <div class="disc-head"><span class="disc-av" style="background:url('${i.av}') center/cover no-repeat, linear-gradient(135deg,var(--accent),var(--accent-soft))"></span><div><div class="disc-name">${escapeHtml(i.name)}</div><div class="disc-handle">${escapeHtml(i.handle)}</div></div>${i.views ? `<span class="disc-views">${escapeHtml(i.views)}</span>` : ''}</div>
+      <div class="disc-card${i.mediaType === 'note' ? ' note' : ''}">
+        <div class="disc-head"><span class="disc-av" style="background:url('${i.av}') center/cover no-repeat, linear-gradient(135deg,var(--accent),var(--accent-soft))"></span><div><div class="disc-name">${escapeHtml(i.name)}</div><div class="disc-handle">${escapeHtml(subline(i))}</div></div>${headMeta(i) ? `<span class="disc-views">${headMeta(i)}</span>` : ''}</div>
         <div class="disc-text">${escapeHtml(i.text)}</div>
+        ${noteFoot(i)}
+        ${engageBlock(i)}
         <div class="disc-meta">
           <span class="disc-tag">${escapeHtml(i.tag || '')}</span>
           <div class="disc-actions">
+            ${sourceLink(i)}
             <button class="disc-action decode" onclick="openDecoder('${i.id}')" title="See why this post worked">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 1v6M12 17v6M4.22 4.22l4.24 4.24M15.54 15.54l4.24 4.24M1 12h6M17 12h6M4.22 19.78l4.24-4.24M15.54 8.46l4.24-4.24"/></svg>
               Decode
