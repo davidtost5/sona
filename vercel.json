@@ -46,6 +46,10 @@
       "destination": "/api/health.js"
     },
     {
+      "source": "/api/resolve",
+      "destination": "/api/resolve.js"
+    },
+    {
       "source": "/app",
       "destination": "/app.html"
     }

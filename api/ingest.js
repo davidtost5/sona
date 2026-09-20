@@ -7,27 +7,37 @@
 //               https://www.youtube.com/feeds/videos.xml?channel_id=UC...
 //
 //   Substack  the archive JSON every publication exposes. Carries
-//             reaction_count, restacks and comment_count.
+//             reaction_count, restacks, comment_count and wordcount.
 //               https://<pub>.substack.com/api/v1/archive?sort=new
 //
 //             Note the RSS feed is NOT usable here: it has no engagement data
 //             at all, so there is nothing to compute a multiple from. The words
 //             "like" and "restack" appear in it only as button labels.
 //
-// Both score a post against its own author's median rather than an absolute
-// number, because an outlier is only meaningful relative to a baseline. 10x a
-// channel's median is a real outlier; a big raw number is just a big account.
+//   Notes     the same publication's short posts, from the public reader feed.
+//               https://substack.com/api/v1/reader/feed/profile/<user_id>
 //
-//   GET  ?handles=@a,@b&substacks=x,y   → preview, writes nothing
-//   POST same + x-admin-key             → writes
-//   GET  with a Vercel Cron bearer      → writes (the daily run)
+//             Articles and notes are two different games — a note is the bare
+//             hook with nothing to hide behind — so they are collected
+//             separately and each scored against its own kind.
+//
+// All three score a post against its own author's median rather than an
+// absolute number, because an outlier is only meaningful relative to a
+// baseline. 10x a channel's median is a real outlier; a big raw number is just
+// a big account.
+//
+//   GET  ?handles=@a,@b&substacks=x,y&notes=x,y  → preview, writes nothing
+//   POST same + x-admin-key                      → writes
+//   GET  with a Vercel Cron bearer                → writes (the daily run)
 //
 // Env: ADMIN_KEY gates manual writes, CRON_SECRET the scheduled one,
-// INGEST_HANDLES / INGEST_SUBSTACKS configure the daily run.
+// INGEST_HANDLES / INGEST_SUBSTACKS / INGEST_SUBSTACK_NOTES configure the
+// daily run.
 
 import { supabase } from './_supabase.js';
 
 const RSS = 'https://www.youtube.com/feeds/videos.xml?channel_id=';
+const SUBSTACK_API = 'https://substack.com/api/v1';
 const UA = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120 Safari/537.36';
 const FETCH_TIMEOUT_MS = 9000;
 
@@ -40,6 +50,15 @@ async function get(url) {
     return await res.text();
   } finally {
     clearTimeout(timer);
+  }
+}
+
+async function getJson(url) {
+  const body = await get(url);
+  try {
+    return JSON.parse(body);
+  } catch {
+    throw new Error(`Expected JSON from ${url.slice(0, 60)}, got ${body.slice(0, 40)}`);
   }
 }
 
@@ -104,6 +123,25 @@ function slug(s) {
   return String(s).toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_|_$/g, '').slice(0, 40);
 }
 
+// Substack prints a read time on every post in its own app, and readers use it
+// to decide whether to open something. The API does not carry that string, but
+// it does carry wordcount, and 250 wpm reproduces what Substack shows on five
+// of the six posts checked against a live publication — the sixth reads one
+// minute longer there, because embedded media counts toward their estimate and
+// not toward the word count.
+function readTime(words) {
+  const w = Number(words) || 0;
+  if (w <= 0) return null;
+  return `${Math.max(1, Math.ceil(w / 250))} min read`;
+}
+
+// Notes carry line breaks and no title, so the whole body is the post. Long
+// ones are capped: a feed card is a reason to open the original, not a reader.
+function noteText(body) {
+  const clean = String(body || '').replace(/\n{3,}/g, '\n\n').trim();
+  return clean.length > 700 ? `${clean.slice(0, 697).trimEnd()}…` : clean;
+}
+
 // Channel → the Discover category it belongs in. Unknown channels default to
 // creators rather than being dropped, so a new handle still ingests.
 function categorise(author) {
@@ -140,6 +178,7 @@ async function collect(handle, minMultiple) {
       duration: null,        // not in the RSS feed; left null rather than faked
       likes: e.ratings ? compact(e.ratings) : null,
       reposts: null,
+      posted_at: e.published || null,
       position: idx,
     }));
 
@@ -152,13 +191,18 @@ async function collect(handle, minMultiple) {
 async function collectSubstack(pub, minMultiple) {
   const name = String(pub).trim().replace(/^@/, '').replace(/\.substack\.com$/, '');
   const url = `https://${encodeURIComponent(name)}.substack.com/api/v1/archive?sort=new&limit=24`;
-  const posts = JSON.parse(await get(url));
+  const posts = await getJson(url);
   if (!Array.isArray(posts) || !posts.length) {
     return { handle: '@' + name, author: name, baseline: 0, considered: 0, rows: [] };
   }
 
   const byline = (posts[0].publishedBylines || [])[0] || {};
   const author = byline.name || name;
+  // The publication is a separate identity from the writer — "Stijn Noorman"
+  // publishes "The Stoic Solopreneur" — and Substack shows both, so both are
+  // kept instead of collapsing them into a handle.
+  const publication =
+    ((byline.publicationUsers || []).find((u) => u.publication) || {}).publication?.name || null;
   const baseline = median(posts.map((p) => p.reaction_count || 0));
 
   const rows = posts
@@ -181,10 +225,132 @@ async function collectSubstack(pub, minMultiple) {
       duration: null,
       likes: compact(p.reaction_count || 0),
       reposts: p.restacks ? compact(p.restacks) : null,
+      comments: p.comment_count ? compact(p.comment_count) : null,
+      read_time: readTime(p.wordcount),
+      // unavatar.io guesses an avatar from an X handle, which is wrong for a
+      // writer who only publishes on Substack. The byline carries the real one.
+      avatar_url: byline.photo_url || null,
+      publication,
+      posted_at: p.post_date || null,
       position: idx,
     }));
 
-  return { handle: '@' + name, author, baseline, considered: posts.length, rows };
+  return { handle: '@' + name, author, publication, baseline, considered: posts.length, rows };
+}
+
+// Substack Notes — the short posts, scored exactly like the articles but
+// against other notes, since a note that beats a 3,000-word essay on likes has
+// not beaten anything comparable.
+//
+// The reader feed is public and needs no key, but it is keyed by numeric user
+// id rather than handle, which the public profile endpoint resolves.
+const MIN_NOTES = 6;
+
+async function collectSubstackNotes(handleRaw, minMultiple) {
+  const handle = String(handleRaw).trim().replace(/^@/, '').replace(/\.substack\.com$/, '');
+  const profile = await getJson(
+    `${SUBSTACK_API}/user/${encodeURIComponent(handle)}/public_profile`
+  );
+  if (!profile || !profile.id) throw new Error(`No Substack profile for @${handle}`);
+
+  const feed = await getJson(
+    `${SUBSTACK_API}/reader/feed/profile/${profile.id}?types%5B%5D=note&limit=24`
+  );
+
+  // A profile feed also carries the notes this person restacked from somebody
+  // else. Those are not their posts and must not be scored as theirs.
+  const notes = (feed.items || [])
+    .map((item) => item.comment)
+    .filter((c) => c && c.body && c.user_id === profile.id);
+
+  const author = profile.name || handle;
+  const publication =
+    (profile.primaryPublication && profile.primaryPublication.name) ||
+    ((profile.publicationUsers || []).find((u) => u.publication) || {}).publication?.name ||
+    null;
+
+  // Six is the floor for a baseline. With two or three notes the median is
+  // effectively one of the posts being scored, so everything lands near 1.0×
+  // and the feed fills with posts that did not actually break out.
+  if (notes.length < MIN_NOTES) {
+    return {
+      handle: `@${handle}`, author, publication, baseline: 0, considered: notes.length, rows: [],
+      note: `Only ${notes.length} notes — need ${MIN_NOTES} for a baseline`,
+    };
+  }
+
+  const baseline = median(notes.map((c) => c.reaction_count || 0));
+
+  const rows = notes
+    .map((c) => ({ c, multiple: baseline ? (c.reaction_count || 0) / baseline : 0 }))
+    .filter(({ c, multiple }) => multiple >= minMultiple && (c.reaction_count || 0) > 0)
+    .sort((a, b) => b.multiple - a.multiple)
+    .map(({ c, multiple }, idx) => ({
+      id: `note_${slug(handle)}_${c.id}`,
+      cat: 'writers',
+      creator_name: c.name || author,
+      handle: `@${handle} · Substack`,
+      avatar_handle: handle,
+      text: noteText(c.body),
+      outlier_tag: `${multiple.toFixed(1)}× outlier`,
+      views: `${compact(c.reaction_count || 0)} likes`,
+      source_url: `https://substack.com/@${handle}/note/c-${c.id}`,
+      // 'note' rather than 'image': a note is text that is meant to be read as
+      // written, line breaks and all, so the app renders it as a quote card.
+      media_type: 'note',
+      thumb_url: null,
+      duration: null,
+      likes: compact(c.reaction_count || 0),
+      reposts: c.restacks ? compact(c.restacks) : null,
+      comments: c.children_count ? compact(c.children_count) : null,
+      read_time: null,
+      avatar_url: c.photo_url || profile.photo_url || null,
+      publication: (c.user_primary_publication && c.user_primary_publication.name) || publication,
+      posted_at: c.date || null,
+      position: idx,
+    }));
+
+  return { handle: `@${handle}`, author, publication, baseline, considered: notes.length, rows };
+}
+
+// Columns added by migration-outliers-substack.sql. Two things depend on this
+// list, and both are failure modes that were easy to hit:
+//
+//   PostgREST rejects a bulk insert outright when the objects do not all carry
+//   the same keys, so a YouTube row with no read time next to a Substack row
+//   with one fails the whole batch. Every row is padded to the same shape.
+//
+//   A deploy that lands before the migration runs would otherwise fail on the
+//   unknown column and write nothing at all — including the YouTube rows that
+//   have nothing to do with the new fields. In that case the write is retried
+//   without them, and the response says the migration is outstanding.
+const SUBSTACK_COLUMNS = ['comments', 'read_time', 'avatar_url', 'publication', 'posted_at'];
+const ROW_COLUMNS = [
+  'id', 'cat', 'creator_name', 'handle', 'avatar_handle', 'text', 'outlier_tag', 'views',
+  'source_url', 'media_type', 'thumb_url', 'duration', 'likes', 'reposts', 'position',
+  ...SUBSTACK_COLUMNS,
+];
+
+function normaliseRow(row) {
+  const out = {};
+  for (const key of ROW_COLUMNS) out[key] = row[key] === undefined ? null : row[key];
+  return out;
+}
+
+async function upsertOutliers(rows) {
+  const { error } = await supabase.from('outliers').upsert(rows, { onConflict: 'id' });
+  if (!error) return { error: null, missingColumns: null };
+
+  const missing = SUBSTACK_COLUMNS.filter((c) => error.message.includes(c));
+  if (!missing.length) return { error, missingColumns: null };
+
+  const trimmed = rows.map((row) => {
+    const copy = { ...row };
+    for (const column of SUBSTACK_COLUMNS) delete copy[column];
+    return copy;
+  });
+  const retry = await supabase.from('outliers').upsert(trimmed, { onConflict: 'id' });
+  return { error: retry.error, missingColumns: SUBSTACK_COLUMNS };
 }
 
 export default async function handler(req, res) {
@@ -216,13 +382,29 @@ export default async function handler(req, res) {
   // lennysnewsletter and thebrowser (no archive JSON), every / stratechery /
   // creatorscience (1-2 posts, so the median is the post itself and every
   // multiple comes out 1.0x — a baseline of one is not a baseline).
-  const DEFAULT_SUBSTACKS = 'thedankoe,oneusefulthing,platformer,noahpinion,astralcodexten,thegeneralist';
+  const DEFAULT_SUBSTACKS =
+    'thedankoe,oneusefulthing,platformer,noahpinion,astralcodexten,thegeneralist,garyvee,sahilbloom,dickiebush,stijnnoorman';
   const rawSubs =
     req.query.substacks ||
     (req.body && req.body.substacks) ||
     process.env.INGEST_SUBSTACKS ||
     DEFAULT_SUBSTACKS;
   const substacks = (Array.isArray(rawSubs) ? rawSubs : String(rawSubs).split(','))
+    .map((h) => String(h).trim()).filter(Boolean).slice(0, 20);
+
+  // Notes are keyed by the writer's Substack handle, not the publication
+  // subdomain, and the two are not always the same string — every handle below
+  // was checked against the public profile endpoint and has enough notes to
+  // build a baseline from. oneusefulthing (2 notes), noahpinion (4), garyvee
+  // and davidperell (0) are deliberately absent: they publish articles, which
+  // the archive pass above already covers.
+  const DEFAULT_NOTES = 'thedankoe,platformer,astralcodexten,sahilbloom,dickiebush,stijnnoorman';
+  const rawNotes =
+    req.query.notes ||
+    (req.body && req.body.notes) ||
+    process.env.INGEST_SUBSTACK_NOTES ||
+    DEFAULT_NOTES;
+  const noteHandles = (Array.isArray(rawNotes) ? rawNotes : String(rawNotes).split(','))
     .map((h) => String(h).trim()).filter(Boolean).slice(0, 20);
 
   if (!handles.length) {
@@ -251,6 +433,9 @@ export default async function handler(req, res) {
   const jobs = [
     ...handles.map((h) => ({ label: h, run: () => collect(h, minMultiple) })),
     ...substacks.map((p) => ({ label: p + ' (substack)', run: () => collectSubstack(p, minMultiple) })),
+    ...noteHandles.map((h) => ({
+      label: h + ' (notes)', run: () => collectSubstackNotes(h, minMultiple),
+    })),
   ];
   for (let i = 0; i < jobs.length; i += CONCURRENCY) {
     const batch = jobs.slice(i, i + CONCURRENCY);
@@ -262,7 +447,7 @@ export default async function handler(req, res) {
     });
   }
 
-  const rows = results.flatMap((r) => r.rows);
+  const rows = results.flatMap((r) => r.rows).map(normaliseRow);
 
   // Vercel Cron invokes with GET and an Authorization bearer, not a POST with
   // the admin key, so the daily run is authorised on that instead. Everything
@@ -322,16 +507,34 @@ export default async function handler(req, res) {
     });
   }
 
-  // Replace mode deletes only this endpoint's own rows (id prefix yt_), so a
-  // curated hand-picked feed is never wiped by an ingest run.
+  // Replace mode deletes only this endpoint's own rows (id prefixes yt_, sub_
+  // and note_), so a curated hand-picked feed is never wiped by an ingest run.
   const mode = (req.query.mode || (req.body && req.body.mode) || 'append').toLowerCase();
   if (mode === 'replace') {
-    const { error } = await supabase.from('outliers').delete().or('id.like.yt\\_%,id.like.sub\\_%');
+    const { error } = await supabase
+      .from('outliers')
+      .delete()
+      .or('id.like.yt\\_%,id.like.sub\\_%,id.like.note\\_%');
     if (error) return res.status(500).json({ error: 'Clear failed: ' + error.message });
   }
 
-  const { error } = await supabase.from('outliers').upsert(rows, { onConflict: 'id' });
+  const { error, missingColumns } = await upsertOutliers(rows);
   if (error) return res.status(500).json({ error: 'Write failed: ' + error.message });
 
-  return res.status(200).json({ written: rows.length, mode, minMultiple, failed });
+  if (missingColumns) {
+    console.warn(
+      `[Ingest] Wrote ${rows.length} rows without ${missingColumns.join(', ')} — ` +
+      'run migration-outliers-substack.sql to store read time, comments and publications.'
+    );
+  }
+
+  return res.status(200).json({
+    written: rows.length,
+    mode,
+    minMultiple,
+    failed,
+    ...(missingColumns
+      ? { degraded: `Run migration-outliers-substack.sql — wrote without ${missingColumns.join(', ')}` }
+      : {}),
+  });
 }
