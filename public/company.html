@@ -495,33 +495,6 @@
     transform: translateY(18px);
   }
   [data-reveal].revealed { opacity: 1; transform: translateY(0); }
-
-  /* ─── MOBILE MENU ─── */
-  .mobile-menu-btn {
-    display: none;
-    background: none;
-    border: none;
-    width: 28px;
-    height: 20px;
-    position: relative;
-    cursor: pointer;
-    z-index: 2;
-  }
-  .mobile-menu-btn span {
-    display: block;
-    width: 100%;
-    height: 2px;
-    background: var(--text-dark);
-    border-radius: var(--r-xs);
-    position: absolute;
-    left: 0;
-    transition: transform 0.3s ease, opacity 0.3s ease;
-  }
-  .mobile-menu-btn span:first-child { top: 4px; }
-  .mobile-menu-btn span:last-child { bottom: 4px; }
-  .mobile-menu-btn.open span:first-child { top: 50%; transform: translateY(-50%) rotate(45deg); }
-  .mobile-menu-btn.open span:last-child { bottom: auto; top: 50%; transform: translateY(-50%) rotate(-45deg); }
-
   .mobile-menu {
     display: none;
     position: fixed;
@@ -562,7 +535,6 @@
     nav { padding: 16px 24px; }
     .nav-links { display: none; }
     .nav-right { display: none; }
-    .mobile-menu-btn { display: block; }
     .mobile-menu { display: flex; }
     .page-header { padding: 130px 24px 60px; }
     .page-header h1 { font-size: 40px; }
@@ -574,6 +546,80 @@
     .footer-top { grid-template-columns: 1fr; }
     .footer-main { padding: 48px 24px 0; }
   }
+
+  /* ─── Menu toggle — Transitions.dev icon swap ───
+     One button holding two icons in the same grid cell. Flipping data-state
+     crossfades them: the outgoing icon blurs and scales away while the
+     incoming one resolves, so burger→close reads as one object turning into
+     another rather than two glyphs trading places. */
+  :root {
+    --icon-swap-dur: 250ms;
+    --icon-swap-blur: 2px;
+    --icon-swap-start-scale: 0.25;
+    --icon-swap-ease: ease-in-out;
+  }
+  .t-icon-swap { position: relative; display: inline-grid; }
+  .t-icon-swap .t-icon {
+    grid-area: 1 / 1;
+    transition:
+      opacity   var(--icon-swap-dur) var(--icon-swap-ease),
+      filter    var(--icon-swap-dur) var(--icon-swap-ease),
+      transform var(--icon-swap-dur) var(--icon-swap-ease);
+    will-change: opacity, filter, transform;
+  }
+  .t-icon-swap[data-state="a"] .t-icon[data-icon="a"],
+  .t-icon-swap[data-state="b"] .t-icon[data-icon="b"] {
+    opacity: 1; filter: blur(0); transform: scale(1);
+  }
+  .t-icon-swap[data-state="a"] .t-icon[data-icon="b"],
+  .t-icon-swap[data-state="b"] .t-icon[data-icon="a"] {
+    opacity: 0; filter: blur(var(--icon-swap-blur)); transform: scale(var(--icon-swap-start-scale));
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .t-icon-swap .t-icon { transition: none !important; }
+  }
+
+  /* 44px square — the smallest target a thumb hits reliably. */
+  .menu-toggle {
+    display: none; place-items: center;
+    width: 44px; height: 44px; padding: 0; flex: none;
+    background: var(--surface, var(--light-grey, #e8e5e3));
+    border: 1px solid var(--border-strong, var(--border, #c7c4c1));
+    border-radius: var(--r-md, var(--radius, 8px));
+    color: var(--text, var(--text-dark, #1e1e1e)); cursor: pointer;
+    -webkit-tap-highlight-color: transparent; -webkit-appearance: none; appearance: none;
+    transition: background .2s, border-color .2s;
+  }
+  .menu-toggle:active { background: var(--bg-soft, var(--light-grey, #e2dfdc)); }
+  .menu-toggle:focus-visible { outline: 2px solid var(--accent, var(--olive, #646e39)); outline-offset: 2px; }
+  .menu-toggle .t-icon { display: grid; place-items: center; }
+  .menu-toggle svg { width: 20px; height: 20px; display: block; }
+  /* The open menu owns the scroll; the page behind it must not chain. */
+  .mobile-menu { overscroll-behavior: contain; -webkit-overflow-scrolling: touch; }
+  body.menu-open { overflow: hidden; }
+  @media (max-width: 768px) { .menu-toggle { display: inline-grid; } }
+
+  /* ─── Mobile ─── */
+  /* iOS inflates text on rotate unless told not to. */
+  html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+  /* Long unbreakable tokens — URLs, handles, API paths — must not set the page width. */
+  body { overflow-wrap: break-word; }
+  @media (max-width: 768px) {
+    /* Notch and home-indicator clearance. */
+    nav { padding-left: max(18px, env(safe-area-inset-left)); padding-right: max(18px, env(safe-area-inset-right)); }
+    .mobile-menu { padding-bottom: max(28px, env(safe-area-inset-bottom)); }
+    /* Thumb-sized targets for anything you actually tap. */
+    .mobile-menu a { min-height: 48px; display: flex; align-items: center; }
+    nav a, .nav-cta, .btn { -webkit-tap-highlight-color: transparent; }
+  }
+
+  /* ─── Menu stacking ───
+     The toggle is the only way to close the menu now, so it has to stay above
+     the panel it opens. index had nav:50 / menu:60 and contact nav:100 /
+     menu:150 — in both the panel covered its own close button. */
+  .mobile-menu { z-index: 150; }
+  nav, .nav { z-index: 200; }
+  .menu-toggle { position: relative; z-index: 201; }
 </style>
 </head>
 <body>
@@ -591,12 +637,14 @@
     <a href="contact.html">Contact</a>
     <a href="#" class="btn-primary">Log in</a>
   </div>
-  <button class="mobile-menu-btn" aria-label="Menu">
-    <span></span><span></span>
+  <button class="menu-toggle t-icon-swap" id="menuToggle" data-state="a"
+          aria-label="Open menu" aria-expanded="false" aria-controls="mobileMenu">
+    <span class="t-icon" data-icon="a" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg></span>
+    <span class="t-icon" data-icon="b" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></span>
   </button>
 </nav>
 
-<div class="mobile-menu">
+<div class="mobile-menu" id="mobileMenu">
   <a href="index.html">Home</a>
   <a href="resources.html">Resources</a>
   <a href="company.html">Company</a>
@@ -740,24 +788,30 @@
 </footer>
 
 <script>
-  // ─── Mobile menu ───
-  const menuBtn = document.querySelector('.mobile-menu-btn');
-  const mobileMenu = document.querySelector('.mobile-menu');
-  if (menuBtn && mobileMenu) {
-    menuBtn.addEventListener('click', () => {
-      const opening = !mobileMenu.classList.contains('open');
-      menuBtn.classList.toggle('open', opening);
-      mobileMenu.classList.toggle('open', opening);
-      document.body.style.overflow = opening ? 'hidden' : '';
+  /* ── Menu toggle: one button, data-state drives the icon swap ── */
+  (function(){
+    var btn = document.getElementById('menuToggle');
+    var menu = document.getElementById('mobileMenu');
+    if (!btn || !menu) return;
+    function setOpen(open){
+      btn.dataset.state = open ? 'b' : 'a';
+      btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+      btn.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+      menu.classList.toggle('open', open);
+      document.body.classList.toggle('menu-open', open);
+    }
+    btn.addEventListener('click', function(){ setOpen(btn.dataset.state === 'a'); });
+    menu.querySelectorAll('a').forEach(function(a){
+      a.addEventListener('click', function(){ setOpen(false); });
     });
-    mobileMenu.querySelectorAll('a').forEach(link => {
-      link.addEventListener('click', () => {
-        menuBtn.classList.remove('open');
-        mobileMenu.classList.remove('open');
-        document.body.style.overflow = '';
-      });
+    document.addEventListener('keydown', function(e){
+      if (e.key === 'Escape' && btn.dataset.state === 'b') { setOpen(false); btn.focus(); }
     });
-  }
+    /* Growing past the breakpoint mid-session must not leave the body locked. */
+    matchMedia('(min-width: 769px)').addEventListener('change', function(e){
+      if (e.matches) setOpen(false);
+    });
+  })();
 
   // ─── Scroll reveal ───
   const revealObserver = new IntersectionObserver((entries) => {
@@ -817,6 +871,8 @@
     }
     lastScrollY = current;
   }, { passive: true });
+</script>
+
 <script src="data.js" defer></script>
 <script>
   // Lazy load Sona Auth & Supabase

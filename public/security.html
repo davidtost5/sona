@@ -72,6 +72,20 @@
     nav { padding: 15px 18px; }
     main { padding: 48px 20px 64px; }
   }
+
+  /* ─── Mobile ─── */
+  /* iOS inflates text on rotate unless told not to. */
+  html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+  /* Long unbreakable tokens — URLs, handles, API paths — must not set the page width. */
+  body { overflow-wrap: break-word; }
+  @media (max-width: 768px) {
+    /* Notch and home-indicator clearance. */
+    nav { padding-left: max(18px, env(safe-area-inset-left)); padding-right: max(18px, env(safe-area-inset-right)); }
+    .mobile-menu { padding-bottom: max(28px, env(safe-area-inset-bottom)); }
+    /* Thumb-sized targets for anything you actually tap. */
+    .mobile-menu a { min-height: 48px; display: flex; align-items: center; }
+    nav a, .nav-cta, .btn { -webkit-tap-highlight-color: transparent; }
+  }
 </style>
 </head>
 <body>
