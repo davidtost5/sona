@@ -40,7 +40,7 @@ const RSS = 'https://www.youtube.com/feeds/videos.xml?channel_id=';
 // inside the deployment's network that answers HTTP.
 const BLOCKED_HOSTS = new Set(['localhost', 'localhost.localdomain', 'metadata.google.internal']);
 
-function isPrivateAddress(address) {
+export function isPrivateAddress(address) {
   if (net.isIPv4(address)) {
     const [a, b] = address.split('.').map(Number);
     if (a === 10 || a === 127 || a === 0) return true;
@@ -151,7 +151,7 @@ function categorise(author) {
 
 // ─── YouTube ───
 
-function youtubeId(url) {
+export function youtubeId(url) {
   const host = url.hostname.replace(/^www\.|^m\./, '');
   if (host === 'youtu.be') return url.pathname.slice(1).split('/')[0] || null;
   if (host !== 'youtube.com' && host !== 'music.youtube.com') return null;
@@ -231,12 +231,12 @@ async function resolveYouTube(videoId) {
 
 // ─── Substack ───
 
-function substackPostSlug(url) {
+export function substackPostSlug(url) {
   const m = url.pathname.match(/^\/p\/([^/?#]+)/);
   return m ? m[1] : null;
 }
 
-function substackNoteId(url) {
+export function substackNoteId(url) {
   const m = url.pathname.match(/\/note\/c-(\d+)/);
   return m ? m[1] : null;
 }

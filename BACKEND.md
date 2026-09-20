@@ -61,8 +61,25 @@ don't change — they already call `CanopyData`.
 
 | Cron | What it does |
 |------|--------------|
-| `/api/ingest` at 06:00 UTC | Pulls fresh outliers from YouTube RSS and Substack archives into the `outliers` table. |
+| `/api/ingest` at 06:00 UTC | Pulls fresh outliers into the `outliers` table from YouTube RSS, Substack archives, and Substack notes. |
 | `/api/health` at 18:00 UTC | One cheap read, plus a status report. Exists so the database is never idle for a week. |
+
+The ingest reads three public sources, none of which needs a key or has a quota.
+Each post is scored against its own author's median — YouTube on views, Substack
+articles and notes on likes, notes against other notes — so the multiple means
+something regardless of audience size.
+
+| Env | Default | What it lists |
+|-----|---------|---------------|
+| `INGEST_HANDLES` | 15 channels | YouTube handles or channel ids. |
+| `INGEST_SUBSTACKS` | 10 publications | Publication subdomains (`garyvee` → `garyvee.substack.com`). |
+| `INGEST_SUBSTACK_NOTES` | 6 writers | Substack **user** handles, which are not always the publication subdomain. A writer needs at least six recent notes, or there is no baseline to score against. |
+
+Run **`migration-outliers-substack.sql`** once for the columns the Substack rows
+use (`read_time`, `comments`, `publication`, `avatar_url`, `posted_at`, and
+`media_type = 'note'`). Until it runs the ingest still writes: it drops those
+fields, stores notes as plain text cards, and says so in its response
+(`degraded: …`) rather than failing the batch and losing the YouTube rows too.
 
 **`CRON_SECRET` is required, not optional.** Vercel only sends an
 `Authorization: Bearer <CRON_SECRET>` header once you have created that variable
@@ -100,6 +117,35 @@ Note that a Vercel Hobby project allows **two** cron jobs, once per day each, so
 these two fill the quota. A paid Supabase plan removes the pausing behaviour
 altogether and makes the health cron a monitor rather than a necessity.
 
+## Resolving a link somebody sends you
+
+`/api/resolve` is the other direction from the cron: instead of watching a fixed
+list of creators, it takes one link and fetches the post behind it. No key, no
+write — resolving is a read.
+
+```bash
+curl 'https://buildwithsona.com/api/resolve?url=https://youtu.be/8-q3ClOYoyA'
+# → { ok: true, source: 'youtube',
+#     row: { creator_name: 'Eden', text: 'My Entire Social Media Strategy…',
+#            views: '44K views', outlier_tag: '1.8× outlier', likes: '1.6K',
+#            source_url: 'https://www.youtube.com/watch?v=8-q3ClOYoyA', … } }
+```
+
+| Link | Where the numbers come from |
+|------|----------------------------|
+| YouTube video | oEmbed for the title and channel, the channel's RSS feed for views and the median. |
+| Substack post (`/p/<slug>`) | `/api/v1/posts/<slug>` on the publication's own host, plus its archive for the median. Custom domains work. |
+| Substack note (`/@handle/note/c-<id>`) | `/api/v1/reader/comment/<id>`, plus that writer's note feed for the median. |
+
+The answer is a row in exactly the shape the `outliers` table uses, so `/app`
+drops it straight into Discover and decodes it. A link with no numbers to score
+(an older video that has fallen out of the RSS window) comes back without an
+outlier tag rather than with a made-up `1.0×`.
+
+Because the endpoint fetches a URL a stranger chose, it refuses IP literals,
+anything that resolves into a private range, and any host reached over plain
+HTTP, and it is rate limited per IP.
+
 ## Files
 
 | File | Role |
@@ -109,7 +155,8 @@ altogether and makes the health cron a monitor rather than a necessity.
 | `api/waitlist.js` | Serverless endpoint for signups (used in `api` mode). |
 | `api/contact.js` | Serverless endpoint for messages. |
 | `api/_supabase.js` | Shared Supabase client + SQL schema docs. |
-| `api/ingest.js` | Daily outlier ingest (YouTube RSS + Substack archives). |
+| `api/ingest.js` | Daily outlier ingest (YouTube RSS + Substack archives + Substack notes). |
+| `api/resolve.js` | Turns one pasted link into the real post behind it. |
 | `api/health.js` | Status probe and the daily keepalive that stops the database being paused. |
 
 ## What's still needed for a *full product app*

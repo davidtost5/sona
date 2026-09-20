@@ -25,6 +25,8 @@
 | 🔌 **MCP server** | `api/mcp.js` — a Streamable-HTTP MCP endpoint. Point Claude (or any MCP client) at it and search the outlier corpus, fetch a post, or decode one, from inside a chat |
 | 🧠 **Outlier decoder** | `api/decode.js` — breaks a breakout post into its mechanism: hook, tension, payoff, reusable template. Cached by content hash so a given post is paid for once, ever, across all users |
 | 🧩 **Pattern library** | `api/patterns.js` — aggregates every decode by mechanism, so recurring hooks surface on their own instead of being read once and forgotten |
+| 🔗 **Link resolver** | `api/resolve.js` — paste a YouTube video, a Substack post or a Substack note and Sona fetches the real post: its numbers, its author, and how far it beat that author's own median |
+| 📬 **Daily ingest** | `api/ingest.js` — YouTube RSS plus Substack archives and notes, each scored against its own baseline. No API keys, no quotas |
 | ⚙️ **Serverless APIs** | `api/*.js` — waitlist (+ welcome email), contact, checkout, outliers curation, auth-config, founding-count |
 | 🗄️ **Database schema** | `schema.sql` — Supabase tables + Row-Level-Security policies |
 | 🚀 **Deploy** | Vercel (`vercel.json`) — auto-routes for serverless functions + clean URLs |

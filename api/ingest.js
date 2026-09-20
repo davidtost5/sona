@@ -129,7 +129,7 @@ function slug(s) {
 // of the six posts checked against a live publication — the sixth reads one
 // minute longer there, because embedded media counts toward their estimate and
 // not toward the word count.
-function readTime(words) {
+export function readTime(words) {
   const w = Number(words) || 0;
   if (w <= 0) return null;
   return `${Math.max(1, Math.ceil(w / 250))} min read`;
@@ -137,7 +137,7 @@ function readTime(words) {
 
 // Notes carry line breaks and no title, so the whole body is the post. Long
 // ones are capped: a feed card is a reason to open the original, not a reader.
-function noteText(body) {
+export function noteText(body) {
   const clean = String(body || '').replace(/\n{3,}/g, '\n\n').trim();
   return clean.length > 700 ? `${clean.slice(0, 697).trimEnd()}…` : clean;
 }
@@ -331,26 +331,45 @@ const ROW_COLUMNS = [
   ...SUBSTACK_COLUMNS,
 ];
 
-function normaliseRow(row) {
+export function normaliseRow(row) {
   const out = {};
   for (const key of ROW_COLUMNS) out[key] = row[key] === undefined ? null : row[key];
   return out;
 }
 
+// Writes, giving up one thing at a time when the schema has not caught up.
+// Each fallback is narrower than failing the batch, which would also take down
+// the YouTube rows that have nothing to do with the new fields.
 async function upsertOutliers(rows) {
-  const { error } = await supabase.from('outliers').upsert(rows, { onConflict: 'id' });
-  if (!error) return { error: null, missingColumns: null };
+  const gaveUp = [];
+  let payload = rows;
 
-  const missing = SUBSTACK_COLUMNS.filter((c) => error.message.includes(c));
-  if (!missing.length) return { error, missingColumns: null };
+  for (let attempt = 0; attempt < 3; attempt += 1) {
+    const { error } = await supabase.from('outliers').upsert(payload, { onConflict: 'id' });
+    if (!error) return { error: null, gaveUp };
 
-  const trimmed = rows.map((row) => {
-    const copy = { ...row };
-    for (const column of SUBSTACK_COLUMNS) delete copy[column];
-    return copy;
-  });
-  const retry = await supabase.from('outliers').upsert(trimmed, { onConflict: 'id' });
-  return { error: retry.error, missingColumns: SUBSTACK_COLUMNS };
+    if (SUBSTACK_COLUMNS.some((column) => error.message.includes(column))) {
+      payload = payload.map((row) => {
+        const copy = { ...row };
+        for (const column of SUBSTACK_COLUMNS) delete copy[column];
+        return copy;
+      });
+      gaveUp.push(`read time, comments, publication, avatar and post date (columns missing)`);
+      continue;
+    }
+
+    // The original media_type constraint allows only 'image' and 'video'.
+    if (error.message.includes('outliers_media_type_check')) {
+      payload = payload.map((row) =>
+        row.media_type === 'note' ? { ...row, media_type: null } : row);
+      gaveUp.push('the note card shape (media_type check does not allow \'note\' yet)');
+      continue;
+    }
+
+    return { error, gaveUp };
+  }
+
+  return { error: new Error('Write still failed after dropping the new columns'), gaveUp };
 }
 
 export default async function handler(req, res) {
@@ -518,13 +537,13 @@ export default async function handler(req, res) {
     if (error) return res.status(500).json({ error: 'Clear failed: ' + error.message });
   }
 
-  const { error, missingColumns } = await upsertOutliers(rows);
+  const { error, gaveUp } = await upsertOutliers(rows);
   if (error) return res.status(500).json({ error: 'Write failed: ' + error.message });
 
-  if (missingColumns) {
+  if (gaveUp.length) {
     console.warn(
-      `[Ingest] Wrote ${rows.length} rows without ${missingColumns.join(', ')} — ` +
-      'run migration-outliers-substack.sql to store read time, comments and publications.'
+      `[Ingest] Wrote ${rows.length} rows but gave up ${gaveUp.join('; ')} — ` +
+      'run migration-outliers-substack.sql.'
     );
   }
 
@@ -533,8 +552,8 @@ export default async function handler(req, res) {
     mode,
     minMultiple,
     failed,
-    ...(missingColumns
-      ? { degraded: `Run migration-outliers-substack.sql — wrote without ${missingColumns.join(', ')}` }
+    ...(gaveUp.length
+      ? { degraded: `Run migration-outliers-substack.sql — wrote without ${gaveUp.join('; ')}` }
       : {}),
   });
 }

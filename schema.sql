@@ -242,11 +242,16 @@ create table if not exists outliers (
   outlier_tag text,                    -- '12× outlier'
   views text,                          -- '1.2M views'
   source_url text,
-  media_type text,                     -- null | 'image' | 'video'  (null = text post)
+  media_type text,                     -- null | 'image' | 'video' | 'note'  (null = text post)
   thumb_url text,                      -- preview image for image/video posts
   duration text,                       -- '10:38' for video
   likes text,                          -- '101K'  — as captured, not computed
   reposts text,                        -- '17K'
+  comments text,                       -- '67' replies
+  read_time text,                      -- '7 min read' (Substack articles)
+  avatar_url text,                     -- real author photo when the source has one
+  publication text,                    -- 'Underpriced Actions' — the publication, not the writer
+  posted_at timestamptz,               -- when the post went out
   position int default 0,              -- display order (lower first)
   captured_at timestamptz default now()
 );
@@ -259,7 +264,22 @@ alter table outliers add column if not exists duration text;
 alter table outliers add column if not exists likes text;
 alter table outliers add column if not exists reposts text;
 
+-- Substack columns, added with the notes ingest. See
+-- migration-outliers-substack.sql, which an existing database should run.
+alter table outliers add column if not exists comments text;
+alter table outliers add column if not exists read_time text;
+alter table outliers add column if not exists avatar_url text;
+alter table outliers add column if not exists publication text;
+alter table outliers add column if not exists posted_at timestamptz;
+
+-- Only these shapes should ever reach the card renderer. 'note' is a Substack
+-- note: no title, no cover, the text is the post.
+alter table outliers drop constraint if exists outliers_media_type_check;
+alter table outliers add  constraint outliers_media_type_check
+  check (media_type is null or media_type in ('image', 'video', 'note'));
+
 create index if not exists outliers_position_idx on outliers (position, captured_at desc);
+create index if not exists outliers_posted_at_idx on outliers (posted_at desc);
 
 alter table outliers enable row level security;
 drop policy if exists "anyone can read outliers" on outliers;
