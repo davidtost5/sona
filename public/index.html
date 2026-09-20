@@ -181,8 +181,10 @@
   .card-top .h { font-size:11px; color:var(--text-dim); font-family:'Geist Mono',monospace; }
   .card-top .plat { margin-left:auto; width:15px; height:15px; color:var(--text-dim); }
   .card p { font-size:13.5px; color:var(--text); line-height:1.5; }
-  .card-foot { margin-top:auto; display:flex; align-items:center; gap:12px; padding-top:4px; }
-  .card-foot .eng { font-size:11.5px; color:var(--text-dim); font-family:'Geist Mono',monospace; }
+  /* Wraps instead of squeezing: a Substack card carries a read time, likes,
+     replies and a link, which is more than a narrow column fits in one line. */
+  .card-foot { margin-top:auto; display:flex; align-items:center; gap:10px; row-gap:6px; padding-top:4px; flex-wrap:wrap; }
+  .card-foot .eng { font-size:11.5px; color:var(--text-dim); font-family:'Geist Mono',monospace; white-space:nowrap; }
   .mult { margin-left:auto; font-family:'Geist Mono',monospace; font-size:12px; font-weight:600; color:var(--accent); background:var(--accent-soft); padding:3px 8px; border-radius:6px; }
   /* Video card — real thumbnail image, Eden-style (title + creator below) */
   .card.vid { padding:0; overflow:hidden; }
@@ -206,6 +208,15 @@
   .vby { display:flex; align-items:center; gap:8px; font-size:12px; color:var(--text-mid); }
   .vby .av { width:22px; height:22px; font-size:9px; }
   .vby .plat { width:13px; height:13px; margin-left:auto; color:var(--text-dim); }
+  /* Substack note — no title, no cover, so the card is the words plus a rule
+     and the writer's signature, the way Substack presents one. */
+  .note-foot { display:flex; align-items:center; justify-content:space-between; gap:10px;
+    padding-top:10px; border-top:1px solid var(--border); font-family:'Geist Mono',monospace;
+    font-size:9.5px; letter-spacing:.06em; text-transform:uppercase; color:var(--text-dim); }
+  .card.note p { font-size:14px; }
+  .card-src { font-family:'Geist Mono',monospace; font-size:11px; color:var(--text-dim);
+    text-decoration:none; white-space:nowrap; border-bottom:1px solid transparent; transition:color .15s, border-color .15s; }
+  .card-src:hover { color:var(--accent); border-bottom-color:currentColor; }
 
   /* ── App shell (Eden-style dashboard mock) ── */
   /* Tall enough for the sidebar's full nav plus the account row; below this the
@@ -427,6 +438,10 @@
     .log-row { grid-template-columns:1fr; gap:6px; }
   }
   @media (max-width:560px) {
+    /* Brand, Sign in, Start free and the burger do not fit on a phone: the
+       Sign in link ended up on top of the logo. The mobile menu carries its
+       own Sign in, so the inline one goes. */
+    .nav-actions .signin { display:none; }
     .grid { grid-template-columns:1fr; }
     .fgrid { grid-template-columns:1fr; }
     .foot-top { grid-template-columns:1fr; }
@@ -585,7 +600,7 @@
         <a class="btn btn-ghost" href="#" onclick="event.preventDefault(); SonaAuth.openSignup();">Search the outliers <span class="arr">→</span></a>
       </div>
       <div class="frame" data-r>
-        <div class="frame-bar"><i></i><i></i><i></i><span class="frame-url mono">Discover · Founders</span></div>
+        <div class="frame-bar"><i></i><i></i><i></i><span class="frame-url mono">Discover · All platforms</span></div>
         <div class="grid" id="discGrid" style="grid-template-columns:repeat(2,1fr);"></div>
       </div>
     </div>
@@ -892,13 +907,25 @@
       eng:['1.9M views'], mult:'3×' },
     { video:true, ini:'MG', name:'Matt Gray', plat:'yt',
       title:'Build a Personal Brand in 30 Days', dur:'19:18',
-      img:IMG+'1499750310107-5fef28a66643'+THUMB, grad:'linear-gradient(135deg,#e8590c,#a23408)', badge:'Top 1%', eng:'390K views', mult:'76×' }
+      img:IMG+'1499750310107-5fef28a66643'+THUMB, grad:'linear-gradient(135deg,#e8590c,#a23408)', badge:'Top 1%', eng:'390K views', mult:'76×' },
+    // Substack, both of the shapes it publishes in, with the numbers each post
+    // actually has — /api/ingest reads them from the public archive and reader
+    // feed, and the links go to the posts themselves.
+    { note:true, ini:'DK', name:'DAN KOE', pub:'future/proof', handle:'@thedankoe', plat:'sub',
+      text:'The fastest way to become articulate on a topic is to write until you\u2019re no longer confused.',
+      date:'22 Aug', eng:['\u2661 13K','\u21c4 919','\u25cb 231'], mult:'6.2×',
+      url:'https://substack.com/@thedankoe/note/c-319246856' },
+    { ini:'GV', name:'Gary Vaynerchuk', pub:'Underpriced Actions', handle:'@garyvee', plat:'sub',
+      text:'The New Rules of Social Media (2026) — Brand is the only defensible asset left. Here\u2019s how to build it.',
+      read:'7 min read', eng:['\u2661 684','\u25cb 67'], mult:'10.5×',
+      url:'https://garyvee.substack.com/p/the-new-rules-of-social-media-2026' }
   ];
 
   var PLAT = {
     x:'<path d="M18.9 2H22l-7 8 8.2 12h-6.4l-5-7.3L5.9 22H2.8l7.5-8.6L2.4 2h6.6l4.5 6.6L18.9 2Z"/>',
     in:'<path d="M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5ZM3 9h4v12H3V9Zm7 0h3.8v1.7h.05c.53-1 1.83-2.05 3.77-2.05C21.4 8.65 22 10.9 22 14v7h-4v-6.2c0-1.5-.03-3.4-2.08-3.4-2.08 0-2.4 1.62-2.4 3.3V21h-4V9Z"/>',
-    yt:'<path d="M23 12s0-3.4-.4-5c-.3-1-1-1.8-2-2C18.7 4.5 12 4.5 12 4.5s-6.7 0-8.6.5c-1 .2-1.7 1-2 2C1 8.6 1 12 1 12s0 3.4.4 5c.3 1 1 1.8 2 2 1.9.5 8.6.5 8.6.5s6.7 0 8.6-.5c1-.2 1.7-1 2-2 .4-1.6.4-5 .4-5Z"/>'
+    yt:'<path d="M23 12s0-3.4-.4-5c-.3-1-1-1.8-2-2C18.7 4.5 12 4.5 12 4.5s-6.7 0-8.6.5c-1 .2-1.7 1-2 2C1 8.6 1 12 1 12s0 3.4.4 5c.3 1 1 1.8 2 2 1.9.5 8.6.5 8.6.5s6.7 0 8.6-.5c1-.2 1.7-1 2-2 .4-1.6.4-5 .4-5Z"/>',
+    sub:'<path d="M4 3h16v2.5H4V3Zm0 4.5h16V10H4V7.5ZM4 12.5 12 17l8-4.5V21l-8-4.5L4 21v-8.5Z"/>'
   };
 
   function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
@@ -921,20 +948,40 @@
         + '</div>'
         + '</article>';
     }
-    var eng = p.eng.map(function(e){ return '<span class="eng mono">'+e+'</span>'; }).join('');
-    return '<article class="card">'
+    // Substack leads its metadata line with the read time, then the likes and
+    // the replies — same order here, in the same row.
+    var eng = (p.read ? [p.read] : []).concat(p.eng)
+      .map(function(e){ return '<span class="eng mono">'+e+'</span>'; }).join('');
+    // A post you cannot go and read is a screenshot. Every card that has a real
+    // post behind it links to it.
+    var src = p.url
+      ? '<a class="card-src" href="'+esc(p.url)+'" target="_blank" rel="noopener noreferrer">Open \u2197</a>'
+      : '';
+    // Substack names the writer and the publication separately, and prints the
+    // read time on an article and the date on a note.
+    var second = p.pub ? p.pub : p.handle;
+    return '<article class="card'+(p.note ? ' note' : '')+'">'
       + '<div class="card-top"><span class="av">'+p.ini+'</span>'
-      + '<div><b>'+esc(p.name)+'</b><span class="h mono">'+esc(p.handle)+'</span></div>'
+      + '<div><b>'+esc(p.name)+'</b><span class="h mono">'+esc(second)+'</span></div>'
       + '<svg class="plat" viewBox="0 0 24 24" fill="currentColor">'+(PLAT[p.plat]||'')+'</svg></div>'
       + '<p>'+esc(p.text)+'</p>'
-      + '<div class="card-foot">'+eng+'<span class="mult mono">'+p.mult+'</span></div>'
+      + (p.note
+          ? '<div class="note-foot"><span>'+esc(p.date)+'</span><span>substack.com/'+esc(p.handle)+'</span></div>'
+          : '')
+      + '<div class="card-foot">'+eng+src+'<span class="mult mono">'+p.mult+'</span></div>'
       + '</article>';
   }
 
   var heroGrid = document.getElementById('heroGrid');
   if (heroGrid) heroGrid.innerHTML = POSTS.map(cardHTML).join('');
+  // One card per shape the feed handles — a text post, a Substack note, a
+  // Substack essay, a video — rather than the first four in the list, which
+  // were three text posts and left Substack out of the section entirely.
   var discGrid = document.getElementById('discGrid');
-  if (discGrid) discGrid.innerHTML = POSTS.slice(0,4).map(cardHTML).join('');
+  if (discGrid) {
+    discGrid.innerHTML = [POSTS[0], POSTS[7], POSTS[8], POSTS[1]]
+      .filter(Boolean).map(cardHTML).join('');
+  }
 
   // ── Headline rotator ──
   var words = ['post.','write.','film.','publish.','ship.'];
