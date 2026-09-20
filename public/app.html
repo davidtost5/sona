@@ -681,11 +681,12 @@
   .disc-head .disc-views { margin-left:auto; flex-shrink:0; }
   .disc-av { width:38px; height:38px; border-radius:50%; background:linear-gradient(135deg,var(--accent),var(--accent-soft)); flex-shrink:0; }
   .disc-name { font-size:14.5px; font-weight:600; letter-spacing:-.2px; }
-  /* A publication name is long enough to wrap onto a second line in the narrow
-     Digest column, which pushes the card head out of shape. Substack truncates
-     it; so do we. */
-  .disc-head > div { min-width:0; }
-  .disc-handle { font-size:13px; color:var(--text-dim); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .disc-handle { font-size:13px; color:var(--text-dim); }
+  /* Digest columns are half the width of a Discover card, and a publication name
+     wraps onto a second line there and pushes the card head out of shape. Only
+     that column truncates — elsewhere there is room to wrap. */
+  .digest-grid .disc-head > div { min-width:0; }
+  .digest-grid .disc-handle { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
   .disc-text { font-size:15px; color:var(--text); line-height:1.62; margin-bottom:15px; white-space:pre-wrap; }
   .disc-card mark { background: var(--accent-soft); color: var(--accent); padding: 1px 3px; border-radius: 3px; font-weight: 600; }
   /* Wraps rather than overflows: a card can carry a multiple, a New marker, a
