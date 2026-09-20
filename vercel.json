@@ -47,7 +47,7 @@
     },
     {
       "source": "/redesign",
-      "destination": "/redesign.html"
+      "destination": "/index.html"
     }
   ],
   "headers": [
