@@ -1,12 +1,10 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<!-- Theme bootstrap — runs before paint so there's no flash of wrong theme.
-     Follows the wall clock (7am–7pm light, else dark), same as the live site. -->
-<script>(function(){try{var h=new Date().getHours();var dark=h<7||h>=19;document.documentElement.setAttribute('data-theme',dark?'dark':'light');document.documentElement.classList.add('js');}catch(e){}})();</script>
-<meta name="color-scheme" content="light dark">
+<script>(function(){try{document.documentElement.classList.add('js');}catch(e){}})();</script>
+<meta name="color-scheme" content="light">
 <link rel="icon" type="image/svg+xml" href="/logo.svg">
 <link rel="apple-touch-icon" href="/logo.svg">
 <title>Sona — Find proven ideas. Write in your voice.</title>
@@ -25,39 +23,37 @@
 <meta name="twitter:image" content="https://buildwithsona.com/og.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700;9..40,800&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Hedvig+Letters+Sans&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
   *,*::before,*::after { margin:0; padding:0; box-sizing:border-box; }
 
+  /* ─── DESIGN TOKENS ───
+     Warm stone, light-only. The page (--bg) is the lightest surface and every
+     panel is cut one step into it, so depth comes from value rather than from
+     shadow. Olive carries the accent on light; lime is reserved for the
+     inverted ink blocks, where olive would disappear. */
   :root {
-    --bg:#f4f4f1; --bg-soft:#ecebe6; --surface:#fcfcfa; --surface-2:#f7f6f2;
-    --border:rgba(26,26,26,0.10); --border-strong:rgba(26,26,26,0.17);
-    --text:#161615; --text-mid:#55554f; --text-dim:#77776f;
-    --accent:#28775c; --accent-2:#1d5c47; --accent-soft:rgba(40,119,92,0.10);
-    --btn-bg:#161615; --btn-fg:#f4f4f1;
-    --shadow-sm:0 1px 2px rgba(26,26,26,0.05);
-    --shadow:0 10px 40px rgba(26,26,26,0.09);
-    --shadow-lg:0 40px 90px rgba(26,26,26,0.14);
-    --radius:18px; --radius-lg:26px;
+    --bg:#efedeb; --bg-soft:#e8e5e3; --surface:#e8e5e3; --surface-2:#e2dfdc;
+    --ink-panel:#1a1716; --text-on-ink:#efedeb;
+    --border:#d9d7d5; --border-strong:#c7c4c1;
+    --text:#1e1e1e; --text-mid:#4a4744; --text-dim:#757372;
+    --accent:#646e39; --accent-2:#565f2f; --accent-soft:rgba(100,110,57,0.10);
+    --lime:#eeffa7; --red:#cc3542;
+    --btn-bg:#1a1716; --btn-bg-2:#474440; --btn-fg:#f7f7f4;
+    --shadow-sm:0 1px 2px rgba(26,23,22,0.04);
+    --shadow:0 2px 10px rgba(26,23,22,0.05);
+    --shadow-lg:0 12px 40px rgba(26,23,22,0.09);
+    /* Tight corners are the loudest single signal of this design language. */
+    --radius:8px; --radius-lg:12px; --radius-sm:4px;
     --maxw:1180px;
-  }
-  html[data-theme="dark"] {
-    --bg:#0e100f; --bg-soft:#141615; --surface:#1a1d1b; --surface-2:#171918;
-    --border:rgba(255,255,255,0.10); --border-strong:rgba(255,255,255,0.18);
-    --text:#f4f4f1; --text-mid:#a7a7a0; --text-dim:#8b8b83;
-    --accent:#5fb896; --accent-2:#4fa183; --accent-soft:rgba(95,184,150,0.14);
-    --btn-bg:#f4f4f1; --btn-fg:#161615;
-    --shadow-sm:0 1px 2px rgba(0,0,0,0.4);
-    --shadow:0 10px 40px rgba(0,0,0,0.45);
-    --shadow-lg:0 40px 90px rgba(0,0,0,0.6);
   }
 
   html { scroll-behavior:smooth; -webkit-text-size-adjust:100%; }
   body {
-    font-family:'DM Sans',-apple-system,BlinkMacSystemFont,sans-serif;
+    font-family:'Inter',-apple-system,BlinkMacSystemFont,system-ui,sans-serif;
     background:var(--bg); color:var(--text);
     -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
-    line-height:1.55; overflow-x:hidden;
+    line-height:1.55; overflow-x:hidden; letter-spacing:-.09px;
   }
   a { color:inherit; text-decoration:none; }
   ::selection { background:var(--accent-soft); }
@@ -87,7 +83,7 @@
   .btn {
     display:inline-flex; align-items:center; gap:9px; cursor:pointer;
     font-family:inherit; font-size:15.5px; font-weight:600; line-height:1;
-    padding:14px 22px; border-radius:999px; border:1px solid transparent;
+    padding:14px 22px; border-radius:var(--radius); border:1px solid transparent;
     transition:transform .18s cubic-bezier(.2,.7,.2,1), background .2s, box-shadow .2s, border-color .2s;
     white-space:nowrap;
   }
@@ -116,18 +112,18 @@
   .nav-links a.link:hover { color:var(--text); }
   .nav-actions { display:flex; align-items:center; gap:12px; }
   .nav-actions .signin { font-size:14.5px; font-weight:600; color:var(--text); padding:9px 6px; }
-  .burger { display:none; background:none; border:1px solid var(--border-strong); border-radius:10px; width:40px; height:40px; color:var(--text); cursor:pointer; font-size:20px; }
+  .burger { display:none; background:none; border:1px solid var(--border-strong); border-radius:var(--radius); width:40px; height:40px; color:var(--text); cursor:pointer; font-size:20px; }
 
   /* ── Hero ── */
-  .hero { padding:74px 0 40px; text-align:center; position:relative; }
-  .hero::before { content:""; position:absolute; left:50%; top:300px; transform:translateX(-50%); width:min(1120px,94vw); height:560px; background:radial-gradient(ellipse 60% 50% at center, var(--accent-soft), transparent 72%); filter:blur(28px); z-index:-1; pointer-events:none; }
+  .hero { padding:74px 0 8px; text-align:center; position:relative; }
+  .hero::before { content:""; position:absolute; left:50%; top:120px; transform:translateX(-50%); width:min(1120px,94vw); height:420px; background:radial-gradient(ellipse 60% 50% at center, var(--accent-soft), transparent 72%); filter:blur(28px); z-index:-1; pointer-events:none; }
   /* Faint dotted grid backdrop that fades out — cursor.com-flavored */
-  .hero::after { content:""; position:absolute; inset:0 0 auto 0; height:560px; z-index:-2; pointer-events:none;
+  .hero::after { content:""; position:absolute; inset:0 0 auto 0; height:430px; z-index:-2; pointer-events:none;
     background-image:radial-gradient(circle at center, color-mix(in srgb, var(--text) 9%, transparent) 1px, transparent 1.6px);
     background-size:24px 24px;
     -webkit-mask-image:radial-gradient(ellipse 72% 60% at 50% 28%, #000, transparent 76%);
     mask-image:radial-gradient(ellipse 72% 60% at 50% 28%, #000, transparent 76%); }
-  .hero-badge { margin-top:26px; }
+  .hero-badge { margin-top:30px; display:flex; justify-content:center; }
   .hero-badge img { width:200px; height:auto; opacity:.85; transition:opacity .2s; }
   .hero-badge a:hover img { opacity:1; }
   .trust { margin-top:24px; font-size:12.5px; color:var(--text-dim); }
@@ -136,7 +132,7 @@
   .hero-inner { max-width:900px; margin:0 auto; }
   .pill {
     display:inline-flex; align-items:center; gap:9px; padding:7px 14px 7px 11px;
-    background:var(--surface); border:1px solid var(--border-strong); border-radius:999px;
+    background:var(--surface); border:1px solid var(--border-strong); border-radius:var(--radius);
     font-size:13px; font-weight:500; color:var(--text-mid); margin-bottom:30px; box-shadow:var(--shadow-sm);
   }
   .pill .dot { width:7px; height:7px; border-radius:50%; background:var(--accent); box-shadow:0 0 0 4px var(--accent-soft); }
@@ -155,107 +151,9 @@
   .frame-bar { display:flex; align-items:center; gap:7px; padding:13px 16px; border-bottom:1px solid var(--border); background:var(--surface-2); }
   .frame-bar i { width:11px; height:11px; border-radius:50%; background:var(--border-strong); }
   .frame-url { margin-left:12px; font-size:12px; color:var(--text-dim); font-family:'Geist Mono',monospace; }
-  .hero-frame { max-width:1040px; margin:60px auto 0; }
 
-  /* Discover feed inside frames */
-  .feed-head { display:flex; align-items:center; justify-content:space-between; padding:16px 20px 0; flex-wrap:wrap; gap:10px; }
-  .feed-q { font-family:'Geist Mono',monospace; font-size:13px; color:var(--text); background:var(--surface-2); border:1px solid var(--border); padding:7px 12px; border-radius:8px; }
-  .feed-meta { font-family:'Geist Mono',monospace; font-size:11.5px; color:var(--text-dim); }
-  .tabs { display:flex; gap:4px; padding:14px 20px 0; }
-  .tabs span { font-size:13.5px; font-weight:600; color:var(--text-dim); padding:7px 13px; border-radius:8px; cursor:pointer; transition:.2s; }
-  .tabs span.on { color:var(--text); background:var(--surface-2); }
-  .chips { display:flex; gap:8px; padding:14px 20px; flex-wrap:wrap; }
-  .chips span { font-size:12.5px; font-weight:500; color:var(--text-mid); padding:6px 12px; border:1px solid var(--border); border-radius:999px; cursor:pointer; transition:.2s; }
-  .chips span.on { background:var(--text); color:var(--bg); border-color:var(--text); }
-  .chips span.add { color:var(--text-dim); }
 
-  .grid { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; padding:6px 20px 22px; }
-  .card {
-    background:var(--surface-2); border:1px solid var(--border); border-radius:14px; padding:15px;
-    display:flex; flex-direction:column; gap:11px; transition:transform .2s, box-shadow .2s, border-color .2s;
-  }
-  .card:hover { transform:translateY(-3px); box-shadow:var(--shadow); border-color:var(--border-strong); }
-  .card-top { display:flex; align-items:center; gap:9px; }
-  .av { width:30px; height:30px; border-radius:50%; background:var(--accent-soft); color:var(--accent); font-size:11px; font-weight:700; display:flex; align-items:center; justify-content:center; flex-shrink:0; font-family:'Geist Mono',monospace; }
-  .card-top b { font-size:13.5px; display:block; letter-spacing:-0.01em; }
-  .card-top .h { font-size:11px; color:var(--text-dim); font-family:'Geist Mono',monospace; }
-  .card-top .plat { margin-left:auto; width:15px; height:15px; color:var(--text-dim); }
-  .card p { font-size:13.5px; color:var(--text); line-height:1.5; }
-  .card-foot { margin-top:auto; display:flex; align-items:center; gap:12px; padding-top:4px; }
-  .card-foot .eng { font-size:11.5px; color:var(--text-dim); font-family:'Geist Mono',monospace; }
-  .mult { margin-left:auto; font-family:'Geist Mono',monospace; font-size:12px; font-weight:600; color:var(--accent); background:var(--accent-soft); padding:3px 8px; border-radius:6px; }
-  /* Video card — real thumbnail image, Eden-style (title + creator below) */
-  .card.vid { padding:0; overflow:hidden; }
-  .cover { position:relative; aspect-ratio:16/9; overflow:hidden;
-    background:linear-gradient(135deg,var(--accent),var(--accent-2)); }
-  /* Self-contained designed cover — always visible, so a video card never
-     shows blank/gray even if the photo is blocked or slow to load. */
-  .cover .cover-title { position:absolute; inset:0; z-index:1; display:flex; align-items:flex-end;
-    padding:14px; color:#fff; font-size:15px; font-weight:700; line-height:1.25; letter-spacing:-0.01em;
-    text-shadow:0 1px 10px rgba(0,0,0,.35); background:
-      radial-gradient(120% 120% at 15% 0%, rgba(255,255,255,.18), transparent 60%); }
-  .cover img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; display:block; z-index:1; transition:transform .35s cubic-bezier(.2,.7,.2,1); }
-  .card.vid:hover .cover img { transform:scale(1.05); }
-  .cover::after { content:""; position:absolute; inset:0; z-index:1; background:linear-gradient(180deg,transparent 45%,rgba(0,0,0,.5)); }
-  .cover .play { position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); width:46px; height:46px; border-radius:50%; background:rgba(255,255,255,.92); display:flex; align-items:center; justify-content:center; color:#111; font-size:15px; padding-left:3px; z-index:2; box-shadow:0 6px 18px rgba(0,0,0,.35); transition:transform .2s; }
-  .card.vid:hover .cover .play { transform:translate(-50%,-50%) scale(1.08); }
-  .cover .dur { position:absolute; right:8px; bottom:8px; z-index:2; font-family:'Geist Mono',monospace; font-size:10.5px; background:rgba(0,0,0,.75); color:#fff; padding:2px 7px; border-radius:5px; }
-  .cover .badge { position:absolute; left:8px; top:8px; z-index:2; font-family:'Geist Mono',monospace; font-size:10px; font-weight:600; background:color-mix(in srgb,var(--accent) 90%,#000); color:#fff; padding:3px 7px; border-radius:6px; letter-spacing:.3px; }
-  .vbody { padding:13px 15px 14px; display:flex; flex-direction:column; gap:9px; }
-  .vtitle { font-size:14px; font-weight:700; line-height:1.32; letter-spacing:-0.01em; color:var(--text); }
-  .vby { display:flex; align-items:center; gap:8px; font-size:12px; color:var(--text-mid); }
-  .vby .av { width:22px; height:22px; font-size:9px; }
-  .vby .plat { width:13px; height:13px; margin-left:auto; color:var(--text-dim); }
 
-  /* ── App shell (Eden-style dashboard mock) ── */
-  /* Tall enough for the sidebar's full nav plus the account row; below this the
-     sidebar's overflow clipped that row out of view entirely. */
-  .app { display:grid; grid-template-columns:238px 1fr; min-height:588px; }
-  .app-side { border-right:1px solid var(--border); background:var(--surface-2); padding:15px 13px; display:flex; flex-direction:column; overflow:hidden; }
-  .app-brand { display:flex; align-items:center; gap:8px; padding:2px 6px 14px; }
-  .app-brand svg { width:22px; height:22px; }
-  .app-brand .nm { font-weight:700; font-size:15px; letter-spacing:-0.02em; }
-  .app-brand .bd { margin-left:2px; font-family:'Geist Mono',monospace; font-size:9px; font-weight:500; letter-spacing:.5px; text-transform:uppercase; color:var(--accent); background:var(--accent-soft); padding:2px 6px; border-radius:5px; }
-  .cmd { display:flex; align-items:center; gap:8px; padding:9px 11px; border:1px solid var(--border); border-radius:10px; background:var(--surface); font-size:12.5px; color:var(--text-mid); margin-bottom:6px; box-shadow:var(--shadow-sm); }
-  .cmd svg { width:14px; height:14px; }
-  .cmd .kbd { margin-left:auto; font-family:'Geist Mono',monospace; font-size:9.5px; color:var(--text-dim); border:1px solid var(--border); border-radius:5px; padding:2px 5px; }
-  .app-nav { display:flex; flex-direction:column; gap:1px; overflow:hidden; }
-  .grp { font-family:'Geist Mono',monospace; font-size:9px; letter-spacing:1.2px; text-transform:uppercase; color:var(--text-dim); padding:13px 7px 5px; }
-  .nav-i { display:flex; align-items:center; gap:10px; padding:7px 9px; border-radius:8px; font-size:12.5px; color:var(--text-mid); cursor:pointer; transition:background .15s, color .15s; white-space:nowrap; }
-  .nav-i:hover { color:var(--text); background:var(--surface); }
-  .nav-i svg { width:15px; height:15px; flex-shrink:0; opacity:.8; }
-  .nav-i.on { background:var(--surface); color:var(--text); font-weight:600; box-shadow:var(--shadow-sm); }
-  .nav-i .n { margin-left:auto; font-family:'Geist Mono',monospace; font-size:9.5px; color:var(--text-dim); }
-  .app-user { margin-top:auto; display:flex; align-items:center; gap:9px; padding:12px 6px 2px; border-top:1px solid var(--border); }
-  .app-user .ua { width:26px; height:26px; border-radius:50%; background:var(--accent); color:#fff; font-size:11px; font-weight:700; display:flex; align-items:center; justify-content:center; }
-  html[data-theme="dark"] .app-user .ua { color:#0e100f; }
-  .app-user .un { font-size:12px; font-weight:600; line-height:1.2; }
-  .app-user .ue { font-size:10.5px; color:var(--text-dim); font-family:'Geist Mono',monospace; }
-
-  .app-main { display:flex; flex-direction:column; min-width:0; }
-  .app-head { padding:16px 20px 0; display:flex; align-items:flex-end; justify-content:space-between; gap:10px; }
-  .app-head h4 { font-size:20px; font-weight:700; letter-spacing:-0.02em; }
-  .app-head .sub { font-size:11.5px; color:var(--text-dim); font-family:'Geist Mono',monospace; }
-  /* Switchable views — click a sidebar item to change the main panel */
-  .app-view { display:none; }
-  .app-view.on { display:block; animation:vfade .28s ease both; }
-  @keyframes vfade { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:none} }
-  .dv-pad { padding:16px 20px 20px; }
-  .dv-post { background:var(--surface-2); border:1px solid var(--border); border-radius:12px; padding:16px; font-size:14px; line-height:1.55; color:var(--text); }
-  .dv-post .dv-src { display:block; margin-top:11px; font-size:11px; color:var(--text-dim); }
-  .dv-break { margin-top:12px; display:grid; gap:8px; }
-  .dv-row { display:flex; gap:14px; align-items:baseline; background:var(--surface-2); border:1px solid var(--border); border-radius:10px; padding:11px 14px; }
-  .dv-row .k { color:var(--accent); font-size:10px; text-transform:uppercase; letter-spacing:1px; min-width:60px; flex-shrink:0; }
-  .dv-row p { font-size:13px; color:var(--text); }
-  .dv-list { display:grid; gap:9px; }
-  .dv-item { display:flex; align-items:center; gap:14px; }
-  .dv-name { font-size:13px; min-width:170px; color:var(--text); }
-  .dv-bar { flex:1; height:7px; background:var(--surface-2); border:1px solid var(--border); border-radius:999px; overflow:hidden; }
-  .dv-bar i { display:block; height:100%; background:var(--accent); }
-  .dv-n { font-size:11px; color:var(--text-dim); min-width:26px; text-align:right; }
-  .dv-hook { display:flex; align-items:center; gap:12px; background:var(--surface-2); border:1px solid var(--border); border-radius:10px; padding:11px 14px; }
-  .dv-hook p { font-size:13px; color:var(--text); flex:1; }
-  .dv-tag { font-size:10px; color:var(--accent); background:var(--accent-soft); padding:3px 9px; border-radius:6px; flex-shrink:0; }
 
   /* ── Sections ── */
   section { padding:96px 0; }
@@ -266,6 +164,9 @@
   /* Split feature row */
   .split { display:grid; grid-template-columns:1.05fr 1.35fr; gap:56px; align-items:center; }
   .split.rev .split-copy { order:2; }
+  /* The Discover row lost its mock, so it reads as one column of prose
+     rather than a copy/visual pair. */
+  .split.solo { grid-template-columns:minmax(0,760px); justify-content:center; }
   .split-copy h2 { font-size:clamp(28px,3.4vw,42px); margin-bottom:18px; }
   .split-list { list-style:none; margin:22px 0 28px; display:flex; flex-direction:column; gap:16px; }
   .split-list li { display:flex; gap:12px; font-size:15px; color:var(--text-mid); }
@@ -280,7 +181,7 @@
     font-family:inherit; font-size:16px; line-height:1.6; outline:none; width:100%;
   }
   .decode-tools { display:flex; align-items:center; justify-content:space-between; margin-top:14px; padding-top:14px; border-top:1px solid var(--border); }
-  .decode-eg { font-size:13px; font-weight:600; color:var(--accent); background:var(--accent-soft); border:none; padding:8px 14px; border-radius:999px; cursor:pointer; font-family:inherit; }
+  .decode-eg { font-size:13px; font-weight:600; color:var(--accent); background:var(--accent-soft); border:none; padding:8px 14px; border-radius:var(--radius-sm); cursor:pointer; font-family:inherit; }
   .decode-count { font-family:'Geist Mono',monospace; font-size:11.5px; color:var(--text-dim); }
   .decode-out { padding:26px; background:var(--surface-2); }
   .decode-empty { color:var(--text-dim); font-size:14.5px; height:100%; display:flex; align-items:center; text-align:center; justify-content:center; }
@@ -291,10 +192,10 @@
 
   /* ── Chat / MCP mock ── */
   .chat { padding:20px; display:flex; flex-direction:column; gap:14px; }
-  .msg { max-width:82%; padding:13px 16px; border-radius:16px; font-size:14px; line-height:1.55; }
+  .msg { max-width:82%; padding:13px 16px; border-radius:var(--radius); font-size:14px; line-height:1.55; }
   .msg.user { align-self:flex-end; background:var(--text); color:var(--bg); border-bottom-right-radius:5px; }
   .msg.bot { align-self:flex-start; background:var(--surface-2); border:1px solid var(--border); border-bottom-left-radius:5px; }
-  .tool-call { align-self:flex-start; display:inline-flex; align-items:center; gap:8px; font-family:'Geist Mono',monospace; font-size:11.5px; color:var(--accent); background:var(--accent-soft); padding:6px 12px; border-radius:999px; }
+  .tool-call { align-self:flex-start; display:inline-flex; align-items:center; gap:8px; font-family:'Geist Mono',monospace; font-size:11.5px; color:var(--accent); background:var(--accent-soft); padding:6px 12px; border-radius:var(--radius-sm); }
   .tool-call .sp { width:6px; height:6px; border-radius:50%; background:var(--accent); }
 
   /* ── Comparison table ── */
@@ -310,7 +211,6 @@
   .crow.sona { background:var(--accent-soft); }
   .crow.sona .tool { color:var(--accent-2); font-weight:700; font-size:17px; }
   .crow.sona .cost { text-decoration:none; color:var(--accent-2); font-size:22px; font-weight:700; }
-  html[data-theme="dark"] .crow.sona .tool, html[data-theme="dark"] .crow.sona .cost { color:var(--accent); }
 
   /* ── Why ── */
   .why { max-width:820px; margin:0 auto; text-align:center; }
@@ -321,7 +221,7 @@
   .fgrid { display:grid; grid-template-columns:repeat(3,1fr); gap:1px; background:var(--border); border:1px solid var(--border); border-radius:var(--radius-lg); overflow:hidden; }
   .fcell { background:var(--surface); padding:26px 24px 28px; display:flex; flex-direction:column; gap:9px; transition:background .18s; }
   .fcell:hover { background:var(--surface-2); }
-  .fcell .ic { width:30px; height:30px; border-radius:9px; display:grid; place-items:center; background:var(--accent-soft); color:var(--accent); margin-bottom:3px; }
+  .fcell .ic { width:30px; height:30px; border-radius:var(--radius-sm); display:grid; place-items:center; background:var(--accent-soft); color:var(--accent); margin-bottom:3px; }
   .fcell .ic svg { width:16px; height:16px; }
   .fcell h3 { font-size:16px; letter-spacing:-0.02em; line-height:1.3; }
   .fcell p { font-size:13.5px; line-height:1.55; color:var(--text-mid); }
@@ -334,15 +234,14 @@
   .log-date { font-family:'Geist Mono',monospace; font-size:12px; color:var(--text-dim); }
   .log-body h3 { font-size:16px; margin-bottom:5px; letter-spacing:-0.01em; }
   .log-body p { font-size:13.5px; color:var(--text-mid); }
-  .log-tag { font-family:'Geist Mono',monospace; font-size:10px; color:var(--accent); background:var(--accent-soft); padding:4px 9px; border-radius:6px; white-space:nowrap; }
+  .log-tag { font-family:'Geist Mono',monospace; font-size:10px; color:var(--accent); background:var(--accent-soft); padding:4px 9px; border-radius:var(--radius-sm); white-space:nowrap; }
 
   /* ── Pricing ── */
   .tiers { display:grid; grid-template-columns:repeat(3,1fr); gap:20px; align-items:start; }
   .tier { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-lg); padding:28px; position:relative; transition:transform .2s, box-shadow .2s; }
   .tier.feat { border-color:var(--accent); box-shadow:var(--shadow); }
   .tier:hover { transform:translateY(-4px); box-shadow:var(--shadow); }
-  .tier-badge { position:absolute; top:-11px; left:28px; background:var(--accent); color:#fff; font-size:11px; font-weight:700; letter-spacing:.5px; text-transform:uppercase; padding:5px 11px; border-radius:999px; }
-  html[data-theme="dark"] .tier-badge { color:#0e100f; }
+  .tier-badge { position:absolute; top:-11px; left:28px; background:var(--accent); color:#fff; font-size:11px; font-weight:700; letter-spacing:.5px; text-transform:uppercase; padding:5px 11px; border-radius:var(--radius-sm); }
   .tier-name { font-weight:700; font-size:17px; margin-bottom:10px; }
   .tier-price { display:flex; align-items:baseline; gap:4px; margin-bottom:6px; }
   .tier-price .amt { font-size:44px; font-weight:700; letter-spacing:-0.03em; }
@@ -370,12 +269,12 @@
   .foot-sub { display:flex; gap:8px; max-width:320px; }
   .foot-sub input {
     flex:1; min-width:0; font:inherit; font-size:13.5px; padding:10px 13px; color:var(--text);
-    background:var(--surface); border:1px solid var(--border-strong); border-radius:999px;
+    background:var(--surface); border:1px solid var(--border-strong); border-radius:var(--radius);
   }
   .foot-sub input:focus { outline:none; border-color:var(--accent); }
   .foot-sub button {
     font:inherit; font-size:13.5px; font-weight:600; padding:10px 17px; cursor:pointer; white-space:nowrap;
-    color:var(--btn-fg); background:var(--btn-bg); border:1px solid transparent; border-radius:999px;
+    color:var(--btn-fg); background:var(--btn-bg); border:1px solid transparent; border-radius:var(--radius);
   }
   .foot-sub button:disabled { opacity:.6; cursor:default; }
   .foot-status { display:flex; align-items:center; gap:8px; margin-top:16px; font-size:12.5px; color:var(--text-dim); }
@@ -414,7 +313,6 @@
     .burger { display:block; }
     .split { grid-template-columns:1fr; gap:32px; }
     .split.rev .split-copy { order:0; }
-    .grid { grid-template-columns:repeat(2,1fr); }
     .decode { grid-template-columns:1fr; }
     .decode-in { border-right:none; border-bottom:1px solid var(--border); }
     .tiers { grid-template-columns:1fr; }
@@ -422,12 +320,9 @@
     .foot-top { grid-template-columns:1fr 1fr; gap:34px; }
     .crow { grid-template-columns:1fr auto; }
     .crow .repl { display:none; }
-    .app { grid-template-columns:1fr; }
-    .app-side { display:none; }
     .log-row { grid-template-columns:1fr; gap:6px; }
   }
   @media (max-width:560px) {
-    .grid { grid-template-columns:1fr; }
     .fgrid { grid-template-columns:1fr; }
     .foot-top { grid-template-columns:1fr; }
     .hero { padding:48px 0 20px; }
@@ -488,91 +383,12 @@
     </div>
   </div>
 
-  <div class="wrap">
-    <div class="frame hero-frame">
-      <div class="frame-bar"><i></i><i></i><i></i><span class="frame-url mono">buildwithsona.com/app</span></div>
-      <div class="app">
-        <aside class="app-side">
-          <div class="app-brand">
-            <svg viewBox="0 0 24 24" fill="none"><path d="M5 15 Q8 9 12 12 Q16 15 19 9" stroke="var(--accent)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M19 3.6 C19.15 5.1 20.3 6.25 21.8 6.4 C20.3 6.55 19.15 7.7 19 9.2 C18.85 7.7 17.7 6.55 16.2 6.4 C17.7 6.25 18.85 5.1 19 3.6 Z" fill="var(--accent)"/></svg>
-            <span class="nm">Sona</span><span class="bd">Beta</span>
-          </div>
-          <div class="cmd">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
-            Create or search <span class="kbd">⌘K</span>
-          </div>
-          <div class="app-nav">
-            <div class="grp">Find</div>
-            <div class="nav-i on" data-view="discover"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m14.5 9.5-5 1.5 1.5 5 5-1.5z"/></svg>Discover<span class="n">24</span></div>
-            <div class="nav-i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/></svg>Home</div>
-            <div class="nav-i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5V4.5A2.5 2.5 0 0 1 6.5 2H18a2 2 0 0 1 2 2v18l-3-1.5-3 1.5-3-1.5-3 1.5-3-1.5Z"/><path d="M8 7h8M8 11h8M8 15h5"/></svg>Digest</div>
-            <div class="nav-i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/><circle cx="17" cy="7" r="3"/></svg>Lists</div>
-            <div class="grp">Understand</div>
-            <div class="nav-i" data-view="decode"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3M16 3h3a2 2 0 0 1 2 2v3M8 21H5a2 2 0 0 1-2-2v-3M16 21h3a2 2 0 0 0 2-2v-3"/><path d="M7 12h10"/></svg>Decode a post</div>
-            <div class="nav-i" data-view="patterns"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>Patterns</div>
-            <div class="nav-i" data-view="hooks"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z"/></svg>Hooks</div>
-            <div class="grp">Make</div>
-            <div class="nav-i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 1 1 3 3L7 19l-4 1 1-4Z"/></svg>Drafts</div>
-            <div class="nav-i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>Calendar</div>
-            <div class="nav-i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>Playbook</div>
-          </div>
-          <div class="app-user">
-            <span class="ua">Y</span>
-            <span><span class="un">You</span><br><span class="ue">Creator plan</span></span>
-          </div>
-        </aside>
-        <div class="app-main">
-          <div class="app-head">
-            <div><h4 id="viewTitle">Discover</h4></div>
-            <span class="sub" id="viewSub">4 platforms · Last 6 months · 3×+</span>
-          </div>
-
-          <div class="app-view on" data-view="discover">
-            <div class="chips"><span class="on">All</span><span>Founders</span><span>Writers</span><span>Creators</span><span class="add">+ Add</span></div>
-            <div class="grid" id="heroGrid"></div>
-          </div>
-
-          <div class="app-view" data-view="decode">
-            <div class="dv-pad">
-              <div class="dv-post">“Most founders post too much — not too little. The ones who break out pick one contrarian take and stick to it.”<span class="dv-src mono">@AlexHormozi · 1.2M views · 12× outlier</span></div>
-              <div class="dv-break">
-                <div class="dv-row"><span class="k mono">Hook</span><p>Contrarian claim aimed straight at a group.</p></div>
-                <div class="dv-row"><span class="k mono">Turn</span><p>Names the real behaviour behind the win.</p></div>
-                <div class="dv-row"><span class="k mono">Lands on</span><p>One memorable instruction to repeat.</p></div>
-                <div class="dv-row"><span class="k mono">Template</span><p>Most [group] [common belief]. The ones who break out [contrarian move].</p></div>
-              </div>
-            </div>
-          </div>
-
-          <div class="app-view" data-view="patterns">
-            <div class="dv-pad dv-list">
-              <div class="dv-item"><span class="dv-name">Contrarian one-liner</span><span class="dv-bar"><i style="width:92%"></i></span><span class="dv-n mono">×14</span></div>
-              <div class="dv-item"><span class="dv-name">3-question framework</span><span class="dv-bar"><i style="width:64%"></i></span><span class="dv-n mono">×9</span></div>
-              <div class="dv-item"><span class="dv-name">Season / phase metaphor</span><span class="dv-bar"><i style="width:48%"></i></span><span class="dv-n mono">×6</span></div>
-              <div class="dv-item"><span class="dv-name">"You don't have X, you have Y"</span><span class="dv-bar"><i style="width:40%"></i></span><span class="dv-n mono">×5</span></div>
-              <div class="dv-item"><span class="dv-name">Story: low point → result</span><span class="dv-bar"><i style="width:33%"></i></span><span class="dv-n mono">×4</span></div>
-            </div>
-          </div>
-
-          <div class="app-view" data-view="hooks">
-            <div class="dv-pad dv-list">
-              <div class="dv-hook"><p>Most [group] [common belief]. The ones who break out [contrarian move].</p><span class="dv-tag mono">contrarian</span></div>
-              <div class="dv-hook"><p>[N] [things] I [do] before [important action]:</p><span class="dv-tag mono">list</span></div>
-              <div class="dv-hook"><p>[Time] ago I [low point]. Today I [result]. Here's what changed:</p><span class="dv-tag mono">story</span></div>
-              <div class="dv-hook"><p>You don't have [named problem]. You have [the real problem].</p><span class="dv-tag mono">mistake</span></div>
-              <div class="dv-hook"><p>Every [winning output] follows the same shape: [a], [b], [c].</p><span class="dv-tag mono">framework</span></div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
 </header>
 
 <!-- ══ 01 · DISCOVER ══ -->
 <section id="discover">
   <div class="wrap">
-    <div class="split">
+    <div class="split solo">
       <div class="split-copy">
         <span class="eyebrow accent"><span class="num">01</span> Discover what's working</span>
         <h2>Find ideas people already care about.</h2>
@@ -583,10 +399,6 @@
           <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg><span><b>Open the catalog for free.</b> The two read tools are public — even an AI client can query it over MCP.</span></li>
         </ul>
         <a class="btn btn-ghost" href="#" onclick="event.preventDefault(); SonaAuth.openSignup();">Search the outliers <span class="arr">→</span></a>
-      </div>
-      <div class="frame" data-r>
-        <div class="frame-bar"><i></i><i></i><i></i><span class="frame-url mono">Discover · Founders</span></div>
-        <div class="grid" id="discGrid" style="grid-template-columns:repeat(2,1fr);"></div>
       </div>
     </div>
   </div>
@@ -868,74 +680,6 @@
 (function(){
   'use strict';
 
-  // ── Real outlier data (mirrors outliers-seed.sql + the live hero) ──
-  var IMG = 'https://images.unsplash.com/photo-';
-  var THUMB = '?auto=format&fit=crop&w=640&h=360&q=70';
-  var POSTS = [
-    { ini:'AH', name:'Alex Hormozi', handle:'@AlexHormozi', plat:'x',
-      text:'Most founders post too much — not too little. The ones who break out pick one contrarian take and stick to it.',
-      eng:['♡ 101K','⇄ 17K'], mult:'12×' },
-    { video:true, ini:'GI', name:'Greg Isenberg', plat:'yt',
-      title:'How I\u2019d Build a Service Business in 2026', dur:'10:38',
-      img:IMG+'1553877522-43269d4ea984'+THUMB, grad:'linear-gradient(135deg,#28775c,#153f31)', badge:'Top 2%', eng:'131K views', mult:'12×' },
-    { ini:'DK', name:'Dan Koe', handle:'@thedankoe', plat:'x',
-      text:'Three questions I ask before writing anything. They\u2019ve saved me hundreds of bad drafts.',
-      eng:['2.4M views'], mult:'18×' },
-    { video:true, ini:'AA', name:'Ali Abdaal', plat:'yt',
-      title:'How I Got My Focus Back (my deep-work system)', dur:'12:20',
-      img:IMG+'1517245386807-bb43f82c33c4'+THUMB, grad:'linear-gradient(135deg,#3b5bdb,#3a2d8f)', badge:'Top 3%', eng:'451K views', mult:'28×' },
-    { ini:'JW', name:'Justin Welsh', handle:'@thejustinwelsh', plat:'in',
-      text:'The people who win with AI are not the ones who generate the most. They\u2019re the ones who develop the clearest taste.',
-      eng:['♡ 1.1K','⇄ 39'], mult:'7.3×' },
-    { ini:'SB', name:'Sahil Bloom', handle:'@SahilBloom', plat:'x',
-      text:'Your life has seasons. Each one is unique — its own weather, its own lessons. None of them last.',
-      eng:['1.9M views'], mult:'3×' },
-    { video:true, ini:'MG', name:'Matt Gray', plat:'yt',
-      title:'Build a Personal Brand in 30 Days', dur:'19:18',
-      img:IMG+'1499750310107-5fef28a66643'+THUMB, grad:'linear-gradient(135deg,#e8590c,#a23408)', badge:'Top 1%', eng:'390K views', mult:'76×' }
-  ];
-
-  var PLAT = {
-    x:'<path d="M18.9 2H22l-7 8 8.2 12h-6.4l-5-7.3L5.9 22H2.8l7.5-8.6L2.4 2h6.6l4.5 6.6L18.9 2Z"/>',
-    in:'<path d="M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5ZM3 9h4v12H3V9Zm7 0h3.8v1.7h.05c.53-1 1.83-2.05 3.77-2.05C21.4 8.65 22 10.9 22 14v7h-4v-6.2c0-1.5-.03-3.4-2.08-3.4-2.08 0-2.4 1.62-2.4 3.3V21h-4V9Z"/>',
-    yt:'<path d="M23 12s0-3.4-.4-5c-.3-1-1-1.8-2-2C18.7 4.5 12 4.5 12 4.5s-6.7 0-8.6.5c-1 .2-1.7 1-2 2C1 8.6 1 12 1 12s0 3.4.4 5c.3 1 1 1.8 2 2 1.9.5 8.6.5 8.6.5s6.7 0 8.6-.5c1-.2 1.7-1 2-2 .4-1.6.4-5 .4-5Z"/>'
-  };
-
-  function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-
-  function cardHTML(p){
-    if (p.video){
-      return '<article class="card vid">'
-        + '<div class="cover"'+(p.grad ? ' style="background:'+p.grad+'"' : '')+'>'
-        +   '<span class="cover-title">'+esc(p.title)+'</span>'
-        +   (p.img ? '<img src="'+p.img+'" alt="" onerror="this.style.display=\'none\'">' : '')
-        +   (p.badge ? '<span class="badge">'+esc(p.badge)+'</span>' : '')
-        +   '<span class="play">▶</span>'
-        +   '<span class="dur mono">'+p.dur+'</span>'
-        + '</div>'
-        + '<div class="vbody">'
-        +   '<div class="vtitle">'+esc(p.title)+'</div>'
-        +   '<div class="vby"><span class="av">'+p.ini+'</span> '+esc(p.name)
-        +     '<svg class="plat" viewBox="0 0 24 24" fill="currentColor">'+(PLAT[p.plat]||'')+'</svg></div>'
-        +   '<div class="card-foot"><span class="eng mono">'+p.eng+'</span><span class="mult mono">'+p.mult+'</span></div>'
-        + '</div>'
-        + '</article>';
-    }
-    var eng = p.eng.map(function(e){ return '<span class="eng mono">'+e+'</span>'; }).join('');
-    return '<article class="card">'
-      + '<div class="card-top"><span class="av">'+p.ini+'</span>'
-      + '<div><b>'+esc(p.name)+'</b><span class="h mono">'+esc(p.handle)+'</span></div>'
-      + '<svg class="plat" viewBox="0 0 24 24" fill="currentColor">'+(PLAT[p.plat]||'')+'</svg></div>'
-      + '<p>'+esc(p.text)+'</p>'
-      + '<div class="card-foot">'+eng+'<span class="mult mono">'+p.mult+'</span></div>'
-      + '</article>';
-  }
-
-  var heroGrid = document.getElementById('heroGrid');
-  if (heroGrid) heroGrid.innerHTML = POSTS.map(cardHTML).join('');
-  var discGrid = document.getElementById('discGrid');
-  if (discGrid) discGrid.innerHTML = POSTS.slice(0,4).map(cardHTML).join('');
-
   // ── Headline rotator ──
   var words = ['post.','write.','film.','publish.','ship.'];
   var rot = document.getElementById('rotator');
@@ -965,28 +709,6 @@
   document.getElementById('burger').addEventListener('click', function(){ mm.classList.add('open'); });
   document.getElementById('menuClose').addEventListener('click', function(){ mm.classList.remove('open'); });
   mm.querySelectorAll('a').forEach(function(a){ a.addEventListener('click', function(){ mm.classList.remove('open'); }); });
-
-  // ── Interactive dashboard: clicking a sidebar item switches the main view ──
-  var VIEW_META = {
-    discover: ['Discover', '4 platforms · Last 6 months · 3×+'],
-    decode:   ['Decode a post', 'Paste anything · instant breakdown'],
-    patterns: ['Patterns', 'What recurs across every decode'],
-    hooks:    ['Hooks', '40+ reusable templates']
-  };
-  var vTitle = document.getElementById('viewTitle');
-  var vSub = document.getElementById('viewSub');
-  var allNav = document.querySelectorAll('.app-side .nav-i');
-  var allViews = document.querySelectorAll('.app-view');
-  document.querySelectorAll('.app-side .nav-i[data-view]').forEach(function(item){
-    item.addEventListener('click', function(){
-      var v = item.getAttribute('data-view');
-      allNav.forEach(function(n){ n.classList.remove('on'); });
-      item.classList.add('on');
-      allViews.forEach(function(vw){ vw.classList.toggle('on', vw.getAttribute('data-view') === v); });
-      var meta = VIEW_META[v];
-      if (meta) { vTitle.textContent = meta[0]; vSub.textContent = meta[1]; }
-    });
-  });
 
   // ── Interactive decoder (reuses window.SonaDecode, same engine as /app) ──
   var EXAMPLE = 'Most founders think they need to post more. They don\u2019t.\n\nThe ones who actually break out do the opposite: they pick one contrarian take and repeat it until it sticks.\n\nStop chasing volume. Start owning an angle.';
@@ -1105,7 +827,7 @@
   window.sonaLeaveReview = function (ev) {
     if (ev) ev.preventDefault();
     var PROFILE = '5eb2057e-3cb0-4025-9d5a-74ac8a966fe7';
-    var mode = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+    var mode = 'light';   // the site is light-only
 
     function open(){
       if (!window.SaaSBrowser) return;

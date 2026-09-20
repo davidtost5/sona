@@ -4,32 +4,33 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Sona — Brand Guidelines</title>
-<style>
-  @font-face { font-family: 'Aeonik Pro'; src: local('Aeonik Pro'), local('AeonikPro-Regular'); font-weight: 400; font-style: normal; }
-  @font-face { font-family: 'Aeonik Pro'; src: local('Aeonik Pro Medium'), local('AeonikPro-Medium'); font-weight: 500; font-style: normal; }
-  @font-face { font-family: 'Aeonik Pro'; src: local('Aeonik Pro Bold'), local('AeonikPro-Bold'); font-weight: 700; font-style: normal; }
-  @font-face { font-family: 'Aeonik Pro'; src: local('Aeonik Pro Bold'), local('AeonikPro-Bold'); font-weight: 800; font-style: normal; }
-</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Hedvig+Letters+Sans&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
   :root {
-    --green-dark: #1a2e1a;
-    --green-deep: #0f1f0f;
-    --green-accent: #c8e64a;
-    --green-muted: #a3b858;
-    --off-white: #f5f4f0;
-    --light-grey: #eae9e4;
-    --text-dark: #1a1a1a;
-    --text-mid: #5a5a56;
-    --text-light: #8a8a84;
-    --border: #ddd9d0;
+    /* Names kept from the previous palette so the rest of the sheet still
+       resolves; the values are the warm-stone set the whole site now shares. */
+    --green-dark: #1a1716;    /* inverted blocks */
+    --green-deep: #131110;
+    --green-accent: #eeffa7;  /* lime — legible on the ink blocks only */
+    --green-muted: #a8ad84;
+    --off-white: #efedeb;     /* the page */
+    --light-grey: #e8e5e3;    /* cards, cut one step in */
+    --text-dark: #1e1e1e;
+    --text-mid: #4a4744;
+    --text-light: #757372;
+    --border: #d9d7d5;
+    --olive: #646e39;         /* accent on light */
+    --r-xs: 2px; --r-sm: 4px; --r-md: 8px; --r-lg: 12px;
   }
 
   html { scroll-behavior: smooth; }
 
   body {
-    font-family: 'Aeonik Pro', -apple-system, sans-serif;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
     background: var(--off-white);
     color: var(--text-dark);
     -webkit-font-smoothing: antialiased;
@@ -130,7 +131,7 @@
     padding: 10px 24px;
     background: var(--green-dark);
     color: var(--off-white);
-    border-radius: 100px;
+    border-radius: var(--r-sm);
     font-size: 14px;
     font-weight: 500;
     text-decoration: none;
@@ -184,7 +185,7 @@
     padding: 14px 40px;
     background: var(--green-dark);
     color: var(--off-white) !important;
-    border-radius: 100px;
+    border-radius: var(--r-sm);
     font-size: 18px !important;
   }
 
@@ -250,7 +251,7 @@
     gap: 24px;
   }
   .logo-card {
-    border-radius: 16px;
+    border-radius: var(--r-md);
     padding: 64px 48px;
     display: flex;
     align-items: center;
@@ -287,7 +288,7 @@
   .logo-icon {
     width: 40px;
     height: 40px;
-    border-radius: 10px;
+    border-radius: var(--r-sm);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -303,10 +304,10 @@
     gap: 20px;
   }
   .color-swatch {
-    border-radius: 16px;
+    border-radius: var(--r-md);
     overflow: hidden;
     border: 1px solid var(--border);
-    background: #fff;
+    background: var(--light-grey);
   }
   .color-swatch-fill {
     height: 120px;
@@ -323,12 +324,12 @@
   }
   .color-swatch-hex {
     font-size: 13px;
-    font-family: 'SF Mono', 'Fira Code', monospace;
+    font-family: 'Geist Mono', 'Fira Code', monospace;
     color: var(--text-light);
   }
   .color-swatch-var {
     font-size: 11px;
-    font-family: 'SF Mono', 'Fira Code', monospace;
+    font-family: 'Geist Mono', 'Fira Code', monospace;
     color: var(--text-light);
     margin-top: 2px;
   }
@@ -361,7 +362,7 @@
   }
   .type-meta-detail {
     font-size: 13px;
-    font-family: 'SF Mono', 'Fira Code', monospace;
+    font-family: 'Geist Mono', 'Fira Code', monospace;
     color: var(--text-mid);
   }
   .type-sample { flex: 1; color: var(--text-dark); }
@@ -404,8 +405,8 @@
   }
   .voice-card {
     padding: 36px;
-    background: #fff;
-    border-radius: 16px;
+    background: var(--light-grey);
+    border-radius: var(--r-md);
     border: 1px solid var(--border);
   }
   .voice-card h3 {
@@ -428,7 +429,7 @@
   }
   .voice-example {
     padding: 32px;
-    border-radius: 16px;
+    border-radius: var(--r-md);
     border: 1px solid var(--border);
   }
   .voice-example.do { background: rgba(200, 230, 74, 0.08); border-color: rgba(200, 230, 74, 0.3); }
@@ -456,8 +457,8 @@
   }
   .spacing-card {
     padding: 32px;
-    background: #fff;
-    border-radius: 16px;
+    background: var(--light-grey);
+    border-radius: var(--r-md);
     border: 1px solid var(--border);
   }
   .spacing-card h4 {
@@ -476,9 +477,9 @@
     margin-top: 8px;
     padding: 4px 10px;
     background: var(--light-grey);
-    border-radius: 6px;
+    border-radius: var(--r-sm);
     font-size: 12px;
-    font-family: 'SF Mono', 'Fira Code', monospace;
+    font-family: 'Geist Mono', 'Fira Code', monospace;
     color: var(--green-dark);
   }
 
@@ -495,11 +496,11 @@
     padding: 14px 32px;
     background: var(--green-dark);
     color: var(--off-white);
-    border-radius: 100px;
+    border-radius: var(--r-sm);
     font-size: 15px;
     font-weight: 500;
     text-decoration: none;
-    font-family: 'Aeonik Pro', sans-serif;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
     border: none;
     cursor: pointer;
     transition: background 0.3s;
@@ -511,11 +512,11 @@
     padding: 14px 32px;
     background: transparent;
     color: var(--text-dark);
-    border-radius: 100px;
+    border-radius: var(--r-sm);
     font-size: 15px;
     font-weight: 500;
     text-decoration: none;
-    font-family: 'Aeonik Pro', sans-serif;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
     border: 1.5px solid var(--border);
     cursor: pointer;
     transition: border-color 0.3s, background 0.3s;
@@ -527,11 +528,11 @@
     padding: 14px 32px;
     background: var(--green-accent);
     color: var(--green-dark);
-    border-radius: 100px;
+    border-radius: var(--r-sm);
     font-size: 15px;
     font-weight: 600;
     text-decoration: none;
-    font-family: 'Aeonik Pro', sans-serif;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
     border: none;
     cursor: pointer;
     transition: filter 0.3s;
@@ -543,11 +544,11 @@
     padding: 14px 32px;
     background: transparent;
     color: var(--green-dark);
-    border-radius: 100px;
+    border-radius: var(--r-sm);
     font-size: 15px;
     font-weight: 500;
     text-decoration: none;
-    font-family: 'Aeonik Pro', sans-serif;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
     border: none;
     cursor: pointer;
     transition: background 0.3s;
@@ -664,14 +665,14 @@
   <div data-reveal>
     <p class="section-label">01 — Logo</p>
     <h2 class="section-title">Wordmark & Mark</h2>
-    <p class="section-desc">The Sona wordmark is set in Aeonik Pro Bold at a tracked -1px. Use the full wordmark as the primary logo. Maintain generous clear space equal to the height of the "C" on all sides.</p>
+    <p class="section-desc">The Sona wordmark is set in Inter Bold at a tracked -1px. Use the full wordmark as the primary logo. Maintain generous clear space equal to the height of the "C" on all sides.</p>
   </div>
   <div class="logo-grid" data-stagger>
     <div class="logo-card light">
       <span class="logo-badge">Light mode</span>
       <div class="logo-mark">
         <div class="logo-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="#f5f4f0" stroke-width="2" stroke-linecap="round"><path d="M12 3v18M12 3c-3 4-7 6-9 8h18c-2-2-6-4-9-8z"/><path d="M8 15c1.5 1 2.5 3 4 6M16 15c-1.5 1-2.5 3-4 6"/></svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="#efedeb" stroke-width="2" stroke-linecap="round"><path d="M12 3v18M12 3c-3 4-7 6-9 8h18c-2-2-6-4-9-8z"/><path d="M8 15c1.5 1 2.5 3 4 6M16 15c-1.5 1-2.5 3-4 6"/></svg>
         </div>
         <span class="logo-text">Sona</span>
       </div>
@@ -680,7 +681,7 @@
       <span class="logo-badge">Dark mode</span>
       <div class="logo-mark">
         <div class="logo-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="#1a2e1a" stroke-width="2" stroke-linecap="round"><path d="M12 3v18M12 3c-3 4-7 6-9 8h18c-2-2-6-4-9-8z"/><path d="M8 15c1.5 1 2.5 3 4 6M16 15c-1.5 1-2.5 3-4 6"/></svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="#1a1716" stroke-width="2" stroke-linecap="round"><path d="M12 3v18M12 3c-3 4-7 6-9 8h18c-2-2-6-4-9-8z"/><path d="M8 15c1.5 1 2.5 3 4 6M16 15c-1.5 1-2.5 3-4 6"/></svg>
         </div>
         <span class="logo-text">Sona</span>
       </div>
@@ -693,86 +694,94 @@
   <div data-reveal>
     <p class="section-label">02 — Color Palette</p>
     <h2 class="section-title">Color System</h2>
-    <p class="section-desc">A nature-inspired palette anchored by deep forest greens and warm neutrals. The accent lime-green is used sparingly for CTAs, highlights, and interactive states.</p>
+    <p class="section-desc">A warm stone palette: the page is the lightest surface and every panel is cut one step into it, so depth comes from value rather than from shadow. Olive carries the accent on light; lime is reserved for the inverted ink blocks, where olive would disappear.</p>
   </div>
   <div class="color-grid" data-stagger>
     <div class="color-swatch">
-      <div class="color-swatch-fill" style="background: #1a2e1a;"></div>
+      <div class="color-swatch-fill" style="background: #1a1716;"></div>
       <div class="color-swatch-info">
-        <div class="color-swatch-name">Forest Dark</div>
-        <div class="color-swatch-hex">#1A2E1A</div>
+        <div class="color-swatch-name">Ink</div>
+        <div class="color-swatch-hex">#1A1716</div>
         <div class="color-swatch-var">--green-dark</div>
       </div>
     </div>
     <div class="color-swatch">
-      <div class="color-swatch-fill" style="background: #0f1f0f;"></div>
+      <div class="color-swatch-fill" style="background: #131110;"></div>
       <div class="color-swatch-info">
-        <div class="color-swatch-name">Forest Deep</div>
-        <div class="color-swatch-hex">#0F1F0F</div>
+        <div class="color-swatch-name">Ink Deep</div>
+        <div class="color-swatch-hex">#131110</div>
         <div class="color-swatch-var">--green-deep</div>
       </div>
     </div>
     <div class="color-swatch">
-      <div class="color-swatch-fill" style="background: #c8e64a;"></div>
+      <div class="color-swatch-fill" style="background: #646e39;"></div>
       <div class="color-swatch-info">
-        <div class="color-swatch-name">Lime Accent</div>
-        <div class="color-swatch-hex">#C8E64A</div>
+        <div class="color-swatch-name">Olive</div>
+        <div class="color-swatch-hex">#646E39</div>
+        <div class="color-swatch-var">--olive</div>
+      </div>
+    </div>
+    <div class="color-swatch">
+      <div class="color-swatch-fill" style="background: #eeffa7;"></div>
+      <div class="color-swatch-info">
+        <div class="color-swatch-name">Lime</div>
+        <div class="color-swatch-hex">#EEFFA7</div>
         <div class="color-swatch-var">--green-accent</div>
       </div>
     </div>
     <div class="color-swatch">
-      <div class="color-swatch-fill" style="background: #a3b858;"></div>
+      <div class="color-swatch-fill" style="background: #a8ad84;"></div>
       <div class="color-swatch-info">
-        <div class="color-swatch-name">Sage Muted</div>
-        <div class="color-swatch-hex">#A3B858</div>
+        <div class="color-swatch-name">Sage</div>
+        <div class="color-swatch-hex">#A8AD84</div>
         <div class="color-swatch-var">--green-muted</div>
       </div>
     </div>
     <div class="color-swatch">
-      <div class="color-swatch-fill" style="background: #f5f4f0;"></div>
+      <div class="color-swatch-fill" style="background: #efedeb;"></div>
       <div class="color-swatch-info">
-        <div class="color-swatch-name">Parchment</div>
-        <div class="color-swatch-hex">#F5F4F0</div>
+        <div class="color-swatch-name">Stone</div>
+        <div class="color-swatch-hex">#EFEDEB</div>
         <div class="color-swatch-var">--off-white</div>
       </div>
     </div>
     <div class="color-swatch">
-      <div class="color-swatch-fill" style="background: #eae9e4;"></div>
+      <div class="color-swatch-fill" style="background: #e8e5e3;"></div>
       <div class="color-swatch-info">
-        <div class="color-swatch-name">Light Grey</div>
-        <div class="color-swatch-hex">#EAE9E4</div>
+        <div class="color-swatch-name">Stone Card</div>
+        <div class="color-swatch-hex">#E8E5E3</div>
         <div class="color-swatch-var">--light-grey</div>
       </div>
     </div>
     <div class="color-swatch">
-      <div class="color-swatch-fill" style="background: #1a1a1a;"></div>
+      <div class="color-swatch-fill" style="background: #1e1e1e;"></div>
       <div class="color-swatch-info">
-        <div class="color-swatch-name">Text Dark</div>
-        <div class="color-swatch-hex">#1A1A1A</div>
+        <div class="color-swatch-name">Text</div>
+        <div class="color-swatch-hex">#1E1E1E</div>
         <div class="color-swatch-var">--text-dark</div>
       </div>
     </div>
     <div class="color-swatch">
-      <div class="color-swatch-fill" style="background: #5a5a56;"></div>
+      <div class="color-swatch-fill" style="background: #4a4744;"></div>
       <div class="color-swatch-info">
         <div class="color-swatch-name">Text Mid</div>
-        <div class="color-swatch-hex">#5A5A56</div>
+        <div class="color-swatch-hex">#4A4744</div>
         <div class="color-swatch-var">--text-mid</div>
       </div>
     </div>
     <div class="color-swatch">
-      <div class="color-swatch-fill" style="background: #8a8a84;"></div>
+      <div class="color-swatch-fill" style="background: #757372;"></div>
       <div class="color-swatch-info">
-        <div class="color-swatch-name">Text Light</div>
-        <div class="color-swatch-hex">#8A8A84</div>
+        <div class="color-swatch-name">Text Dim</div>
+        <div class="color-swatch-hex">#757372</div>
         <div class="color-swatch-var">--text-light</div>
       </div>
     </div>
     <div class="color-swatch">
-      <div class="color-swatch-fill" style="background: #ddd9d0;"></div>
+      <div class="color-swatch-fill" style="background: #d9d7d5;"></div>
       <div class="color-swatch-info">
         <div class="color-swatch-name">Border</div>
-        <div class="color-swatch-hex">#DDD9D0</div>
+        <div class="color-swatch-hex">#D9D7D5</div>
         <div class="color-swatch-var">--border</div>
       </div>
     </div>
@@ -784,7 +793,7 @@
   <div data-reveal>
     <p class="section-label">03 — Typography</p>
     <h2 class="section-title">Type Scale</h2>
-    <p class="section-desc">Aeonik Pro is the sole typeface across all brand and product touchpoints. Its geometric clarity and humanist warmth match Sona's balance of technical precision and approachability.</p>
+    <p class="section-desc">Inter is the sole typeface across all brand and product touchpoints, with Geist Mono for labels, metrics and anything that reads as data. Inter's neutral, high-legibility forms keep the attention on the writing rather than on the page.</p>
   </div>
   <div class="type-specimens" data-reveal>
     <div class="type-row">

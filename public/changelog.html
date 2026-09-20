@@ -4,31 +4,33 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Sona — Changelog</title>
-<style>
-  @font-face { font-family: 'Aeonik Pro'; src: local('Aeonik Pro'), local('AeonikPro-Regular'); font-weight: 400; font-style: normal; }
-  @font-face { font-family: 'Aeonik Pro'; src: local('Aeonik Pro Medium'), local('AeonikPro-Medium'); font-weight: 500; font-style: normal; }
-  @font-face { font-family: 'Aeonik Pro'; src: local('Aeonik Pro Bold'), local('AeonikPro-Bold'); font-weight: 700; font-style: normal; }
-</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Hedvig+Letters+Sans&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
   :root {
-    --green-dark: #1a2e1a;
-    --green-deep: #0f1f0f;
-    --green-accent: #c8e64a;
-    --green-muted: #a3b858;
-    --off-white: #f5f4f0;
-    --light-grey: #eae9e4;
-    --text-dark: #1a1a1a;
-    --text-mid: #5a5a56;
-    --text-light: #8a8a84;
-    --border: #ddd9d0;
+    /* Names kept from the previous palette so the rest of the sheet still
+       resolves; the values are the warm-stone set the whole site now shares. */
+    --green-dark: #1a1716;    /* inverted blocks */
+    --green-deep: #131110;
+    --green-accent: #eeffa7;  /* lime — legible on the ink blocks only */
+    --green-muted: #a8ad84;
+    --off-white: #efedeb;     /* the page */
+    --light-grey: #e8e5e3;    /* cards, cut one step in */
+    --text-dark: #1e1e1e;
+    --text-mid: #4a4744;
+    --text-light: #757372;
+    --border: #d9d7d5;
+    --olive: #646e39;         /* accent on light */
+    --r-xs: 2px; --r-sm: 4px; --r-md: 8px; --r-lg: 12px;
   }
 
   html { scroll-behavior: smooth; }
 
   body {
-    font-family: 'Aeonik Pro', -apple-system, sans-serif;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
     background: var(--off-white);
     color: var(--text-dark);
     -webkit-font-smoothing: antialiased;
@@ -79,7 +81,7 @@
     left: 0;
     width: 0;
     height: 1.5px;
-    background: var(--green-accent);
+    background: var(--olive);
     transition: width 0.3s ease;
   }
 
@@ -108,7 +110,7 @@
     padding: 10px 22px;
     background: var(--green-dark);
     color: #fff;
-    border-radius: 40px;
+    border-radius: var(--r-md);
     font-size: 14px;
     font-weight: 500;
     text-decoration: none;
@@ -184,7 +186,7 @@
 
   .changelog-tag {
     padding: 4px 12px;
-    border-radius: 20px;
+    border-radius: var(--r-md);
     font-size: 12px;
     font-weight: 600;
     background: var(--light-grey);
@@ -192,13 +194,13 @@
   }
 
   .changelog-tag.new {
-    background: rgba(200,230,74,0.2);
-    color: #4a6810;
+    background: rgba(100,110,57,0.2);
+    color: var(--olive);
   }
 
   .changelog-tag.improved {
-    background: rgba(100,149,237,0.12);
-    color: #2d5aa0;
+    background: rgba(26,23,22,0.09);
+    color: var(--text-mid);
   }
 
   .changelog-tag.fix {
@@ -209,7 +211,7 @@
   .changelog-visual {
     margin-top: 20px;
     background: var(--green-dark);
-    border-radius: 12px;
+    border-radius: var(--r-md);
     height: 160px;
     display: flex;
     align-items: center;
@@ -222,13 +224,13 @@
     content: '';
     position: absolute;
     inset: 0;
-    background: radial-gradient(circle at 30% 50%, rgba(200,230,74,0.1) 0%, transparent 60%);
+    background: radial-gradient(circle at 30% 50%, rgba(238,255,167,0.1) 0%, transparent 60%);
   }
 
   .changelog-visual code {
     font-size: 13px;
     color: rgba(255,255,255,0.5);
-    font-family: 'SF Mono', monospace;
+    font-family: 'Geist Mono', monospace;
   }
 
   /* ─── FOOTER ─── */
@@ -379,7 +381,7 @@
     width: 100%;
     height: 2px;
     background: var(--text-dark);
-    border-radius: 2px;
+    border-radius: var(--r-xs);
     position: absolute;
     left: 0;
     transition: transform 0.3s ease, opacity 0.3s ease;
@@ -421,7 +423,7 @@
     padding: 14px 40px !important;
     background: var(--green-dark);
     color: #fff !important;
-    border-radius: 10px;
+    border-radius: var(--r-sm);
     font-size: 16px !important;
   }
 

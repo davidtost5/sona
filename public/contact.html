@@ -1,39 +1,33 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<!-- Theme — fully automatic, follows the wall clock (7am–7pm light, else dark) -->
-<script>(function(){try{var h=new Date().getHours();var dark=h<7||h>=19;document.documentElement.setAttribute('data-theme',dark?'dark':'light');}catch(e){}})();</script>
-<meta name="color-scheme" content="light dark">
+<meta name="color-scheme" content="light">
 <link rel="icon" type="image/svg+xml" href="/logo.svg">
 <link rel="apple-touch-icon" href="/logo.svg">
 <title>Sona — Contact</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700;9..40,800&family=Geist+Mono:wght@500&display=swap" rel="stylesheet" media="print" onload="this.media='all'"><noscript><link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700;9..40,800&family=Geist+Mono:wght@500&display=swap" rel="stylesheet"></noscript>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Hedvig+Letters+Sans&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet" media="print" onload="this.media='all'"><noscript><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Hedvig+Letters+Sans&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet"></noscript>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
   :root {
-    --bg: #f3f3f0; --bg-soft: #ecebe6; --surface: #fcfcfa;
-    --border: rgba(26,26,26,0.09); --border-strong: rgba(26,26,26,0.16);
-    --text: #1a1a1a; --text-mid: #55554f; --text-dim: #71716a;
-    --accent: #28775c; --accent-soft: rgba(40,119,92,0.09);
-    --btn: #1a1a1a; --btn-text: #f3f3f0;
-    --shadow-sm: 0 1px 2px rgba(20,20,30,0.04); --shadow: 0 6px 30px rgba(20,20,30,0.07);
-  }
-  html[data-theme="dark"] {
-    --bg: #111312; --bg-soft: #171918; --surface: #1b1e1c;
-    --border: rgba(255,255,255,0.09); --border-strong: rgba(255,255,255,0.18);
-    --text: #f3f3f0; --text-mid: #a5a59e; --text-dim: #8b8b84;
-    --accent: #5fb896; --accent-soft: rgba(95,184,150,0.13);
-    --btn: #f3f3f0; --btn-text: #1a1a1a;
-    --shadow-sm: 0 1px 2px rgba(0,0,0,0.4); --shadow: 0 6px 30px rgba(0,0,0,0.4);
+    /* Surfaces — the page is the lightest thing; panels are cut into it. */
+    --bg: #efedeb; --surface: #e8e5e3; --bg-soft: #e2dfdc;
+    --border: #d9d7d5; --border-strong: #c7c4c1;
+    --text: #1e1e1e; --text-mid: #4a4744; --text-dim: #757372;
+    --ink-panel: #1a1716; --text-on-ink: #efedeb;
+    --accent: #646e39; --accent-2: #565f2f; --accent-soft: rgba(100,110,57,0.10);
+    --lime: #eeffa7; --red: #cc3542;
+    --btn: #1a1716; --btn-text: #f7f7f4; --btn-hover: #474440;
+    --r-xs: 2px; --r-sm: 4px; --r-md: 8px; --r-lg: 12px;
+    --shadow-sm: 0 1px 2px rgba(26,23,22,0.04); --shadow: 0 2px 10px rgba(26,23,22,0.05);
   }
 
   body {
-    font-family: 'Aeonik Pro', 'Aeonik', 'DM Sans', -apple-system, sans-serif; background: var(--bg); color: var(--text);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif; background: var(--bg); color: var(--text);
     -webkit-font-smoothing: antialiased; overflow-x: hidden; line-height: 1.5; min-height: 100vh;
     display: flex; flex-direction: column; transition: background .5s, color .5s;
   }
@@ -47,7 +41,7 @@
   nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; display: flex; align-items: center; justify-content: space-between; padding: 16px 36px; background: color-mix(in srgb, var(--bg) 80%, transparent); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); border-bottom: 1px solid transparent; transition: border-color .3s; }
   nav.scrolled { border-bottom-color: var(--border); }
   .logo { display: inline-flex; align-items: center; gap: 10px; text-decoration: none; }
-  .logo-mark { width: 32px; height: 32px; border-radius: 9px; background: var(--surface); border: 1px solid var(--border-strong); box-shadow: var(--shadow-sm); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .logo-mark { width: 32px; height: 32px; border-radius: var(--r-sm); background: var(--surface); border: 1px solid var(--border-strong); box-shadow: var(--shadow-sm); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
   .logo-mark svg { width: 20px; height: 20px; }
   .logo-word { font-size: 19px; font-weight: 600; letter-spacing: -.5px; color: var(--text); }
   .nav-links { display: flex; gap: 30px; list-style: none; }
@@ -57,13 +51,13 @@
   /* Theme is fully automatic — clock-based, no toggle */
   .nav-signin { font-size: 14px; font-weight: 500; color: var(--text-mid); text-decoration: none; cursor: pointer; transition: color .2s; background: none; border: 0; padding: 0; font-family: inherit; }
   .nav-signin:hover { color: var(--text); }
-  .btn { display: inline-flex; align-items: center; gap: 9px; justify-content: center; font-family: inherit; font-size: 14px; font-weight: 500; border: none; border-radius: 999px; cursor: pointer; text-decoration: none; transition: transform .2s, box-shadow .3s, background .2s, border-color .2s, filter .2s, opacity .2s; white-space: nowrap; }
+  .btn { display: inline-flex; align-items: center; gap: 9px; justify-content: center; font-family: inherit; font-size: 14px; font-weight: 500; border: none; border-radius: var(--r-md); cursor: pointer; text-decoration: none; transition: transform .2s, box-shadow .3s, background .2s, border-color .2s, filter .2s, opacity .2s; white-space: nowrap; }
   .btn-primary {
     padding: 10px 18px; color: var(--btn-text);
     background: var(--btn);
-    box-shadow: 0 1px 2px rgba(26,26,26,0.16);
+    box-shadow: 0 1px 2px rgba(26,23,22,0.16);
   }
-  .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 10px 24px rgba(26,26,26,0.22); }
+  .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 10px 24px rgba(26,23,22,0.22); }
   .menu-btn {
     display: none; width: 40px; height: 40px; position: relative; padding: 0;
     border: 1px solid var(--border-strong); background: var(--surface); border-radius: 50%;
@@ -76,7 +70,7 @@
   .menu-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
   .menu-btn span {
     position: absolute; left: calc(50% - 8px); width: 16px; height: 2px;
-    background: var(--text); border-radius: 2px;
+    background: var(--text); border-radius: var(--r-xs);
     transition: top .3s cubic-bezier(.16,.86,.21,1), transform .3s cubic-bezier(.16,.86,.21,1);
   }
   .menu-btn span:nth-child(1) { top: 15px; } .menu-btn span:nth-child(2) { top: 21px; }
@@ -97,8 +91,8 @@
   .channel .v { font-size: 16px; font-weight: 500; text-decoration: none; color: var(--text); transition: color .2s; }
   a.channel-v:hover { color: var(--accent); }
 
-  .form-card { background: var(--surface); border: 1px solid var(--border); border-radius: 20px; box-shadow: var(--shadow); padding: 36px; }
-  .form-msg { font-size: 14px; padding: 13px 16px; border-radius: 12px; margin-bottom: 22px; display: none; line-height: 1.5; }
+  .form-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-md); box-shadow: var(--shadow); padding: 36px; }
+  .form-msg { font-size: 14px; padding: 13px 16px; border-radius: var(--r-md); margin-bottom: 22px; display: none; line-height: 1.5; }
   .form-msg.success { display: block; color: var(--accent); background: var(--accent-soft); border: 1px solid var(--accent-soft); }
   .form-msg.error { display: block; color: #d4493f; background: rgba(212,73,63,.08); border: 1px solid rgba(212,73,63,.18); }
   .form { display: flex; flex-direction: column; gap: 18px; }
@@ -107,7 +101,7 @@
   .field label { font-size: 12px; font-weight: 600; letter-spacing: .3px; color: var(--text-mid); text-transform: uppercase; font-family: 'Geist Mono', monospace; }
   .field input, .field textarea, .field select {
     font-family: inherit; font-size: 15px; padding: 13px 15px;
-    border: 1px solid var(--border-strong); border-radius: 11px; background: var(--bg);
+    border: 1px solid var(--border-strong); border-radius: var(--r-sm); background: var(--bg);
     color: var(--text); outline: none; transition: border-color .2s, box-shadow .2s; -webkit-appearance: none; appearance: none;
   }
   .field select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' fill='none'%3E%3Cpath d='M1 1.5l5 5 5-5' stroke='%2395959d' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; padding-right: 36px; cursor: pointer; }
@@ -116,9 +110,9 @@
   .field input::placeholder, .field textarea::placeholder { color: var(--text-dim); }
   .submit {
     font-family: inherit; font-size: 15px; font-weight: 500; width: 100%;
-    padding: 15px; color: var(--btn-text); border: none; border-radius: 999px; cursor: pointer;
+    padding: 15px; color: var(--btn-text); border: none; border-radius: var(--r-md); cursor: pointer;
     background: var(--btn);
-    box-shadow: 0 1px 2px rgba(26,26,26,0.16);
+    box-shadow: 0 1px 2px rgba(26,23,22,0.16);
     transition: filter .2s, transform .15s, box-shadow .3s; margin-top: 4px;
   }
   .submit:hover { filter: brightness(1.05); transform: translateY(-1px); box-shadow: inset 0 1px 0 rgba(255,255,255,0.28), inset 0 -1px 0 rgba(0,0,0,0.22), 0 10px 24px rgba(79,70,229,0.32); }
@@ -162,17 +156,15 @@
     .submit:hover { transform: none !important; }
   }
 
-  .lg-wave { stroke: #28775c; }
-  .lg-spark { fill: #28775c; }
-  html[data-theme="dark"] .lg-wave { stroke: #5fb896; }
-  html[data-theme="dark"] .lg-spark { fill: #5fb896; }
+  .lg-wave { stroke: #646e39; }
+  .lg-spark { fill: #646e39; }
 </style>
 </head>
 <body>
 
 <nav>
   <a href="index.html" class="logo">
-    <span class="logo-mark"><svg viewBox="0 0 24 24" fill="none"><path class="lg-wave" d="M5 15 Q8 9 12 12 Q16 15 19 9" stroke="#28775c" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path class="lg-spark" d="M19 3.6 C19.15 5.1 20.3 6.25 21.8 6.4 C20.3 6.55 19.15 7.7 19 9.2 C18.85 7.7 17.7 6.55 16.2 6.4 C17.7 6.25 18.85 5.1 19 3.6 Z" fill="#28775c"/></svg></span>
+    <span class="logo-mark"><svg viewBox="0 0 24 24" fill="none"><path class="lg-wave" d="M5 15 Q8 9 12 12 Q16 15 19 9" stroke="#646e39" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path class="lg-spark" d="M19 3.6 C19.15 5.1 20.3 6.25 21.8 6.4 C20.3 6.55 19.15 7.7 19 9.2 C18.85 7.7 17.7 6.55 16.2 6.4 C17.7 6.25 18.85 5.1 19 3.6 Z" fill="#646e39"/></svg></span>
     <span class="logo-word">Sona</span>
   </a>
   <ul class="nav-links">
@@ -227,7 +219,7 @@
 <footer>
   <div class="footer-base">
     <a href="index.html" class="logo">
-      <span class="logo-mark"><svg viewBox="0 0 24 24" fill="none"><path class="lg-wave" d="M5 15 Q8 9 12 12 Q16 15 19 9" stroke="#28775c" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path class="lg-spark" d="M19 3.6 C19.15 5.1 20.3 6.25 21.8 6.4 C20.3 6.55 19.15 7.7 19 9.2 C18.85 7.7 17.7 6.55 16.2 6.4 C17.7 6.25 18.85 5.1 19 3.6 Z" fill="#28775c"/></svg></span>
+      <span class="logo-mark"><svg viewBox="0 0 24 24" fill="none"><path class="lg-wave" d="M5 15 Q8 9 12 12 Q16 15 19 9" stroke="#646e39" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path class="lg-spark" d="M19 3.6 C19.15 5.1 20.3 6.25 21.8 6.4 C20.3 6.55 19.15 7.7 19 9.2 C18.85 7.7 17.7 6.55 16.2 6.4 C17.7 6.25 18.85 5.1 19 3.6 Z" fill="#646e39"/></svg></span>
       <span class="logo-word">Sona</span>
     </a>
     <span>&copy; 2026 Sona Labs Inc.</span>
@@ -300,12 +292,6 @@
   })();
 </script>
 <script>
-  // Theme — fully automatic, follows the clock (head bootstrap set the initial state)
-  setInterval(() => {
-    const h = new Date().getHours();
-    document.documentElement.setAttribute('data-theme', (h < 7 || h >= 19) ? 'dark' : 'light');
-  }, 60 * 1000);
-
   const nav = document.querySelector('nav');
   window.addEventListener('scroll', () => nav.classList.toggle('scrolled', window.scrollY > 16), { passive: true });
 
