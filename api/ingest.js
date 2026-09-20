@@ -272,6 +272,28 @@ export default async function handler(req, res) {
     cronSecret && req.headers.authorization === `Bearer ${cronSecret}`
   );
 
+  // Vercel labels its own invocations with this user agent and header. They are
+  // detection only — the bearer above stays the security boundary, since either
+  // can be forged by anyone. Knowing a request was MEANT to be the daily run is
+  // what lets an unauthorised one fail loudly instead of quietly previewing.
+  const looksLikeCron = Boolean(
+    req.headers['x-vercel-cron-schedule'] ||
+    /^vercel-cron\//.test(String(req.headers['user-agent'] || ''))
+  );
+
+  // A scheduled run that cannot authorise used to fall straight through to the
+  // preview below and answer 200, so an unset CRON_SECRET looked like a healthy
+  // daily job while nothing was ever written — the feed went stale and the
+  // database sat idle long enough to be scheduled for pausing. Refuse instead,
+  // so the cron goes red and says why.
+  if (looksLikeCron && !isCron) {
+    const reason = cronSecret
+      ? 'CRON_SECRET is set but the Authorization header did not match it'
+      : 'CRON_SECRET is not set, so Vercel sends no Authorization header to compare';
+    console.error(`[Ingest] Scheduled run refused: ${reason}. Nothing was written.`);
+    return res.status(500).json({ error: 'Scheduled run not authorised', reason, written: 0 });
+  }
+
   // GET previews. Nothing is written until an authenticated POST — or a cron.
   if (req.method !== 'POST' && !isCron) {
     return res.status(200).json({
@@ -291,7 +313,13 @@ export default async function handler(req, res) {
   }
   if (!supabase) return res.status(503).json({ error: 'Database not configured' });
   if (!rows.length) {
-    return res.status(200).json({ written: 0, note: 'Nothing cleared the threshold', failed });
+    // Touch the database even on an empty day. A scheduled run that returns
+    // without querying leaves a free Supabase project looking idle, and idle
+    // projects get paused.
+    const { count } = await supabase.from('outliers').select('id', { count: 'exact', head: true });
+    return res.status(200).json({
+      written: 0, note: 'Nothing cleared the threshold', outliers: count ?? null, failed,
+    });
   }
 
   // Replace mode deletes only this endpoint's own rows (id prefix yt_), so a

@@ -55,6 +55,51 @@ in your admin page. It's perfect for demoing the flow; not for collecting real l
 Now `/api/waitlist` and `/api/contact` write to Postgres. The forms and validation
 don't change — they already call `CanopyData`.
 
+## Scheduled jobs, and keeping the database awake
+
+`vercel.json` defines two daily crons:
+
+| Cron | What it does |
+|------|--------------|
+| `/api/ingest` at 06:00 UTC | Pulls fresh outliers from YouTube RSS and Substack archives into the `outliers` table. |
+| `/api/health` at 18:00 UTC | One cheap read, plus a status report. Exists so the database is never idle for a week. |
+
+**`CRON_SECRET` is required, not optional.** Vercel only sends an
+`Authorization: Bearer <CRON_SECRET>` header once you have created that variable
+yourself — it is not generated for you. Without it the scheduled ingest cannot
+prove it is Vercel calling, so it refuses to write:
+
+```
+CRON_SECRET = <random string, 16+ chars: openssl rand -hex 32>
+```
+
+Set it in Project → Settings → Environment Variables (Production) and redeploy.
+Until it is set, the ingest cron answers 500 with the reason, which is deliberate:
+it used to answer 200 and silently write nothing, so a misconfigured job looked
+like a healthy one while the Discover feed quietly went stale for weeks.
+
+**Why the health cron matters.** A free Supabase project is paused after about a
+week with no activity, and Supabase emails a warning first. The marketing site
+serves static HTML and never touches Postgres, so a quiet week is enough to get
+the project suspended even though nothing is broken. `/api/health` queries the
+database once a day, which keeps that clock reset, and reports what it found:
+
+```bash
+curl https://buildwithsona.com/api/health
+# → { ok: true,
+#     database: { reachable: true, outliers: 88, ingestedOutliers: 84,
+#                 lastIngestAgeHours: 11, ingestStale: false },
+#     config:   { database: true, cronSecret: true, adminKey: true } }
+```
+
+`ingestStale: true` means the daily ingest has not landed anything for over two
+days — check `config.cronSecret` first. A `503` means the database is unreachable
+or paused; unpause it from the Supabase dashboard within 90 days.
+
+Note that a Vercel Hobby project allows **two** cron jobs, once per day each, so
+these two fill the quota. A paid Supabase plan removes the pausing behaviour
+altogether and makes the health cron a monitor rather than a necessity.
+
 ## Files
 
 | File | Role |
@@ -64,6 +109,8 @@ don't change — they already call `CanopyData`.
 | `api/waitlist.js` | Serverless endpoint for signups (used in `api` mode). |
 | `api/contact.js` | Serverless endpoint for messages. |
 | `api/_supabase.js` | Shared Supabase client + SQL schema docs. |
+| `api/ingest.js` | Daily outlier ingest (YouTube RSS + Substack archives). |
+| `api/health.js` | Status probe and the daily keepalive that stops the database being paused. |
 
 ## What's still needed for a *full product app*
 
