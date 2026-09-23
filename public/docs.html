@@ -130,6 +130,7 @@
 
   /* ─── SIDEBAR ─── */
   .docs-sidebar {
+    min-width: 0;
     position: sticky;
     top: 100px;
     height: fit-content;
@@ -179,6 +180,7 @@
 
   /* ─── DOCS CONTENT ─── */
   .docs-content {
+    min-width: 0;
     padding-top: 40px;
     max-width: 720px;
   }
@@ -806,6 +808,7 @@
     }
     lastScrollY = current;
   }, { passive: true });
+</script>
 <script src="data.js" defer></script>
 <script>
   // Lazy load Sona Auth & Supabase
