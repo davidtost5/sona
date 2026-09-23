@@ -322,6 +322,53 @@
   .hero { position: relative; padding: 170px 36px 0; text-align: center; }
   .hero-inner { max-width: 880px; margin: 0 auto; position: relative; z-index: 1; }
 
+  /* Hero backdrop — a looping video in a rounded card inset under the nav.
+     Layers, bottom to top: poster still, video (fades in once it plays),
+     film grain, scrim. The card's height is set from JS (--hero-bg-h) so it
+     always ends a little way behind the Discover panel, which overlaps it.
+     The footage is dark in both themes, so the hero text switches to the
+     light tokens below regardless of the page theme. */
+  .hero-bg {
+    position: absolute; z-index: 0; top: 72px; left: 12px; right: 12px;
+    height: var(--hero-bg-h, 640px);
+    border-radius: 28px; overflow: hidden; background: #15120e;
+    pointer-events: none;
+  }
+  .hero-bg img, .hero-bg video {
+    position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
+  }
+  .hero-bg video { opacity: 0; transition: opacity .8s ease; }
+  .hero-bg video.playing { opacity: 1; }
+  .hero-bg-grain {
+    position: absolute; inset: 0; opacity: .45; mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+  /* Heaviest behind the text column (left on desktop), lighter over the
+     clouds on the right, darker again at the bottom edge. */
+  .hero-bg-scrim {
+    position: absolute; inset: 0;
+    background:
+      linear-gradient(90deg, rgba(10,8,6,.74) 0%, rgba(10,8,6,.5) 42%, rgba(10,8,6,.16) 72%, rgba(10,8,6,.22) 100%),
+      linear-gradient(180deg, rgba(0,0,0,.32) 0%, rgba(0,0,0,0) 38%, rgba(0,0,0,.58) 100%);
+  }
+  .hero.has-bg .hero-inner {
+    --bg: #111312; --text: #f3f3f0;
+    --text-mid: rgba(243,243,240,.82); --text-dim: rgba(243,243,240,.64);
+    /* Set color too: elements with no color rule (the h1) inherit body's
+       already-resolved color, not the token, so light theme left it black. */
+    color: var(--text);
+  }
+  @media (max-width: 760px) {
+    .hero-bg { top: 64px; left: 8px; right: 8px; border-radius: 20px; }
+    /* Text is centred here, so the scrim evens out instead of favouring the left. */
+    .hero-bg-scrim {
+      background: linear-gradient(180deg, rgba(10,8,6,.62) 0%, rgba(10,8,6,.5) 50%, rgba(10,8,6,.7) 100%);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .hero-bg video { display: none; }
+  }
+
 
 
 
@@ -1449,7 +1496,14 @@
 </div>
 
 <!-- HERO -->
-<header class="hero">
+<header class="hero has-bg">
+  <div class="hero-bg" aria-hidden="true">
+    <img src="hero-poster.jpg" alt="" decoding="async" fetchpriority="high">
+    <video muted loop playsinline preload="none"
+      data-src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260405_170732_8a9ccda6-5cff-4628-b164-059c500a2b41.mp4"></video>
+    <div class="hero-bg-grain"></div>
+    <div class="hero-bg-scrim"></div>
+  </div>
   <div class="hero-inner">
     <h1 data-r data-split>Stop guessing<br><span class="quiet">what to post.</span></h1>
     <p class="hero-triad" data-r>Find what's working. Understand why. Make it yours.</p>
@@ -2816,5 +2870,44 @@ var mode = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dar
   });
 </script>
 <div id="floating-menu"></div>
+<script>
+/* Hero backdrop: size the card, and load the video only where it's worth it.
+   The clip is 16 MB, so phones, Save-Data and reduced-motion visitors keep the
+   poster still. Off-screen, the video pauses. */
+(function(){
+  var hero = document.querySelector('.hero.has-bg');
+  if (!hero) return;
+  var bg = hero.querySelector('.hero-bg');
+  var mock = hero.querySelector('.mock-wrap');
+  var video = bg.querySelector('video');
+
+  function size(){
+    if (!mock) return;
+    var overlap = window.innerWidth <= 760 ? 40 : 64;
+    var h = mock.offsetTop + overlap - bg.offsetTop;
+    if (h > 0) bg.style.setProperty('--hero-bg-h', h + 'px');
+  }
+  size();
+  if ('ResizeObserver' in window) new ResizeObserver(size).observe(hero);
+  else window.addEventListener('resize', size);
+  window.addEventListener('load', size);
+
+  var conn = navigator.connection || {};
+  var skip = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    || window.matchMedia('(max-width: 760px)').matches
+    || conn.saveData || /(^|-)2g$/.test(conn.effectiveType || '');
+  if (skip || !video) return;
+
+  video.addEventListener('playing', function(){ video.classList.add('playing'); }, { once: true });
+  video.src = video.dataset.src;
+  var play = function(){ var p = video.play(); if (p && p.catch) p.catch(function(){}); };
+  play();
+  if ('IntersectionObserver' in window) {
+    new IntersectionObserver(function(entries){
+      entries[0].isIntersecting ? play() : video.pause();
+    }).observe(bg);
+  }
+})();
+</script>
 </body>
 </html>
