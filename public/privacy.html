@@ -1,31 +1,34 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="color-scheme" content="light">
+<script>(function(){try{var h=new Date().getHours();var dark=h<7||h>=19;document.documentElement.setAttribute('data-theme',dark?'dark':'light');}catch(e){}})();</script>
+<meta name="color-scheme" content="light dark">
 <link rel="icon" type="image/svg+xml" href="/logo.svg">
 <link rel="apple-touch-icon" href="/logo.svg">
 <title>Sona — Privacy Policy</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Hedvig+Letters+Sans&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet" media="print" onload="this.media='all'"><noscript><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Hedvig+Letters+Sans&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet"></noscript>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Geist+Mono:wght@500&display=swap" rel="stylesheet" media="print" onload="this.media='all'"><noscript><link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Geist+Mono:wght@500&display=swap" rel="stylesheet"></noscript>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
   :root {
-    /* Surfaces — the page is the lightest thing; panels are cut into it. */
-    --bg: #efedeb; --surface: #e8e5e3; --bg-soft: #e2dfdc;
-    --border: #d9d7d5; --border-strong: #c7c4c1;
-    --text: #1e1e1e; --text-mid: #4a4744; --text-dim: #757372;
-    --ink-panel: #1a1716; --text-on-ink: #efedeb;
-    --accent: #646e39; --accent-2: #565f2f; --accent-soft: rgba(100,110,57,0.10);
-    --lime: #eeffa7; --red: #cc3542;
-    --btn: #1a1716; --btn-text: #f7f7f4; --btn-hover: #474440;
-    --r-xs: 2px; --r-sm: 4px; --r-md: 8px; --r-lg: 12px;
-    --shadow-sm: 0 1px 2px rgba(26,23,22,0.04); --shadow: 0 2px 10px rgba(26,23,22,0.05);
+    --bg: #f3f3f0; --bg-soft: #ecebe6; --surface: #fcfcfa;
+    --border: rgba(26,26,26,0.09); --border-strong: rgba(26,26,26,0.16);
+    --text: #1a1a1a; --text-mid: #55554f; --text-dim: #71716a;
+    --accent: #28775c; --accent-soft: rgba(40,119,92,0.09);
+    --btn: #1a1a1a; --btn-text: #f3f3f0;
+  }
+  html[data-theme="dark"] {
+    --bg: #111312; --bg-soft: #171918; --surface: #1b1e1c;
+    --border: rgba(255,255,255,0.09); --border-strong: rgba(255,255,255,0.18);
+    --text: #f3f3f0; --text-mid: #a5a59e; --text-dim: #8b8b84;
+    --accent: #5fb896; --accent-soft: rgba(95,184,150,0.13);
+    --btn: #f3f3f0; --btn-text: #1a1a1a;
   }
   body {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+    font-family: 'Aeonik Pro', 'Aeonik', 'DM Sans', -apple-system, sans-serif;
     background: var(--bg); color: var(--text); -webkit-font-smoothing: antialiased;
     line-height: 1.5; min-height: 100vh; display: flex; flex-direction: column;
     transition: background .5s, color .5s;
@@ -40,7 +43,7 @@
   .logo { display: inline-flex; align-items: center; gap: 9px; text-decoration: none; font-weight: 600; letter-spacing: -.4px; }
   .logo svg { width: 24px; height: 24px; }
   .nav-cta {
-    padding: 9px 17px; border-radius: var(--r-sm); background: var(--btn); color: var(--btn-text);
+    padding: 9px 17px; border-radius: 100px; background: var(--btn); color: var(--btn-text);
     text-decoration: none; font-size: 14px; font-weight: 500; transition: opacity .2s;
   }
   .nav-cta:hover { opacity: .85; }
@@ -52,7 +55,7 @@
   h1 { font-size: clamp(32px, 5vw, 46px); font-weight: 600; letter-spacing: -1.6px; line-height: 1.08; margin-bottom: 14px; }
   .updated { font-family: 'Geist Mono', monospace; font-size: 12px; color: var(--text-dim); margin-bottom: 34px; }
   .note {
-    border: 1px solid var(--border-strong); background: var(--surface); border-radius: var(--r-md);
+    border: 1px solid var(--border-strong); background: var(--surface); border-radius: 12px;
     padding: 15px 17px; font-size: 14px; color: var(--text-mid); line-height: 1.6; margin-bottom: 34px;
   }
   h2 { font-size: 19px; font-weight: 600; letter-spacing: -.5px; margin: 34px 0 10px; }
@@ -72,27 +75,13 @@
     nav { padding: 15px 18px; }
     main { padding: 48px 20px 64px; }
   }
-
-  /* ─── Mobile ─── */
-  /* iOS inflates text on rotate unless told not to. */
-  html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
-  /* Long unbreakable tokens — URLs, handles, API paths — must not set the page width. */
-  body { overflow-wrap: break-word; }
-  @media (max-width: 768px) {
-    /* Notch and home-indicator clearance. */
-    nav { padding-left: max(18px, env(safe-area-inset-left)); padding-right: max(18px, env(safe-area-inset-right)); }
-    .mobile-menu { padding-bottom: max(28px, env(safe-area-inset-bottom)); }
-    /* Thumb-sized targets for anything you actually tap. */
-    .mobile-menu a { min-height: 48px; display: flex; align-items: center; }
-    nav a, .nav-cta, .btn { -webkit-tap-highlight-color: transparent; }
-  }
 </style>
 </head>
 <body>
 
 <nav>
   <a href="/index.html" class="logo">
-    <svg viewBox="0 0 24 24" fill="none"><path d="M5 15 Q8 9 12 12 Q16 15 19 9" stroke="#646e39" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M19 3.6 C19.15 5.1 20.3 6.25 21.8 6.4 C20.3 6.55 19.15 7.7 19 9.2 C18.85 7.7 17.7 6.55 16.2 6.4 C17.7 6.25 18.85 5.1 19 3.6 Z" fill="#646e39"/></svg>
+    <svg viewBox="0 0 24 24" fill="none"><path d="M5 15 Q8 9 12 12 Q16 15 19 9" stroke="#28775c" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M19 3.6 C19.15 5.1 20.3 6.25 21.8 6.4 C20.3 6.55 19.15 7.7 19 9.2 C18.85 7.7 17.7 6.55 16.2 6.4 C17.7 6.25 18.85 5.1 19 3.6 Z" fill="#28775c"/></svg>
     <span>Sona</span>
   </a>
   <a href="/index.html#pricing" class="nav-cta">Start free</a>
@@ -135,5 +124,11 @@
   </div>
 </footer>
 
+<script>
+  setInterval(function () {
+    var h = new Date().getHours();
+    document.documentElement.setAttribute('data-theme', (h < 7 || h >= 19) ? 'dark' : 'light');
+  }, 60 * 1000);
+</script>
 </body>
 </html>
