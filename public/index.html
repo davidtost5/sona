@@ -1047,90 +1047,69 @@
   }
 
 
-  /* ─── Floating menu ───
-     A pill that morphs open. Ported from a framer-motion component: what were
-     animate props there are transitions here, and the stagger is a per-child
-     delay. Sona's palette rather than the original's yellow — the effect needs
-     a bright pill against a dark expansion, not that specific yellow. */
-  .fm {
-    position: fixed; left: 50%; bottom: 26px; z-index: 90;
+  /* ─── Floating menu (gooey) ───
+     A "Menu" pill whose links bubble up out of it on open, joined by liquid
+     bridges while they travel, then settling as separate pills. Port of the
+     Gooey effect from libraries.dev: the blobs are SVG rects under one goo
+     filter, the labels are plain links on top with no background, so the goo
+     never blurs text. Geometry and the filter live in floating-menu.js. */
+  .gm {
+    position: fixed; left: 50%; bottom: calc(14px + env(safe-area-inset-bottom)); z-index: 90;
     transform: translateX(-50%);
-    width: 158px; height: 48px; border-radius: 72px;
-    overflow: hidden; display: flex; flex-direction: column;
-    transition: width .8s cubic-bezier(.22,1,.36,1),
-                height .15s cubic-bezier(.22,1,.36,1),
-                border-radius .8s cubic-bezier(.22,1,.36,1);
-    box-shadow: 0 8px 30px rgba(0,0,0,.18);
+    pointer-events: none;   /* only the pills take clicks; the gaps fall through */
   }
-  .fm-open { width: 268px; height: 252px; border-radius: 30px; transition-duration: .8s; }
-
-  .fm-ground { position: absolute; inset: 0; background: var(--accent); border-radius: inherit; }
-
-  /* The dark circle rises from below the pill and overshoots it, so the fill
-     reads as a liquid sweep rather than a box growing. */
-  .fm-circle {
-    position: absolute; left: 50%; bottom: -200%;
-    width: 200%; height: 200%; border-radius: 50%;
-    background: #141715; transform: translateX(-50%);
-    transition: bottom .8s cubic-bezier(.22,1,.36,1);
+  .gm-goo { position: absolute; inset: 0; overflow: visible; filter: drop-shadow(0 8px 18px rgba(0,0,0,.2)); }
+  .gm-items { position: absolute; inset: 0; }
+  .gm-shape { fill: var(--accent); transform-box: fill-box; transform-origin: center; }
+  .gm-shape.is-hot { fill: var(--accent-2); }
+  .gm-item, .gm-bar {
+    position: absolute; display: flex; align-items: center; justify-content: center;
+    padding: 0 22px; border: 0; border-radius: 100px; background: none;
+    font-family: inherit; font-size: 15px; font-weight: 600; line-height: 1; white-space: nowrap;
+    color: var(--btn-fg); text-decoration: none;
+    cursor: pointer; pointer-events: auto; -webkit-tap-highlight-color: transparent; touch-action: manipulation;
   }
-  .fm-open .fm-circle { bottom: -20%; transition-delay: .1s; }
+  .gm-bar { gap: 10px; }
+  .gm-item:focus-visible, .gm-bar:focus-visible { outline: 2px solid var(--text); outline-offset: 3px; }
 
-  .fm-items {
-    position: relative; z-index: 2; flex: 0; overflow: hidden;
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
-    gap: 20px; opacity: 0; pointer-events: none;
+  /* Closed: each link and its blob sit shrunk inside the Menu pill. Going
+     back in is quicker than coming out, and the outermost pill leaves first. */
+  .gm-item, .gm-shape-item {
+    transform: translateY(var(--dy)) scale(.4);
+    transition: transform .32s cubic-bezier(.5,0,.75,0) calc((var(--n) - 1 - var(--k)) * 30ms), fill .2s ease;
   }
-  .fm-open .fm-items { flex: 1; opacity: 1; pointer-events: auto; }
+  .gm-item { visibility: hidden; pointer-events: none; }
+  .gm-item span { opacity: 0; transition: opacity .1s ease; }
 
-  .fm-item {
-    font-family: inherit; font-size: 22px; font-weight: 700; letter-spacing: -.5px;
-    text-transform: uppercase; line-height: 1; color: #f3f3f0; text-decoration: none;
-    display: flex; overflow: hidden; height: 1em; background: none; border: none;
-    opacity: 0; transition: opacity .4s cubic-bezier(.22,1,.36,1);
+  /* Open: spring out nearest-first. The overshoot in the curve is what
+     stretches the bridges before they snap. */
+  .gm-open .gm-item, .gm-open .gm-shape-item {
+    transform: none;
+    transition: transform .55s cubic-bezier(.34,1.56,.64,1) calc(var(--k) * 40ms), fill .2s ease;
   }
-  .fm-open .fm-item { opacity: 1; transition-delay: calc(.4s + .08s * var(--i)); }
-  .fm-item:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; border-radius: 4px; }
+  .gm-open .gm-item { visibility: visible; pointer-events: auto; }
+  .gm-open .gm-item span { opacity: 1; transition: opacity .25s ease calc(var(--k) * 40ms + 180ms); }
 
-  .fm-ch { display: inline-block; overflow: hidden; height: 1em; }
-  .fm-roll { display: flex; flex-direction: column; transition: transform 0s; }
-  .fm-roll b { display: block; height: 1em; line-height: 1em; font-weight: inherit; }
-  /* The pair slides exactly half its own height, so the duplicate lands where
-     the original was. Per-character delay is what makes it a roll. */
-  .fm-item:hover .fm-roll, .fm-item:focus-visible .fm-roll {
-    transform: translateY(-50%);
-    transition: transform .8s cubic-bezier(.22,1,.36,1);
-    transition-delay: var(--d);
-  }
+  /* Press: the pill and its blob dip together. */
+  .gm-bar, .gm-shape-bar { transition: transform .15s ease, fill .2s ease; }
+  .gm-bar:active, .gm:has(.gm-bar:active) .gm-shape-bar { transform: scale(.95); }
 
-  .fm-bar {
-    position: relative; z-index: 2; flex: none;
-    display: flex; align-items: center; justify-content: space-between;
-    width: 100%; height: 48px; padding: 0 20px;
-    background: none; border: none; cursor: pointer; font-family: inherit;
-    transition: padding .8s cubic-bezier(.22,1,.36,1);
+  .gm-burger { position: relative; width: 18px; height: 18px; display: grid; place-items: center; }
+  .gm-burger i {
+    position: absolute; width: 16px; height: 1.8px; border-radius: 2px; background: currentColor;
+    transition: transform .4s cubic-bezier(.34,1.56,.64,1);
   }
-  .fm-open .fm-bar { padding: 0 24px 22px; height: 70px; }
-  .fm-label { font-size: 15px; font-weight: 600; line-height: 1; color: var(--btn-fg); transition: color .3s; }
-  .fm-open .fm-label { color: #f3f3f0; }
-
-  .fm-burger { position: relative; width: 22px; height: 22px; display: grid; place-items: center; }
-  .fm-burger i {
-    position: absolute; width: 17px; height: 2px; border-radius: 2px;
-    background: var(--btn-fg); transition: transform .4s cubic-bezier(.22,1,.36,1), background .3s;
-  }
-  .fm-burger i:first-child { transform: translateY(-3px); }
-  .fm-burger i:last-child  { transform: translateY(3px); }
-  .fm-open .fm-burger i { background: #f3f3f0; }
-  .fm-open .fm-burger i:first-child { transform: rotate(45deg); }
-  .fm-open .fm-burger i:last-child  { transform: rotate(-45deg); }
+  .gm-burger i:first-child { transform: translateY(-3.5px); }
+  .gm-burger i:last-child  { transform: translateY(3.5px); }
+  .gm-open .gm-burger i:first-child { transform: rotate(45deg); }
+  .gm-open .gm-burger i:last-child  { transform: rotate(-45deg); }
 
   /* The site already has a nav bar; on a wide screen this would be a second one
      saying the same thing. It earns its place where that nav is collapsed. */
-  @media (min-width: 761px) { .fm { display: none; } }
+  @media (min-width: 761px) { .gm { display: none; } }
 
   @media (prefers-reduced-motion: reduce) {
-    .fm, .fm-circle, .fm-item, .fm-roll, .fm-bar, .fm-burger i { transition: none !important; }
+    .gm *, .gm-shape { transition: none !important; }
   }
 
   footer { margin-top: 140px; border-top: 1px solid var(--border); padding-top: 56px; overflow: hidden; position: relative; isolation: isolate; }
@@ -1400,7 +1379,7 @@
   .mask-reveal { clip-path: none !important; }
 </style></noscript>
 <script src="local-decode.js?v=20260830a" defer></script>
-<script src="floating-menu.js?v=20260909a" defer></script>
+<script src="floating-menu.js?v=20260924a" defer></script>
 </head>
 <body>
 <svg width="0" height="0" aria-hidden="true" style="position:absolute">
