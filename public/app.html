@@ -452,33 +452,127 @@
 
   @media (max-width:768px) { .cmd-back { padding:8vh 14px 14px; } }
 
-  /* ─── "Let's make something" entry cards ─── */
-  .lc { margin-bottom: 22px; }
-  .lc-head { display:flex; align-items:center; gap:10px; margin-bottom:14px; }
-  .lc-mark { width:20px; height:20px; color:var(--accent); flex-shrink:0; }
-  .lc-mark svg { width:100%; height:100%; display:block; }
-  .lc-head h2 { font-size:19px; font-weight:600; letter-spacing:-.4px; }
-  .lc-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(190px,1fr)); gap:12px; }
-  .lc-card {
-    display:flex; flex-direction:column; align-items:flex-start; gap:4px;
-    padding:18px 16px 16px; min-height:132px; cursor:pointer; text-align:left;
-    background:var(--bg-soft); border:1px solid var(--border); border-radius:15px;
-    font-family:inherit; transition:border-color .2s ease, transform .2s ease;
+  /* ─── Ask (home) ───
+     The home screen's open prompt, answered from what's already loaded: a topic
+     searches the outlier feed and the hooks library, a pasted post goes to the
+     local decoder. Chat-home shape, no model behind it. */
+  .ask { max-width: 760px; margin: 26px auto 6px; }
+  .ask-hero { text-align: center; margin-bottom: 28px; }
+  .ask-mark { display: inline-flex; width: 40px; height: 40px; color: var(--accent); margin-bottom: 14px; }
+  .ask-mark svg { width: 100%; height: 100%; display: block; }
+  .ask-hi { font-size: 13px; color: var(--text-dim); margin: 0 0 6px; }
+  .ask-title { font-size: clamp(26px, 3.4vw, 36px); font-weight: 600; letter-spacing: -1px; line-height: 1.12; margin: 0; }
+
+  .ask-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 14px; }
+  /* These set display, which beats the UA rule for [hidden]; restate it. */
+  .ask-cards[hidden], .ask-thread[hidden], .ask-mode[hidden] { display: none; }
+  .ask-card {
+    display: flex; flex-direction: column; align-items: flex-start; justify-content: space-between; gap: 22px;
+    min-height: 122px; padding: 18px 20px; text-align: left;
+    font: inherit; color: var(--text); background: var(--bg-soft);
+    border: 1px solid var(--border); border-radius: 16px; cursor: pointer;
+    transition: border-color .2s ease, background .2s ease, transform .15s ease;
   }
-  .lc-card:hover { border-color:var(--border-strong); transform:translateY(-2px); }
-  .lc-card:focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
-  .lc-ico {
-    width:36px; height:36px; border-radius:10px; margin-bottom:auto;
-    display:flex; align-items:center; justify-content:center;
+  .ask-card svg { width: 20px; height: 20px; color: var(--text-mid); flex-shrink: 0; }
+  .ask-card span { font-size: 15px; line-height: 1.4; }
+  .ask-card:hover { border-color: var(--border-strong); background: var(--surface); }
+  .ask-card:active { transform: scale(.985); }
+  .ask-card:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  .ask-box {
+    background: var(--surface); border: 1px solid var(--border-strong); border-radius: 22px;
+    padding: 16px 14px 12px 20px; box-shadow: var(--shadow-sm);
+    transition: border-color .2s ease, box-shadow .2s ease;
   }
-  .lc-ico svg { width:17px; height:17px; }
-  /* Per-card accent, like the reference — one hue each so the row scans fast. */
-  .lc-green  { background:rgba(95,184,150,.14);  color:#5fb896; }
-  .lc-blue   { background:rgba(90,150,255,.14);  color:#6f9dff; }
-  .lc-amber  { background:rgba(230,170,70,.14);  color:#e2a94a; }
-  .lc-violet { background:rgba(150,120,240,.14); color:#9b83f0; }
-  .lc-card b { font-size:14px; color:var(--text); margin-top:14px; }
-  .lc-card small { font-size:12px; color:var(--text-dim); line-height:1.45; }
+  .ask-box:focus-within { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+  .ask-box textarea {
+    display: block; width: 100%; min-height: 26px; max-height: 240px; resize: none; overflow-y: hidden;
+    border: 0; outline: 0; background: transparent; padding: 0;
+    color: var(--text); font: inherit; font-size: 16px; line-height: 1.5;
+  }
+  .ask-box textarea::placeholder { color: var(--text-dim); }
+  .ask-tools { display: flex; align-items: center; gap: 8px; margin-top: 14px; }
+  .ask-tool {
+    width: 36px; height: 36px; display: grid; place-items: center; flex-shrink: 0;
+    border: 0; border-radius: 50%; background: none; color: var(--text-mid); cursor: pointer;
+  }
+  .ask-tool:hover { background: var(--bg-soft); color: var(--text); }
+  .ask-tool svg, .ask-send svg { width: 18px; height: 18px; }
+  .ask-mode {
+    margin-left: auto; font: inherit; font-size: 12.5px; color: var(--text-dim);
+    background: none; border: 1px solid var(--border); border-radius: 100px; padding: 5px 11px; cursor: pointer;
+  }
+  .ask-mode:hover { color: var(--text); border-color: var(--border-strong); }
+  .ask-mode[hidden] + .ask-send { margin-left: auto; }
+  .ask-send {
+    width: 40px; height: 40px; display: grid; place-items: center; flex-shrink: 0;
+    border: 0; border-radius: 50%; background: var(--text); color: var(--bg); cursor: pointer;
+    transition: opacity .2s ease, transform .15s ease;
+  }
+  .ask-send:disabled { opacity: .3; cursor: default; }
+  .ask-send:not(:disabled):active { transform: scale(.94); }
+  .ask-tool:focus-visible, .ask-send:focus-visible, .ask-mode:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .ask-note { min-height: 18px; margin: 8px 6px 0; font-size: 12.5px; color: var(--text-dim); }
+  .ask-note.err { color: #e07a7a; }
+
+  /* The conversation that replaces the cards once something is asked. */
+  .ask-thread { display: flex; flex-direction: column; gap: 22px; margin-bottom: 18px; }
+  .ask-thead { display: flex; justify-content: flex-end; margin-bottom: -10px; }
+  .ask-clear { font: inherit; font-size: 12.5px; color: var(--text-dim); background: none; border: 0; padding: 4px 6px; border-radius: 6px; cursor: pointer; }
+  .ask-clear:hover { color: var(--text); }
+  .ask-q { display: flex; justify-content: flex-end; }
+  .ask-q span {
+    max-width: 80%; padding: 10px 14px; border-radius: 16px 16px 4px 16px;
+    background: var(--bg-soft); border: 1px solid var(--border);
+    font-size: 14.5px; line-height: 1.5; white-space: pre-wrap; overflow-wrap: anywhere;
+    display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden;
+  }
+  .ask-a { display: flex; gap: 12px; }
+  .ask-a-mark { width: 22px; height: 22px; color: var(--accent); flex-shrink: 0; margin-top: 1px; }
+  .ask-a-mark svg { width: 100%; height: 100%; display: block; }
+  .ask-a-body { flex: 1; min-width: 0; }
+  .ask-lead { font-size: 15px; line-height: 1.55; margin: 0 0 12px; }
+  .ask-sub { font-size: 11.5px; font-weight: 600; letter-spacing: .4px; text-transform: uppercase; color: var(--text-dim); margin: 18px 0 8px; }
+  .ask-results { display: grid; gap: 10px; }
+  .ask-post { padding: 14px 16px; border: 1px solid var(--border); border-radius: 14px; background: var(--bg-soft); }
+  .ask-who { display: flex; align-items: center; gap: 9px; font-size: 13px; margin-bottom: 8px; min-width: 0; }
+  .ask-av { width: 24px; height: 24px; border-radius: 50%; flex-shrink: 0; background: var(--accent-soft) center/cover no-repeat; }
+  .ask-who b { font-weight: 600; white-space: nowrap; }
+  .ask-who span { color: var(--text-dim); font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .ask-post p {
+    font-size: 14px; line-height: 1.5; margin: 0 0 10px;
+    display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
+  }
+  .ask-meta { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+  .ask-views { font-family: 'Geist Mono', monospace; font-size: 11px; color: var(--text-dim); }
+  .ask-acts { margin-left: auto; display: flex; gap: 6px; }
+  .ask-act {
+    font: inherit; font-size: 12.5px; padding: 5px 11px; border-radius: 8px;
+    border: 1px solid var(--border); background: none; color: var(--text-mid); cursor: pointer;
+  }
+  .ask-act:hover { border-color: var(--border-strong); color: var(--text); }
+  .ask-act.saved { color: var(--accent); border-color: var(--accent); }
+  .ask-hook { padding: 12px 14px; border-radius: 12px; border: 1px dashed var(--border-strong); }
+  .ask-hook small { display: block; font-size: 10.5px; letter-spacing: .4px; text-transform: uppercase; color: var(--text-dim); margin-bottom: 4px; }
+  .ask-hook b { display: block; font-size: 13.5px; font-weight: 600; line-height: 1.45; margin-bottom: 4px; }
+  .ask-hook span { font-size: 13px; line-height: 1.5; color: var(--text-mid); }
+  .ask-steps { white-space: pre-line; font-size: 13.5px; line-height: 1.7; color: var(--text-mid); padding: 12px 14px; border: 1px solid var(--border); border-radius: 12px; }
+  .ask-links { display: flex; gap: 16px; flex-wrap: wrap; margin-top: 12px; }
+  .ask-link { font: inherit; font-size: 13px; font-weight: 500; color: var(--accent); background: none; border: 0; padding: 4px 0; cursor: pointer; }
+  .ask-link:hover { text-decoration: underline; text-underline-offset: 3px; }
+  .ask-act:focus-visible, .ask-link:focus-visible, .ask-clear:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  @media (max-width: 560px) {
+    .ask { margin-top: 12px; }
+    .ask-box textarea { min-height: 48px; }   /* the placeholder wraps to two lines here */
+    .ask-cards { grid-template-columns: 1fr; gap: 8px; }
+    .ask-card { flex-direction: row; align-items: center; justify-content: flex-start; gap: 14px; min-height: 0; padding: 15px 16px; }
+    .ask-q span { max-width: 92%; }
+    .ask-acts { margin-left: 0; width: 100%; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .ask-card, .ask-box, .ask-send { transition: none; }
+  }
 
   /* Editor footer: created date on the left, live counts on the right. */
   .draft-foot {
@@ -528,10 +622,6 @@
   .ir-use:hover { border-color:var(--accent); color:var(--accent); }
 
   /* ─── Home ─── */
-  .hm-head { display:flex; align-items:center; gap:12px; margin-bottom:22px; }
-  .hm-mark { width:26px; height:26px; color:var(--accent); flex-shrink:0; }
-  .hm-mark svg { width:100%; height:100%; display:block; }
-  .hm-head h2 { font-size:28px; font-weight:600; letter-spacing:-.8px; }
   .hm-sec { font-size:15px; font-weight:600; margin:30px 0 12px; }
   .hm-recents {
     display:grid; grid-template-columns:minmax(240px,340px) 1fr;
@@ -1256,39 +1346,32 @@
            Sona opened straight into Discover, so nothing said "here's where you
            were". One greeting, four ways in, and what you touched last. -->
       <div class="view active" data-view="home">
-        <div class="hm-head">
-          <span class="hm-mark"><svg viewBox="0 0 24 24" fill="none"><path d="M5 15 Q8 9 12 12 Q16 15 19 9" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" fill="none"/><path d="M19 3.6 C19.15 5.1 20.3 6.25 21.8 6.4 C20.3 6.55 19.15 7.7 19 9.2 C18.85 7.7 17.7 6.55 16.2 6.4 C17.7 6.25 18.85 5.1 19 3.6 Z" fill="currentColor"/></svg></span>
-          <h2 id="hm-greeting">Welcome back</h2>
-        </div>
+        <section class="ask" id="ask" aria-labelledby="ask-title">
+          <div class="ask-hero">
+            <span class="ask-mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M5 15 Q8 9 12 12 Q16 15 19 9" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" fill="none"/><path d="M19 3.6 C19.15 5.1 20.3 6.25 21.8 6.4 C20.3 6.55 19.15 7.7 19 9.2 C18.85 7.7 17.7 6.55 16.2 6.4 C17.7 6.25 18.85 5.1 19 3.6 Z" fill="currentColor"/></svg></span>
+            <p class="ask-hi" id="hm-greeting">Welcome back</p>
+            <h2 class="ask-title" id="ask-title">What's worth posting today?</h2>
+          </div>
 
-        <div class="lc">
-          <div class="lc-head">
-            <span class="lc-mark"><svg viewBox="0 0 24 24" fill="none"><path d="M5 15 Q8 9 12 12 Q16 15 19 9" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" fill="none"/><path d="M19 3.6 C19.15 5.1 20.3 6.25 21.8 6.4 C20.3 6.55 19.15 7.7 19 9.2 C18.85 7.7 17.7 6.55 16.2 6.4 C17.7 6.25 18.85 5.1 19 3.6 Z" fill="currentColor"/></svg></span>
-            <h2>Let's make something</h2>
+          <div class="ask-cards" id="ask-cards">
+            <button type="button" class="ask-card" data-ask="today"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.07-2.14-.22-4.05 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.15.43-2.29 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg><span>Find an outlier to post about today</span></button>
+            <button type="button" class="ask-card" data-ask="paste"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/><path d="M7 8h8"/><path d="M7 12h10"/><path d="M7 16h6"/></svg><span>Decode a post that worked</span></button>
+            <button type="button" class="ask-card" data-ask="hooks"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 6H3"/><path d="M21 12H8"/><path d="M21 18H8"/><path d="M3 12v6"/></svg><span>Study the hooks behind top posts</span></button>
+            <button type="button" class="ask-card" data-ask="draft"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.38 3.62a1 1 0 0 1 3 3L7.37 18.64a2 2 0 0 1-.86.5l-2.87.84a.5.5 0 0 1-.62-.62l.84-2.87a2 2 0 0 1 .5-.86z"/></svg><span>Start a draft in your own words</span></button>
           </div>
-          <div class="lc-grid">
-            <button type="button" class="lc-card" data-go="decode">
-              <span class="lc-ico lc-green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3M16 3h3a2 2 0 0 1 2 2v3M8 21H5a2 2 0 0 1-2-2v-3M16 21h3a2 2 0 0 0 2-2v-3"/><path d="M7 12h10"/></svg></span>
-              <b>Decode a post</b>
-              <small>Paste anything that worked</small>
-            </button>
-            <button type="button" class="lc-card" data-go="discover">
-              <span class="lc-ico lc-blue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg></span>
-              <b>Find an outlier</b>
-              <small>See what's beating its baseline</small>
-            </button>
-            <button type="button" class="lc-card" data-go="draft">
-              <span class="lc-ico lc-amber"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg></span>
-              <b>Start a draft</b>
-              <small>Write it in your own words</small>
-            </button>
-            <button type="button" class="lc-card" data-go="voice">
-              <span class="lc-ico lc-violet"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></span>
-              <b>Set your voice</b>
-              <small>Teach Sona how you sound</small>
-            </button>
-          </div>
-        </div>
+
+          <div class="ask-thread" id="ask-thread" hidden></div>
+
+          <form class="ask-box" id="ask-form">
+            <textarea id="ask-input" rows="1" placeholder="Search a topic, or paste a post that worked" aria-label="Search a topic, or paste a post that worked" spellcheck="true"></textarea>
+            <div class="ask-tools">
+              <button type="button" class="ask-tool" id="ask-draft" aria-label="Start a draft" title="Start a draft"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M12 5v14"/></svg></button>
+              <button type="button" class="ask-mode" id="ask-mode" hidden></button>
+              <button type="submit" class="ask-send" id="ask-send" aria-label="Ask" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 7-7 7 7"/><path d="M12 19V5"/></svg></button>
+            </div>
+          </form>
+          <p class="ask-note" id="ask-note" role="status" aria-live="polite"></p>
+        </section>
 
         <h3 class="hm-sec">Recents</h3>
         <div class="hm-recents">
@@ -4439,21 +4522,8 @@
   })();
 
 
-  // ─── "Let's make something" cards + live editor counts ───
+  // ─── Live editor counts ───
   (function initCreateRow() {
-    document.querySelectorAll('.lc-card[data-go]').forEach(function (card) {
-      card.addEventListener('click', function () {
-        var go = card.dataset.go;
-        if (go === 'draft') {
-          // Already on this view; just put the cursor where writing starts.
-          var t = document.getElementById('draft-title');
-          if (t) { t.focus(); t.scrollIntoView({ block: 'center', behavior: 'smooth' }); }
-          return;
-        }
-        switchView(go);
-      });
-    });
-
     var body = document.getElementById('draft-body');
     var title = document.getElementById('draft-title');
     var wEl = document.getElementById('draft-words');
@@ -4582,6 +4652,275 @@
     if (!el) return;
     const h = new Date().getHours();
     el.textContent = h < 12 ? 'Good morning' : h < 18 ? 'Welcome back' : 'Good evening';
+  })();
+
+  // ─── Ask (home) ───
+  // The open prompt on the home screen. It answers from what is already
+  // loaded: a topic is matched against the outlier feed (SEED_IDEAS) and the
+  // hooks library; a pasted post goes through the Decode form, so the modal,
+  // memoisation and "decoded this session" list all come for free. No model,
+  // no network, no spend — and, like Decode, it never writes the post for you.
+  (function initAsk() {
+    const form = document.getElementById('ask-form');
+    if (!form) return;
+    const input = document.getElementById('ask-input');
+    const send = document.getElementById('ask-send');
+    const modeBtn = document.getElementById('ask-mode');
+    const note = document.getElementById('ask-note');
+    const cards = document.getElementById('ask-cards');
+    const thread = document.getElementById('ask-thread');
+    const MARK = document.querySelector('.ask-mark').innerHTML;
+    const PH = input.placeholder;
+    const PH_PASTE = 'Paste the post that worked, yours or anyone’s';
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const STOP = new Set(('the and for with about what how why are was were you your this that from into have has had ' +
+      'post posts posting today some any should would could write make want need get more best good top find').split(' '));
+
+    let forced = null;   // 'post' | 'search' once the mode chip is flipped
+    let primed = false;  // set by the "Decode a post" card
+
+    // A search is a few words; a post is sentences. Long, multi-line or
+    // multi-sentence text is treated as a post, and the chip lets you flip it.
+    const looksLikePost = t => t.length >= 140 || /\n/.test(t) || t.split(/\s+/).length >= 22 ||
+      (t.length >= 60 && (t.match(/[.!?](\s|$)/g) || []).length >= 2);
+    const isPost = t => forced ? forced === 'post' : (primed || looksLikePost(t));
+
+    function setMode() {
+      const t = input.value.trim();
+      send.disabled = !t;
+      modeBtn.hidden = !t;
+      if (!t) return;
+      const post = isPost(t);
+      modeBtn.textContent = post ? 'Decode post' : 'Search';
+      modeBtn.setAttribute('aria-label', (post ? 'Decode post' : 'Search') + '. Switch to ' + (post ? 'search' : 'decode'));
+    }
+    // Grow with the text up to 240px, and only show a scrollbar past that.
+    function grow() {
+      input.style.height = 'auto';
+      input.style.height = Math.min(input.scrollHeight, 240) + 'px';
+      input.style.overflowY = input.scrollHeight > 240 ? 'auto' : 'hidden';
+    }
+    function status(msg, err) { note.textContent = msg; note.classList.toggle('err', !!err); }
+    function resetInput() { input.value = ''; forced = null; primed = false; input.placeholder = PH; grow(); setMode(); }
+
+    input.addEventListener('input', () => { if (!input.value.trim()) forced = null; grow(); setMode(); status(''); });
+    input.addEventListener('keydown', e => {
+      if (e.key === 'Enter' && !e.shiftKey && !e.isComposing) { e.preventDefault(); if (!send.disabled) form.requestSubmit(); }
+    });
+    modeBtn.addEventListener('click', () => { forced = isPost(input.value.trim()) ? 'search' : 'post'; setMode(); input.focus(); });
+
+    // ── ranking ──
+    const tokensOf = q => q.toLowerCase().split(/[^a-z0-9]+/).filter(t => t.length > 2 && !STOP.has(t));
+    const hits = (hay, toks) => toks.reduce((n, t) => n + (hay.includes(t) ? 1 : 0), 0);
+    function ideaScore(i, toks) {
+      const d = i.decoded || {};
+      return hits([i.name, i.handle, i.text, i.tag, i.cat, d.hook, d.pattern, d.tension, d.payoff].join(' ').toLowerCase(), toks);
+    }
+    const hookScore = (h, toks) => hits((h.cat + ' ' + h.pattern + ' ' + h.eg).toLowerCase(), toks);
+    // Fresh first, then the biggest multiple — the same order Discover leads with.
+    const byStrength = (a, b) => (isFresh(b) - isFresh(a)) || (multOf(b) - multOf(a));
+    function spreadHooks(n) {
+      const seen = new Set();
+      return HOOKS_LIBRARY.filter(h => !seen.has(h.cat) && seen.add(h.cat)).slice(0, n);
+    }
+
+    // ── rendering ──
+    function postCard(i) {
+      const m = multOf(i), p = pctRank(i), on = saved.has(i.id), id = escapeHtml(i.id);
+      return `<article class="ask-post">
+        <div class="ask-who"><span class="ask-av"${i.av ? ` style="background-image:url('${escapeHtml(i.av)}')"` : ''}></span><b>${escapeHtml(i.name)}</b><span>${escapeHtml(i.handle || '')}</span></div>
+        <p>${escapeHtml(i.text)}</p>
+        <div class="ask-meta">
+          ${m ? `<span class="disc-mult">${m}×</span>` : ''}
+          ${p && p <= 10 ? `<span class="disc-pct">Top ${p}%</span>` : ''}
+          ${i.views ? `<span class="ask-views">${escapeHtml(i.views)}</span>` : ''}
+          <span class="ask-acts">
+            <button type="button" class="ask-act" data-decode="${id}">Decode</button>
+            <button type="button" class="ask-act${on ? ' saved' : ''}" data-save="${id}">${on ? 'Saved' : 'Save'}</button>
+          </span>
+        </div>
+      </article>`;
+    }
+    const hookRow = h => `<div class="ask-hook"><small>${escapeHtml(h.cat)}</small><b>${escapeHtml(h.pattern)}</b><span>${escapeHtml(h.eg)}</span></div>`;
+    const link = (attrs, text) => `<button type="button" class="ask-link" ${attrs}>${text} →</button>`;
+
+    function answerTopic(q) {
+      const toks = tokensOf(q);
+      const posts = toks.length ? SEED_IDEAS.map(i => [i, ideaScore(i, toks)]).filter(x => x[1] > 0)
+        .sort((a, b) => (b[1] - a[1]) || byStrength(a[0], b[0])).map(x => x[0]) : [];
+      const hookHits = toks.length ? HOOKS_LIBRARY.map(h => [h, hookScore(h, toks)]).filter(x => x[1] > 0)
+        .sort((a, b) => b[1] - a[1]).map(x => x[0]) : [];
+      const wantsHooks = /\bhooks?\b/i.test(q);
+      let html = '', said;
+
+      if (posts.length) {
+        const m = multOf(posts[0]), n = posts.length;
+        html += `<p class="ask-lead">${n} ${n === 1 ? 'post in your feed matches' : 'posts in your feed match'} “${escapeHtml(q)}”.${m ? ` The strongest ran ${m}× past its author's baseline.` : ''}</p>`;
+        html += `<div class="ask-results">${posts.slice(0, 3).map(postCard).join('')}</div>`;
+        said = `${n} ${n === 1 ? 'post matches' : 'posts match'}.`;
+      } else if (!(wantsHooks && hookHits.length)) {
+        const best = SEED_IDEAS.slice().sort(byStrength).slice(0, 3);
+        html += `<p class="ask-lead">${toks.length ? `Nothing in your feed matches “${escapeHtml(q)}” yet. ` : ''}Here's what's beating its baseline right now.</p>`;
+        html += `<div class="ask-results">${best.map(postCard).join('')}</div>`;
+        said = 'No matching posts; showing the strongest right now.';
+      }
+
+      const hooks = hookHits.length ? hookHits.slice(0, wantsHooks ? 4 : 2) : (wantsHooks ? spreadHooks(4) : []);
+      if (hooks.length) {
+        html += `<p class="ask-sub">${hookHits.length ? 'Hooks that fit' : 'Hooks to start from'}</p><div class="ask-results">${hooks.map(hookRow).join('')}</div>`;
+        said = said || `${hooks.length} hooks found.`;
+      }
+
+      // Discover's search box matches the whole phrase against name, handle,
+      // text and tag — narrower than the word-by-word ranking above. Link to
+      // it with the query only when that would show something, and say how
+      // many; otherwise just open the feed.
+      const phrase = q.toLowerCase();
+      const inDiscover = SEED_IDEAS.filter(i => (i.name + ' ' + i.handle + ' ' + i.text + ' ' + i.tag).toLowerCase().includes(phrase)).length;
+      const links = [];
+      if (inDiscover) links.push(link(`data-discover="${escapeHtml(q)}"`, inDiscover === posts.length
+        ? `See ${inDiscover} in Discover`
+        : `See the ${inDiscover} exact ${inDiscover === 1 ? 'match' : 'matches'} in Discover`));
+      else if (posts.length) links.push(link('data-discover=""', 'Browse Discover'));
+      if (hooks.length) links.push(link('data-go-view="hooks"', 'Open the hooks library'));
+      if (links.length) html += `<div class="ask-links">${links.join('')}</div>`;
+      return [html, said];
+    }
+
+    function answerToday() {
+      const best = SEED_IDEAS.slice().sort(byStrength).slice(0, 3);
+      return [`<p class="ask-lead">Fresh posts first, then the ones running furthest past their authors' baselines. Decode one to see why it worked.</p>
+        <div class="ask-results">${best.map(postCard).join('')}</div>
+        <div class="ask-links">${link('data-discover=""', 'Open Discover')}</div>`, 'Showing today’s strongest outliers.'];
+    }
+
+    function answerHooks() {
+      return [`<p class="ask-lead">The openers behind posts that broke out, one from each family. Each is a pattern to fill with your own point, not a line to copy.</p>
+        <div class="ask-results">${spreadHooks(4).map(hookRow).join('')}</div>
+        <div class="ask-links">${link('data-go-view="hooks"', 'Open the hooks library')}</div>`, 'Showing four hook patterns.'];
+    }
+
+    function addTurn(q, html) {
+      if (thread.hidden) {
+        thread.hidden = false;
+        cards.hidden = true;
+        thread.innerHTML = '<div class="ask-thead"><button type="button" class="ask-clear">Clear</button></div>';
+      }
+      const turn = document.createElement('div');
+      turn.className = 'ask-turn';
+      turn.innerHTML = `<div class="ask-q"><span>${escapeHtml(q)}</span></div>
+        <div class="ask-a"><span class="ask-a-mark" aria-hidden="true">${MARK}</span><div class="ask-a-body">${html}</div></div>`;
+      thread.appendChild(turn);
+      turn.scrollIntoView({ block: 'nearest', behavior: reduceMotion ? 'auto' : 'smooth' });
+      return turn;
+    }
+
+    // A pasted post goes through the Decode form rather than a copy of it, so
+    // validation, the modal and the session list stay in one place.
+    function askPost(text) {
+      const decForm = document.getElementById('dec-form');
+      const decText = document.getElementById('dec-text');
+      if (!decForm || !decText) return status('The decoder isn’t available right now.', true);
+      decText.value = text;
+      const author = document.getElementById('dec-author');
+      if (author) author.value = '';
+      decForm.requestSubmit();
+      // The form adds the post to SEED_IDEAS synchronously, before its first await.
+      const idea = SEED_IDEAS[0];
+      if (!idea || idea.text !== text) return status('That post couldn’t be decoded. Try pasting it again.', true);
+
+      const turn = addTurn(text, '<p class="ask-lead">Decoding it now. The full breakdown is open.</p>');
+      status('Decoding your post.');
+      const body = turn.querySelector('.ask-a-body');
+      const started = Date.now();
+      const tick = setInterval(() => {
+        const d = idea.decoded;
+        if (!d && Date.now() - started < 20000) return;
+        clearInterval(tick);
+        const again = link(`data-decode="${escapeHtml(idea.id)}"`, d ? 'Open the full decode' : 'Try again');
+        if (!d) {
+          body.innerHTML = `<p class="ask-lead">That one took too long to decode.</p><div class="ask-links">${again}</div>`;
+          return status('Decode timed out.', true);
+        }
+        // Two decoders fill these fields differently. The local one writes the
+        // post's first line, a blank line, then its read of the opener; the
+        // curated feed stores a short label. Its `pattern` is a bracketed
+        // skeleton only when it found one — otherwise it's the post's own
+        // opening, which would just echo the paste back. `apply` is the local
+        // decoder's how-to-reuse steps.
+        const parts = String(d.hook || '').split('\n\n');
+        const read = parts.length > 1 ? parts[parts.length - 1] : `The hook: ${parts[0]}.`;
+        const skeleton = /\[[^\]]+\]/.test(d.pattern || '') ? d.pattern : '';
+        const steps = d.apply && d.apply !== '—' ? d.apply : '';
+        body.innerHTML = `<p class="ask-lead">${escapeHtml(read)}</p>` +
+          (skeleton ? `<div class="ask-results"><div class="ask-hook"><small>The shape underneath</small><b>${escapeHtml(skeleton)}</b><span>Fill it with your own point.</span></div></div>` : '') +
+          (steps ? `<p class="ask-sub">To reuse the shape</p><div class="ask-steps">${escapeHtml(steps)}</div>` : '') +
+          `<div class="ask-links">${again}</div>`;
+        status('Decoded.');
+      }, 250);
+    }
+
+    function startDraft() {
+      switchView('studio');
+      const t = document.getElementById('draft-title');
+      if (t) setTimeout(() => t.focus(), 0);
+    }
+
+    form.addEventListener('submit', e => {
+      e.preventDefault();
+      const q = input.value.trim();
+      if (!q) return;
+      if (isPost(q)) {
+        if (q.length < 10) return status('Paste a bit more — at least 10 characters.', true);
+        if (q.length > 2000) return status(`That's ${q.length} characters; the decoder takes up to 2000.`, true);
+        askPost(q);
+      } else {
+        const [html, said] = answerTopic(q);
+        addTurn(q, html);
+        status(said);
+      }
+      resetInput();
+    });
+
+    cards.addEventListener('click', e => {
+      const c = e.target.closest('.ask-card');
+      if (!c) return;
+      const k = c.dataset.ask;
+      if (k === 'today') { const [h, said] = answerToday(); addTurn('Find an outlier to post about today', h); status(said); }
+      else if (k === 'hooks') { const [h, said] = answerHooks(); addTurn('Study the hooks behind top posts', h); status(said); }
+      else if (k === 'paste') { primed = true; input.placeholder = PH_PASTE; input.focus(); setMode(); }
+      else if (k === 'draft') startDraft();
+    });
+    document.getElementById('ask-draft').addEventListener('click', startDraft);
+
+    thread.addEventListener('click', e => {
+      const b = e.target.closest('button');
+      if (!b) return;
+      if (b.classList.contains('ask-clear')) {
+        thread.innerHTML = ''; thread.hidden = true; cards.hidden = false; status(''); input.focus();
+        return;
+      }
+      if (b.dataset.decode) return openDecoder(b.dataset.decode);
+      if (b.dataset.save) {
+        const id = b.dataset.save;
+        Promise.resolve(window.toggleSave(id)).then(() => {
+          const on = saved.has(id);
+          b.textContent = on ? 'Saved' : 'Save';
+          b.classList.toggle('saved', on);
+        });
+        return;
+      }
+      if (b.hasAttribute('data-discover')) {
+        const v = b.dataset.discover;
+        searchInput.value = v;
+        applySearch(v);
+        switchView('discover');
+        return;
+      }
+      if (b.dataset.goView) switchView(b.dataset.goView);
+    });
+
+    setMode();
   })();
 
   function syncNavCounts() {
