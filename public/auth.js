@@ -688,7 +688,7 @@
             </div>
             <div class="settings-row">
               <div class="settings-row-key">Plan</div>
-              <div class="settings-row-val">Beta · free</div>
+              <div class="settings-row-val">Free</div>
             </div>
             <div class="settings-row">
               <div class="settings-row-key">Member since</div>

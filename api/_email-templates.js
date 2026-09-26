@@ -88,7 +88,7 @@ export function welcomeEmail({ email, unsubscribeUrl } = {}) {
 
               ${p("Thanks for subscribing — you're on the list.")}
 
-              ${p("Sona is in beta and I'm onboarding people in small batches, so it may be a little while before your invite lands. I'd rather it work properly than arrive early.")}
+              ${p("I'm onboarding people in small batches, so it may be a little while before your invite lands. I'd rather it work properly than arrive early.")}
 
               ${p("In the meantime, here's what it actually does.")}
 
@@ -124,8 +124,8 @@ export function welcomeEmail({ email, unsubscribeUrl } = {}) {
 
   const text = `Thanks for subscribing — you're on the list.
 
-Sona is in beta and I'm onboarding people in small batches, so it may be a
-little while before your invite lands. I'd rather it work properly than arrive early.
+I'm onboarding people in small batches, so it may be a little while
+before your invite lands. I'd rather it work properly than arrive early.
 
 In the meantime, here's what it actually does.
 
