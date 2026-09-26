@@ -22,35 +22,11 @@
 | 📞 **Contact page** | `public/contact.html` — Supabase-backed form |
 | 🎛️ **Studio app** | `public/app.html` — authenticated dashboard with real CRUD on `saved_ideas` (RLS-secured) |
 | 🔐 **Auth modal** | `public/auth.js` — signup, signin, and early-access waitlist |
-| 🔌 **MCP server** | `api/mcp.js` — a Streamable-HTTP MCP endpoint. Point Claude (or any MCP client) at it and search the outlier corpus, fetch a post, or decode one, from inside a chat |
-| 🧠 **Outlier decoder** | `api/decode.js` — breaks a breakout post into its mechanism: hook, tension, payoff, reusable template. Cached by content hash so a given post is paid for once, ever, across all users |
+| 🧠 **Outlier decoder** | `public/local-decode.js` — breaks a post into its mechanism: hook, tension, payoff, reusable template. Rule-based and runs in the browser, so it costs nothing |
 | 🧩 **Pattern library** | `api/patterns.js` — aggregates every decode by mechanism, so recurring hooks surface on their own instead of being read once and forgotten |
 | ⚙️ **Serverless APIs** | `api/*.js` — waitlist (+ welcome email), contact, checkout, outliers curation, auth-config, founding-count |
 | 🗄️ **Database schema** | `schema.sql` — Supabase tables + Row-Level-Security policies |
 | 🚀 **Deploy** | Vercel (`vercel.json`) — auto-routes for serverless functions + clean URLs |
-
-## Connect it to Claude
-
-Sona exposes its research over the Model Context Protocol, so an AI client can
-query the outlier corpus directly instead of you copy-pasting into a chat.
-
-Add it as a custom connector:
-
-```
-https://buildwithsona.com/api/mcp
-```
-
-Three tools are exposed:
-
-| Tool | What it does |
-|---|---|
-| `search_outliers` | Search posts that beat their own creator's baseline, with the real engagement figure and outlier multiple |
-| `get_outlier` | Fetch one post in full, including the source URL |
-| `decode_post` | Break a post down into hook, tension, payoff, and a reusable template |
-
-The two read tools are open — the catalog is already public via `/api/outliers`.
-`decode_post` spends model credit, so it stays disabled unless `MCP_TOKEN` is set
-and sent as a bearer token.
 
 ## Stack
 
