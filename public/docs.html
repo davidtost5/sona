@@ -679,14 +679,14 @@
     </table>
 
     <h2 id="decode_post">decode_post</h2>
-    <p>Break a post down into the mechanism that made it work: hook type, the tension that stops the scroll, the payoff, and a reusable pattern you can write from. Works on any text, not only posts in the index.</p>
+    <p>Break a post down into the structure that carries it: how the opener works, where it turns, where it lands, the reusable shape underneath, and steps to rebuild that shape with your own point, plus the closest templates from Sona&rsquo;s hook library. Works on any text, not only posts in the index.</p>
     <table class="docs-table">
       <thead><tr><th>Parameter</th><th>Type</th><th>Notes</th></tr></thead>
       <tbody><tr><td><code>text</code></td><td>string</td><td><strong>Required.</strong> The post to decode, 10&ndash;2000 characters</td></tr></tbody>
     </table>
     <div class="callout">
-      <strong>Decodes are cached</strong>
-      <p>Results are keyed by a hash of the text, so decoding the same post twice costs one call, not two.</p>
+      <strong>Free, instant, deterministic</strong>
+      <p>It runs the same rule-based decoder as the site, with no model behind it, so it costs nothing and needs no token. It reads structure rather than meaning. <code>pattern</code> is a fill-in template only when <code>pattern_kind</code> is <code>"template"</code>; otherwise it is the post&rsquo;s own opening.</p>
     </div>
 
     <h2 id="protocol">Protocol</h2>
@@ -698,7 +698,6 @@
       <tbody>
         <tr><td><code>-32601</code></td><td>Unknown method or tool name</td></tr>
         <tr><td><code>-32602</code></td><td>Invalid parameters — a required field is missing or out of range</td></tr>
-        <tr><td><code>503</code></td><td><code>decode_post</code> only: the decoder is not configured or is out of credit</td></tr>
       </tbody>
     </table>
   </main>

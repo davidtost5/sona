@@ -12,7 +12,9 @@
  * product.
  *
  * Exposed on window.SonaDecode rather than as a module so both pages can use it
- * with a plain script tag and no build step.
+ * with a plain script tag and no build step. Outside a browser it lands on
+ * globalThis instead: api/mcp.js imports this same file for its decode_post
+ * tool, so agents get exactly the decoder the site runs, not a copy of it.
  */
 (function () {
   'use strict';
@@ -222,7 +224,7 @@
     return { hook, tension, payoff, pattern, why, apply };
   }
 
-  window.SonaDecode = {
+  (typeof window !== 'undefined' ? window : globalThis).SonaDecode = {
     decode: localDecode,
     structure: irStructure,
     matchHooks: irMatchHooks,

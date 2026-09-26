@@ -8,12 +8,16 @@
 //   https://buildwithsona.com/api/mcp
 //
 // Auth: set MCP_TOKEN in the environment to require `Authorization: Bearer <token>`.
-// Without MCP_TOKEN the read-only tools stay open (the outlier catalog is already
-// public via /api/outliers) but `decode_post` is refused — it spends Anthropic
-// credit, so it is never left open to the internet.
+// Without it every tool is open: the outlier catalog is already public via
+// /api/outliers, and decode_post runs Sona's local decoder, which costs nothing.
 
 import { supabase } from './_supabase.js';
 import crypto from 'crypto';
+// The decoder the site runs in the browser, loaded as-is. It publishes itself
+// on globalThis.SonaDecode when there is no window.
+import '../public/local-decode.js';
+
+const SonaDecode = globalThis.SonaDecode;
 
 const SERVER = { name: 'sona-mcp', title: 'Sona MCP', version: '1.0.0' };
 
@@ -75,14 +79,16 @@ const TOOLS = [
     name: 'decode_post',
     title: 'Decode why a post worked',
     description:
-      'Break a high-performing post down into the mechanism that made it work: its hook type, the ' +
-      'cognitive tension that stops the scroll, the payoff, a reusable pattern with fillable slots, and ' +
-      'how to apply that pattern in your own voice. Call this when the user asks why a post performed, ' +
-      'or wants a template they can reuse. Costs a model call, so pass the post text only.',
+      'Break a post down into the structure that carries it: how the opener works, where it turns, ' +
+      'where it lands, the reusable shape underneath, and steps to rebuild that shape with your own ' +
+      'point — plus the closest templates from Sona\'s hook library. Runs Sona\'s rule-based decoder, ' +
+      'the same one on buildwithsona.com: free, instant and deterministic, with no model behind it. ' +
+      'It reads structure, not meaning, so bring your own judgement to the why. `pattern` is a ' +
+      'fill-in template only when `pattern_kind` is "template"; otherwise it is the post\'s opening.',
     inputSchema: {
       type: 'object',
       properties: {
-        text: { type: 'string', description: 'The full text of the post to decode.' },
+        text: { type: 'string', description: 'The full text of the post to decode, 10–2000 characters.' },
       },
       required: ['text'],
       additionalProperties: false,
@@ -125,7 +131,7 @@ function bearer(req) {
 
 function authorized(req) {
   const token = process.env.MCP_TOKEN;
-  if (!token) return true; // open mode — decode_post is refused separately
+  if (!token) return true; // open mode — every tool is free to call
   return safeEqual(bearer(req), token);
 }
 
@@ -179,42 +185,47 @@ async function getOutlier(args) {
   return toolText(JSON.stringify(data, null, 2));
 }
 
-// Reuses /api/decode rather than duplicating it — that endpoint owns the cache
-// (one paid decode per unique post, ever) and the model choice.
-async function decodePost(args, req) {
-  if (!process.env.MCP_TOKEN) {
-    return toolText(
-      'decode_post is disabled on this server because it spends model credit and no MCP_TOKEN is set. ' +
-      'Set MCP_TOKEN in the environment and connect with that bearer token to enable it.',
-      true,
-    );
-  }
+// Matches the site's Decode form: long enough to have a shape, short enough to
+// be a post rather than an essay.
+const DECODE_MIN = 10, DECODE_MAX = 2000;
+// irMatchHooks' own floor for naming a shape; weaker matches are noise.
+const MATCH_FLOOR = 0.35;
+
+function decodePost(args) {
+  if (!SonaDecode) return toolText('The decoder failed to load on this server.', true);
   const text = String(args.text || '').trim();
-  if (!text) return toolText('Post text is required.', true);
-
-  const host = req.headers['x-forwarded-host'] || req.headers.host;
-  const proto = req.headers['x-forwarded-proto'] || 'https';
-  if (!host) return toolText('Could not resolve the decode endpoint.', true);
-
-  try {
-    const r = await fetch(`${proto}://${host}/api/decode`, {
-      method: 'POST',
-      headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ text }),
-    });
-    const j = await r.json().catch(() => ({}));
-    if (!r.ok) return toolText(j.error || `Decode failed (${r.status}).`, true);
-    return toolText(JSON.stringify(j.decoded || j, null, 2));
-  } catch (e) {
-    return toolText(`Decode failed: ${(e && e.message) || 'unknown error'}`, true);
+  if (text.length < DECODE_MIN) {
+    return toolText(`Post text must be at least ${DECODE_MIN} characters.`, true);
   }
+  if (text.length > DECODE_MAX) {
+    return toolText(`Post text is ${text.length} characters; decode_post takes up to ${DECODE_MAX}.`, true);
+  }
+
+  const d = SonaDecode.decode(text);
+  const matches = SonaDecode.matchHooks(text, 3)
+    .filter(m => m.score >= MATCH_FLOOR)
+    .map(m => ({ category: m.h.cat, template: m.h.pattern, example: m.h.eg, score: Math.round(m.score * 100) / 100 }));
+
+  return toolText(JSON.stringify({
+    hook: d.hook,
+    tension: d.tension,
+    payoff: d.payoff,
+    pattern: d.pattern,
+    // The decoder falls back to the post's first sentences when it can't
+    // abstract a template. Say which, so a caller doesn't treat the user's own
+    // words as a reusable skeleton.
+    pattern_kind: /\[[^\]]+\]/.test(d.pattern) ? 'template' : 'opening',
+    why: d.why,
+    apply: d.apply,
+    library_matches: matches,
+  }, null, 2));
 }
 
 async function callTool(name, args, req) {
   switch (name) {
     case 'search_outliers': return searchOutliers(args || {});
     case 'get_outlier':     return getOutlier(args || {});
-    case 'decode_post':     return decodePost(args || {}, req);
+    case 'decode_post':     return decodePost(args || {});
     default:                return null; // signals unknown tool → rpcError
   }
 }
