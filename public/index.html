@@ -358,14 +358,6 @@
     border-bottom: 1.8px solid var(--accent); transform: rotate(-45deg);
   }
 
-  /* MCP callout — Sona genuinely ships one, so it earns hero space. */
-  .hero-mcp { display: flex; align-items: center; gap: 9px; font-size: 14.5px; margin-bottom: 34px; flex-wrap: wrap; }
-  .mcp-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); flex-shrink: 0; }
-  .mcp-label { color: var(--text-dim); }
-  .hero-mcp a { color: var(--text); text-decoration: none; font-weight: 500; display: inline-flex; align-items: center; gap: 6px; }
-  .hero-mcp a:hover { color: var(--accent); }
-  .mcp-arrow { transition: transform .2s ease; }
-  .hero-mcp a:hover .mcp-arrow { transform: translateX(3px); }
 
   /* Pill CTA — fully round, light on dark. Distinct from the old squared
      button: the sheen and the lift are the tell, not an arrow glyph. */
@@ -457,11 +449,11 @@
   @media (max-width: 860px) {
     .hero { text-align: center; }
     .hero-caps { grid-template-columns: 1fr; gap: 11px; text-align: left; max-width: 420px; margin-left: auto; margin-right: auto; }
-    .hero .hero-mcp, .hero .hero-cta, .hero .hero-badge { justify-content: center; }
+    .hero .hero-cta, .hero .hero-badge { justify-content: center; }
     .hero-lede { font-size: 16.5px; margin-left: auto; margin-right: auto; }
   }
   @media (prefers-reduced-motion: reduce) {
-    .btn-pill, .btn-pill::after, .mcp-arrow { transition: none !important; }
+    .btn-pill, .btn-pill::after { transition: none !important; }
   }
 
   .pill {
@@ -1455,11 +1447,6 @@
     <p class="hero-triad" data-r>Find what's working. Understand why. Make it yours.</p>
     <p class="hero-lede" data-r>Sona finds high-performing content in your niche and helps you turn the underlying ideas into original content in your voice.</p>
 
-    <p class="hero-mcp" data-r>
-      <span class="mcp-dot" aria-hidden="true"></span>
-      <span class="mcp-label">Sona MCP</span>
-      <a href="/docs.html">Connect Claude to Sona <span class="mcp-arrow">→</span></a>
-    </p>
 
     <div class="hero-cta" data-r>
       <!-- Glass instead of the solid pill. To revert: btn-liquid -> btn-pill. -->
@@ -2190,7 +2177,6 @@ and they stick with it for ninety days.
       <ul class="tier-feats">
         <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Everything in Creator</li>
         <li class="key"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Pattern library — what recurs across every decode</li>
-        <li class="key"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Sona MCP — query your research from Claude</li>
         <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Multiple brands and playbooks</li>
         <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Priority support</li>
       </ul>
@@ -2245,13 +2231,11 @@ and they stick with it for ninety days.
       <a href="#features">Features</a>
       <a href="#how">How it works</a>
       <a href="#pricing">Pricing</a>
-      <a href="docs.html">Sona MCP</a>
     </div>
     <!-- Third column added: these pages already ship and nothing linked to
          them from the footer, which is also why this row looked so sparse. -->
     <div class="foot-col">
       <h3>Resources</h3>
-      <a href="docs.html">Docs</a>
       <a href="resources.html">Guides</a>
       <a href="changelog.html">Changelog</a>
       <a href="brand.html">Brand</a>
@@ -2809,7 +2793,6 @@ var mode = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dar
       items: [
         { label: 'Try it',   href: '#try' },
         { label: 'Pricing',  href: '#pricing' },
-        { label: 'Docs',     href: 'docs.html' },
         { label: 'Start',    href: '#', onClick: function (e) { e.preventDefault(); SonaAuth.openSignup(); } },
       ],
     });

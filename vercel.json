@@ -104,5 +104,17 @@
       "path": "/api/health",
       "schedule": "0 18 * * *"
     }
+  ],
+  "redirects": [
+    {
+      "source": "/docs.html",
+      "destination": "/",
+      "permanent": false
+    },
+    {
+      "source": "/docs",
+      "destination": "/",
+      "permanent": false
+    }
   ]
 }
