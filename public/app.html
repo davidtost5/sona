@@ -452,33 +452,93 @@
 
   @media (max-width:768px) { .cmd-back { padding:8vh 14px 14px; } }
 
-  /* ─── "Let's make something" entry cards ─── */
-  .lc { margin-bottom: 22px; }
-  .lc-head { display:flex; align-items:center; gap:10px; margin-bottom:14px; }
-  .lc-mark { width:20px; height:20px; color:var(--accent); flex-shrink:0; }
-  .lc-mark svg { width:100%; height:100%; display:block; }
-  .lc-head h2 { font-size:19px; font-weight:600; letter-spacing:-.4px; }
-  .lc-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(190px,1fr)); gap:12px; }
-  .lc-card {
-    display:flex; flex-direction:column; align-items:flex-start; gap:4px;
-    padding:18px 16px 16px; min-height:132px; cursor:pointer; text-align:left;
-    background:var(--bg-soft); border:1px solid var(--border); border-radius:15px;
-    font-family:inherit; transition:border-color .2s ease, transform .2s ease;
+  /* ─── Today (home) ───
+     One outlier a day, laid out as the product's own promise: find what's
+     working, understand why, make it yours. An editorial front page rather
+     than a menu of shortcuts; the pick is stable for the day. */
+  .td { margin: 4px 0 8px; }
+  .td-mast { display:flex; align-items:flex-end; justify-content:space-between; gap:16px; margin-bottom:18px; }
+  .td-date { font-family:'Geist Mono', monospace; font-size:11px; letter-spacing:.8px; text-transform:uppercase; color:var(--text-dim); margin:0 0 8px; }
+  .td-title { font-size:clamp(22px, 2.6vw, 30px); font-weight:600; letter-spacing:-.8px; line-height:1.18; margin:0; max-width:680px; }
+  .td-quiet { color:var(--text-dim); }
+  .td-next {
+    flex-shrink:0; display:inline-flex; align-items:center; gap:7px;
+    font:inherit; font-size:13px; font-weight:500; color:var(--text-mid);
+    background:none; border:1px solid var(--border); border-radius:100px; padding:8px 14px; cursor:pointer;
+    transition:border-color .2s, color .2s;
   }
-  .lc-card:hover { border-color:var(--border-strong); transform:translateY(-2px); }
-  .lc-card:focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
-  .lc-ico {
-    width:36px; height:36px; border-radius:10px; margin-bottom:auto;
-    display:flex; align-items:center; justify-content:center;
+  .td-next svg { width:14px; height:14px; transition:transform .4s ease; }
+  .td-next:hover { color:var(--text); border-color:var(--border-strong); }
+  .td-next:hover svg { transform:rotate(-90deg); }
+  .td-next[hidden] { display:none; }
+
+  .td-board { border:1px solid var(--border); border-radius:20px; background:var(--bg-soft); overflow:hidden; }
+  .td-board.td-swap { animation:td-in .35s ease; }
+  @keyframes td-in { from { opacity:.35; transform:translateY(4px); } }
+  .td-grid { display:grid; grid-template-columns:1.05fr 1fr; }
+  .td-step { padding:26px 28px; min-width:0; }
+  .td-why { border-left:1px solid var(--border); }
+  .td-kicker {
+    display:flex; align-items:center; gap:10px; margin:0 0 18px;
+    font-family:'Geist Mono', monospace; font-size:11px; font-weight:500; letter-spacing:.8px; text-transform:uppercase; color:var(--text-dim);
   }
-  .lc-ico svg { width:17px; height:17px; }
-  /* Per-card accent, like the reference — one hue each so the row scans fast. */
-  .lc-green  { background:rgba(95,184,150,.14);  color:#5fb896; }
-  .lc-blue   { background:rgba(90,150,255,.14);  color:#6f9dff; }
-  .lc-amber  { background:rgba(230,170,70,.14);  color:#e2a94a; }
-  .lc-violet { background:rgba(150,120,240,.14); color:#9b83f0; }
-  .lc-card b { font-size:14px; color:var(--text); margin-top:14px; }
-  .lc-card small { font-size:12px; color:var(--text-dim); line-height:1.45; }
+  .td-kicker span { color:var(--accent); }
+  .td-who { display:flex; align-items:center; gap:10px; margin-bottom:14px; min-width:0; }
+  .td-av { width:34px; height:34px; border-radius:50%; flex-shrink:0; background:var(--accent-soft) center/cover no-repeat; }
+  .td-who b { display:block; font-size:14px; font-weight:600; }
+  .td-who small { display:block; font-size:12px; color:var(--text-dim); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .td-post { margin:0 0 18px; padding:0; border:0; font-size:19px; line-height:1.5; letter-spacing:-.2px; color:var(--text); overflow-wrap:anywhere; }
+  .td-meta { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+  .td-views { font-family:'Geist Mono', monospace; font-size:11.5px; color:var(--text-dim); }
+  .td-anat { margin:0; display:grid; gap:14px; }
+  .td-anat > div { display:grid; grid-template-columns:76px 1fr; gap:12px; }
+  .td-anat dt { font-size:12px; font-weight:600; color:var(--text-dim); padding-top:2px; }
+  .td-anat dd { margin:0; font-size:14px; line-height:1.55; color:var(--text); white-space:pre-line; overflow-wrap:anywhere; }
+  .td-shape-label { font-size:12px; font-weight:600; color:var(--text-dim); margin:22px 0 8px; }
+  .td-shape { margin:0; font-size:14.5px; line-height:1.75; padding:14px 16px; border-radius:12px; background:var(--surface); border:1px dashed var(--border-strong); overflow-wrap:anywhere; }
+  .td-shape mark { background:var(--accent-soft); color:var(--accent); border-radius:6px; padding:1px 6px; font-weight:500; }
+  .td-make { display:flex; align-items:center; gap:14px 28px; flex-wrap:wrap; padding:20px 28px; border-top:1px solid var(--border); background:var(--surface); }
+  .td-make .td-kicker { margin:0; }
+  .td-make-copy { margin:0; flex:1; min-width:200px; font-size:14px; color:var(--text-mid); }
+  .td-make-acts { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+  .td-ghost { font:inherit; font-size:13px; font-weight:500; color:var(--text-mid); background:none; border:1px solid var(--border); border-radius:10px; padding:9px 14px; cursor:pointer; }
+  .td-ghost:hover { color:var(--text); border-color:var(--border-strong); }
+  .td-ghost.saved { color:var(--accent); border-color:var(--accent); }
+
+  .td-more { margin-top:22px; }
+  .td-more[hidden] { display:none; }
+  .td-more > .td-kicker { margin-bottom:12px; }
+  .td-more-grid { display:grid; grid-template-columns:repeat(3, 1fr); gap:12px; }
+  .td-alt {
+    display:flex; flex-direction:column; gap:8px; min-width:0; text-align:left;
+    font:inherit; color:var(--text); background:var(--bg-soft);
+    border:1px solid var(--border); border-radius:14px; padding:14px 16px; cursor:pointer;
+    transition:border-color .2s, transform .15s;
+  }
+  .td-alt:hover { border-color:var(--border-strong); }
+  .td-alt:active { transform:scale(.99); }
+  .td-alt-who { display:flex; align-items:center; gap:8px; font-size:12.5px; color:var(--text-dim); }
+  .td-alt-who b { color:var(--text); font-weight:600; }
+  .td-alt-text { font-size:13.5px; line-height:1.5; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+  .td-alt-cta { font-size:12px; font-weight:500; color:var(--accent); }
+  .td-next:focus-visible, .td-alt:focus-visible, .td-ghost:focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
+  .td-sr { position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; }
+  @media (max-width: 900px) {
+    .td-grid { grid-template-columns:1fr; }
+    .td-why { border-left:0; border-top:1px solid var(--border); }
+    .td-more-grid { grid-template-columns:1fr; }
+  }
+  @media (max-width: 560px) {
+    .td-mast { flex-direction:column; align-items:flex-start; }
+    .td-step { padding:20px; }
+    .td-make { padding:18px 20px; }
+    .td-post { font-size:17px; }
+    .td-anat > div { grid-template-columns:1fr; gap:2px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .td-board.td-swap { animation:none; }
+    .td-next svg, .td-alt { transition:none; }
+  }
 
   /* Editor footer: created date on the left, live counts on the right. */
   .draft-foot {
@@ -528,10 +588,6 @@
   .ir-use:hover { border-color:var(--accent); color:var(--accent); }
 
   /* ─── Home ─── */
-  .hm-head { display:flex; align-items:center; gap:12px; margin-bottom:22px; }
-  .hm-mark { width:26px; height:26px; color:var(--accent); flex-shrink:0; }
-  .hm-mark svg { width:100%; height:100%; display:block; }
-  .hm-head h2 { font-size:28px; font-weight:600; letter-spacing:-.8px; }
   .hm-sec { font-size:15px; font-weight:600; margin:30px 0 12px; }
   .hm-recents {
     display:grid; grid-template-columns:minmax(240px,340px) 1fr;
@@ -1256,39 +1312,21 @@
            Sona opened straight into Discover, so nothing said "here's where you
            were". One greeting, four ways in, and what you touched last. -->
       <div class="view active" data-view="home">
-        <div class="hm-head">
-          <span class="hm-mark"><svg viewBox="0 0 24 24" fill="none"><path d="M5 15 Q8 9 12 12 Q16 15 19 9" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" fill="none"/><path d="M19 3.6 C19.15 5.1 20.3 6.25 21.8 6.4 C20.3 6.55 19.15 7.7 19 9.2 C18.85 7.7 17.7 6.55 16.2 6.4 C17.7 6.25 18.85 5.1 19 3.6 Z" fill="currentColor"/></svg></span>
-          <h2 id="hm-greeting">Welcome back</h2>
-        </div>
-
-        <div class="lc">
-          <div class="lc-head">
-            <span class="lc-mark"><svg viewBox="0 0 24 24" fill="none"><path d="M5 15 Q8 9 12 12 Q16 15 19 9" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" fill="none"/><path d="M19 3.6 C19.15 5.1 20.3 6.25 21.8 6.4 C20.3 6.55 19.15 7.7 19 9.2 C18.85 7.7 17.7 6.55 16.2 6.4 C17.7 6.25 18.85 5.1 19 3.6 Z" fill="currentColor"/></svg></span>
-            <h2>Let's make something</h2>
+        <section class="td" id="today" aria-labelledby="td-title">
+          <header class="td-mast">
+            <div>
+              <p class="td-date" id="td-date">Today's pick</p>
+              <h2 class="td-title" id="td-title"><span id="hm-greeting">Welcome back</span>. <span class="td-quiet">Here's one post worth studying today.</span></h2>
+            </div>
+            <button type="button" class="td-next" id="td-next">Another pick <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></svg></button>
+          </header>
+          <div class="td-board" id="td-board"></div>
+          <p class="td-sr" id="td-status" role="status" aria-live="polite"></p>
+          <div class="td-more" id="td-more-wrap">
+            <h3 class="td-kicker">Also beating baseline today</h3>
+            <div class="td-more-grid" id="td-more"></div>
           </div>
-          <div class="lc-grid">
-            <button type="button" class="lc-card" data-go="decode">
-              <span class="lc-ico lc-green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3M16 3h3a2 2 0 0 1 2 2v3M8 21H5a2 2 0 0 1-2-2v-3M16 21h3a2 2 0 0 0 2-2v-3"/><path d="M7 12h10"/></svg></span>
-              <b>Decode a post</b>
-              <small>Paste anything that worked</small>
-            </button>
-            <button type="button" class="lc-card" data-go="discover">
-              <span class="lc-ico lc-blue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg></span>
-              <b>Find an outlier</b>
-              <small>See what's beating its baseline</small>
-            </button>
-            <button type="button" class="lc-card" data-go="draft">
-              <span class="lc-ico lc-amber"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg></span>
-              <b>Start a draft</b>
-              <small>Write it in your own words</small>
-            </button>
-            <button type="button" class="lc-card" data-go="voice">
-              <span class="lc-ico lc-violet"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></span>
-              <b>Set your voice</b>
-              <small>Teach Sona how you sound</small>
-            </button>
-          </div>
-        </div>
+        </section>
 
         <h3 class="hm-sec">Recents</h3>
         <div class="hm-recents">
@@ -3881,6 +3919,7 @@
     if (v === 'canvas') requestAnimationFrame(drawCanvasEdges);
     if (v === 'library') renderLibrary();
     if (v === 'calendar') renderCalendar();
+    if (v === 'home') renderToday();
   };
 
   function renderSwipe() {
@@ -3932,6 +3971,7 @@
     document.querySelectorAll('.filter[data-filter]').forEach(b =>
       b.classList.toggle('active', b.dataset.filter === niche));
     renderDiscover();
+    renderToday();
   }
 
   window.skipNiche = function () {
@@ -4439,21 +4479,8 @@
   })();
 
 
-  // ─── "Let's make something" cards + live editor counts ───
+  // ─── Live editor counts ───
   (function initCreateRow() {
-    document.querySelectorAll('.lc-card[data-go]').forEach(function (card) {
-      card.addEventListener('click', function () {
-        var go = card.dataset.go;
-        if (go === 'draft') {
-          // Already on this view; just put the cursor where writing starts.
-          var t = document.getElementById('draft-title');
-          if (t) { t.focus(); t.scrollIntoView({ block: 'center', behavior: 'smooth' }); }
-          return;
-        }
-        switchView(go);
-      });
-    });
-
     var body = document.getElementById('draft-body');
     var title = document.getElementById('draft-title');
     var wEl = document.getElementById('draft-words');
@@ -4582,6 +4609,129 @@
     if (!el) return;
     const h = new Date().getHours();
     el.textContent = h < 12 ? 'Good morning' : h < 18 ? 'Welcome back' : 'Good evening';
+  })();
+
+  // ─── Today (home) ───
+  // One outlier a day, as find → understand → make it yours. The pick comes
+  // from the strongest few posts in your niche (all of them if the niche is
+  // thin), rotated by date so it holds all day and changes tomorrow.
+  // "Another pick" steps through the rest; a runner-up can be swapped in.
+  // Hoisted (var + function declarations, not let/const): switchView and
+  // applyNiche both call renderToday, and neither should be able to hit a
+  // temporal dead zone however early in load they run.
+  var TD_POOL = 8, tdOffset = 0, tdForced = null;
+  function tdStrength(a, b) { return (isFresh(b) - isFresh(a)) || (multOf(b) - multOf(a)); }
+  function todayPool() {
+    const pool = SEED_IDEAS.filter(i => i && i.text && !String(i.id).startsWith('paste_'));
+    const mine = currentFilter !== 'all' ? pool.filter(i => i.cat === currentFilter) : [];
+    return (mine.length >= 4 ? mine : pool).slice().sort(tdStrength).slice(0, TD_POOL || 8);
+  }
+  // Curated posts carry a decode; freshly ingested ones may not. The local
+  // decoder fills the same fields, memoised the way openDecoder does it.
+  function decodedOf(i) { return i.decoded || (window.SonaDecode ? (i.decoded = window.SonaDecode.decode(i.text)) : null); }
+  // Curated hooks are a short label; local ones are "first line, blank, read".
+  function hookRead(h) { const p = String(h || '').split('\n\n'); return p[p.length - 1]; }
+  function slots(t) { return escapeHtml(t).replace(/\[([^\]]+)\]/g, '<mark>$1</mark>'); }
+
+  function renderToday(announce) {
+    const board = document.getElementById('td-board');
+    if (!board) return;
+    const pool = todayPool();
+    const more = document.getElementById('td-more'), moreWrap = document.getElementById('td-more-wrap');
+    const next = document.getElementById('td-next');
+    const date = document.getElementById('td-date');
+    if (date) date.textContent = new Date().toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric' }) + " · Today's pick";
+    if (!pool.length) {
+      board.innerHTML = '<div class="td-step"><p class="td-make-copy">Nothing in the feed yet. Check Discover once today\'s ingest lands.</p></div>';
+      moreWrap.hidden = true; next.hidden = true;
+      return;
+    }
+    let at = (dayIndex() + (tdOffset || 0)) % pool.length;
+    if (tdForced) { const f = pool.findIndex(i => i.id === tdForced); if (f !== -1) at = f; }
+    const i = pool[at];
+    const d = decodedOf(i) || {};
+    const m = multOf(i), pct = pctRank(i), on = saved.has(i.id);
+    const isTemplate = /\[[^\]]+\]/.test(d.pattern || '');
+
+    board.innerHTML = `
+      <div class="td-grid">
+        <article class="td-step td-find">
+          <p class="td-kicker"><span>01</span> Find what's working</p>
+          <div class="td-who"><span class="td-av"${i.av ? ` style="background-image:url('${escapeHtml(i.av)}')"` : ''}></span>
+            <div><b>${escapeHtml(i.name)}</b><small>${escapeHtml(i.handle || '')}</small></div></div>
+          <blockquote class="td-post">${escapeHtml(i.text)}</blockquote>
+          <div class="td-meta">
+            ${m ? `<span class="disc-mult">${m}× its baseline</span>` : ''}
+            ${pct && pct <= 10 ? `<span class="disc-pct">Top ${pct}%</span>` : ''}
+            ${i.views ? `<span class="td-views">${escapeHtml(i.views)}</span>` : ''}
+          </div>
+        </article>
+        <article class="td-step td-why">
+          <p class="td-kicker"><span>02</span> Understand why</p>
+          <dl class="td-anat">
+            ${d.hook ? `<div><dt>Hook</dt><dd>${escapeHtml(hookRead(d.hook))}</dd></div>` : ''}
+            ${d.tension ? `<div><dt>Tension</dt><dd>${escapeHtml(d.tension)}</dd></div>` : ''}
+            ${d.payoff ? `<div><dt>Payoff</dt><dd>${escapeHtml(d.payoff)}</dd></div>` : ''}
+          </dl>
+          ${d.pattern ? `<p class="td-shape-label">${isTemplate ? 'The shape underneath' : 'Its opening, to model'}</p><p class="td-shape">${slots(d.pattern)}</p>` : ''}
+        </article>
+      </div>
+      <div class="td-make">
+        <p class="td-kicker"><span>03</span> Make it yours</p>
+        <p class="td-make-copy">${isTemplate ? 'Keep the shape. Fill the highlighted slots with your own point.' : 'Keep the structure. Say your own thing with it.'}</p>
+        <div class="td-make-acts">
+          <button type="button" class="btn" data-td="write">Write yours from this →</button>
+          <button type="button" class="td-ghost" data-td="decode">Full decode</button>
+          <button type="button" class="td-ghost${on ? ' saved' : ''}" data-td="save">${on ? 'Saved' : 'Save'}</button>
+        </div>
+      </div>`;
+    board.dataset.idea = i.id;
+    if (announce) {
+      board.classList.remove('td-swap'); void board.offsetWidth; board.classList.add('td-swap');
+      document.getElementById('td-status').textContent = `Today's pick: ${i.name}.`;
+    }
+
+    const rest = pool.filter((_, k) => k !== at).slice(0, 3);
+    moreWrap.hidden = !rest.length;
+    next.hidden = pool.length < 2;
+    more.innerHTML = rest.map(r => `
+      <button type="button" class="td-alt" data-pick="${escapeHtml(r.id)}">
+        <span class="td-alt-who"><b>${escapeHtml(r.name)}</b>${multOf(r) ? `<span class="disc-mult">${multOf(r)}×</span>` : ''}</span>
+        <span class="td-alt-text">${escapeHtml(r.text)}</span>
+        <span class="td-alt-cta">Make this today's pick</span>
+      </button>`).join('');
+  }
+
+  (function initToday() {
+    const board = document.getElementById('td-board');
+    if (!board) return;
+    document.getElementById('td-next').addEventListener('click', () => { tdForced = null; tdOffset++; renderToday(true); });
+    document.getElementById('td-more').addEventListener('click', e => {
+      const b = e.target.closest('[data-pick]');
+      if (!b) return;
+      tdForced = b.dataset.pick;
+      renderToday(true);
+      board.scrollIntoView({ block: 'nearest', behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+    });
+    board.addEventListener('click', e => {
+      const b = e.target.closest('[data-td]');
+      const id = board.dataset.idea;
+      if (!b || !id) return;
+      if (b.dataset.td === 'decode') return openDecoder(id);
+      if (b.dataset.td === 'write') {
+        // applyPatternToDraft reads its idea from the decoder; point it here.
+        document.getElementById('decoder-back').dataset.idea = id;
+        return applyPatternToDraft();
+      }
+      if (b.dataset.td === 'save') {
+        Promise.resolve(window.toggleSave(id)).then(() => {
+          const on = saved.has(id);
+          b.textContent = on ? 'Saved' : 'Save';
+          b.classList.toggle('saved', on);
+        });
+      }
+    });
+    renderToday();
   })();
 
   function syncNavCounts() {
