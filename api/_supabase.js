@@ -9,6 +9,7 @@
 //   saved_ideas                 — /app saved ideas (RLS per user)
 //   profiles                    — auto-created on signup (RLS per user)
 //   founding_members            — Stripe webhook seat counter (service role only)
+//   subscriptions               — Stripe plan + status per subscription (service role only)
 
 import { createClient } from '@supabase/supabase-js';
 

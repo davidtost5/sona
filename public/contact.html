@@ -9,9 +9,7 @@
 <link rel="icon" type="image/svg+xml" href="/logo.svg">
 <link rel="apple-touch-icon" href="/logo.svg">
 <title>Sona — Contact</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700;9..40,800&family=Geist+Mono:wght@500&display=swap" rel="stylesheet" media="print" onload="this.media='all'"><noscript><link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700;9..40,800&family=Geist+Mono:wght@500&display=swap" rel="stylesheet"></noscript>
+<link rel="stylesheet" href="/fonts/fonts.css">
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -230,7 +228,7 @@
       <span class="logo-mark"><svg viewBox="0 0 24 24" fill="none"><path class="lg-wave" d="M5 15 Q8 9 12 12 Q16 15 19 9" stroke="#28775c" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path class="lg-spark" d="M19 3.6 C19.15 5.1 20.3 6.25 21.8 6.4 C20.3 6.55 19.15 7.7 19 9.2 C18.85 7.7 17.7 6.55 16.2 6.4 C17.7 6.25 18.85 5.1 19 3.6 Z" fill="#28775c"/></svg></span>
       <span class="logo-word">Sona</span>
     </a>
-    <span>&copy; 2026 Sona Labs Inc.</span>
+    <span>&copy; 2026 David Tost</span>
   </div>
 </footer>
 <script defer src="data.js"></script>
@@ -256,16 +254,17 @@
       // the header fix stay on a stale copy for up to a day — which is exactly how
       // a fixed auth modal kept rendering empty. A new URL sidesteps the cache
       // entirely. Bump this string whenever auth.js changes.
-      authScript.src = "auth.js?v=20260828d";
-      authScript.defer = true;
+      authScript.src = "auth.js?v=20261002a";
+      authScript.async = false;
       document.head.appendChild(authScript);
 
       // Clerk layer, loaded after auth.js so it can capture the Supabase
       // implementation and delegate to it while CLERK_PUBLISHABLE_KEY is unset.
-      // Deferred scripts run in insertion order, so this always parses second.
+      // Injected scripts run as soon as each downloads unless async is false;
+      // async = false makes them run in insertion order, so this always runs second.
       const clerkScript = document.createElement('script');
-      clerkScript.src = "clerk-auth.js?v=20260830b";
-      clerkScript.defer = true;
+      clerkScript.src = "clerk-auth.js?v=20261002a";
+      clerkScript.async = false;
       document.head.appendChild(clerkScript);
     };
 
@@ -325,6 +324,12 @@
   const form = document.getElementById('contact-form');
   const msg = document.getElementById('form-msg');
   const btn = document.getElementById('c-submit');
+  // /api/billing-portal lands here until the Stripe portal is configured, so a
+  // cancellation request still takes one message.
+  if (new URLSearchParams(location.search).get('topic') === 'billing') {
+    const m = document.getElementById('c-message');
+    if (!m.value) m.value = 'Please cancel my Sona subscription at the end of the current billing period.';
+  }
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
     btn.disabled = true; btn.textContent = 'Sending...'; msg.className = 'form-msg';

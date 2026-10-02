@@ -27,7 +27,26 @@ const SITE = 'https://buildwithsona.com';
 // registered business address — the fallback below is deliberately obvious so an
 // unset value can't quietly ship as though it were real.
 const POSTAL_ADDRESS = process.env.MAIL_FROM_ADDRESS || '[SET MAIL_FROM_ADDRESS]';
-const LEGAL_NAME = process.env.MAIL_LEGAL_NAME || 'Sona';
+// Sona is not a registered company yet, so the sender CAN-SPAM needs named is
+// the person who runs it. Change MAIL_LEGAL_NAME once there is an entity.
+const LEGAL_NAME = process.env.MAIL_LEGAL_NAME || 'David Tost (Sona)';
+
+// Senders check this before any commercial send. The placeholder above keeps
+// a template from rendering a fake address; this keeps it from being mailed.
+export const postalAddressConfigured = () => Boolean((process.env.MAIL_FROM_ADDRESS || '').trim());
+
+// The opt-out every template links to, as a plain mailto: target.
+export function unsubscribeMailto(email) {
+  return `mailto:hello@buildwithsona.com?subject=${encodeURIComponent('Unsubscribe')}`
+    + (email ? `&body=${encodeURIComponent('Please unsubscribe ' + email + ' from the Sona list.')}` : '');
+}
+
+// Headers that make Gmail and Apple Mail show their own "Unsubscribe" button.
+// Gmail and Yahoo require one on bulk mail. mailto: is the accepted fallback
+// until there is a one-click HTTPS endpoint (RFC 8058).
+export function unsubscribeHeaders(email) {
+  return { 'List-Unsubscribe': `<${unsubscribeMailto(email)}>` };
+}
 
 function esc(s) {
   return String(s || '')
@@ -53,8 +72,7 @@ export function welcomeEmail({ email, unsubscribeUrl } = {}) {
 
   // A working opt-out is legally required. mailto: is a legitimate mechanism and
   // works today; swap in a one-click endpoint when there is one.
-  const unsub = unsubscribeUrl
-    || `mailto:hello@buildwithsona.com?subject=${encodeURIComponent('Unsubscribe')}&body=${encodeURIComponent('Please unsubscribe ' + (email || '') + ' from the Sona list.')}`;
+  const unsub = unsubscribeUrl || unsubscribeMailto(email);
 
   const html = `<!doctype html>
 <html lang="en">
@@ -207,8 +225,7 @@ export function broadcastEmail(opts = {}) {
     cta = null, signoff = 'Talk soon,\nDavid from Sona', unsubscribeUrl,
   } = opts;
 
-  const unsub = unsubscribeUrl
-    || `mailto:hello@buildwithsona.com?subject=${encodeURIComponent('Unsubscribe')}`;
+  const unsub = unsubscribeUrl || unsubscribeMailto();
 
   const lines = Array.isArray(title) ? title : [title];
   const heading = lines.map(esc).join('<br>');

@@ -295,3 +295,24 @@ create index if not exists founding_members_created_at_idx
 
 -- No RLS policies: only service role (webhook + founding-count API) should touch this table.
 alter table founding_members enable row level security;
+
+-- ─── Subscriptions (Stripe webhook) ───
+-- Same definition as migration-billing.sql; see that file for the column notes.
+create table if not exists subscriptions (
+  stripe_subscription_id text primary key,
+  stripe_customer_id text,
+  email text,
+  status text,
+  plan text,
+  billing_interval text,
+  stripe_price_id text,
+  cancel_at_period_end boolean not null default false,
+  current_period_end timestamptz,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+create index if not exists subscriptions_email_idx on subscriptions (lower(email));
+create index if not exists subscriptions_customer_idx on subscriptions (stripe_customer_id);
+
+alter table subscriptions enable row level security;

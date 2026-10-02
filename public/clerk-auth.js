@@ -148,6 +148,98 @@
     };
   }
 
+  // ─── Age gate ───
+  // Sona is 16+ (the EU default age of digital consent; also clears COPPA's 13).
+  // Asked once per browser before the Clerk modal opens, for sign-in as well as
+  // sign-up, because "Continue with Google" on the sign-in form creates accounts
+  // too. The answer is remembered so returning users see it once per device.
+
+  var AGE_KEY = 'sona_age_16_confirmed';
+  var ageConfirmed = false;
+
+  function ageAlreadyConfirmed() {
+    if (ageConfirmed) return true;
+    try { ageConfirmed = window.localStorage.getItem(AGE_KEY) === '1'; } catch (_) {}
+    return ageConfirmed;
+  }
+
+  // Resolves true once the person ticks the box, false if they back out.
+  function confirmAge() {
+    if (ageAlreadyConfirmed()) return Promise.resolve(true);
+
+    return new Promise(function (resolve) {
+      var dark = document.documentElement.getAttribute('data-theme') === 'dark';
+      var c = {
+        bg: dark ? '#1a1d1b' : '#fcfcfa',
+        text: dark ? '#f3f3f0' : '#1a1a1a',
+        mid: dark ? '#a8a8a1' : '#55554f',
+        accent: dark ? '#5fb896' : '#28775c',
+        onAccent: dark ? '#111312' : '#ffffff',
+        border: dark ? 'rgba(255,255,255,.12)' : 'rgba(26,26,26,.12)',
+      };
+
+      // The site's reset zeroes margins, which is what centres a modal dialog,
+      // and ::backdrop can only be styled from a stylesheet.
+      if (!document.getElementById('sona-age-style')) {
+        var st = document.createElement('style');
+        st.id = 'sona-age-style';
+        st.textContent = 'dialog.sona-age{margin:auto;}dialog.sona-age::backdrop{background:rgba(0,0,0,.5);}';
+        document.head.appendChild(st);
+      }
+
+      var dlg = document.createElement('dialog');
+      dlg.className = 'sona-age';
+      dlg.setAttribute('aria-labelledby', 'sona-age-title');
+      dlg.style.cssText = 'max-width:400px;width:calc(100% - 32px);padding:28px;border-radius:16px;' +
+        'border:1px solid ' + c.border + ';background:' + c.bg + ';color:' + c.text + ';' +
+        'font-family:inherit;box-sizing:border-box;';
+      // Static markup only; nothing user-supplied is interpolated.
+      dlg.innerHTML =
+        '<h2 id="sona-age-title" style="margin:0 0 10px;font-size:19px;font-weight:600;">Before you continue</h2>' +
+        '<p style="margin:0 0 18px;font-size:14px;line-height:1.55;color:' + c.mid + ';">' +
+          'Sona is for people aged 16 and over. Paid plans also need you to be 18, ' +
+          'or to have a parent or guardian\'s permission.</p>' +
+        '<label style="display:flex;gap:10px;align-items:flex-start;font-size:14px;line-height:1.5;cursor:pointer;">' +
+          '<input type="checkbox" style="margin-top:3px;width:16px;height:16px;accent-color:' + c.accent + ';flex:none;">' +
+          '<span>I\'m 16 or older, and I agree to the <a href="/terms.html" target="_blank" rel="noopener" style="color:inherit;">Terms</a> ' +
+          'and <a href="/privacy.html" target="_blank" rel="noopener" style="color:inherit;">Privacy Policy</a>.</span>' +
+        '</label>' +
+        '<div style="display:flex;justify-content:flex-end;gap:10px;margin-top:24px;">' +
+          '<button type="button" data-act="cancel" style="padding:9px 16px;border-radius:999px;border:1px solid ' + c.border + ';' +
+            'background:transparent;color:' + c.text + ';font:inherit;font-size:14px;cursor:pointer;">Cancel</button>' +
+          '<button type="button" data-act="ok" disabled style="padding:9px 18px;border-radius:999px;border:none;' +
+            'background:' + c.accent + ';color:' + c.onAccent + ';font:inherit;font-size:14px;font-weight:600;cursor:pointer;opacity:.45;">Continue</button>' +
+        '</div>';
+
+      var box = dlg.querySelector('input');
+      var ok = dlg.querySelector('[data-act="ok"]');
+      box.addEventListener('change', function () {
+        ok.disabled = !box.checked;
+        ok.style.opacity = box.checked ? '1' : '.45';
+      });
+
+      var settled = false;
+      function finish(result) {
+        if (settled) return;
+        settled = true;
+        if (result) {
+          ageConfirmed = true;
+          try { window.localStorage.setItem(AGE_KEY, '1'); } catch (_) {}
+        }
+        if (dlg.open) dlg.close();
+        dlg.remove();
+        resolve(result);
+      }
+      ok.addEventListener('click', function () { if (box.checked) finish(true); });
+      dlg.querySelector('[data-act="cancel"]').addEventListener('click', function () { finish(false); });
+      dlg.addEventListener('close', function () { finish(false); }); // Esc
+
+      document.body.appendChild(dlg);
+      dlg.showModal();
+      box.focus();
+    });
+  }
+
   // ─── Supabase, authenticated as the Clerk user ───
 
   async function getSupabase() {
@@ -178,6 +270,7 @@
   // ─── Public API ───
 
   async function openSignIn(afterUrl) {
+    if (!(await confirmAge())) return;
     var clerk = await ensureClerk();
     clerk.openSignIn({
       appearance: appearance(),
@@ -187,6 +280,7 @@
   }
 
   async function openSignUp(afterUrl) {
+    if (!(await confirmAge())) return;
     var clerk = await ensureClerk();
     clerk.openSignUp({
       appearance: appearance(),
@@ -254,6 +348,7 @@
             '<div class="user-dropdown-email"></div>' +
             '<button class="user-dropdown-item" id="auth-dashboard" type="button">Dashboard</button>' +
             '<button class="user-dropdown-item" id="auth-account" type="button">Account</button>' +
+            '<a class="user-dropdown-item" href="/api/billing-portal" target="_blank" rel="noopener">Manage billing</a>' +
             '<button class="user-dropdown-item danger" id="auth-signout" type="button">Sign out</button>' +
           '</div>' +
         '</div>';
@@ -332,11 +427,16 @@
     return Boolean(cfg.clerkPublishableKey);
   }
 
+  // Entry points that can create an account, and so must pass the age gate
+  // under either provider.
+  var GATED = ['openLogin', 'openSignup', 'openMagic'];
+
   // Runs `clerkFn` under Clerk, or the same-named method on the old
   // implementation when Clerk is not configured.
   function route(name, clerkFn) {
     return async function () {
       if (await clerkConfigured()) return clerkFn.apply(null, arguments);
+      if (GATED.indexOf(name) !== -1 && !(await confirmAge())) return null;
       if (previous && typeof previous[name] === 'function') {
         return previous[name].apply(previous, arguments);
       }
