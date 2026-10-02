@@ -18,6 +18,10 @@
       "destination": "/api/checkout.js"
     },
     {
+      "source": "/api/billing-portal",
+      "destination": "/api/billing-portal.js"
+    },
+    {
       "source": "/api/founding-count",
       "destination": "/api/founding-count.js"
     },

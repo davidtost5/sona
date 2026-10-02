@@ -521,8 +521,10 @@
       .user-dropdown.open { opacity: 1; pointer-events: auto; transform: translateY(0); }
       .user-dropdown-item {
         display: block;
+        box-sizing: border-box;
         width: 100%;
         padding: 8px 12px;
+        text-decoration: none;
         border: none;
         background: transparent;
         text-align: left;
