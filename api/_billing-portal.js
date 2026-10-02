@@ -1,3 +1,8 @@
+// Served at /api/billing-portal, which vercel.json rewrites to
+// /api/checkout?action=portal. It lives inside checkout.js's function because
+// Vercel's Hobby plan caps a deployment at 12 functions, and the underscore
+// keeps this file from counting as one.
+//
 // Sends the customer to Stripe's hosted billing portal: cancel, switch between
 // monthly and annual, update the card, download invoices.
 //
@@ -16,7 +21,7 @@
 // request still reaches a person. That fallback must stay: the site promises
 // cancelling online is always possible.
 
-export default function handler(req, res) {
+export function billingPortal(req, res) {
   res.setHeader('Cache-Control', 'no-store');
 
   if (req.method !== 'GET' && req.method !== 'HEAD') {

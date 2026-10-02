@@ -126,15 +126,21 @@ function applySecurityHeaders(res) {
   res.setHeader('Referrer-Policy', 'no-referrer');
 }
 
+// Returns { file, query } — a destination may carry its own query string
+// (/api/billing-portal → /api/checkout.js?action=portal), merged in as Vercel does.
 function matchApiRewrite(pathname) {
   const rw = rewrites.find((r) => r.source === pathname);
   if (rw && rw.destination.startsWith('/api/')) {
-    return path.join(ROOT, rw.destination.replace(/^\//, ''));
+    const dest = new URL(rw.destination, 'http://localhost');
+    return {
+      file: path.join(ROOT, dest.pathname.replace(/^\//, '')),
+      query: Object.fromEntries(dest.searchParams),
+    };
   }
   // Fall back to /api/<name> → api/<name>.js even without an explicit rewrite.
   if (pathname.startsWith('/api/')) {
     const candidate = path.join(API_DIR, pathname.slice('/api/'.length) + '.js');
-    if (candidate.startsWith(API_DIR) && fs.existsSync(candidate)) return candidate;
+    if (candidate.startsWith(API_DIR) && fs.existsSync(candidate)) return { file: candidate, query: {} };
   }
   return null;
 }
@@ -165,11 +171,12 @@ const server = http.createServer(async (rawReq, res) => {
   const url = new URL(rawReq.url, `http://localhost:${PORT}`);
   const pathname = url.pathname;
 
-  const apiFile = matchApiRewrite(pathname);
-  if (apiFile) {
+  const api = matchApiRewrite(pathname);
+  if (api) {
+    const apiFile = api.file;
     try {
       const raw = await readRaw(rawReq);
-      const query = Object.fromEntries(url.searchParams);
+      const query = { ...Object.fromEntries(url.searchParams), ...api.query };
       const mod = await import(pathToFileURL(apiFile).href);
       const handler = mod.default;
       if (typeof handler !== 'function') {

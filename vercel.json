@@ -19,7 +19,7 @@
     },
     {
       "source": "/api/billing-portal",
-      "destination": "/api/billing-portal.js"
+      "destination": "/api/checkout.js?action=portal"
     },
     {
       "source": "/api/founding-count",
