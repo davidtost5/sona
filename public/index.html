@@ -6,6 +6,19 @@
 <!-- Theme bootstrap — runs before paint so there's no flash of wrong theme -->
 <!-- Theme — fully automatic, follows the wall clock (7am–7pm light, else dark) -->
 <script>(function(){try{var h=new Date().getHours();var dark=h<7||h>=19;document.documentElement.setAttribute('data-theme',dark?'dark':'light');}catch(e){}})();</script>
+<!-- Loading animation (loader.js). Decided here, before first paint, so the
+     hero never flashes first: once per session, never for reduced motion or a
+     deep link. The failsafe uncovers the page if loader.js or GSAP never runs. -->
+<script>(function(){try{
+  var d=document.documentElement;
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  if (sessionStorage.getItem('sona_loader_seen')) return;
+  if (location.hash || /[?&]signin=1/.test(location.search)) return;
+  d.classList.add('sona-loading');
+  window.__sonaLoaderFailsafe = setTimeout(function(){ d.classList.remove('sona-loading'); }, 4000);
+}catch(e){}})();</script>
+<script src="vendor/gsap-3.15.0.min.js" defer onerror="document.documentElement.classList.remove('sona-loading')"></script>
+<script src="loader.js?v=20261012a" defer></script>
 <meta name="color-scheme" content="light dark">
 <link rel="icon" type="image/svg+xml" href="/logo.svg">
 <link rel="apple-touch-icon" href="/logo.svg">
@@ -1391,6 +1404,41 @@
   .lg-wave { stroke: #28775c; }
   html[data-theme="dark"] .lg-wave { stroke: #5fb896; }
 </style>
+<style>
+  /* ─── Loading animation — see loader.js ─── */
+  .sona-loader { display: none; }
+  html.sona-loading { overflow: hidden; }
+  html.sona-loading .sona-loader { display: flex; }
+  .sona-loader {
+    position: fixed; inset: 0; z-index: 2147483000;
+    justify-content: center; align-items: center; overflow: hidden;
+    background: var(--bg); color: var(--text); cursor: pointer;
+  }
+  .sl-word {
+    display: flex; justify-content: center; position: relative;
+    white-space: nowrap; font-size: 12.5em; font-weight: 500;
+    line-height: .75; letter-spacing: -0.04em;
+  }
+  .sl-start, .sl-end { display: flex; overflow: hidden; }
+  .sl-start { justify-content: flex-end; }
+  .sl-letter { display: block; position: relative; }
+  .sl-box { display: flex; flex-direction: column; justify-content: center; align-items: center; width: 0; position: relative; }
+  .sl-box-inner { display: flex; justify-content: center; align-items: center; min-width: 1em; height: 95%; position: relative; }
+  .sl-grow { display: flex; justify-content: center; align-items: center; width: 0%; height: 100%; position: absolute; overflow: hidden; }
+  .sl-grow-wrap { position: absolute; width: 100%; min-width: 1em; height: 100%; }
+  .sl-frame {
+    position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+    font-family: 'Geist Mono', monospace; font-size: clamp(9px, .075em, 15px); font-weight: 500;
+    letter-spacing: .12em; text-transform: uppercase; line-height: 1;
+  }
+  .sl-extra.is--1 { z-index: 3; background: var(--text); color: var(--bg); }
+  .sl-extra.is--2 { z-index: 2; background: var(--accent-2); color: #f3f3f0; }
+  .sl-extra.is--3 { z-index: 1; background: var(--bg-soft); color: var(--text); }
+  .sl-cover { background: var(--accent); color: var(--bg); }
+  .sl-cover svg { width: clamp(26px, 3.2vw, 48px); height: auto; }
+  @media (max-width: 991px) { .sl-word { font-size: 9em; } }
+  @media (max-width: 767px) { .sl-word { font-size: 5.5em; } }
+</style>
 <noscript><style>
   /* No script means no observer, so the reveal never happens and the page is
      blank. Ship the content unanimated instead. */
@@ -1401,6 +1449,26 @@
 <script src="floating-menu.js?v=20260909a" defer></script>
 </head>
 <body>
+<!-- Loading animation — styles above, timeline in loader.js. Decorative, so
+     hidden from assistive tech; the real heading is the hero's h1. -->
+<div class="sona-loader" aria-hidden="true">
+  <div class="sl-word">
+    <div class="sl-start"><span class="sl-letter">S</span><span class="sl-letter">o</span></div>
+    <div class="sl-box">
+      <div class="sl-box-inner">
+        <div class="sl-grow">
+          <div class="sl-grow-wrap">
+            <div class="sl-frame sl-extra is--1">Find</div>
+            <div class="sl-frame sl-extra is--2">Decode</div>
+            <div class="sl-frame sl-extra is--3">Write</div>
+            <div class="sl-frame sl-cover"><svg viewBox="0 0 24 24" fill="none"><path d="M5 15 Q8 9 12 12 Q16 15 19 9" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M19 3.6 C19.15 5.1 20.3 6.25 21.8 6.4 C20.3 6.55 19.15 7.7 19 9.2 C18.85 7.7 17.7 6.55 16.2 6.4 C17.7 6.25 18.85 5.1 19 3.6 Z" fill="currentColor"/></svg></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="sl-end"><span class="sl-letter">n</span><span class="sl-letter">a</span></div>
+  </div>
+</div>
 <svg width="0" height="0" aria-hidden="true" style="position:absolute">
   <filter id="liquid-glass" x="-20%" y="-20%" width="140%" height="140%">
     <feTurbulence type="fractalNoise" baseFrequency="0.008 0.012" numOctaves="2" seed="7" result="noise"/>
