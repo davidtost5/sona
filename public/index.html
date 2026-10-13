@@ -19,6 +19,10 @@
 }catch(e){}})();</script>
 <script src="vendor/gsap-3.15.0.min.js" defer onerror="document.documentElement.classList.remove('sona-loading')"></script>
 <script src="loader.js?v=20261012a" defer></script>
+<!-- Smooth scroll — after GSAP, which it shares a frame loop with. -->
+<link rel="stylesheet" href="vendor/lenis-1.2.3.css">
+<script src="vendor/lenis-1.2.3.min.js" defer></script>
+<script src="smooth-scroll.js?v=20261012a" defer></script>
 <meta name="color-scheme" content="light dark">
 <link rel="icon" type="image/svg+xml" href="/logo.svg">
 <link rel="apple-touch-icon" href="/logo.svg">
@@ -2464,7 +2468,8 @@ and they stick with it for ninety days.
     });
   });
 
-  // Reveal — single observer, no Lenis. Handles both single-block (data-r) and staggered children (data-stagger).
+  // Reveal — single observer. Lenis (smooth-scroll.js) moves the real scroll
+  // position, so this needs nothing extra. Handles both single-block (data-r) and staggered children (data-stagger).
   let ioEverFired = false;
   const io = new IntersectionObserver(es => es.forEach(e => {
     if (e.isIntersecting) { ioEverFired = true; e.target.classList.add('in'); io.unobserve(e.target); }
