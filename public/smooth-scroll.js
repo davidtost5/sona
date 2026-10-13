@@ -17,11 +17,10 @@
  *   - Anything scrollable inside the page — a docs sidebar, a modal, the Clerk
  *     sign-in, the age check — keeps native wheel scrolling (`prevent`). This
  *     Lenis version has no automatic nested-scroll detection.
- *   - Scroll locks: the loader (`html.sona-loading`) and menus or modals that
- *     set `body.style.overflow = 'hidden'` pause Lenis, which would otherwise
- *     scroll the page behind them.
- *   - GSAP on the page: Lenis runs on GSAP's ticker so both share one frame
- *     loop; otherwise it runs its own.
+ *   - Scroll locks: menus or modals that set `body.style.overflow = 'hidden'`
+ *     pause Lenis, which would otherwise scroll the page behind them.
+ *   - GSAP on the page, if ever added: Lenis runs on GSAP's ticker so both
+ *     share one frame loop; otherwise it runs its own.
  */
 (function () {
   'use strict';
@@ -77,7 +76,7 @@
   }
 
   function locked() {
-    return root.classList.contains('sona-loading') || document.body.style.overflow === 'hidden';
+    return document.body.style.overflow === 'hidden';
   }
   function sync() {
     if (locked()) lenis.stop(); else lenis.start();
