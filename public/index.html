@@ -96,12 +96,6 @@
   a { color: inherit; }
   .mono { font-family: 'Geist Mono', monospace; }
 
-  .eyebrow {
-    font-family: 'Geist Mono', monospace;
-    font-size: 12px; letter-spacing: 1.2px; text-transform: uppercase;
-    color: var(--text-dim); margin-bottom: 22px; display: inline-block;
-  }
-  .eyebrow.accent { color: var(--accent); }
 
   [data-r] { opacity: 0; transform: translate3d(0,18px,0); will-change: opacity, transform; transition: opacity .7s cubic-bezier(.2,.7,.2,1), transform .7s cubic-bezier(.2,.7,.2,1); }
   [data-r].in { opacity: 1; transform: none; }
@@ -171,16 +165,6 @@
   }
   [data-split].in .w { opacity: 1; transform: none; }
 
-  /* 3. Eyebrow line-draw — thin line strokes in before each section's eyebrow */
-  .eyebrow.line { position: relative; padding-left: 32px; }
-  .eyebrow.line::before {
-    content:''; position: absolute; left: 0; top: 50%; width: 22px; height: 1px;
-    background: currentColor; transform-origin: left;
-    transform: translateY(-50%) scaleX(0);
-    transition: transform .65s cubic-bezier(.16,.86,.21,1) .1s;
-  }
-  .eyebrow.line.in::before, .in .eyebrow.line::before { transform: translateY(-50%) scaleX(1); }
-
   /* 4. Cinematic mask-reveal — the product panel "unveils" from top */
   .mask-reveal { clip-path: inset(0 0 100% 0); transition: clip-path 1.25s cubic-bezier(.2,.85,.2,1) .1s; }
   .mask-reveal.in { clip-path: inset(0); }
@@ -188,7 +172,7 @@
   /* Subtle parallax on the hero glow — drives off CSS var the scroll handler updates */
 
   @media (prefers-reduced-motion: reduce) {
-    [data-split] .w, .mask-reveal, .eyebrow.line::before { transition: none !important; transform: none !important; opacity: 1 !important; clip-path: none !important; }
+    [data-split] .w, .mask-reveal { transition: none !important; transform: none !important; opacity: 1 !important; clip-path: none !important; }
   }
 
   /* SaaS Browser reviews — revealed only when the profile has any. */
@@ -230,14 +214,14 @@
 
   .try-foot { text-align: center; font-size: 13.5px; color: var(--text-dim); margin: 22px auto 0; max-width: 60ch; }
 
-  .midcta { text-align:center; padding:0 24px 104px; }
+  .midcta { text-align:center; padding:112px 24px 104px; }
   .midcta-line { font-size:clamp(22px,3.4vw,31px); font-weight:600; letter-spacing:-.8px;
     line-height:1.25; margin-bottom:22px; }
   /* .quiet is only styled under .hero h1 / .sec-head h2, so it needs its own
      rule here. Same treatment as the hero headline. */
   .midcta-line .quiet { color:var(--text-dim); font-weight:500; }
   .midcta-note { margin-top:14px; font-size:13px; color:var(--text-dim); }
-  @media (max-width:760px) { .midcta { padding-bottom:76px; } }
+  @media (max-width:760px) { .midcta { padding-top:72px; padding-bottom:76px; } }
 
   /* ─── NAV ─── */
   nav {
@@ -1320,7 +1304,6 @@
     .sec-head { margin-bottom: 40px; }
     .sec-head h2 { font-size: clamp(26px, 8vw, 38px); letter-spacing: -1.2px; }
     .sec-head p { font-size: 15px; }
-    .eyebrow { font-size: 11px; margin-bottom: 16px; }
 
     /* Personas */
     .persona { padding: 24px; }
@@ -1647,7 +1630,6 @@
      claims. -->
 <section class="section" id="try">
   <div class="sec-head" data-r>
-    <span class="eyebrow line">Try it</span>
     <h2>Paste a post. See its shape.</h2>
     <p class="sec-lede">No account, nothing sent anywhere &mdash; the analysis runs in your browser.</p>
   </div>
@@ -1682,7 +1664,6 @@
 
 <section class="section" id="who">
   <div class="sec-head" data-r>
-    <span class="eyebrow accent line">01 · Who it's for</span>
     <h2>For people <span class="quiet">building an audience.</span></h2>
     <p>Sona helps you find what deserves your attention before you spend hours creating.</p>
   </div>
@@ -1723,7 +1704,6 @@
 <!-- BENTO FEATURES -->
 <section class="section" id="features">
   <div class="sec-head" data-r>
-    <span class="eyebrow line">02 · Inside Sona</span>
     <h2>Built for depth. <span class="quiet">Designed for focus.</span></h2>
     <p>Six tools that quietly do the heavy lifting, so writing stays the only thing you think about.</p>
   </div>
@@ -1819,7 +1799,6 @@ and they stick with it for ninety days.
 <!-- INTERACTIVE PRODUCT PREVIEW -->
 <section class="section" id="inside">
   <div class="sec-head" data-r>
-    <span class="eyebrow accent line">03 · A peek inside</span>
     <h2>This is where you'll work. <span class="quiet">Click around.</span></h2>
     <p>A real preview of the studio. Tap any item in the sidebar to switch views — the real thing ships with your invite.</p>
   </div>
@@ -2022,7 +2001,6 @@ and they stick with it for ninety days.
 <!-- WHAT YOU'LL SHIP — formats showcase -->
 <section class="section" id="formats">
   <div class="sec-head" data-r>
-    <span class="eyebrow accent line">04 · What you'll ship</span>
     <h2>One voice. <span class="quiet">Every format your audience reads in.</span></h2>
     <p>Threads, carousels, scripts, essays. Sona gives you the proven structure for each — you write it in your voice.</p>
   </div>
@@ -2169,7 +2147,6 @@ and they stick with it for ninety days.
      turns itself on the day a review lands, with nothing left to remember. -->
 <section class="section reviews-sec" id="sb-reviews" hidden>
   <div class="sec-head" data-r>
-    <span class="eyebrow accent line">Reviews</span>
     <h2>What people <span class="quiet">actually say.</span></h2>
   </div>
   <div id="saas-browser-reviews"></div>
@@ -2181,7 +2158,6 @@ and they stick with it for ninety days.
 <!-- HOW IT WORKS / TIMELINE -->
 <section class="section" id="how">
   <div class="sec-head" data-r>
-    <span class="eyebrow accent line">05 · The workflow</span>
     <h2>From blank page <span class="quiet">to published, in minutes.</span></h2>
   </div>
   <div class="steps" data-stagger>
@@ -2211,7 +2187,6 @@ and they stick with it for ninety days.
 
 <section class="section" id="pricing">
   <div class="sec-head" data-r>
-    <span class="eyebrow accent line">06 · Pricing</span>
     <h2>Start free. <span class="quiet">Go further with Pro.</span></h2>
     <p>Start free, upgrade when it earns its keep. Pay monthly or save two months on annual — cancel anytime.</p>
   </div>
@@ -2276,7 +2251,6 @@ and they stick with it for ninety days.
 <!-- FAQ -->
 <section class="section">
   <div class="sec-head" data-r>
-    <span class="eyebrow line">07 · Questions</span>
     <h2>Anything else? <span class="quiet">Let's clear it up.</span></h2>
   </div>
   <div class="faq" data-r>
@@ -2511,12 +2485,6 @@ and they stick with it for ninety days.
       document.querySelectorAll('[data-r], [data-stagger], .mask-reveal').forEach(el => el.classList.add('in'));
     }
   }, 1500);
-
-  // Eyebrow line-draw — separate observer (eyebrows aren't always inside data-r containers)
-  const lineIo = new IntersectionObserver(es => es.forEach(e => {
-    if (e.isIntersecting) { e.target.classList.add('in'); lineIo.unobserve(e.target); }
-  }), { threshold: 0.5, rootMargin: '0px 0px -20px 0px' });
-  document.querySelectorAll('.eyebrow.line').forEach(el => lineIo.observe(el));
 
   // Mobile menu
   const menuBtn = document.querySelector('.menu-btn');
