@@ -8,7 +8,7 @@
 
 import { supabase } from './_supabase.js';
 import { sendEmail } from './_email.js';
-import { welcomeEmail } from './_email-templates.js';
+import { welcomeEmail, postalAddressConfigured, unsubscribeHeaders } from './_email-templates.js';
 import { rateLimit, tooMany } from './_rate-limit.js';
 
 const memory = [];
@@ -75,17 +75,26 @@ export default async function handler(req, res) {
 
   // Best-effort welcome email. Awaited (not fire-and-forget) because the runtime
   // can freeze the function the moment we respond, which would drop the request.
-  const { subject, html, text } = welcomeEmail({ email: record.email });
-  // Reply-to matters here: mail is sent from the verified sending subdomain
-  // (send.buildwithsona.com), which has no mailbox behind it — MX points at the
-  // root domain only. Without this, anyone hitting Reply gets a bounce.
-  const sent = await sendEmail({
-    to: record.email,
-    subject, html, text,
-    replyTo: process.env.EMAIL_REPLY_TO || undefined,
-  });
-  if (!sent.ok && !sent.skipped) {
-    console.error('[Waitlist] welcome email failed:', sent.error);
+  //
+  // It is a commercial email, so it is held back until MAIL_FROM_ADDRESS is set:
+  // without it the footer would say "[SET MAIL_FROM_ADDRESS]" where CAN-SPAM
+  // requires a real postal address. The signup itself still succeeds.
+  if (!postalAddressConfigured()) {
+    console.warn('[Waitlist] welcome email skipped: MAIL_FROM_ADDRESS is not set');
+  } else {
+    const { subject, html, text } = welcomeEmail({ email: record.email });
+    // Reply-to matters here: mail is sent from the verified sending subdomain
+    // (send.buildwithsona.com), which has no mailbox behind it — MX points at the
+    // root domain only. Without this, anyone hitting Reply gets a bounce.
+    const sent = await sendEmail({
+      to: record.email,
+      subject, html, text,
+      replyTo: process.env.EMAIL_REPLY_TO || undefined,
+      headers: unsubscribeHeaders(record.email),
+    });
+    if (!sent.ok && !sent.skipped) {
+      console.error('[Waitlist] welcome email failed:', sent.error);
+    }
   }
 
   return res.status(200).json({ success: true, message: "You're on the list. We'll reach out soon." });

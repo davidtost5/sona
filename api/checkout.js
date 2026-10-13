@@ -20,6 +20,8 @@
 // That variable still holds the retired $99 test link, and falling back to it
 // is precisely the bug this file exists to fix.
 
+import { billingPortal } from './_billing-portal.js';
+
 const PLANS = {
   'creator-monthly': { env: 'STRIPE_LINK_CREATOR_MONTHLY', label: 'Creator · monthly', price: '$19/mo' },
   'creator-annual': { env: 'STRIPE_LINK_CREATOR_ANNUAL', label: 'Creator · annual', price: '$190/yr' },
@@ -35,6 +37,9 @@ const isTestLink = (url) => /\/test_/.test(url) || /^https:\/\/buy\.stripe\.com\
 
 export default function handler(req, res) {
   res.setHeader('Cache-Control', 'no-store');
+
+  // /api/billing-portal is rewritten here; see _billing-portal.js for why.
+  if (req.query && req.query.action === 'portal') return billingPortal(req, res);
 
   if (req.method !== 'GET' && req.method !== 'POST') {
     return res.status(405).json({ ok: false, error: 'Method not allowed' });

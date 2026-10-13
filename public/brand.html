@@ -1027,16 +1027,17 @@
       // the header fix stay on a stale copy for up to a day — which is exactly how
       // a fixed auth modal kept rendering empty. A new URL sidesteps the cache
       // entirely. Bump this string whenever auth.js changes.
-      authScript.src = "auth.js?v=20260828d";
-      authScript.defer = true;
+      authScript.src = "auth.js?v=20261002a";
+      authScript.async = false;
       document.head.appendChild(authScript);
 
       // Clerk layer, loaded after auth.js so it can capture the Supabase
       // implementation and delegate to it while CLERK_PUBLISHABLE_KEY is unset.
-      // Deferred scripts run in insertion order, so this always parses second.
+      // Injected scripts run as soon as each downloads unless async is false;
+      // async = false makes them run in insertion order, so this always runs second.
       const clerkScript = document.createElement('script');
-      clerkScript.src = "clerk-auth.js?v=20260830b";
-      clerkScript.defer = true;
+      clerkScript.src = "clerk-auth.js?v=20261002a";
+      clerkScript.async = false;
       document.head.appendChild(clerkScript);
     };
 

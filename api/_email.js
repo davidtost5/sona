@@ -41,7 +41,7 @@ function withTimeout(promise, ms, label) {
   ]);
 }
 
-async function sendViaSmtp({ from, to, subject, html, text, replyTo }) {
+async function sendViaSmtp({ from, to, subject, html, text, replyTo, headers }) {
   // Imported lazily so the Resend path doesn't pay for it, and so a missing
   // dependency can't crash functions that never send mail.
   const nodemailer = (await import('nodemailer')).default;
@@ -61,15 +61,17 @@ async function sendViaSmtp({ from, to, subject, html, text, replyTo }) {
   const info = await transporter.sendMail({
     from, to: Array.isArray(to) ? to.join(', ') : to, subject, html, text,
     replyTo: replyTo || undefined,
+    headers: headers || undefined,
   });
   return { ok: true, id: info && info.messageId };
 }
 
-async function sendViaResend({ from, to, subject, html, text, replyTo }) {
+async function sendViaResend({ from, to, subject, html, text, replyTo, headers }) {
   const payload = { from, to: Array.isArray(to) ? to : [to], subject };
   if (html) payload.html = html;
   if (text) payload.text = text;
   if (replyTo) payload.reply_to = replyTo;
+  if (headers) payload.headers = headers;
 
   const r = await fetch(RESEND_ENDPOINT, {
     method: 'POST',
@@ -84,9 +86,10 @@ async function sendViaResend({ from, to, subject, html, text, replyTo }) {
 
 /**
  * Send one email. Never throws.
+ * `headers` is for extra MIME headers such as List-Unsubscribe.
  * @returns {Promise<{ok: boolean, id?: string, skipped?: boolean, via?: string, error?: string}>}
  */
-export async function sendEmail({ to, subject, html, text, replyTo }) {
+export async function sendEmail({ to, subject, html, text, replyTo, headers }) {
   const via = emailTransport();
   const from = process.env.EMAIL_FROM || 'Sona <hello@buildwithsona.com>';
 
@@ -97,8 +100,8 @@ export async function sendEmail({ to, subject, html, text, replyTo }) {
 
   try {
     const send = via === 'smtp'
-      ? sendViaSmtp({ from, to, subject, html, text, replyTo })
-      : sendViaResend({ from, to, subject, html, text, replyTo });
+      ? sendViaSmtp({ from, to, subject, html, text, replyTo, headers })
+      : sendViaResend({ from, to, subject, html, text, replyTo, headers });
 
     const result = await withTimeout(send, SEND_TIMEOUT_MS + 2000, `${via} send`);
     if (!result.ok) console.error(`[email] ${via} send failed:`, result.error);

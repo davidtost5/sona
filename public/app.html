@@ -10,9 +10,7 @@
 <link rel="icon" type="image/svg+xml" href="/logo.svg">
 <link rel="apple-touch-icon" href="/logo.svg">
 <title>Sona — Studio</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@500&family=Caveat:wght@500;600&display=swap" rel="stylesheet" media="print" onload="this.media='all'"><noscript><link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@500&family=Caveat:wght@500;600&display=swap" rel="stylesheet"></noscript>
+<link rel="stylesheet" href="/fonts/fonts.css">
 <style>
   * { margin:0; padding:0; box-sizing:border-box; }
   :root {
@@ -1201,7 +1199,7 @@
       <div class="upsell-inner">
         <div class="upsell-eye">✦ Creator</div>
         <h4>Decode any post for <span class="acc">$19/mo</span>. Unlimited ideas and drafts.</h4>
-        <p class="upsell-note">Or $190/year — two months free. Cancel anytime.</p>
+        <p class="upsell-note">Or $190/year — two months free. Renews automatically until you cancel. Cancel anytime in Settings → Billing.</p>
         <button class="upsell-btn" onclick="claimSeat(this)">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12 L19 12 M13 6 L19 12 L13 18"/></svg>
           Start creating
@@ -1755,6 +1753,8 @@
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-6 8-6s8 2 8 6"/></svg>Profile</button>
               <button class="set-link" data-pane="prefs" data-keywords="digest email notifications public profile privacy">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M4 12h16M4 18h16"/><circle cx="9" cy="6" r="2" fill="currentColor"/><circle cx="15" cy="12" r="2" fill="currentColor"/><circle cx="7" cy="18" r="2" fill="currentColor"/></svg>Preferences</button>
+              <button class="set-link" data-pane="billing" data-keywords="billing subscription cancel plan invoice card payment upgrade annual monthly">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 10h18M7 15h4"/></svg>Billing</button>
             </div>
 
             <div class="set-group" data-group>
@@ -1821,6 +1821,19 @@
                 <span class="switch"><input type="checkbox" id="settings-public" name="publicProfile"><i></i></span>
               </label>
               <p class="status-note" style="margin-top:12px">Saved with your profile.</p>
+            </section>
+
+            <!-- BILLING — Stripe's hosted portal does the work; see api/billing-portal.js -->
+            <section class="panel set-pane" data-pane="billing" hidden>
+              <div class="panel-head"><div><h2>Billing</h2><p>Your plan, card and invoices, handled by Stripe.</p></div></div>
+              <div class="stat-list">
+                <div class="stat-row"><span>Cancel</span><b>Anytime. You keep access until the period you paid for ends.</b></div>
+                <div class="stat-row"><span>Renewal</span><b>Automatic, monthly or yearly, until you cancel</b></div>
+              </div>
+              <div class="actions-row" style="margin-top:16px">
+                <a class="btn" href="/api/billing-portal" target="_blank" rel="noopener">Manage billing</a>
+                <span class="status-note">Sign in with the email you paid with. Stripe sends you a one-time code.</span>
+              </div>
             </section>
 
             <!-- BRAND -->
@@ -2429,7 +2442,7 @@
           step = 'loading sign-in';
           await withTimeout(new Promise((resolve, reject) => {
             const s = document.createElement('script');
-            s.src = 'clerk-auth.js?v=20260830b';
+            s.src = 'clerk-auth.js?v=20261002a';
             s.onload = resolve;
             s.onerror = () => reject(new Error('clerk-auth.js failed to load'));
             document.head.appendChild(s);
