@@ -140,6 +140,17 @@
   .btn:active, .mini:active { filter: brightness(.97); transform: translateY(1px); box-shadow: inset 0 1px 0 transparent, 0 0 0 1px var(--sec-line), 0 1px 1px rgba(0,0,0,.12); }
   .btn-go:active, .mini.go:active { box-shadow: inset 0 1px 2px rgba(0,0,0,.18), 0 1px 1px rgba(0,0,0,.12); }
   .btn[disabled], .mini[disabled] { opacity: .5; cursor: progress; transform: none; filter: none; }
+  /* Arrow swap, as in the reference recording: the label and an arrow on
+     each side slide together inside a clipped window. At rest the right
+     arrow shows; on hover or keyboard focus the whole row moves right, the
+     right arrow leaves and the left one arrives. The button never resizes. */
+  .ba { display: inline-block; overflow: hidden; vertical-align: middle; }
+  .ba-track { --ba-shift: calc(16px + 8px); display: inline-flex; align-items: center; gap: 8px; margin-right: calc(-1 * var(--ba-shift)); transform: translateX(calc(-1 * var(--ba-shift))); transition: transform .5s cubic-bezier(.65,0,.35,1); }
+  .ba-i { width: 16px; height: 16px; flex: none; }
+  .btn-sm .ba-track { --ba-shift: calc(14px + 7px); gap: 7px; }
+  .btn-sm .ba-i { width: 14px; height: 14px; }
+  @media (hover: hover) { .btn:hover .ba-track { transform: translateX(0); } }
+  .btn:focus-visible .ba-track { transform: translateX(0); }
   .btn-sm { min-height: 38px; padding: 0 14px; font-size: 14px; border-radius: 9px; }
   .link { color: var(--ink); font-weight: 500; text-decoration: underline; text-decoration-color: var(--rule-2); text-underline-offset: 4px; }
   .link:hover { text-decoration-color: var(--ink); }
@@ -453,7 +464,7 @@
     </ul>
     <div class="nav-right">
       <button type="button" class="nav-signin" onclick="SonaAuth.openLogin()">Sign in</button>
-      <a href="#" class="btn btn-go btn-sm" onclick="event.preventDefault(); SonaAuth.openSignup();">Start free</a>
+      <a href="#" class="btn btn-go btn-sm" onclick="event.preventDefault(); SonaAuth.openSignup();"><span class="ba"><span class="ba-track"><svg class="ba-i" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg><span>Start free</span><svg class="ba-i" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></span></span></a>
     </div>
     <button class="menu-btn" type="button" aria-label="Open menu" aria-controls="mobile-menu" aria-expanded="false"><span></span><span></span></button>
   </div>
@@ -466,7 +477,7 @@
   <a href="#pricing">Pricing</a>
   <a href="docs.html">Docs</a>
   <a href="#" onclick="event.preventDefault(); SonaAuth.openLogin();">Sign in</a>
-  <a href="#" class="btn btn-go" onclick="event.preventDefault(); SonaAuth.openSignup();">Start free</a>
+  <a href="#" class="btn btn-go" onclick="event.preventDefault(); SonaAuth.openSignup();"><span class="ba"><span class="ba-track"><svg class="ba-i" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg><span>Start free</span><svg class="ba-i" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></span></span></a>
 </div>
 
 <main id="main">
@@ -476,7 +487,7 @@
     <h1 data-split>Write from the posts that beat the average in your niche.</h1>
     <p class="lede">Sona shows you posts that did several times better than their creator usually does, explains how each one is built, and helps you write your own version, in your voice.</p>
     <div class="hero-cta">
-      <a href="#" class="btn btn-go" onclick="event.preventDefault(); SonaAuth.openSignup();">Start free</a>
+      <a href="#" class="btn btn-go" onclick="event.preventDefault(); SonaAuth.openSignup();"><span class="ba"><span class="ba-track"><svg class="ba-i" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg><span>Start free</span><svg class="ba-i" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></span></span></a>
       <a href="#try" class="link">Try it on a post</a>
     </div>
     <p class="small">Free for 10 saved ideas. No credit card.</p>
@@ -731,7 +742,7 @@
           <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Follow the creators you learn from</li>
           <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Your playbook on every device</li>
         </ul>
-        <button type="button" class="btn btn-go" onclick="startCheckout('creator-monthly', this)">Get Creator</button>
+        <button type="button" class="btn btn-go" onclick="startCheckout('creator-monthly', this)"><span class="ba"><span class="ba-track"><svg class="ba-i" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg><span>Get Creator</span><svg class="ba-i" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></span></span></button>
         <p class="tier-foot">Renews automatically until you cancel. Cancel anytime.</p>
       </div>
       <div class="tier">
@@ -746,7 +757,7 @@
           <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Multiple brands and playbooks</li>
           <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Priority support</li>
         </ul>
-        <button type="button" class="btn btn-line" onclick="startCheckout('pro-monthly', this)">Get Creator Pro</button>
+        <button type="button" class="btn btn-line" onclick="startCheckout('pro-monthly', this)"><span class="ba"><span class="ba-track"><svg class="ba-i" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg><span>Get Creator Pro</span><svg class="ba-i" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></span></span></button>
         <p class="tier-foot">Renews automatically until you cancel. Cancel anytime.</p>
       </div>
     </div>
@@ -773,7 +784,7 @@
     <div class="band">
       <h2>Start with one post that worked.</h2>
       <p>Free for 10 saved ideas. No credit card.</p>
-      <a href="#" class="btn" onclick="event.preventDefault(); SonaAuth.openSignup();">Start free</a>
+      <a href="#" class="btn" onclick="event.preventDefault(); SonaAuth.openSignup();"><span class="ba"><span class="ba-track"><svg class="ba-i" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg><span>Start free</span><svg class="ba-i" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></span></span></a>
     </div>
   </div>
 </section>
