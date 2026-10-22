@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <!-- Theme bootstrap — runs before paint so there's no flash of wrong theme -->
 <!-- Theme — fully automatic, follows the wall clock (7am–7pm light, else dark) -->
-<script>(function(){try{var h=new Date().getHours();var dark=h<7||h>=19;document.documentElement.setAttribute('data-theme',dark?'dark':'light');}catch(e){}})();</script>
+<script>(function(){try{var t=null;try{t=localStorage.getItem('sona-theme');}catch(e){}if(t==='light'||t==='dark'){window.__sonaThemeChosen=true;}else{var h=new Date().getHours();t=(h<7||h>=19)?'dark':'light';}document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
 <!-- Smooth scroll — see smooth-scroll.js. -->
 <link rel="stylesheet" href="vendor/lenis-1.2.3.css">
 <script src="vendor/lenis-1.2.3.min.js" defer></script>
@@ -51,6 +51,18 @@
     --mono: 'Geist Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
     --r-lg: 18px; --r: 12px; --r-sm: 8px;
     --wrap: 1160px;
+    /* Tactile controls, after eden.so: a 1px light edge on top, stacked soft
+       shadows underneath, a slight vertical gradient. Radius 10 on buttons,
+       14 on the tray that holds them. */
+    --go-top: #2f8a6b; --go-bot: #236a52; --go-ink: #ffffff;
+    --go-edge: rgba(255,255,255,.22);
+    --go-drop: 0 1px 1.5px rgba(16,58,44,.22), 0 3px 6px -1px rgba(16,58,44,.26), 0 8px 14px -4px rgba(16,58,44,.22);
+    --sec-top: #ffffff; --sec-bot: #f4f4f1; --sec-line: rgba(26,26,26,.10); --sec-edge: rgba(255,255,255,1);
+    --sec-drop: 0 1px 2px rgba(26,26,26,.06), 0 4px 10px -4px rgba(26,26,26,.12);
+    --tray: rgba(26,26,26,.035); --tray-line: rgba(26,26,26,.08); --tray-edge: rgba(255,255,255,.7);
+    --seg-on: #ffffff; --seg-off: rgba(26,26,26,.52);
+    --seg-drop: 0 1px 2px rgba(26,26,26,.08), 0 2px 6px -2px rgba(26,26,26,.12);
+    --ease-out: cubic-bezier(0,0,.2,1);
   }
   html[data-theme="dark"] {
     --paper: #121413;
@@ -66,6 +78,14 @@
     --green-wash: rgba(95,184,150,.13);
     --on-green: #0f1311;
     --lift: 0 1px 0 rgba(0,0,0,.3), 0 30px 80px -30px rgba(0,0,0,.7);
+    --go-top: #79cdab; --go-bot: #56ab8a; --go-ink: #0c1a14;
+    --go-edge: rgba(255,255,255,.38);
+    --go-drop: 0 1px 1.5px rgba(0,0,0,.4), 0 3px 6px -1px rgba(0,0,0,.45), 0 8px 14px -4px rgba(0,0,0,.4);
+    --sec-top: rgba(255,255,255,.085); --sec-bot: rgba(255,255,255,.045); --sec-line: rgba(255,255,255,.10); --sec-edge: rgba(255,255,255,.08);
+    --sec-drop: 0 1px 2px rgba(0,0,0,.35), 0 4px 10px -4px rgba(0,0,0,.5);
+    --tray: rgba(255,255,255,.03); --tray-line: rgba(255,255,255,.08); --tray-edge: rgba(255,255,255,.04);
+    --seg-on: rgba(255,255,255,.09); --seg-off: rgba(255,255,255,.5);
+    --seg-drop: none;
   }
 
   *, *::before, *::after { box-sizing: border-box; }
@@ -96,19 +116,31 @@
   .small { font-size: .875rem; color: var(--ink-3); }
 
   /* Buttons: one solid style for the action, one quiet style for the rest */
-  .btn {
+  .btn, .mini {
     display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-    min-height: 46px; padding: 0 22px; border-radius: 999px; border: 1px solid transparent;
-    font-size: 15px; font-weight: 600; text-decoration: none; cursor: pointer; white-space: nowrap;
-    transition: background-color .15s, border-color .15s, transform .15s;
+    min-height: 46px; padding: 0 20px; border-radius: 10px; border: 0;
+    font-size: 15px; font-weight: 600; letter-spacing: -.005em; text-decoration: none; cursor: pointer; white-space: nowrap;
+    touch-action: manipulation; -webkit-tap-highlight-color: transparent;
+    transition: transform .2s var(--ease-out), box-shadow .2s var(--ease-out), filter .2s var(--ease-out);
   }
-  .btn:active { transform: scale(.98); }
-  .btn-go { background: var(--green); color: var(--on-green); }
-  .btn-go:hover { background: var(--green-ink); }
-  html[data-theme="dark"] .btn-go:hover { background: var(--green-ink); }
-  .btn-line { background: transparent; border-color: var(--rule-2); color: var(--ink); }
-  .btn-line:hover { border-color: var(--ink-3); }
-  .btn-sm { min-height: 38px; padding: 0 16px; font-size: 14px; }
+  /* Primary: the one green action per view */
+  .btn-go, .mini.go {
+    color: var(--go-ink);
+    background: linear-gradient(var(--go-top), var(--go-bot));
+    box-shadow: inset 0 1px 0 var(--go-edge), var(--go-drop);
+  }
+  /* Secondary: a raised neutral key */
+  .btn-line, .mini {
+    color: var(--ink);
+    background: linear-gradient(var(--sec-top), var(--sec-bot));
+    box-shadow: inset 0 1px 0 var(--sec-edge), 0 0 0 1px var(--sec-line), var(--sec-drop);
+  }
+  .btn:hover, .mini:hover { filter: brightness(1.05); transform: translateY(-1px); }
+  /* Pressed: sinks back down and loses most of its shadow */
+  .btn:active, .mini:active { filter: brightness(.97); transform: translateY(1px); box-shadow: inset 0 1px 0 transparent, 0 0 0 1px var(--sec-line), 0 1px 1px rgba(0,0,0,.12); }
+  .btn-go:active, .mini.go:active { box-shadow: inset 0 1px 2px rgba(0,0,0,.18), 0 1px 1px rgba(0,0,0,.12); }
+  .btn[disabled], .mini[disabled] { opacity: .5; cursor: progress; transform: none; filter: none; }
+  .btn-sm { min-height: 38px; padding: 0 14px; font-size: 14px; border-radius: 9px; }
   .link { color: var(--ink); font-weight: 500; text-decoration: underline; text-decoration-color: var(--rule-2); text-underline-offset: 4px; }
   .link:hover { text-decoration-color: var(--ink); }
 
@@ -149,11 +181,10 @@
 
   /* ─── Product demo ─── */
   .demo { padding-bottom: 40px; }
-  .tabs { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; max-width: 760px; margin: 0 auto 18px; padding: 4px; border-radius: 999px; background: var(--paper-2); border: 1px solid var(--rule); }
-  .tab { display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 42px; padding: 0 14px; border: 0; border-radius: 999px; background: transparent; color: var(--ink-2); font-size: 15px; font-weight: 500; cursor: pointer; transition: background-color .15s, color .15s; }
+  .tabs { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; max-width: 620px; margin: 0 auto 18px; padding: 4px; border-radius: 14px; background: var(--tray); border: 1px solid var(--tray-line); box-shadow: inset 0 1px 0 var(--tray-edge); }
+  .tab { display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 40px; padding: 0 12px; border: 0; border-radius: 10px; background: transparent; color: var(--seg-off); font-size: 15px; font-weight: 500; cursor: pointer; transition: color .3s cubic-bezier(.4,0,.2,1), background-color .3s cubic-bezier(.4,0,.2,1), box-shadow .3s cubic-bezier(.4,0,.2,1); }
   .tab:hover { color: var(--ink); }
-  .tab[aria-selected="true"] { background: var(--card); color: var(--ink); box-shadow: 0 1px 2px rgba(0,0,0,.08); }
-  html[data-theme="dark"] .tab[aria-selected="true"] { background: #2b302d; box-shadow: none; }
+  .tab[aria-selected="true"] { background: var(--seg-on); color: var(--ink); box-shadow: inset 0 1px 0 var(--sec-edge), var(--seg-drop); }
   .tab svg { width: 16px; height: 16px; flex: none; }
   .tab-note { text-align: center; color: var(--ink-3); font-size: 15px; min-height: 1.6em; margin-bottom: 26px; }
 
@@ -171,9 +202,11 @@
   .find-bar { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin-bottom: 18px; }
   .find-q { display: flex; align-items: center; gap: 8px; flex: 1 1 260px; min-height: 42px; padding: 0 14px; border: 1px solid var(--rule); border-radius: var(--r); background: var(--paper); color: var(--ink-3); font-size: 15px; }
   .find-q svg { width: 16px; height: 16px; }
-  .chips { display: flex; gap: 6px; flex-wrap: wrap; }
-  .chip { min-height: 36px; padding: 0 14px; border-radius: 999px; border: 1px solid var(--rule); background: transparent; color: var(--ink-2); font-size: 14px; cursor: pointer; }
-  .chip[aria-pressed="true"] { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+  .chips { display: flex; gap: 2px; flex-wrap: wrap; }
+  .chips, .pick { padding: 3px; border-radius: 12px; background: var(--tray); border: 1px solid var(--tray-line); box-shadow: inset 0 1px 0 var(--tray-edge); }
+  .chip { min-height: 34px; padding: 0 13px; border: 0; border-radius: 9px; background: transparent; color: var(--seg-off); font-size: 14px; font-weight: 500; cursor: pointer; transition: color .3s cubic-bezier(.4,0,.2,1), background-color .3s cubic-bezier(.4,0,.2,1); }
+  .chip:hover { color: var(--ink); }
+  .chip[aria-pressed="true"] { background: var(--seg-on); color: var(--ink); box-shadow: inset 0 1px 0 var(--sec-edge), var(--seg-drop); }
   .grid-posts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
   .post { display: flex; flex-direction: column; gap: 14px; padding: 18px; border: 1px solid var(--rule); border-radius: var(--r); background: var(--card); }
   .post[hidden] { display: none; }
@@ -188,13 +221,11 @@
   .mult span:last-child { font-size: 13px; color: var(--ink-3); }
   .post-views { font-size: 13px; color: var(--ink-3); }
   .post-act { display: flex; gap: 8px; }
-  .mini { min-height: 34px; padding: 0 12px; border-radius: 999px; border: 1px solid var(--rule-2); background: transparent; font-size: 13.5px; font-weight: 500; text-decoration: none; display: inline-flex; align-items: center; cursor: pointer; }
-  .mini:hover { border-color: var(--ink-3); }
-  .mini.go { background: var(--green); border-color: var(--green); color: var(--on-green); }
+  .mini { min-height: 36px; padding: 0 13px; border-radius: 9px; font-size: 13.5px; font-weight: 500; }
 
   /* Decode */
   .decode { display: grid; grid-template-columns: 1fr 1.15fr; gap: 22px; }
-  .pick { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 14px; }
+  .pick { display: inline-flex; gap: 2px; flex-wrap: wrap; margin-bottom: 14px; }
   .read { border: 1px solid var(--rule); border-radius: var(--r); }
   .read-row { display: grid; grid-template-columns: 96px 1fr; gap: 14px; padding: 14px 16px; border-bottom: 1px solid var(--rule); }
   .read-row:last-child { border-bottom: 0; }
@@ -333,9 +364,8 @@
   .band { background: var(--green); color: var(--on-green); border-radius: 28px; padding: 76px 40px; text-align: center; }
   .band h2 { max-width: 20ch; margin: 0 auto; }
   .band p { margin-top: 14px; opacity: .85; }
-  .band .btn { margin-top: 30px; background: var(--on-green); color: var(--green-ink); }
-  html[data-theme="dark"] .band .btn { color: var(--green); }
-  .band .btn:hover { opacity: .92; }
+  .band .btn { margin-top: 30px; color: #16352a; background: linear-gradient(#ffffff, #e9ece9); box-shadow: inset 0 1px 0 #fff, 0 1px 1.5px rgba(0,0,0,.18), 0 3px 6px -1px rgba(0,0,0,.2), 0 8px 14px -4px rgba(0,0,0,.18); }
+  html[data-theme="dark"] .band .btn { color: #0c1a14; }
 
   /* Footer */
   footer { padding: 96px 0 40px; }
@@ -353,6 +383,17 @@
   .foot-badges { display: flex; gap: 14px; align-items: center; margin-left: auto; }
   .foot-badges img { height: 40px; width: auto; }
   .ph-crop { display: block; height: 40px; overflow: hidden; border-radius: 8px; }
+
+  /* ─── Theme toggle ─── */
+  .theme-toggle { position: fixed; right: 20px; bottom: 20px; z-index: 50; display: flex; gap: 2px; padding: 3px; border-radius: 999px;
+    background: color-mix(in srgb, var(--card) 92%, transparent); border: 1px solid var(--tray-line);
+    box-shadow: 0 1px 2px rgba(0,0,0,.12), 0 10px 28px -12px rgba(0,0,0,.45);
+    backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
+  .theme-toggle button { width: 36px; height: 36px; display: grid; place-items: center; border: 0; border-radius: 999px; background: transparent; color: var(--ink-3); cursor: pointer; transition: background-color .2s, color .2s; }
+  .theme-toggle button:hover { color: var(--ink); }
+  .theme-toggle button[aria-pressed="true"] { background: var(--seg-on); color: var(--ink); box-shadow: inset 0 1px 0 var(--sec-edge), 0 0 0 1px var(--tray-line), var(--seg-drop); }
+  .theme-toggle svg { width: 17px; height: 17px; }
+  html { transition: background-color .25s; }
 
   /* ─── Responsive ─── */
   @media (max-width: 980px) {
@@ -387,6 +428,8 @@
     .also { grid-template-columns: 1fr; }
     .band { padding: 56px 22px; border-radius: 22px; }
     .foot-badges { margin-left: 0; }
+    .theme-toggle { right: 12px; bottom: 12px; }
+    footer { padding-bottom: 72px; }
   }
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { animation: none !important; transition: none !important; }
@@ -788,6 +831,11 @@
   </div>
 </footer>
 
+<div class="theme-toggle" role="group" aria-label="Colour theme">
+  <button type="button" data-theme-set="light" aria-pressed="false" aria-label="Light mode" title="Light mode"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2M12 19.5v2M4.6 4.6l1.4 1.4M18 18l1.4 1.4M2.5 12h2M19.5 12h2M4.6 19.4 6 18M18 6l1.4-1.4"/></svg></button>
+  <button type="button" data-theme-set="dark" aria-pressed="false" aria-label="Dark mode" title="Dark mode"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5Z"/></svg></button>
+</div>
+
 <script defer src="data.js"></script>
 <script>
   // Lazy load Sona Auth & Supabase. Calls made before the scripts arrive are
@@ -834,8 +882,29 @@
   // Theme follows the clock (7am–7pm light). Re-checked every minute.
   setInterval(function () {
     var h = new Date().getHours();
-    document.documentElement.setAttribute('data-theme', (h < 7 || h >= 19) ? 'dark' : 'light');
+    if (!window.__sonaThemeChosen) document.documentElement.setAttribute('data-theme', (h < 7 || h >= 19) ? 'dark' : 'light');
   }, 60 * 1000);
+
+  // Theme toggle. A choice is saved as sona-theme (the same key /app uses)
+  // and wins over the clock on every page that has a dark mode.
+  (function () {
+    var root = document.documentElement;
+    var btns = document.querySelectorAll('[data-theme-set]');
+    function paint() {
+      var cur = root.getAttribute('data-theme');
+      btns.forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.themeSet === cur)); });
+    }
+    btns.forEach(function (b) {
+      b.addEventListener('click', function () {
+        var t = b.dataset.themeSet;
+        window.__sonaThemeChosen = true;
+        try { localStorage.setItem('sona-theme', t); } catch (e) {}
+        root.setAttribute('data-theme', t);
+      });
+    });
+    new MutationObserver(paint).observe(root, { attributes: true, attributeFilter: ['data-theme'] });
+    paint();
+  })();
 
   // Nav gets a hairline once the page scrolls.
   (function () {

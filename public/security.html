@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<script>(function(){try{var h=new Date().getHours();var dark=h<7||h>=19;document.documentElement.setAttribute('data-theme',dark?'dark':'light');}catch(e){}})();</script>
+<script>(function(){try{var t=null;try{t=localStorage.getItem('sona-theme');}catch(e){}if(t==='light'||t==='dark'){window.__sonaThemeChosen=true;}else{var h=new Date().getHours();t=(h<7||h>=19)?'dark':'light';}document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
 <meta name="color-scheme" content="light dark">
 <link rel="icon" type="image/svg+xml" href="/logo.svg">
 <link rel="apple-touch-icon" href="/logo.svg">
@@ -126,7 +126,7 @@
 <script>
   setInterval(function () {
     var h = new Date().getHours();
-    document.documentElement.setAttribute('data-theme', (h < 7 || h >= 19) ? 'dark' : 'light');
+    if (!window.__sonaThemeChosen) document.documentElement.setAttribute('data-theme', (h < 7 || h >= 19) ? 'dark' : 'light');
   }, 60 * 1000);
 </script>
 </body>
