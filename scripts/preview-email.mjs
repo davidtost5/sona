@@ -42,18 +42,24 @@ for (const [name, mail] of [['broadcast', issue], ['welcome', welcome]]) {
 }
 
 // Cheap correctness checks that catch the things that actually break a send.
-const checks = [
-  ['subject present',        issue.subject.length > 0],
-  ['preheader present',      /max-height:0/.test(issue.html)],
-  ['plain-text part',        issue.text.length > 200],
-  ['unsubscribe in html',    /Unsubscribe/.test(issue.html)],
-  ['unsubscribe in text',    /Unsubscribe:/.test(issue.text)],
-  ['no flexbox or grid',     !/display:\s*(flex|grid)/.test(issue.html)],
-  ['tables for layout',      (issue.html.match(/<table/g) || []).length >= 4],
-  ['no external css',        !/<link/.test(issue.html)],
-  ['no unclosed tags',       (issue.html.match(/<table/g)||[]).length === (issue.html.match(/<\/table>/g)||[]).length],
-];
+// Every template is checked; only marketing email needs an unsubscribe.
+const all = [['broadcast', issue, true], ['welcome', welcome, true]];
 console.log('');
 let bad = 0;
-for (const [label, ok] of checks) { if (!ok) bad++; console.log(`  ${ok ? 'PASS' : 'FAIL'}  ${label}`); }
+for (const [name, mail, marketing] of all) {
+  const checks = [
+    ['subject present',        mail.subject.length > 0],
+    ['preheader present',      /max-height:0/.test(mail.html)],
+    ['plain-text part',        mail.text.length > 200],
+    ['unsubscribe in html',    !marketing || /Unsubscribe/.test(mail.html)],
+    ['unsubscribe in text',    !marketing || /Unsubscribe:/.test(mail.text)],
+    ['no flexbox or grid',     !/display:\s*(flex|grid)/.test(mail.html)],
+    ['tables for layout',      (mail.html.match(/<table/g) || []).length >= 4],
+    ['no external css',        !/<link/.test(mail.html)],
+    ['no svg images',          !/<svg|\.svg"/.test(mail.html)],
+    ['images have alt',        (mail.html.match(/<img(?![^>]*alt=)/g) || []).length === 0],
+    ['no unclosed tags',       (mail.html.match(/<table/g)||[]).length === (mail.html.match(/<\/table>/g)||[]).length],
+  ];
+  for (const [label, ok] of checks) { if (!ok) bad++; console.log(`  ${ok ? 'PASS' : 'FAIL'}  ${name.padEnd(10)} ${label}`); }
+}
 process.exit(bad ? 1 : 0);
