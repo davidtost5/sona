@@ -58,21 +58,88 @@ function p(content, extra = '') {
   return `<p style="margin:0 0 20px 0;font-family:${FONT};font-size:16px;line-height:1.65;color:${INK};${extra}">${content}</p>`;
 }
 
-function link(href, label) {
-  return `<a href="${esc(href)}" style="color:${INK};text-decoration:underline;">${esc(label)}</a>`;
+
+/* ──────────────────────────────────────────────────────────────────────────
+ * Brand layout
+ *
+ * The designed frame for product email, after Osmo's: a slim header, a dark
+ * hero card with small tags, one big headline and the wordmark cropped along
+ * its bottom edge, a short body, social icons, two buttons and a small footer.
+ *
+ * Everything that has to look exact is a PNG in public/email/ (the wordmark
+ * strip, the logo mark, the icons): Gmail drops SVG and most CSS, and Outlook
+ * ignores border-radius, so those degrade to square corners, never breakage.
+ *
+ *   brandEmail({
+ *     subject, preheader,
+ *     tags: ['Password', 'Reset'],
+ *     title: ['Password cannot', 'be reset'],
+ *     greeting: 'Hi David,',
+ *     paragraphs: ['…'],             // trusted HTML, written in code
+ *     code: '{{otp_code}}',          // optional one-time code box
+ *     note: 'Questions? Reply to this email.',
+ *     primary: { label: 'Open Sona', href: SITE + '/app' },
+ *     footer: { reason, unsubscribeUrl },   // marketing email only
+ *   })
+ *
+ * Strings are inserted as given, so a Clerk template can pass Handlebars
+ * placeholders such as {{app.name}} straight through.
+ * ────────────────────────────────────────────────────────────────────────── */
+
+const ASSETS = `${SITE}/email`;
+const BRAND = {
+  paper: '#ecebe6',     // behind the email
+  sheet: '#f6f6f3',     // the email itself
+  ink: '#1a1a1a',
+  mid: '#55554f',
+  soft: '#6b6b64',
+  rule: '#e2e1dc',
+  hero: '#1a1a1a',
+  heroTag: '#2c2c2b',
+  heroTagInk: '#cfcfc9',
+  green: '#28775c',
+  tile: '#e6e5e0',
+};
+const BRAND_FONT = "'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif";
+const BRAND_MONO = "'Geist Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace";
+const SOCIAL = [
+  { name: 'X', href: 'https://x.com/davidtostscale', img: 'x.png' },
+  { name: 'LinkedIn', href: 'https://www.linkedin.com/in/davidtost/', img: 'linkedin.png' },
+  { name: 'GitHub', href: 'https://github.com/davidtost5/sona', img: 'github.png' },
+];
+
+function bulletproofButton({ label, href, bg, color, radius }) {
+  return `<td align="center" bgcolor="${bg}" style="border-radius:${radius};background:${bg};">
+            <a href="${esc(href)}" style="display:inline-block;padding:15px 26px;font-family:${BRAND_FONT};font-size:17px;font-weight:500;line-height:1;color:${color};text-decoration:none;border-radius:${radius};">${esc(label)}</a>
+          </td>`;
 }
 
-/**
- * Welcome / confirmation email for a new subscriber.
- * @param {{ email: string, unsubscribeUrl?: string }} opts
- */
-export function welcomeEmail({ email, unsubscribeUrl } = {}) {
-  const subject = "You're on the list";
-  const preheader = "What Sona does, and what happens next.";
-
-  // A working opt-out is legally required. mailto: is a legitimate mechanism and
-  // works today; swap in a one-click endpoint when there is one.
-  const unsub = unsubscribeUrl || unsubscribeMailto(email);
+export function brandEmail(opts = {}) {
+  const {
+    subject = '', preheader = '', tags = [], title = [], greeting = '',
+    paragraphs = [], code = '', note = '', primary = null,
+    secondary = { label: 'Website', href: SITE }, footer = null,
+  } = opts;
+  const lines = (Array.isArray(title) ? title : [title]).map(esc).join('<br>');
+  const tagHtml = tags.map((t) => `<span style="display:inline-block;margin:0 2px;padding:5px 10px;border-radius:6px;background:${BRAND.heroTag};font-family:${BRAND_MONO};font-size:12px;line-height:1;color:${BRAND.heroTagInk};">${esc(t)}</span>`).join('');
+  const body = (greeting ? [greeting] : []).concat(paragraphs)
+    .map((h) => `<p style="margin:0 0 22px 0;font-family:${BRAND_FONT};font-size:18px;line-height:1.6;color:${BRAND.ink};">${h}</p>`).join('\n              ');
+  const icons = SOCIAL.map((x) => `<td style="padding:0 5px;">
+                  <a href="${esc(x.href)}" style="display:block;width:48px;height:48px;border-radius:24px;background:${BRAND.tile};text-align:center;line-height:0;">
+                    <img src="${ASSETS}/${x.img}" width="20" height="20" alt="${esc(x.name)}" style="display:inline-block;margin-top:14px;border:0;">
+                  </a>
+                </td>`).join('');
+  const buttons = [
+    secondary && bulletproofButton({ ...secondary, bg: BRAND.ink, color: '#ffffff', radius: '6px' }),
+    primary && bulletproofButton({ ...primary, bg: BRAND.green, color: '#ffffff', radius: '999px' }),
+  ].filter(Boolean).join('<td style="width:10px;font-size:0;">&nbsp;</td>');
+  const legal = footer ? `
+          <tr>
+            <td style="padding:0 40px 30px 40px;font-family:${BRAND_FONT};font-size:12px;line-height:1.6;color:${BRAND.soft};text-align:center;">
+              ${esc(footer.reason || '')}<br>${esc(LEGAL_NAME)}, ${esc(POSTAL_ADDRESS)}<br>
+              <a href="${esc(footer.unsubscribeUrl || unsubscribeMailto())}" style="color:${BRAND.soft};text-decoration:underline;">Unsubscribe</a>
+            </td>
+          </tr>` : '';
 
   const html = `<!doctype html>
 <html lang="en">
@@ -82,89 +149,121 @@ export function welcomeEmail({ email, unsubscribeUrl } = {}) {
 <meta name="color-scheme" content="light">
 <meta name="supported-color-schemes" content="light">
 <title>${esc(subject)}</title>
+<style>
+  @media (max-width: 600px) {
+    .px { padding-left: 24px !important; padding-right: 24px !important; }
+    .hero-h { font-size: 34px !important; }
+  }
+</style>
 </head>
-<body style="margin:0;padding:0;background:${PAGE};">
-  <!-- preheader: shown in the inbox preview, hidden in the body -->
+<body style="margin:0;padding:0;background:${BRAND.paper};">
   <div style="display:none;max-height:0;overflow:hidden;opacity:0;color:transparent;height:0;width:0;">${esc(preheader)}</div>
-
-  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:${PAGE};margin:0;padding:0;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:${BRAND.paper};">
     <tr>
-      <td align="center" style="padding:32px 12px;">
+      <td align="center" style="padding:24px 10px;">
+        <table role="presentation" width="560" cellpadding="0" cellspacing="0" border="0" style="width:100%;max-width:560px;background:${BRAND.sheet};border-radius:14px;">
 
-        <table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" style="width:100%;max-width:600px;background:${CARD};border-radius:12px;">
+          <!-- header -->
           <tr>
-            <td style="padding:36px 40px 40px 40px;">
-
-              <!-- wordmark, top-left -->
-              <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 28px 0;">
-                <tr>
-                  <td style="font-family:${FONT};font-size:24px;font-weight:700;color:#8a8a8a;letter-spacing:-0.5px;">
-                    Sona
-                  </td>
-                </tr>
-              </table>
-
-              ${p("Thanks for subscribing — you're on the list.")}
-
-              ${p("Sona is in beta and I'm onboarding people in small batches, so it may be a little while before your invite lands. I'd rather it work properly than arrive early.")}
-
-              ${p("In the meantime, here's what it actually does.")}
-
-              ${p("It finds posts that genuinely outperformed their own creator's baseline — not just whatever got the most views — then breaks down the mechanism that made each one work: the hook, the tension that stops the scroll, and the reusable pattern underneath.")}
-
-              ${p("Then it hands you that pattern. <strong style=\"font-weight:600;\">You write the post.</strong> Nothing in Sona writes it for you, and that's deliberate.")}
-
-              ${p(`You can see what's working right now at ${link(SITE, 'buildwithsona.com')}.`)}
-
-              ${p("— David")}
-
-              <!-- footer -->
-              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:32px 0 0 0;">
-                <tr><td style="border-top:1px solid ${RULE};padding:0;font-size:0;line-height:0;">&nbsp;</td></tr>
-                <tr>
-                  <td style="padding:18px 0 0 0;font-family:${FONT};font-size:12px;line-height:1.6;color:${SOFT};">
-                    You are receiving this email because you opted in to receive updates from ${esc(LEGAL_NAME)}.<br>
-                    ${esc(POSTAL_ADDRESS)}<br>
-                    <a href="${esc(unsub)}" style="color:${SOFT};text-decoration:underline;font-weight:600;">Unsubscribe</a>
-                  </td>
-                </tr>
-              </table>
-
+            <td class="px" style="padding:26px 40px;border-bottom:1px solid ${BRAND.rule};">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr>
+                <td style="font-family:${BRAND_FONT};font-size:22px;font-weight:700;letter-spacing:-0.6px;color:${BRAND.ink};">
+                  <img src="${ASSETS}/mark.png" width="26" height="26" alt="" style="display:inline-block;vertical-align:-6px;margin-right:6px;border:0;">Sona
+                </td>
+                <td align="right" style="font-family:${BRAND_MONO};font-size:13px;color:${BRAND.soft};">buildwithsona.com</td>
+              </tr></table>
             </td>
           </tr>
-        </table>
 
+          <!-- hero -->
+          <tr>
+            <td style="padding:22px 22px 0 22px;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:${BRAND.hero};border-radius:14px;">
+                <tr><td align="center" style="padding:30px 24px 0 24px;">${tagHtml}</td></tr>
+                <tr><td class="hero-h" align="center" style="padding:20px 24px 24px 24px;font-family:${BRAND_FONT};font-size:42px;line-height:1.05;font-weight:600;letter-spacing:-1.6px;color:#ffffff;">${lines}</td></tr>
+                <tr><td style="line-height:0;font-size:0;"><img src="${ASSETS}/wordmark.png" width="516" alt="" style="display:block;width:100%;height:auto;border:0;border-radius:0 0 14px 14px;"></td></tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- body -->
+          <tr>
+            <td class="px" style="padding:36px 52px 14px 52px;">
+              ${body}
+              ${code ? `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 26px 0;"><tr><td align="center" style="padding:22px 12px;border-radius:12px;background:#ffffff;border:1px solid ${BRAND.rule};font-family:${BRAND_MONO};font-size:34px;font-weight:600;letter-spacing:8px;color:${BRAND.ink};">${code}</td></tr></table>` : ''}
+              ${note ? `<p style="margin:6px 0 22px 0;font-family:${BRAND_FONT};font-size:16px;line-height:1.6;color:${BRAND.soft};">${note}</p>` : ''}
+            </td>
+          </tr>
+
+          <!-- social -->
+          <tr>
+            <td align="center" style="padding:26px 20px;border-top:1px solid ${BRAND.rule};border-bottom:1px solid ${BRAND.rule};">
+              <table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr>${icons}</tr></table>
+            </td>
+          </tr>
+
+          <!-- buttons -->
+          <tr>
+            <td align="center" style="padding:34px 20px 40px 20px;">
+              <table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr>${buttons}</tr></table>
+            </td>
+          </tr>
+
+          <!-- sign-off line -->
+          <tr>
+            <td class="px" style="padding:0 40px 30px 40px;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr>
+                <td style="font-family:${BRAND_MONO};font-size:12px;color:${BRAND.soft};">Find what works</td>
+                <td align="center" width="40"><img src="${ASSETS}/spark.png" width="16" height="16" alt="" style="display:inline-block;border:0;"></td>
+                <td align="right" style="font-family:${BRAND_MONO};font-size:12px;color:${BRAND.soft};">Write your own</td>
+              </tr></table>
+            </td>
+          </tr>
+          ${legal}
+        </table>
       </td>
     </tr>
   </table>
 </body>
 </html>`;
 
-  const text = `Thanks for subscribing — you're on the list.
-
-Sona is in beta and I'm onboarding people in small batches, so it may be a
-little while before your invite lands. I'd rather it work properly than arrive early.
-
-In the meantime, here's what it actually does.
-
-It finds posts that genuinely outperformed their own creator's baseline — not
-just whatever got the most views — then breaks down the mechanism that made each
-one work: the hook, the tension that stops the scroll, and the reusable pattern
-underneath.
-
-Then it hands you that pattern. You write the post. Nothing in Sona writes it
-for you, and that's deliberate.
-
-You can see what's working right now at ${SITE}
-
-— David
-
-—
-You are receiving this email because you opted in to receive updates from ${LEGAL_NAME}.
-${POSTAL_ADDRESS}
-Unsubscribe: ${unsub}`;
+  const strip = (h) => String(h).replace(/<br\s*\/?>/g, '\n').replace(/<[^>]+>/g, '').replace(/&nbsp;/g, ' ').replace(/&amp;/g, '&').replace(/&rsquo;/g, '’').replace(/&mdash;/g, '—');
+  const text = [
+    (Array.isArray(title) ? title.join(' ') : title),
+    '',
+    ...(greeting ? [greeting, ''] : []),
+    ...paragraphs.flatMap((h) => [strip(h), '']),
+    ...(code ? [code, ''] : []),
+    ...(note ? [strip(note), ''] : []),
+    ...(primary ? [`${primary.label}: ${primary.href}`] : []),
+    `${SITE}`,
+    ...(footer ? ['', '—', footer.reason || '', `${LEGAL_NAME}, ${POSTAL_ADDRESS}`, `Unsubscribe: ${footer.unsubscribeUrl || unsubscribeMailto()}`] : []),
+  ].join('\n');
 
   return { subject, html, text };
+}
+
+/**
+ * Welcome email for someone who signs up for product updates.
+ * @param {{ email: string, unsubscribeUrl?: string }} opts
+ */
+export function welcomeEmail({ email, unsubscribeUrl } = {}) {
+  return brandEmail({
+    subject: "You're on the list",
+    preheader: 'What Sona does, and what you will hear from us.',
+    tags: ['Product', 'Updates'],
+    title: ["You're on", 'the list'],
+    greeting: 'Hi,',
+    paragraphs: [
+      "Thanks for signing up. You'll get an email when something new ships in Sona, and nothing else.",
+      "Here's what it does today. Sona finds posts that did far better than their creator usually does, not just the ones with the most views, and shows how each one is built: the hook, the turn and the pattern you can reuse.",
+      'Then you write the post, in your own words. Nothing in Sona writes it for you, and that’s on purpose.',
+      '— David',
+    ],
+    note: 'Questions or ideas? Reply to this email. I read every one.',
+    primary: { label: 'Open Sona', href: `${SITE}/app` },
+    footer: { reason: 'You get this email because you signed up for Sona product updates.', unsubscribeUrl: unsubscribeUrl || unsubscribeMailto(email) },
+  });
 }
 
 /* ──────────────────────────────────────────────────────────────────────────
