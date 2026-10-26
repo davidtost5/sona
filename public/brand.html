@@ -292,9 +292,8 @@
     align-items: center;
     justify-content: center;
   }
-  .logo-card.light .logo-icon { background: var(--green-dark); }
-  .logo-card.dark .logo-icon { background: var(--green-accent); }
-  .logo-icon svg { width: 22px; height: 22px; }
+  /* The mark carries its own green tile, so it sits on light and dark as is. */
+  .logo-icon img { display: block; width: 40px; height: 40px; }
 
   /* ─── COLOR PALETTE ─── */
   .color-grid {
@@ -624,6 +623,9 @@
 <link rel="stylesheet" href="vendor/lenis-1.2.3.css">
 <script src="vendor/lenis-1.2.3.min.js" defer></script>
 <script src="smooth-scroll.js?v=20261012a" defer></script>
+<link rel="icon" type="image/svg+xml" href="/logo.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
 </head>
 <body>
 
@@ -667,24 +669,20 @@
   <div data-reveal>
     <p class="section-label">01 — Logo</p>
     <h2 class="section-title">Wordmark & Mark</h2>
-    <p class="section-desc">The Sona wordmark is set in Aeonik Pro Bold at a tracked -1px. Use the full wordmark as the primary logo. Maintain generous clear space equal to the height of the "C" on all sides.</p>
+    <p class="section-desc">The mark is a Roman inscriptional S, cut from Cinzel Bold, in marble white on a dark stone tile: Stoic, quiet and built to last. Use it beside the wordmark, set in DM Sans Bold, or on its own where space is tight. Keep clear space of at least half the tile&rsquo;s width on every side, and never recolour or redraw it. The file is <a href="/logo.svg">logo.svg</a>.</p>
   </div>
   <div class="logo-grid" data-stagger>
     <div class="logo-card light">
       <span class="logo-badge">Light mode</span>
       <div class="logo-mark">
-        <div class="logo-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="#f5f4f0" stroke-width="2" stroke-linecap="round"><path d="M12 3v18M12 3c-3 4-7 6-9 8h18c-2-2-6-4-9-8z"/><path d="M8 15c1.5 1 2.5 3 4 6M16 15c-1.5 1-2.5 3-4 6"/></svg>
-        </div>
+        <div class="logo-icon"><img src="/logo.svg" alt="Sona mark" width="40" height="40"></div>
         <span class="logo-text">Sona</span>
       </div>
     </div>
     <div class="logo-card dark">
       <span class="logo-badge">Dark mode</span>
       <div class="logo-mark">
-        <div class="logo-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="#1a2e1a" stroke-width="2" stroke-linecap="round"><path d="M12 3v18M12 3c-3 4-7 6-9 8h18c-2-2-6-4-9-8z"/><path d="M8 15c1.5 1 2.5 3 4 6M16 15c-1.5 1-2.5 3-4 6"/></svg>
-        </div>
+        <div class="logo-icon"><img src="/logo.svg" alt="Sona mark" width="40" height="40"></div>
         <span class="logo-text">Sona</span>
       </div>
     </div>
