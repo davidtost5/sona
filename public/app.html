@@ -8,7 +8,8 @@
 <script>(function(){try{var t=null;try{t=localStorage.getItem('sona-theme');}catch(e){}if(t==='light'||t==='dark'){window.__sonaThemeChosen=true;}else{var h=new Date().getHours();t=(h<7||h>=19)?'dark':'light';}document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
 <meta name="color-scheme" content="light dark">
 <link rel="icon" type="image/svg+xml" href="/logo.svg">
-<link rel="apple-touch-icon" href="/logo.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <title>Sona — Studio</title>
 <link rel="stylesheet" href="/fonts/fonts.css">
 <style>
@@ -1069,6 +1070,7 @@
 
 </style>
 <script src="local-decode.js?v=20260830a"></script>
+<style>/* New mark (logo.svg) carries its own tile, so the old frames are switched off. */.mark-img{display:block;width:100%;height:100%}:is(.logo-mark,.lm,.hm-mark,.lc-mark,.mark):has(>.mark-img){background:none!important;border:0!important;box-shadow:none!important;padding:0!important;border-radius:0!important}.logo>.mark-img{width:24px;height:24px}</style>
 </head>
 <body>
 
@@ -1077,7 +1079,7 @@
   <canvas id="bg" aria-hidden="true"></canvas>
   <div class="grain" aria-hidden="true"></div>
   <div class="vignette" aria-hidden="true"></div>
-  <div class="lm logo-load"><svg viewBox="0 0 24 24" fill="none"><path class="lg-wave" d="M5 15 Q8 9 12 12 Q16 15 19 9" stroke="#28775c" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path class="lg-spark" d="M19 3.6 C19.15 5.1 20.3 6.25 21.8 6.4 C20.3 6.55 19.15 7.7 19 9.2 C18.85 7.7 17.7 6.55 16.2 6.4 C17.7 6.25 18.85 5.1 19 3.6 Z" fill="#28775c"/></svg></div>
+  <div class="lm logo-load"><img class="mark-img" src="/logo.svg" alt="" width="26" height="26"></div>
   <p id="gate-msg">One sec…</p>
 </div>
 
@@ -1086,7 +1088,7 @@
   <!-- SIDEBAR -->
   <aside class="side">
     <div class="side-top">
-      <span class="lm"><svg viewBox="0 0 24 24" fill="none"><path class="lg-wave" d="M5 15 Q8 9 12 12 Q16 15 19 9" stroke="#28775c" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path class="lg-spark" d="M19 3.6 C19.15 5.1 20.3 6.25 21.8 6.4 C20.3 6.55 19.15 7.7 19 9.2 C18.85 7.7 17.7 6.55 16.2 6.4 C17.7 6.25 18.85 5.1 19 3.6 Z" fill="#28775c"/></svg></span>
+      <span class="lm"><img class="mark-img" src="/logo.svg" alt="" width="26" height="26"></span>
       <span class="name">Sona</span>
       <span class="badge">Beta</span>
     </div>
@@ -1255,13 +1257,13 @@
            were". One greeting, four ways in, and what you touched last. -->
       <div class="view active" data-view="home">
         <div class="hm-head">
-          <span class="hm-mark"><svg viewBox="0 0 24 24" fill="none"><path d="M5 15 Q8 9 12 12 Q16 15 19 9" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" fill="none"/><path d="M19 3.6 C19.15 5.1 20.3 6.25 21.8 6.4 C20.3 6.55 19.15 7.7 19 9.2 C18.85 7.7 17.7 6.55 16.2 6.4 C17.7 6.25 18.85 5.1 19 3.6 Z" fill="currentColor"/></svg></span>
+          <span class="hm-mark"><img class="mark-img" src="/logo.svg" alt="" width="26" height="26"></span>
           <h2 id="hm-greeting">Welcome back</h2>
         </div>
 
         <div class="lc">
           <div class="lc-head">
-            <span class="lc-mark"><svg viewBox="0 0 24 24" fill="none"><path d="M5 15 Q8 9 12 12 Q16 15 19 9" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" fill="none"/><path d="M19 3.6 C19.15 5.1 20.3 6.25 21.8 6.4 C20.3 6.55 19.15 7.7 19 9.2 C18.85 7.7 17.7 6.55 16.2 6.4 C17.7 6.25 18.85 5.1 19 3.6 Z" fill="currentColor"/></svg></span>
+            <span class="lc-mark"><img class="mark-img" src="/logo.svg" alt="" width="26" height="26"></span>
             <h2>Let's make something</h2>
           </div>
           <div class="lc-grid">
