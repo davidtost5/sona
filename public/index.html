@@ -1189,7 +1189,7 @@
     });
   })();
 
-  // Pricing → Stripe. Until the STRIPE_LINK_* env vars are set, /api/checkout
+  // Pricing → Polar. Until the POLAR_LINK_* env vars are set, /api/checkout
   // answers 503 and this falls back to signup instead of dead-ending.
   window.startCheckout = async function (plan, btn) {
     const orig = btn ? btn.innerHTML : null;
