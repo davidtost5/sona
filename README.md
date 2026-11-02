@@ -57,7 +57,7 @@ and sent as a bearer token.
 - **Frontend** — Vanilla HTML/CSS/JS, no framework, Geist + Geist Mono via Google Fonts
 - **Backend** — Supabase (Postgres + Auth + RLS)
 - **Hosting** — Vercel (static + serverless functions on Node.js)
-- **Payments** — Stripe or Polar checkout link → `/api/checkout` redirect
+- **Payments** — Polar (merchant of record) checkout links via `/api/checkout`; `/api/polar-webhook` records subscriptions
 - **Email** — Resend or any SMTP host (Spacemail, etc.), selected by which env vars are set
 - **AI** — Claude Haiku for the decoder; nothing writes posts for you
 - **Theme** — Clock-based auto switching (7am–7pm light, else dark) — no manual toggle
@@ -88,7 +88,9 @@ Vercel → your project → **Settings → Environment Variables** → add:
 | `SUPABASE_URL` | Supabase → Settings → Data API → Project URL |
 | `SUPABASE_ANON_KEY` | Supabase → Settings → Data API → `anon · public` |
 | `SUPABASE_SERVICE_ROLE_KEY` | Supabase → Settings → Data API → `service_role · secret` (server-only) |
-| `STRIPE_PAYMENT_LINK` | Stripe → Products → create $99/yr founding-member product → Create Payment Link → copy URL |
+| `POLAR_LINK_CREATOR_MONTHLY`, `POLAR_LINK_CREATOR_ANNUAL`, `POLAR_LINK_PRO_MONTHLY`, `POLAR_LINK_PRO_ANNUAL` | Polar → Products → Checkout Links |
+| `POLAR_WEBHOOK_SECRET` | Polar → Settings → Webhooks → your endpoint |
+| `POLAR_PORTAL_URL` | `https://polar.sh/<your-org-slug>/portal` |
 
 ### 4. Deploy
 
@@ -105,7 +107,7 @@ Visit your domain. Sign up → land in `/app`. Click Save on any Discover card �
 ├── api/                     # Vercel serverless functions
 │   ├── _supabase.js         # shared admin client (server-only)
 │   ├── auth-config.js       # public Supabase config for the browser
-│   ├── checkout.js          # Stripe Payment Link redirect
+│   ├── checkout.js          # Polar checkout link for each plan
 │   ├── contact.js           # contact-form persistence
 │   ├── founding-count.js    # real seat counter (returns 0 until first sale)
 │   └── waitlist.js          # waitlist persistence

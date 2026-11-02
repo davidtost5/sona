@@ -10,7 +10,7 @@
 //   node scripts/dev-server.mjs            # http://localhost:3000
 //   PORT=8080 node scripts/dev-server.mjs
 //
-// Serverless functions degrade gracefully without Supabase/Stripe/Resend env
+// Serverless functions degrade gracefully without Supabase/Polar/Resend env
 // vars (in-memory fallbacks, `configured:false`), so the whole app runs end to
 // end locally with no secrets. Set the same env vars Vercel would to go live.
 

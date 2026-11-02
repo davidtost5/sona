@@ -1,5 +1,5 @@
 // Returns the real number of founding-member seats claimed.
-// Reads from a `founding_members` table in Supabase (created via the Stripe webhook).
+// Reads from a `founding_members` table in Supabase (from the retired Founding tier).
 //
 // If the table doesn't exist yet (i.e. you haven't wired the webhook), this gracefully
 // returns 0 — which is the truth. No fake numbers anywhere.

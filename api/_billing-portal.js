@@ -3,19 +3,16 @@
 // Vercel's Hobby plan caps a deployment at 12 functions, and the underscore
 // keeps this file from counting as one.
 //
-// Sends the customer to Stripe's hosted billing portal: cancel, switch between
-// monthly and annual, update the card, download invoices.
+// Sends the customer to Polar's hosted customer portal: cancel, change plan,
+// update the card, download invoices.
 //
-// This uses the portal's *login link*, not a per-customer session. The customer
-// types their email and Stripe emails them a one-time code, so no secret key is
+// This is the portal's public address, not a per-customer session. The customer
+// types their email and Polar emails them a one-time code, so no secret key is
 // needed here and nobody can open someone else's billing page.
 //
-// SETUP (Stripe Dashboard → Settings → Billing → Customer portal):
-//   1. Turn on "Cancel subscriptions" → "At the end of the billing period"
-//   2. Turn on "Switch plans" and add the four Creator / Creator Pro prices
-//   3. Save, then copy the "Login link" and set it in Vercel:
+// SETUP: the portal is always on. Set its address in Vercel:
 //
-//   STRIPE_PORTAL_LOGIN_URL = https://billing.stripe.com/p/login/...
+//   POLAR_PORTAL_URL = https://polar.sh/<your-org-slug>/portal
 //
 // Until it is set, the link goes to the contact page, where a cancellation
 // request still reaches a person. That fallback must stay: the site promises
@@ -28,10 +25,10 @@ export function billingPortal(req, res) {
     return res.status(405).json({ ok: false, error: 'Method not allowed' });
   }
 
-  const url = (process.env.STRIPE_PORTAL_LOGIN_URL || '').trim();
-  const configured = /^https:\/\/billing\.stripe\.com\//.test(url);
+  const url = (process.env.POLAR_PORTAL_URL || '').trim();
+  const configured = /^https:\/\/(sandbox\.)?polar\.sh\/[^/]+\/portal/.test(url);
   if (!configured) {
-    if (url) console.error('[billing-portal] STRIPE_PORTAL_LOGIN_URL is not a billing.stripe.com link');
+    if (url) console.error('[billing-portal] POLAR_PORTAL_URL is not a polar.sh portal link');
     res.statusCode = 302;
     res.setHeader('Location', '/contact.html?topic=billing');
     return res.end();
