@@ -1,15 +1,15 @@
 // Returns the Polar checkout link for a given plan.
 //
-// The pricing ladder is Free / Creator $19 / Creator Pro $39, each with a yearly
+// The pricing ladder is Free / Creator €19 / Creator Pro €39, each with a yearly
 // option, so there are four paid price points and four links.
 //
 // SETUP (Polar → Products → create Creator and Creator Pro, each with a monthly
 // and a yearly product → Products → Checkout Links → one link per product):
 //
-//   POLAR_LINK_CREATOR_MONTHLY = your Creator monthly checkout link   ($19 / month)
-//   POLAR_LINK_CREATOR_ANNUAL  = your Creator yearly checkout link    ($190 / year)
-//   POLAR_LINK_PRO_MONTHLY     = your Creator Pro monthly link        ($39 / month)
-//   POLAR_LINK_PRO_ANNUAL      = your Creator Pro yearly link         ($390 / year)
+//   POLAR_LINK_CREATOR_MONTHLY = your Creator monthly checkout link   (€19 / month)
+//   POLAR_LINK_CREATOR_ANNUAL  = your Creator yearly checkout link    (€190 / year)
+//   POLAR_LINK_PRO_MONTHLY     = your Creator Pro monthly link        (€39 / month)
+//   POLAR_LINK_PRO_ANNUAL      = your Creator Pro yearly link         (€390 / year)
 //
 // Add them in Vercel → Settings → Environment Variables, then redeploy.
 // Set only the ones you have; an unset plan reports itself as unconfigured
@@ -18,14 +18,14 @@
 import { billingPortal } from './_billing-portal.js';
 
 const PLANS = {
-  'creator-monthly': { env: 'POLAR_LINK_CREATOR_MONTHLY', label: 'Creator · monthly', price: '$19/mo' },
-  'creator-annual': { env: 'POLAR_LINK_CREATOR_ANNUAL', label: 'Creator · annual', price: '$190/yr' },
-  'pro-monthly': { env: 'POLAR_LINK_PRO_MONTHLY', label: 'Creator Pro · monthly', price: '$39/mo' },
-  'pro-annual': { env: 'POLAR_LINK_PRO_ANNUAL', label: 'Creator Pro · annual', price: '$390/yr' },
+  'creator-monthly': { env: 'POLAR_LINK_CREATOR_MONTHLY', label: 'Creator · monthly', price: '€19/mo' },
+  'creator-annual': { env: 'POLAR_LINK_CREATOR_ANNUAL', label: 'Creator · annual', price: '€190/yr' },
+  'pro-monthly': { env: 'POLAR_LINK_PRO_MONTHLY', label: 'Creator Pro · monthly', price: '€39/mo' },
+  'pro-annual': { env: 'POLAR_LINK_PRO_ANNUAL', label: 'Creator Pro · annual', price: '€390/yr' },
 };
 
 // Legacy callers (the in-app upsell) hit this endpoint with no plan at all.
-// The upsell advertises $19/mo, so that is what they get.
+// The upsell advertises €19/mo, so that is what they get.
 const DEFAULT_PLAN = 'creator-monthly';
 
 // Polar's sandbox is a separate environment on its own hosts.
