@@ -1,22 +1,21 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en" data-theme="light">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<script>(function(){try{var t=null;try{t=localStorage.getItem('sona-theme');}catch(e){}if(t==='light'||t==='dark'){window.__sonaThemeChosen=true;}else{t='dark';}document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
-<meta name="color-scheme" content="dark light">
-<meta name="theme-color" content="#0a0a0a">
+<script>(function(){try{var t=null;try{t=localStorage.getItem('sona-theme');}catch(e){}if(t==='light'||t==='dark'){window.__sonaThemeChosen=true;}else{t='light';}document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#ffffff">
 <link rel="icon" type="image/svg+xml" href="/logo.svg">
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
 <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96.png">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
-<link rel="preload" href="/fonts/eb-garamond-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="/fonts/fonts.css">
-<link rel="stylesheet" href="/site.css?v=20261106a">
+<link rel="stylesheet" href="/site.css?v=20261106b">
 <link rel="stylesheet" href="/vendor/lenis-1.2.3.css">
 <script src="/vendor/lenis-1.2.3.min.js" defer></script>
 <script src="/smooth-scroll.js?v=20261012a" defer></script>
-<script src="/site.js?v=20261106a" defer></script>
+<script src="/site.js?v=20261106b" defer></script>
 <title>Find viral X and LinkedIn posts in your niche | Sona</title>
 <meta name="description" content="Sona finds X and LinkedIn posts that beat their creator&#x27;s usual, shows the hook and structure behind each one, and helps you write your own. Free to start.">
 <link rel="canonical" href="https://buildwithsona.com/">
@@ -33,54 +32,94 @@
 <meta name="twitter:description" content="Sona finds X and LinkedIn posts that beat their creator&#x27;s usual, shows the hook and structure behind each one, and helps you write your own. Free to start.">
 <meta name="twitter:image" content="https://buildwithsona.com/og.png">
 <style>
-  /* Homepage only. Tokens, nav, keys, footer and the room live in site.css. */
+  /* Homepage only. Tokens, rails, nav, keys and footer live in site.css. */
 
-  /* ─── Hero ─── */
-  .hero { position: relative; padding: clamp(80px, 12vh, 128px) 0 60px; text-align: center; }
-  .hero h1 { max-width: 19ch; margin: 0 auto; font-size: clamp(2.75rem, 5.8vw, 4.5rem); line-height: 1.04; }
-  .hero .lede { max-width: 54ch; margin: 26px auto 0; }
-  .hero-cta { display: flex; justify-content: center; align-items: center; gap: 24px; margin-top: 36px; flex-wrap: wrap; }
-  .hero .small { margin-top: 18px; }
+  /* ─── Hero: words left, a post being read on the blueprint right ─── */
+  .hero { position: relative; padding: clamp(56px, 9vh, 96px) 0 clamp(56px, 8vh, 88px); }
+  .hero .wrap { display: grid; grid-template-columns: 1fr 1.08fr; gap: clamp(32px, 5vw, 64px); align-items: center; }
+  .hero h1 { max-width: 13ch; }
+  .hero .lede { max-width: 44ch; margin-top: 22px; }
+  .hero-cta { display: flex; align-items: center; gap: 10px; margin-top: 30px; flex-wrap: wrap; }
+  .hero .small { margin-top: 14px; }
   /* The one page-load moment: the headline comes into focus word by word. */
-  .hero h1 .w { display: inline-block; animation: focus-in .9s cubic-bezier(.16,.86,.21,1) both; animation-delay: calc(var(--i) * 55ms); }
-  @keyframes focus-in { from { opacity: .01; filter: blur(8px); transform: translateY(.3em); } }
+  .hero h1 .w { display: inline-block; animation: focus-in .8s cubic-bezier(.16,.86,.21,1) both; animation-delay: calc(var(--i) * 45ms); }
+  @keyframes focus-in { from { opacity: .01; filter: blur(6px); transform: translateY(.25em); } }
 
-  /* ─── Product tour, lit from below ─── */
-  .demo { position: relative; padding-bottom: 32px; overflow-x: clip; }
-  .demo-room { position: relative; isolation: isolate; }
-  .demo-room::before, .demo-room::after { content: ''; position: absolute; z-index: -1; pointer-events: none; }
-  .demo-room::before { left: -20%; right: -20%; top: 45%; bottom: -280px;
-    background: radial-gradient(60% 50% at 50% 55%, var(--glow-room), var(--glow-room-2) 38%, rgba(255,255,255,.02) 62%, transparent 82%); }
-  .demo-room::after { left: -8%; right: -8%; bottom: -12%; height: 72%;
-    background: radial-gradient(var(--glow-green), rgba(255,255,255,.03) 42%, transparent 72%); }
-  .tabs { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; max-width: 460px; margin: 0 auto 14px; padding: 4px; border-radius: 14px; background: var(--tray); border: 1px solid var(--tray-line); box-shadow: inset 0 1px 0 var(--tray-edge); }
-  .tab { display: flex; align-items: center; justify-content: center; gap: 7px; min-height: 38px; padding: 0 12px; border: 0; border-radius: 10px; background: transparent; color: var(--seg-off); font-size: 14.5px; font-weight: 500; cursor: pointer; transition: color .3s var(--ease-io), background-color .3s var(--ease-io), box-shadow .3s var(--ease-io); }
+  .hero-vis { position: relative; isolation: isolate; min-height: 470px; display: grid; place-items: center; padding: 48px 20px; }
+  .hv-card { position: relative; justify-self: start; margin-left: 6%; width: min(350px, 100%); padding: 20px; background: var(--card); border: 1px solid var(--line); border-radius: 14px; box-shadow: var(--shadow-float); }
+  .hv-who { display: flex; align-items: center; gap: 10px; }
+  .hv-who .av { width: 34px; height: 34px; }
+  .hv-who b { display: block; font-size: 14px; font-weight: 600; }
+  .hv-who span { font-size: 12.5px; color: var(--ink-3); }
+  .hv-card p { margin-top: 14px; font-size: 16px; line-height: 1.55; color: var(--ink); }
+  .hv-card mark { color: inherit; background: var(--green-wash); box-shadow: inset 0 -1.5px 0 var(--green); border-radius: 2px; padding: 0 2px; }
+  .hv-card mark.soft { background: transparent; box-shadow: inset 0 -1.5px 0 var(--ink-3); }
+  .hv-foot { display: flex; align-items: baseline; justify-content: space-between; margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--line); font-size: 13px; color: var(--ink-3); }
+  .hv-foot .num { font-size: 20px; font-weight: 600; color: var(--green); margin-right: 6px; }
+  .hv-tag { position: absolute; z-index: 1; max-width: 210px; padding: 9px 12px; background: var(--card); border: 1px solid var(--line); border-radius: 9px; box-shadow: var(--shadow-card); font-size: 13px; line-height: 1.4; color: var(--ink-2); }
+  .hv-tag b { display: block; font-size: 12px; font-weight: 600; color: var(--green-ink); margin-bottom: 1px; }
+  .hv-tag::after { content: ''; position: absolute; border: 0 dashed var(--line-2); }
+  .hv-tag.t1 { top: 6%; left: 0; }
+  .hv-tag.t1::after { top: 100%; left: 32px; height: 34px; border-left-width: 1px; }
+  .hv-tag.t2 { top: 47%; right: 0; max-width: 180px; }
+  .hv-tag.t2::after { right: 100%; top: 50%; width: 30px; border-top-width: 1px; }
+  .hv-tag.t3 { bottom: 4%; left: 8%; max-width: 250px; }
+  .hv-tag.t3::after { bottom: 100%; left: 50%; height: 26px; border-left-width: 1px; }
+  .hv-tag .q { font-family: var(--mono); font-size: 12px; color: var(--ink); letter-spacing: -.02em; }
+
+  /* Where it works: a ruled strip of cells */
+  .strip { display: grid; grid-template-columns: 1.4fr repeat(4, 1fr); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+  .strip > * { display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 84px; padding: 0 18px; border-left: 1px solid var(--line); font-size: 15px; font-weight: 600; letter-spacing: -.02em; color: var(--ink-3); }
+  .strip > :first-child { justify-content: flex-start; border-left: 0; font-weight: 400; font-size: 14.5px; letter-spacing: -.006em; color: var(--ink-2); }
+  .strip > :first-child b { color: var(--ink); font-weight: 600; }
+  .strip svg { width: 17px; height: 17px; flex: none; }
+  .strip small { font-weight: 400; font-size: 13px; }
+
+  /* ─── Sections ─── */
+  .sec { position: relative; padding: clamp(80px, 10vw, 120px) 0; }
+  .sec-head { max-width: 640px; margin-bottom: 44px; }
+  .sec-head .lede { margin-top: 16px; }
+  .sec-head.center { margin-left: auto; margin-right: auto; text-align: center; }
+
+  /* Statement: what Sona does, as one sentence */
+  .statement { max-width: 25em; margin: 0 auto; text-align: center; font-size: clamp(1.6rem, 3vw, 2.3rem); line-height: 1.22; letter-spacing: -.028em; font-weight: 500; color: var(--ink); }
+  .statement .acc { color: var(--green); }
+
+  /* ─── Product tour: the one dark band ─── */
+  .tour { position: relative; background: var(--bg); color: var(--ink); padding: clamp(72px, 9vw, 112px) 0 clamp(64px, 8vw, 96px); overflow-x: clip; }
+  .tour::before { content: ''; position: absolute; top: 0; bottom: 0; left: 50%; width: min(var(--wrap), 100%); transform: translateX(-50%); border-left: 1px solid var(--line); border-right: 1px solid var(--line); pointer-events: none; }
+  .tour .wrap { position: relative; }
+  .tour h2 { text-align: center; }
+  .tour .lede { text-align: center; max-width: 52ch; margin: 16px auto 0; }
+  .tabs { display: flex; justify-content: center; gap: 4px; margin: 34px auto 0; border-bottom: 1px solid var(--line); max-width: 560px; }
+  .tab { display: flex; align-items: center; gap: 7px; padding: 12px 14px; border: 0; background: none; color: var(--ink-3); font-size: 14.5px; font-weight: 500; cursor: pointer; box-shadow: inset 0 -2px 0 transparent; transition: color .2s, box-shadow .25s var(--ease-io); }
   .tab:hover { color: var(--ink); }
-  .tab[aria-selected="true"] { background: var(--seg-on); color: var(--ink); box-shadow: inset 0 1px 0 var(--sec-edge), var(--seg-drop); }
+  .tab[aria-selected="true"] { color: var(--ink); box-shadow: inset 0 -2px 0 var(--ink); }
   .tab svg { width: 15px; height: 15px; flex: none; }
-  .tab-note { text-align: center; color: var(--ink-3); font-size: 14.5px; min-height: 1.6em; margin-bottom: 28px; }
+  .tab-note { text-align: center; color: var(--ink-3); font-size: 14px; min-height: 1.6em; margin: 16px 0 26px; }
 
-  .window { background: var(--card); border: 1px solid var(--line); border-radius: 22px; box-shadow: var(--shadow-float); overflow: hidden; text-align: left; }
-  .win-bar { display: flex; align-items: center; gap: 10px; height: 48px; padding: 0 20px; border-bottom: 1px solid var(--line); font-size: 13.5px; color: var(--ink-3); }
+  .window { background: var(--card); border: 1px solid var(--line); border-radius: 14px; box-shadow: 0 30px 70px -30px rgba(0,0,0,.8); overflow: hidden; }
+  .win-bar { display: flex; align-items: center; gap: 10px; height: 46px; padding: 0 18px; border-bottom: 1px solid var(--line); font-size: 13.5px; color: var(--ink-3); }
   .win-bar b { color: var(--ink); font-weight: 600; }
   .win-bar .dots { display: flex; gap: 6px; margin-right: 6px; }
-  .win-bar .dots i { width: 10px; height: 10px; border-radius: 99px; background: var(--raise-2); box-shadow: inset 0 0 0 1px var(--line); }
-  .panel { padding: 24px; min-height: 470px; }
+  .win-bar .dots i { width: 10px; height: 10px; border-radius: 99px; background: var(--raise-2); }
+  .panel { padding: 22px; min-height: 470px; }
   .panel[hidden] { display: none; }
-  .panel.enter { animation: panel-in .24s ease-out; }
+  .panel.enter { animation: panel-in .22s ease-out; }
   @keyframes panel-in { from { opacity: 0; transform: translateY(4px); } }
+  .demo-foot { text-align: center; margin-top: 20px; }
 
   /* Find */
   .find-bar { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin-bottom: 18px; }
-  .find-q { display: flex; align-items: center; gap: 9px; flex: 1 1 260px; min-height: 42px; padding: 0 14px; border-radius: 12px; background: var(--raise); box-shadow: inset 0 0 0 1px var(--line); color: var(--ink-3); font-size: 14.5px; }
+  .find-q { display: flex; align-items: center; gap: 9px; flex: 1 1 260px; min-height: 40px; padding: 0 12px; border-radius: 8px; background: var(--raise); box-shadow: inset 0 0 0 1px var(--line); color: var(--ink-3); font-size: 14.5px; }
   .find-q svg { width: 16px; height: 16px; }
-  .chips { display: flex; gap: 2px; flex-wrap: wrap; }
-  .chips, .pick { padding: 3px; border-radius: 12px; background: var(--tray); border: 1px solid var(--tray-line); box-shadow: inset 0 1px 0 var(--tray-edge); }
-  .chip { min-height: 32px; padding: 0 12px; border: 0; border-radius: 9px; background: transparent; color: var(--seg-off); font-size: 13.5px; font-weight: 500; cursor: pointer; transition: color .3s var(--ease-io), background-color .3s var(--ease-io); }
+  .chips, .pick { display: flex; gap: 2px; flex-wrap: wrap; padding: 3px; border-radius: 9px; background: var(--tray); box-shadow: inset 0 0 0 1px var(--tray-line); }
+  .pick { display: inline-flex; margin-bottom: 14px; }
+  .chip { min-height: 30px; padding: 0 11px; border: 0; border-radius: 6px; background: transparent; color: var(--seg-off); font-size: 13.5px; font-weight: 500; cursor: pointer; transition: color .2s, background-color .2s; }
   .chip:hover { color: var(--ink); }
-  .chip[aria-pressed="true"] { background: var(--seg-on); color: var(--ink); box-shadow: inset 0 1px 0 var(--sec-edge), var(--seg-drop); }
-  .grid-posts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
-  .post { display: flex; flex-direction: column; gap: 14px; padding: 20px; border-radius: 16px; background: var(--raise); box-shadow: inset 0 0 0 1px var(--line); }
+  .chip[aria-pressed="true"] { background: var(--seg-on); color: var(--ink); box-shadow: var(--seg-drop); }
+  .grid-posts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+  .post { display: flex; flex-direction: column; gap: 14px; padding: 18px; border-radius: 10px; background: var(--raise); box-shadow: inset 0 0 0 1px var(--line); }
   .post[hidden] { display: none; }
   .post-who { display: flex; align-items: center; gap: 10px; }
   .av { width: 36px; height: 36px; border-radius: 99px; object-fit: cover; background: var(--raise-2); display: grid; place-items: center; font-size: 13px; font-weight: 600; color: var(--ink-2); flex: none; }
@@ -89,16 +128,15 @@
   .post p { font-size: 15px; line-height: 1.55; flex: 1; color: var(--ink); }
   .post-foot { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 12px; padding-top: 14px; border-top: 1px solid var(--line); }
   .mult { display: flex; align-items: baseline; gap: 6px; margin-right: auto; }
-  .mult .num { font-size: 22px; font-weight: 600; color: var(--green); }
+  .mult .num { font-size: 21px; font-weight: 600; color: var(--green); }
   .mult span:last-child { font-size: 13px; color: var(--ink-3); }
   .post-views { font-size: 13px; color: var(--ink-3); }
   .post-act { display: flex; gap: 8px; }
 
   /* Decode */
   .decode { display: grid; grid-template-columns: 1fr 1.15fr; gap: 22px; }
-  .pick { display: inline-flex; gap: 2px; flex-wrap: wrap; margin-bottom: 14px; }
-  .read { border-radius: 14px; box-shadow: inset 0 0 0 1px var(--line); }
-  .read-row { display: grid; grid-template-columns: 96px 1fr; gap: 14px; padding: 14px 16px; border-bottom: 1px solid var(--line); }
+  .read { border-radius: 10px; box-shadow: inset 0 0 0 1px var(--line); }
+  .read-row { display: grid; grid-template-columns: 96px 1fr; gap: 14px; padding: 13px 16px; border-bottom: 1px solid var(--line); }
   .read-row:last-child { border-bottom: 0; }
   .read-row dt { font-size: 13px; color: var(--ink-3); padding-top: 2px; }
   .read-row dd { font-size: 15px; margin: 0; white-space: pre-line; color: var(--ink); }
@@ -107,174 +145,166 @@
 
   /* Write */
   .write { display: grid; grid-template-columns: 1.4fr 1fr; gap: 22px; }
-  .doc { border-radius: 14px; box-shadow: inset 0 0 0 1px var(--line); padding: 22px 24px; }
+  .doc { border-radius: 10px; box-shadow: inset 0 0 0 1px var(--line); padding: 22px 24px; }
   .doc-meta { display: flex; gap: 10px; align-items: center; font-size: 13px; color: var(--ink-3); margin-bottom: 16px; }
   .doc-meta b { color: var(--ink); font-weight: 600; }
-  .doc p { font-family: var(--serif); font-size: 19px; line-height: 1.5; margin-bottom: 12px; color: var(--ink); }
-  .doc .caret { display: inline-block; width: 2px; height: 1.05em; vertical-align: -3px; background: var(--ink); animation: blink 1.1s steps(1) infinite; }
+  .doc p { font-size: 16px; line-height: 1.6; margin-bottom: 12px; color: var(--ink); }
+  .doc .caret { display: inline-block; width: 2px; height: 1.1em; vertical-align: -3px; background: var(--green); animation: blink 1.1s steps(1) infinite; }
   @keyframes blink { 50% { opacity: 0; } }
-  .used { display: flex; align-items: center; gap: 8px; margin-top: 18px; padding: 10px 12px; border-radius: 10px; background: var(--green-wash); font-size: 13.5px; color: var(--green-ink); }
-  .side { display: flex; flex-direction: column; gap: 14px; }
-  .side-box { border-radius: 14px; background: var(--raise); box-shadow: inset 0 0 0 1px var(--line); padding: 16px 18px; }
+  .used { display: flex; align-items: center; gap: 8px; margin-top: 18px; padding: 10px 12px; border-radius: 8px; background: var(--green-wash); font-size: 13.5px; color: var(--green-ink); }
+  .side { display: flex; flex-direction: column; gap: 12px; }
+  .side-box { border-radius: 10px; background: var(--raise); box-shadow: inset 0 0 0 1px var(--line); padding: 16px 18px; }
   .side-box h3 { font-size: 14.5px; margin-bottom: 10px; }
   .notes { list-style: none; padding: 0; display: grid; gap: 8px; font-size: 14px; color: var(--ink-2); }
   .notes li { padding-left: 16px; position: relative; }
-  .notes li::before { content: ''; position: absolute; left: 0; top: .62em; width: 5px; height: 5px; border-radius: 99px; background: var(--ink-3); }
+  .notes li::before { content: ''; position: absolute; left: 0; top: .62em; width: 5px; height: 5px; border-radius: 99px; background: var(--green); }
 
   /* Plan */
   .week { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; }
-  .day { min-height: 300px; border-radius: 14px; box-shadow: inset 0 0 0 1px var(--line); padding: 10px; display: flex; flex-direction: column; gap: 8px; }
+  .day { min-height: 300px; border-radius: 10px; box-shadow: inset 0 0 0 1px var(--line); padding: 10px; display: flex; flex-direction: column; gap: 8px; }
   .day-h { font-size: 12.5px; color: var(--ink-3); display: flex; justify-content: space-between; }
   .day-h .num { color: var(--ink-2); }
-  .day.today { background: var(--raise); box-shadow: inset 0 0 0 1px var(--line-2); }
-  .day.today .day-h span:first-child { color: var(--ink); }
-  .slot { padding: 10px; border-radius: 10px; background: var(--card-2); box-shadow: inset 0 0 0 1px var(--line); font-size: 13px; line-height: 1.35; color: var(--ink); }
+  .day.today { box-shadow: inset 0 0 0 1px var(--green); }
+  .day.today .day-h span:first-child { color: var(--green-ink); font-weight: 600; }
+  .slot { padding: 10px; border-radius: 7px; background: var(--card-2); box-shadow: inset 0 0 0 1px var(--line); font-size: 13px; line-height: 1.35; color: var(--ink); }
   .slot small { display: block; margin-top: 6px; font-size: 11.5px; color: var(--ink-3); }
-  .slot.draft { background: transparent; box-shadow: inset 0 0 0 1px var(--line-2); border: 0; outline: 1px dashed var(--line-2); outline-offset: -1px; }
-  .demo-foot { text-align: center; margin-top: 22px; }
+  .slot.draft { background: transparent; box-shadow: none; outline: 1px dashed var(--line-2); outline-offset: -1px; }
 
-  /* ─── Sections ─── */
-  .sec { padding: clamp(84px, 10vw, 128px) 0; }
-  .sec-head { max-width: 720px; margin: 0 auto 56px; text-align: center; }
-  .sec-head .lede { margin: 18px auto 0; max-width: 56ch; }
+  /* ─── Features: four ruled cells, each with its own small proof ─── */
+  .feats { grid-template-columns: 1fr 1fr; }
+  .fcell { display: flex; flex-direction: column; padding: clamp(24px, 3.4vw, 40px); }
+  .fcell .icon-sq { margin-bottom: 20px; }
+  .fcell p.lead { max-width: 46ch; font-size: 15.5px; line-height: 1.6; color: var(--ink-3); }
+  .fcell p.lead b { color: var(--ink); font-weight: 600; }
+  .fcell .link { align-self: flex-start; margin-top: 14px; font-size: 14.5px; }
+  .vis { position: relative; margin-top: 28px; padding: 22px; border-radius: 10px; background: var(--card); box-shadow: 0 0 0 1px var(--line), var(--shadow-card); }
+  .vis-wrap { position: relative; isolation: isolate; margin-top: auto; padding-top: 4px; }
 
-  /* Statement: what Sona is, in three lines */
-  .statement { padding: clamp(96px, 12vw, 160px) 0 clamp(64px, 8vw, 100px); text-align: center; }
-  .statement h2 { max-width: 30ch; margin: 0 auto; font-size: clamp(2.2rem, 4.6vw, 3.6rem); line-height: 1.14; color: var(--ink); }
-  .statement h2 span { display: block; }
+  .bars { display: grid; gap: 16px; }
+  .bar-row { display: grid; grid-template-columns: 112px 1fr; gap: 14px; align-items: center; font-size: 13.5px; color: var(--ink-2); }
+  .bar { height: 30px; border-radius: 6px; background: var(--raise); position: relative; }
+  .bar i { position: absolute; inset: 0 auto 0 0; border-radius: 6px; background: var(--raise-2); box-shadow: inset 0 0 0 1px var(--line-2); }
+  .bar.hit i { background: var(--green); box-shadow: none; }
+  /* Bars are to scale: the usual post is 1/5 of the 5× post. */
+  .bar .num { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); font-size: 14px; font-weight: 600; color: var(--ink-2); }
+  .bar.hit .num { color: var(--on-green); }
+  .bars-cap { margin-top: 16px; font-size: 13px; color: var(--ink-3); }
+
+  .anno p { font-size: 17px; line-height: 1.5; color: var(--ink); }
+  .anno mark { background: var(--green-wash); color: inherit; padding: 1px 2px; border-radius: 3px; box-shadow: inset 0 -2px 0 var(--green); }
+  .anno mark.soft { box-shadow: inset 0 -2px 0 var(--ink-3); background: transparent; }
+  .anno-key { display: flex; gap: 18px; margin-top: 16px; font-size: 13px; color: var(--ink-3); }
+  .anno-key span::before { content: ''; display: inline-block; width: 14px; height: 3px; margin-right: 8px; vertical-align: middle; background: var(--green); }
+  .anno-key span.soft::before { background: var(--ink-3); }
+
+  .pb-row { display: grid; grid-template-columns: 100px 1fr; gap: 14px; padding: 11px 0; border-bottom: 1px solid var(--line); font-size: 14px; color: var(--ink); }
+  .pb-row:first-child { padding-top: 0; }
+  .pb-row:last-child { border-bottom: 0; padding-bottom: 0; }
+  .pb-row span { color: var(--ink-3); font-size: 13px; }
+
+  .chat { display: grid; gap: 12px; }
+  .msg { max-width: 90%; padding: 10px 14px; border-radius: 12px; font-size: 14px; line-height: 1.5; }
+  .msg.you { justify-self: end; background: var(--ink); color: var(--bg); border-bottom-right-radius: 4px; }
+  .msg.claude { background: var(--raise); box-shadow: inset 0 0 0 1px var(--line); border-bottom-left-radius: 4px; color: var(--ink); }
+  .msg ul { margin: 6px 0 0; padding-left: 18px; }
+  .tool { justify-self: start; font-size: 12.5px; color: var(--ink-3); }
 
   /* Try it — the real engine, no account */
-  .try { display: grid; grid-template-columns: 1fr 1.15fr; gap: 64px; align-items: center; }
-  .try-text-col .lede { margin-top: 18px; }
-  .try-text-col ul { margin-top: 28px; padding: 0; list-style: none; display: grid; gap: 12px; color: var(--ink-2); font-size: 15px; }
+  .try { display: grid; grid-template-columns: 1fr 1.15fr; gap: clamp(36px, 6vw, 72px); align-items: center; }
+  .try-text-col .lede { margin-top: 16px; }
+  .try-text-col ul { margin-top: 26px; padding: 0; list-style: none; display: grid; gap: 10px; color: var(--ink-2); font-size: 15px; }
   .try-text-col li { display: flex; gap: 10px; }
   .try-text-col li svg { width: 18px; height: 18px; color: var(--green); flex: none; margin-top: 2px; }
-  .try-box { background: var(--card); border-radius: 17px; overflow: hidden; }
-  .try-in { padding: 18px; border-bottom: 1px solid var(--line); }
-  .try-in label { display: block; font-size: 13.5px; font-weight: 500; margin-bottom: 8px; color: var(--ink-2); }
-  .try-text { width: 100%; min-height: 150px; resize: vertical; padding: 14px; border: 0; border-radius: 12px; background: var(--raise); box-shadow: inset 0 0 0 1px var(--line); color: var(--ink); font-size: 16px; line-height: 1.5; }
+  .try-stage { position: relative; isolation: isolate; padding: 28px; }
+  .try-box { position: relative; background: var(--card); border: 1px solid var(--line); border-radius: 14px; box-shadow: var(--shadow-float); overflow: hidden; }
+  .try-in { padding: 16px; border-bottom: 1px solid var(--line); }
+  .try-in label { display: block; font-size: 13.5px; font-weight: 600; margin-bottom: 8px; }
+  .try-text { width: 100%; min-height: 140px; resize: vertical; padding: 12px; border: 0; border-radius: 8px; background: var(--raise); box-shadow: inset 0 0 0 1px var(--line); color: var(--ink); font-size: 16px; line-height: 1.5; }
   .try-text::placeholder { color: var(--ink-3); }
-  .try-text:focus { outline: 2px solid var(--ink-2); outline-offset: 0; }
+  .try-text:focus { outline: 2px solid var(--green); outline-offset: 0; }
   .try-actions { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; }
-  .try-out { padding: 6px 18px 14px; min-height: 220px; }
+  .try-out { padding: 6px 16px 14px; min-height: 210px; }
   .try-out .read { box-shadow: none; }
-  .try-cta { display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap; margin: 6px 0 4px; padding: 14px 16px; border-radius: 12px; background: var(--raise); box-shadow: inset 0 0 0 1px var(--line); }
+  .try-cta { display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap; margin: 6px 0 4px; padding: 12px 14px; border-radius: 9px; background: var(--green-wash); }
   .try-cta p { font-size: 14.5px; color: var(--ink); }
   .try-cta[hidden] { display: none; }
   .try-empty { padding: 30px 0; color: var(--ink-3); font-size: 15px; }
 
-  /* Feature rows: a lit stage with the product on it, the words beside it */
-  .feat { display: grid; grid-template-columns: 7fr 5fr; gap: clamp(40px, 6vw, 88px); align-items: center; padding: clamp(56px, 8vw, 104px) 0; }
-  .feat.flip { grid-template-columns: 5fr 7fr; }
-  .feat.flip .feat-vis { order: 2; }
-  .feat-label { display: block; margin-bottom: 16px; }
-  .feat h2 { font-size: clamp(2rem, 3.5vw, 3.05rem); }
-  .feat .lede { margin-top: 20px; }
-  .feat .btn { margin-top: 30px; }
-  .feat-vis { position: relative; isolation: isolate; overflow: hidden; padding: clamp(28px, 4.5vw, 56px); border-radius: 26px; background: var(--panel); border: 1px solid var(--line); box-shadow: var(--shadow-panel); }
-  .feat-vis::before { content: ''; position: absolute; inset: 0; z-index: -1;
-    background: radial-gradient(70% 60% at 50% 110%, var(--glow-green), transparent 70%), radial-gradient(80% 60% at 50% 0, var(--glow-top), transparent 70%); }
-  .feat-vis::after { content: ''; position: absolute; inset: 0; z-index: -1;
-    background-image: radial-gradient(circle at 1px 1px, var(--dot) 1.05px, transparent 1.4px); background-size: 24px 24px;
-    -webkit-mask-image: radial-gradient(70% 70% at 50% 40%, #000 20%, transparent 85%); mask-image: radial-gradient(70% 70% at 50% 40%, #000 20%, transparent 85%); }
-  .vis { position: relative; background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 24px; box-shadow: var(--shadow-float); }
-
-  .bars { display: grid; gap: 18px; }
-  .bar-row { display: grid; grid-template-columns: 120px 1fr; gap: 14px; align-items: center; font-size: 14px; color: var(--ink-2); }
-  .bar { height: 34px; border-radius: 8px; background: var(--raise); position: relative; }
-  .bar i { position: absolute; inset: 0 auto 0 0; border-radius: 8px; background: var(--raise-2); box-shadow: inset 0 0 0 1px var(--line-2); }
-  .bar.hit i { background: linear-gradient(90deg, color-mix(in srgb, var(--green) 55%, transparent), var(--green)); box-shadow: none; }
-  /* Bars are to scale: the usual post is 1/5 of the 5× post. */
-  .bar .num { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); font-size: 14.5px; font-weight: 600; color: var(--ink-2); }
-  .bar.hit .num { color: var(--on-green); }
-  .bars-cap { margin-top: 20px; font-size: 13.5px; color: var(--ink-3); }
-
-  .anno p { font-family: var(--serif); font-size: 22px; line-height: 1.45; color: var(--ink); }
-  .anno mark { background: var(--green-wash); color: inherit; padding: 1px 2px; border-radius: 3px; box-shadow: inset 0 -2px 0 var(--green); }
-  .anno mark.soft { box-shadow: inset 0 -2px 0 var(--ink-3); background: transparent; }
-  .anno-key { display: flex; gap: 18px; margin-top: 18px; font-size: 13.5px; color: var(--ink-3); }
-  .anno-key span::before { content: ''; display: inline-block; width: 14px; height: 3px; margin-right: 8px; vertical-align: middle; background: var(--green); }
-  .anno-key span.soft::before { background: var(--ink-3); }
-
-  .pb { display: grid; }
-  .pb-row { display: grid; grid-template-columns: 110px 1fr; gap: 14px; padding: 13px 0; border-bottom: 1px solid var(--line); font-size: 14.5px; color: var(--ink); }
-  .pb-row:first-child { padding-top: 0; }
-  .pb-row:last-child { border-bottom: 0; }
-  .pb-row span { color: var(--ink-3); font-size: 13.5px; }
-
-  .chat { display: grid; gap: 14px; }
-  .msg { max-width: 88%; padding: 12px 16px; border-radius: 14px; font-size: 14.5px; line-height: 1.5; }
-  .msg.you { justify-self: end; background: var(--ink); color: var(--bg); border-bottom-right-radius: 4px; }
-  .msg.claude { background: var(--raise); box-shadow: inset 0 0 0 1px var(--line); border-bottom-left-radius: 4px; color: var(--ink); }
-  .msg ul { margin: 8px 0 0; padding-left: 18px; }
-  .tool { justify-self: start; display: inline-flex; gap: 8px; align-items: center; font-size: 12.5px; color: var(--ink-3); }
-
   /* Also in the studio */
-  .also { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
-  .also-item { display: flex; gap: 14px; align-items: flex-start; padding: 20px; border-radius: 16px; background: var(--raise); box-shadow: inset 0 0 0 1px var(--line); }
-  .also-item h3 { font-size: 15px; }
-  .also-item p { margin-top: 3px; font-size: 14px; color: var(--ink-2); }
+  .also { grid-template-columns: repeat(3, 1fr); }
+  .also > div { padding: 26px 24px; }
+  .also .icon-sq { margin-bottom: 16px; }
+  .also h3 { font-size: 15px; }
+  .also p { margin-top: 4px; font-size: 14.5px; color: var(--ink-3); }
 
-  /* Pricing */
-  .tiers { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; align-items: stretch; max-width: 1080px; margin: 0 auto; }
-  .tier { display: flex; flex-direction: column; height: 100%; padding: 30px; border-radius: 18px; background: var(--card); border: 1px solid var(--line); box-shadow: var(--shadow-card); }
-  .edge > .tier { border: 0; }
-  .tier-top { display: flex; justify-content: space-between; align-items: center; min-height: 28px; }
-  .tier-name { font-size: 16px; font-weight: 600; }
-  .tier-badge { font-size: 12.5px; color: var(--ink); background: var(--raise-2); box-shadow: inset 0 0 0 1px var(--line); padding: 4px 10px; border-radius: 999px; }
-  .tier-price { display: flex; align-items: baseline; gap: 6px; margin-top: 20px; }
-  .tier-price .amt { font-family: var(--serif); font-size: 56px; line-height: 1; letter-spacing: -.02em; color: var(--ink); }
-  .tier-price .unit { color: var(--ink-3); font-size: 15px; }
+  /* Pricing: three ruled columns */
+  .tiers { grid-template-columns: repeat(3, 1fr); }
+  .tier { display: flex; flex-direction: column; padding: 30px 28px; }
+  .tier.featured { background: linear-gradient(var(--green-wash), transparent 220px), var(--bg); box-shadow: inset 0 2px 0 var(--green); }
+  .tier-top { display: flex; justify-content: space-between; align-items: center; min-height: 26px; }
+  .tier-name { font-size: 15.5px; font-weight: 600; }
+  .tier-badge { font-size: 12.5px; font-weight: 500; color: var(--green-ink); background: var(--green-wash); padding: 3px 9px; border-radius: 999px; }
+  .tier-price { display: flex; align-items: baseline; gap: 6px; margin-top: 18px; }
+  .tier-price .amt { font-size: 46px; font-weight: 500; line-height: 1; letter-spacing: -.04em; color: var(--ink); }
+  .tier-price .unit { color: var(--ink-3); font-size: 14.5px; }
   .tier-sub { font-size: 13.5px; color: var(--ink-3); margin-top: 8px; min-height: 1.5em; }
   .tier-annual { background: none; border: 0; padding: 0; color: var(--ink); text-decoration: underline; text-decoration-color: var(--line-2); text-underline-offset: 3px; cursor: pointer; font-size: inherit; }
-  .tier-for { margin-top: 18px; color: var(--ink-2); font-size: 15px; }
-  .tier-feats { list-style: none; padding: 20px 0 0; margin: 20px 0 26px; border-top: 1px solid var(--line); display: grid; gap: 11px; align-content: start; font-size: 14.5px; flex: 1; }
+  .tier-for { margin-top: 16px; color: var(--ink-2); font-size: 15px; }
+  .tier-feats { list-style: none; padding: 20px 0 0; margin: 20px 0 26px; border-top: 1px dashed var(--line-2); display: grid; gap: 10px; align-content: start; font-size: 14.5px; flex: 1; }
   .tier-feats li { display: flex; gap: 10px; }
-  .tier-feats svg { width: 17px; height: 17px; color: var(--green); flex: none; margin-top: 3px; }
+  .tier-feats svg { width: 16px; height: 16px; color: var(--green); flex: none; margin-top: 4px; }
   .tier .btn { width: 100%; }
   .tier-foot { margin-top: 12px; font-size: 12.5px; color: var(--ink-3); text-align: center; }
-  .pricing-note { margin-top: 32px; text-align: center; font-size: 15px; color: var(--ink-2); }
+  .pricing-note { margin-top: 26px; font-size: 15px; color: var(--ink-2); }
 
   /* FAQ */
   .faq-grid { display: grid; grid-template-columns: 4fr 7fr; gap: 64px; }
   .faq details { border-bottom: 1px solid var(--line); }
   .faq details:first-child { border-top: 1px solid var(--line); }
-  .faq summary { list-style: none; display: flex; justify-content: space-between; gap: 20px; padding: 21px 0; font-size: 16.5px; font-weight: 500; cursor: pointer; color: var(--ink); }
+  .faq summary { list-style: none; display: flex; justify-content: space-between; gap: 20px; padding: 19px 0; font-size: 16px; font-weight: 500; cursor: pointer; color: var(--ink); }
   .faq summary::-webkit-details-marker { display: none; }
-  .faq summary::after { content: '+'; font-size: 22px; line-height: 1; color: var(--ink-3); transition: transform .25s var(--ease-io); }
+  .faq summary::after { content: '+'; font-size: 20px; line-height: 1; color: var(--ink-3); transition: transform .25s var(--ease-io); }
   .faq details[open] summary::after { transform: rotate(45deg); }
-  .faq details p { padding: 0 0 22px; color: var(--ink-2); max-width: 62ch; }
+  .faq details p { padding: 0 0 20px; color: var(--ink-2); max-width: 62ch; }
 
   .reviews-sec[hidden] { display: none; }
 
   /* ─── Responsive ─── */
   @media (max-width: 980px) {
-    .try, .feat, .feat.flip, .faq-grid { grid-template-columns: 1fr; gap: 36px; }
-    .feat.flip .feat-vis { order: 0; }
+    .hero .wrap, .try, .faq-grid { grid-template-columns: 1fr; gap: 36px; }
+    .hero-vis { min-height: 420px; }
+    .strip { grid-template-columns: repeat(2, 1fr); }
+    .strip > :first-child { grid-column: 1 / -1; justify-content: center; border-bottom: 1px solid var(--line); }
+    .strip > :nth-child(2n) { border-left: 0; }
+    .strip > :nth-child(n+4) { border-top: 1px solid var(--line); }
     .decode, .write { grid-template-columns: 1fr; }
     .week { grid-template-columns: repeat(4, 1fr); }
     .week .day:nth-child(n+5) { display: none; }
-    .tiers { grid-template-columns: 1fr; max-width: 460px; }
+    .feats, .tiers { grid-template-columns: 1fr; }
+    .tiers { max-width: 480px; }
     .also { grid-template-columns: 1fr 1fr; }
   }
   @media (max-width: 760px) {
-    .hero { padding: 56px 0 40px; }
-    .tabs { max-width: none; }
-    .tab { padding: 0 6px; font-size: 14px; gap: 5px; }
+    .hero { padding: 40px 0 48px; }
+    .hero-vis { min-height: 0; padding: 0; display: block; }
+    .hero-vis .blueprint { inset: -24px -18px; }
+    .hv-card { margin: 0 auto; justify-self: auto; width: min(370px, 100%); }
+    .hv-tag, .hv-tag.t1, .hv-tag.t2, .hv-tag.t3 { position: static; max-width: none; margin: 10px auto 0; width: min(370px, 100%); }
+    .hv-tag::after { display: none; }
+    .tabs { gap: 0; justify-content: space-between; }
+    .tab { padding: 12px 8px; font-size: 14px; }
     .panel { padding: 14px; min-height: 0; }
     .grid-posts { grid-template-columns: minmax(0, 1fr); }
     .post-act { width: 100%; }
-    .post-act .mini { flex: 1; justify-content: center; }
+    .post-act .mini { flex: 1; }
     .week { grid-template-columns: repeat(2, 1fr); }
     .week .day:nth-child(n+3) { display: none; }
     .day { min-height: 200px; }
     .read-row { grid-template-columns: 1fr; gap: 4px; }
     .bar-row { grid-template-columns: 1fr; gap: 6px; }
     .pb-row { grid-template-columns: 1fr; gap: 2px; }
-    .feat-vis { padding: 18px; border-radius: 20px; }
-    .vis { padding: 18px; }
+    .try-stage { padding: 0; }
     .also { grid-template-columns: 1fr; }
-    .statement h2 span { display: inline; }
   }
   @media (max-width: 400px) { .tab svg { display: none; } }
 </style>
@@ -283,11 +313,11 @@
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
-<div class="stage" aria-hidden="true"></div>
+<div class="rails" aria-hidden="true"></div>
 
 <header class="nav" id="top">
   <div class="wrap">
-    <a href="/" class="logo" aria-label="Sona home"><span class="logo-mark"><img class="mark-img" src="/logo.svg" alt="" width="26" height="26"></span><span class="logo-word">Sona</span></a>
+    <a href="/" class="logo" aria-label="Sona home"><span class="logo-mark"><img class="mark-img" src="/logo.svg" alt="" width="24" height="24"></span><span class="logo-word">Sona</span></a>
     <ul class="nav-links">
       <li><a href="#product">Product</a></li>
       <li><a href="#features">Features</a></li>
@@ -321,22 +351,52 @@
 
 <section class="hero">
   <div class="wrap">
-    <h1 data-split>Write from the posts that <em>beat the average</em> in your niche.</h1>
-    <p class="lede">Sona shows you X and LinkedIn posts that did several times better than their creator usually does, explains <b>how each one is built</b>, and helps you <b>write your own version</b>, in your voice.</p>
-    <div class="hero-cta">
-      <a href="#" class="btn btn-go" onclick="event.preventDefault(); SonaAuth.openSignup();"><span class="ba"><span class="ba-track"><svg class="ba-i" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg><span>Start free</span><svg class="ba-i" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></span></span></a>
-      <a href="#try" class="link">Try it on a post</a>
+    <div>
+      <h1 data-split>Write from the posts that beat the average <span class="tone">in your niche.</span></h1>
+      <p class="lede">Sona shows you X and LinkedIn posts that did several times better than their creator usually does, explains how each one is built, and helps you <b>write your own version, in your voice.</b></p>
+      <div class="hero-cta">
+        <a href="#" class="btn btn-go btn-lg" onclick="event.preventDefault(); SonaAuth.openSignup();"><span class="ba"><span class="ba-track"><svg class="ba-i" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg><span>Start free</span><svg class="ba-i" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></span></span></a>
+        <a href="#try" class="btn btn-line btn-lg">Try it on a post</a>
+      </div>
+      <p class="small">Free for 10 saved ideas. No credit card.</p>
     </div>
-    <p class="small">Free for 10 saved ideas. No credit card.</p>
+    <div class="hero-vis" role="img" aria-label="Example: a LinkedIn post by Justin Welsh, read by Sona. It did 3 times his usual. The hook is a statement opener; it lands on what you care about; the reusable line is: The older I get, the more I realize [truth].">
+      <div class="blueprint" aria-hidden="true"><svg><defs><pattern id="bp-hero" width="88" height="88" patternUnits="userSpaceOnUse"><rect x=".5" y=".5" width="87" height="87" rx="2" fill="none" stroke="currentColor" stroke-dasharray="4 4"/></pattern></defs><rect width="100%" height="100%" fill="url(#bp-hero)"/></svg></div>
+      <div class="hv-tag t1" aria-hidden="true"><b>Hook</b>Statement opener, 15 words</div>
+      <div class="hv-card" aria-hidden="true">
+        <div class="hv-who"><span class="av">JW</span><div><b>Justin Welsh</b><span>@justinwelsh on LinkedIn</span></div></div>
+        <p><mark>The older I get, the more I realize your calendar is a list of your priorities.</mark> <mark class="soft">It tells the truth about what you actually care about.</mark></p>
+        <div class="hv-foot"><span><span class="num">3×</span>his usual</span><span>Decoded by Sona</span></div>
+      </div>
+      <div class="hv-tag t2" aria-hidden="true"><b>Lands on</b>What you actually care about</div>
+      <div class="hv-tag t3" aria-hidden="true"><b>Reusable</b><span class="q">The older I get, the more I realize [truth].</span></div>
+    </div>
+  </div>
+</section>
+
+<div class="wrap" style="padding:0">
+  <div class="strip">
+    <div><span><b>Works where you post.</b> Find, decode and draft for:</span></div>
+    <div>X</div>
+    <div>LinkedIn</div>
+    <div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 7V3M15 7V3M7 7h10v4a5 5 0 0 1-10 0V7ZM12 16v5"/></svg>Claude <small>via MCP</small></div>
+    <div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6" y="4" width="12" height="17" rx="2"/><path d="M9 4V3h6v1M9 10h6M9 14h4"/></svg>Any pasted post</div>
+  </div>
+</div>
+
+<section class="sec">
+  <div class="wrap">
+    <p class="statement"><span class="acc">Sona reads the posts that beat their creator's average,</span> names the hook, the turn and where each one lands, and keeps your playbook beside the editor, <span class="acc">so you write from evidence, not guesswork.</span></p>
   </div>
 </section>
 
 <!-- The product itself, with real posts from the live outlier feed
      (/api/outliers) and the real decode engine. Tabs follow the order you use
      Sona in. -->
-<section class="demo" id="product" aria-label="Product tour">
+<section class="tour dark-scope" id="product" aria-labelledby="tour-h">
   <div class="wrap">
-    <div class="demo-room">
+    <h2 id="tour-h">See what broke through, <span class="tone">and why it worked.</span></h2>
+    <p class="lede">Real posts from the outlier feed, read by the same engine the studio uses.</p>
     <div class="tabs" role="tablist" aria-label="What Sona does">
       <button class="tab" role="tab" id="tab-find" aria-controls="panel-find" aria-selected="true" tabindex="0" data-note="Posts doing far better than their creator's usual, with the multiple next to each one.">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>Find</button>
@@ -423,95 +483,75 @@
         <div class="week" id="week"></div>
       </div>
     </div>
-    </div>
     <p class="small demo-foot">The posts are real and link to the originals. The draft and the week are examples.</p>
-  </div>
-</section>
-
-<section class="statement">
-  <div class="wrap">
-    <h2><span>Find the posts that worked.</span> <span>See <em>why</em> they worked.</span> <span>Then write <em>your own</em> version.</span></h2>
   </div>
 </section>
 
 <section class="sec" id="features">
   <div class="wrap">
-
-    <div class="feat">
-      <div class="feat-vis">
-        <div class="vis" role="img" aria-label="Chart: a usual post compared with a 5× outlier">
-          <div class="bars">
-            <div class="bar-row"><span>Their usual post</span><div class="bar"><i style="width:20%"></i><span class="num">1×</span></div></div>
-            <div class="bar-row"><span>This post</span><div class="bar hit"><i style="width:100%"></i><span class="num">5×</span></div></div>
+    <div class="sec-head">
+      <h2>From a post that worked <span class="tone">to a draft that sounds like you.</span></h2>
+    </div>
+    <div class="cells feats">
+      <div class="fcell">
+        <span class="icon-sq" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg></span>
+        <p class="lead"><b>Measured against each creator's own average.</b> A post with 102K views can matter more than one with a million, if its creator usually gets a fraction of that. You see what actually broke through, not just who is already big.</p>
+        <div class="vis-wrap">
+          <div class="vis" role="img" aria-label="Chart: a usual post compared with a 5× outlier">
+            <div class="bars">
+              <div class="bar-row"><span>Their usual post</span><div class="bar"><i style="width:20%"></i><span class="num">1×</span></div></div>
+              <div class="bar-row"><span>This post</span><div class="bar hit"><i style="width:100%"></i><span class="num">5×</span></div></div>
+            </div>
+            <p class="bars-cap">Tyler Denk's post about the beehiiv Community launch did five times his usual.</p>
           </div>
-          <p class="bars-cap">Tyler Denk's post about the beehiiv Community launch did five times his usual.</p>
         </div>
       </div>
-      <div>
-        <h2>Outliers are measured against <em>each creator's own average</em>.</h2>
-        <p class="lede">A post with 102K views can matter more than one with a million, if its creator usually gets a fraction of that. Sona compares every post with the creator's normal, so you see what actually broke through, not just who is already big.</p>
-      </div>
-    </div>
-
-    <div class="feat flip">
-      <div class="feat-vis">
-        <div class="vis anno">
-          <p><mark>The older I get, the more I realize your calendar is a list of your priorities.</mark> <mark class="soft">It tells the truth about what you actually care about.</mark></p>
-          <div class="anno-key"><span>Hook</span><span class="soft">Where it lands</span></div>
-          <p class="small" style="margin-top:14px;font-family:var(--sans);font-size:13.5px">Justin Welsh, LinkedIn. 3× his usual.</p>
-        </div>
-      </div>
-      <div>
-        <h2>Learn the structure. <em>Keep your own words.</em></h2>
-        <p class="lede">Every decode names the hook and where the post lands. Patterns collects the moves that keep coming back across everything you decode, and the hooks library holds openings that already worked.</p>
-        <a class="btn btn-line" href="#try"><span class="ba"><span class="ba-track"><svg class="ba-i" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg><span>Decode a post now</span><svg class="ba-i" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></span></span></a>
-      </div>
-    </div>
-
-    <div class="feat">
-      <div class="feat-vis">
-        <div class="vis">
-          <div class="pb">
-            <div class="pb-row"><span>Topics</span>Building a small company in public</div>
-            <div class="pb-row"><span>Sounds like</span>Plain, a little dry, short paragraphs</div>
-            <div class="pb-row"><span>Never</span>Hashtags, "game-changer", threads over 8 posts</div>
-            <div class="pb-row"><span>Ends with</span>A real question for the reader</div>
+      <div class="fcell">
+        <span class="icon-sq" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6h16M4 12h10M4 18h6"/></svg></span>
+        <p class="lead"><b>Learn the structure, keep your own words.</b> Every decode names the hook and where the post lands. Patterns collects the moves that keep coming back, and the hooks library holds openings that already worked.</p>
+        <a class="link" href="#try">Decode a post now</a>
+        <div class="vis-wrap">
+          <div class="vis anno">
+            <p><mark>The older I get, the more I realize your calendar is a list of your priorities.</mark> <mark class="soft">It tells the truth about what you actually care about.</mark></p>
+            <div class="anno-key"><span>Hook</span><span class="soft">Where it lands</span></div>
           </div>
-          <p class="small" style="margin-top:14px">An example playbook.</p>
         </div>
       </div>
-      <div>
-        <h2>Your playbook sits <em>beside every draft</em>.</h2>
-        <p class="lede">Write down once how you sound: what you post about, the phrases you use, the ones you never would. Sona keeps it next to the editor while you write. It doesn't write the post for you.</p>
-      </div>
-    </div>
-
-    <div class="feat flip">
-      <div class="feat-vis">
-        <div class="vis chat">
-          <div class="msg you">Which of my saved hooks would work for a post about pricing?</div>
-          <span class="tool">Searched your saved hooks</span>
-          <div class="msg claude">Two fit well:
-            <ul><li>"Your [thing] has seasons too." Try it as "Your pricing has seasons too."</li><li>"The older I get, the more I realise…" works for a lesson you learned the hard way.</li></ul>
+      <div class="fcell">
+        <span class="icon-sq" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16v4Z"/></svg></span>
+        <p class="lead"><b>Your playbook sits beside every draft.</b> Write down once how you sound: what you post about, the phrases you use, the ones you never would. Sona keeps it next to the editor. It doesn't write the post for you.</p>
+        <div class="vis-wrap">
+          <div class="vis">
+            <div class="pb">
+              <div class="pb-row"><span>Topics</span>Building a small company in public</div>
+              <div class="pb-row"><span>Sounds like</span>Plain, a little dry, short paragraphs</div>
+              <div class="pb-row"><span>Never</span>Hashtags, "game-changer", threads over 8 posts</div>
+              <div class="pb-row"><span>Ends with</span>A real question for the reader</div>
+            </div>
           </div>
-          <p class="small">An example conversation.</p>
         </div>
       </div>
-      <div>
-        <h2>Ask Claude <em>about your research</em>.</h2>
-        <p class="lede">Connect Sona to Claude and ask about the posts, hooks and drafts you've saved, without leaving the chat. Included in Creator Pro.</p>
-        <a class="btn btn-line" href="/docs.html"><span class="ba"><span class="ba-track"><svg class="ba-i" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg><span>Set up Sona in Claude</span><svg class="ba-i" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></span></span></a>
+      <div class="fcell">
+        <span class="icon-sq" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12Z"/></svg></span>
+        <p class="lead"><b>Ask Claude about your research.</b> Connect Sona to Claude and ask about the posts, hooks and drafts you've saved, without leaving the chat. Included in Creator Pro.</p>
+        <a class="link" href="/docs.html">Set up Sona in Claude</a>
+        <div class="vis-wrap">
+          <div class="vis chat">
+            <div class="msg you">Which of my saved hooks would work for a post about pricing?</div>
+            <span class="tool">Searched your saved hooks</span>
+            <div class="msg claude">"Your [thing] has seasons too." Try it as "Your pricing has seasons too."</div>
+          </div>
+        </div>
       </div>
     </div>
-
   </div>
 </section>
 
 <!-- Try it — the real analysis engine, on the public page, with no account. -->
-<section class="sec" id="try">
+<section class="sec ruled" id="try">
   <div class="wrap try">
     <div class="try-text-col">
-      <h2>Paste a post and <em>see how it's built</em>.</h2>
+      <h2>Paste a post <span class="tone">and see how it's built.</span></h2>
       <p class="lede">Pick a post you wish you'd written. Sona names its hook, the turn, where it lands, and the pattern you can reuse.</p>
       <ul>
         <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Runs in your browser. Nothing is sent anywhere.</li>
@@ -519,8 +559,9 @@
         <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Sign up to save the pattern and draft from it.</li>
       </ul>
     </div>
-    <div class="edge">
-      <div class="try-box">
+    <div class="try-stage">
+      <div class="blueprint" aria-hidden="true"><svg><defs><pattern id="bp-try" width="88" height="88" patternUnits="userSpaceOnUse"><rect x=".5" y=".5" width="87" height="87" rx="2" fill="none" stroke="currentColor" stroke-dasharray="4 4"/></pattern></defs><rect width="100%" height="100%" fill="url(#bp-try)"/></svg></div>
+    <div class="try-box">
       <div class="try-in">
         <label for="try-text">A post that worked</label>
         <textarea id="try-text" class="try-text" rows="6" spellcheck="false" placeholder="Paste any post here, or use the example."></textarea>
@@ -543,21 +584,21 @@
           <a href="#" class="btn btn-go btn-sm" onclick="event.preventDefault(); SonaAuth.openSignup();">Start free</a>
         </div>
       </div>
-      </div>
+    </div>
     </div>
   </div>
 </section>
 
-<section class="sec" aria-labelledby="also-h">
+<section class="sec ruled" aria-labelledby="also-h">
   <div class="wrap">
-    <div class="sec-head"><h2 id="also-h">The rest of the studio, <em>when you need it</em>.</h2></div>
-    <div class="also">
-      <div class="also-item"><span class="icon-tile" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16M4 10h16M4 15h10M4 20h7"/></svg></span><div><h3>Digest</h3><p>This week's breakout posts, by niche.</p></div></div>
-      <div class="also-item"><span class="icon-tile" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="3" width="12" height="18" rx="2"/><path d="m3 8 3-1M21 8l-3-1"/></svg></span><div><h3>Idea swipe</h3><p>Go through outliers one at a time and keep the good ones.</p></div></div>
-      <div class="also-item"><span class="icon-tile" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6h13M8 12h13M8 18h13M3.5 6h.01M3.5 12h.01M3.5 18h.01"/></svg></span><div><h3>Lists</h3><p>Group the creators and posts you want to keep learning from.</p></div></div>
-      <div class="also-item"><span class="icon-tile" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="13" height="14" rx="2"/><path d="m16 10 5-3v10l-5-3"/></svg></span><div><h3>Scripts</h3><p>Turn an idea into a short video script.</p></div></div>
-      <div class="also-item"><span class="icon-tile" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/><path d="M10 6.5h4a3 3 0 0 1 3 3V14"/></svg></span><div><h3>Canvas</h3><p>Lay ideas out side by side and connect them.</p></div></div>
-      <div class="also-item"><span class="icon-tile" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h4v16H4zM10 4h4v16h-4zM16 5l4 1-3 14-4-1"/></svg></span><div><h3>Library</h3><p>Everything you've kept, in one place.</p></div></div>
+    <div class="sec-head"><h2 id="also-h">Also in the studio, <span class="tone">when you need it.</span></h2></div>
+    <div class="cells also">
+      <div><span class="icon-sq" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16M4 10h16M4 15h10M4 20h7"/></svg></span><h3>Digest</h3><p>This week's breakout posts, by niche.</p></div>
+      <div><span class="icon-sq" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6" y="3" width="12" height="18" rx="2"/><path d="m3 8 3-1M21 8l-3-1"/></svg></span><h3>Idea swipe</h3><p>Go through outliers one at a time and keep the good ones.</p></div>
+      <div><span class="icon-sq" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 6h13M8 12h13M8 18h13M3.5 6h.01M3.5 12h.01M3.5 18h.01"/></svg></span><h3>Lists</h3><p>Group the creators and posts you want to keep learning from.</p></div>
+      <div><span class="icon-sq" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="13" height="14" rx="2"/><path d="m16 10 5-3v10l-5-3"/></svg></span><h3>Scripts</h3><p>Turn an idea into a short video script.</p></div>
+      <div><span class="icon-sq" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/><path d="M10 6.5h4a3 3 0 0 1 3 3V14"/></svg></span><h3>Canvas</h3><p>Lay ideas out side by side and connect them.</p></div>
+      <div><span class="icon-sq" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h4v16H4zM10 4h4v16h-4zM16 5l4 1-3 14-4-1"/></svg></span><h3>Library</h3><p>Everything you've kept, in one place.</p></div>
     </div>
   </div>
 </section>
@@ -569,13 +610,13 @@
   </div>
 </section>
 
-<section class="sec" id="pricing">
+<section class="sec ruled" id="pricing">
   <div class="wrap">
     <div class="sec-head">
-      <h2>Start free. <em>Upgrade when it pays off.</em></h2>
+      <h2>Start free. <span class="tone">Upgrade when it pays off.</span></h2>
       <p class="lede">Pay monthly, or yearly and get two months free. Cancel anytime.</p>
     </div>
-    <div class="tiers">
+    <div class="cells tiers">
       <div class="tier">
         <div class="tier-top"><span class="tier-name">Free</span></div>
         <div class="tier-price"><span class="amt">€0</span></div>
@@ -589,7 +630,6 @@
         <button type="button" class="btn btn-line" onclick="SonaAuth.openSignup()">Start free</button>
         <p class="tier-foot">No credit card</p>
       </div>
-      <div class="edge">
       <div class="tier featured">
         <div class="tier-top"><span class="tier-name">Creator</span><span class="tier-badge">Most popular</span></div>
         <div class="tier-price"><span class="amt">€19</span><span class="unit">/month</span></div>
@@ -604,7 +644,6 @@
         </ul>
         <button type="button" class="btn btn-go" onclick="startCheckout('creator-monthly', this)"><span class="ba"><span class="ba-track"><svg class="ba-i" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg><span>Get Creator</span><svg class="ba-i" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></span></span></button>
         <p class="tier-foot">Renews automatically until you cancel. Cancel anytime.</p>
-      </div>
       </div>
       <div class="tier">
         <div class="tier-top"><span class="tier-name">Creator Pro</span></div>
@@ -626,9 +665,9 @@
   </div>
 </section>
 
-<section class="sec" id="faq">
+<section class="sec ruled" id="faq">
   <div class="wrap faq-grid">
-    <h2>Questions, <em>answered</em>.</h2>
+    <h2>Questions</h2>
     <div class="faq">
       <details><summary>Will my posts end up sounding like AI?</summary><p>No. Sona doesn't write your posts. It puts what's working, the pattern behind it and your own playbook next to the editor, and you do the writing.</p></details>
       <details><summary>Where do the outlier posts come from?</summary><p>They're public posts, picked by hand and checked against how the creator usually performs, so a post only counts as an outlier if it beat that creator's normal. The feed is small and grows every week.</p></details>
@@ -646,7 +685,7 @@
   <div class="wrap">
     <div class="foot-top">
       <div class="foot-brand">
-        <a href="/" class="logo" aria-label="Sona home"><span class="logo-mark"><img class="mark-img" src="/logo.svg" alt="" width="26" height="26"></span><span class="logo-word">Sona</span></a>
+        <a href="/" class="logo" aria-label="Sona home"><span class="logo-mark"><img class="mark-img" src="/logo.svg" alt="" width="24" height="24"></span><span class="logo-word">Sona</span></a>
         <p>Find the posts that worked, see why, and write your own version.</p>
         <form class="foot-sub" id="sub-form" onsubmit="return false;">
           <input type="email" placeholder="you@email.com" id="sub-email" aria-label="Email for product updates" required>
@@ -698,7 +737,7 @@
 
 <script defer src="/data.js"></script>
 <script>
-  // Hero headline: split into words for the focus-in, keeping the <em>.
+  // Hero headline: split into words for the focus-in, keeping inner spans.
   (function () {
     var h = document.querySelector('[data-split]'); if (!h) return;
     var i = 0;
