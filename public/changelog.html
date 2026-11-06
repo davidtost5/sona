@@ -3,7 +3,21 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Sona — Changelog</title>
+<title>Changelog: what&#x27;s new in Sona</title>
+<meta name="description" content="Every update shipped to Sona, newest first: new features, design changes and fixes, with the date each one went live.">
+<link rel="canonical" href="https://buildwithsona.com/changelog.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Sona">
+<meta property="og:title" content="Changelog: what&#x27;s new in Sona">
+<meta property="og:description" content="Every update shipped to Sona, newest first: new features, design changes and fixes, with the date each one went live.">
+<meta property="og:url" content="https://buildwithsona.com/changelog.html">
+<meta property="og:image" content="https://buildwithsona.com/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Changelog: what&#x27;s new in Sona">
+<meta name="twitter:description" content="Every update shipped to Sona, newest first: new features, design changes and fixes, with the date each one went live.">
+<meta name="twitter:image" content="https://buildwithsona.com/og.png">
 <style>
   @font-face { font-family: 'Aeonik Pro'; src: local('Aeonik Pro'), local('AeonikPro-Regular'); font-weight: 400; font-style: normal; }
   @font-face { font-family: 'Aeonik Pro'; src: local('Aeonik Pro Medium'), local('AeonikPro-Medium'); font-weight: 500; font-style: normal; }
@@ -444,6 +458,7 @@
 <script src="smooth-scroll.js?v=20261012a" defer></script>
 <link rel="icon" type="image/svg+xml" href="/logo.svg">
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+<link rel="icon" type="image/png" sizes="96x96" href="/favicon-96.png">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 </head>
 <body>
@@ -451,8 +466,7 @@
 <nav>
   <a href="index.html" class="nav-logo">Sona</a>
   <ul class="nav-links">
-    <li><a href="resources.html">Resources</a></li>
-    <li><a href="company.html">Company</a></li>
+    <li><a href="company.html">About</a></li>
     <li><a href="changelog.html" class="active">Changelog</a></li>
     <li><a href="docs.html">Docs</a></li>
     <li><a href="brand.html">Brand</a></li>
@@ -468,8 +482,7 @@
 
 <div class="mobile-menu">
   <a href="index.html">Home</a>
-  <a href="resources.html">Resources</a>
-  <a href="company.html">Company</a>
+  <a href="company.html">About</a>
   <a href="changelog.html">Changelog</a>
   <a href="docs.html">Docs</a>
   <a href="brand.html">Brand</a>
@@ -479,122 +492,92 @@
 <!-- Page Header -->
 <div class="page-header" data-reveal>
   <h1>Changelog</h1>
-  <p>The latest updates, improvements, and fixes shipped to the Sona platform.</p>
+  <p>Everything shipped to Sona, newest first.</p>
 </div>
 
 <!-- Changelog Timeline -->
 <div class="changelog-container">
   <div class="changelog-entry" data-reveal>
-    <div class="changelog-date">May 14, 2026</div>
+    <div class="changelog-date">Nov 2, 2026</div>
     <div class="changelog-content">
-      <h3>Streaming Webhooks v2</h3>
-      <p>Real-time event delivery now supports batched payloads with configurable flush intervals. Reduces overhead by up to 80% for high-volume integrations.</p>
-      <div class="changelog-tags">
-        <span class="changelog-tag new">New</span>
-        <span class="changelog-tag">API</span>
-      </div>
-      <div class="changelog-visual">
-        <code>POST /v2/webhooks/stream → 200 OK (12ms)</code>
-      </div>
+      <h3>Billing moves to Polar</h3>
+      <p>Paid plans are sold through Polar, which handles payment, VAT and invoices. Cancel or change your plan any time from Settings → Billing.</p>
+      <div class="changelog-tags"><span class="changelog-tag improved">Improved</span></div>
     </div>
   </div>
-
   <div class="changelog-entry" data-reveal>
-    <div class="changelog-date">May 8, 2026</div>
+    <div class="changelog-date">Oct 26, 2026</div>
     <div class="changelog-content">
-      <h3>Enhanced Merchant Intelligence</h3>
-      <p>Our merchant identification model now achieves 97.2% accuracy across 14 additional countries. Coverage expanded to include LATAM and Southeast Asian markets.</p>
-      <div class="changelog-tags">
-        <span class="changelog-tag improved">Improved</span>
-        <span class="changelog-tag">Enrichment</span>
-      </div>
+      <h3>New logo and a better phone menu</h3>
+      <p>Sona&rsquo;s new mark is a single classical column. On phones, the menu now opens as a full sheet with a short description under each link.</p>
+      <div class="changelog-tags"><span class="changelog-tag new">New</span></div>
     </div>
   </div>
-
   <div class="changelog-entry" data-reveal>
-    <div class="changelog-date">Apr 29, 2026</div>
+    <div class="changelog-date">Oct 23, 2026</div>
     <div class="changelog-content">
-      <h3>Dashboard Analytics Overhaul</h3>
-      <p>Completely redesigned analytics dashboard with custom date ranges, exportable reports, and team-level usage breakdowns. Now 3x faster to load.</p>
-      <div class="changelog-tags">
-        <span class="changelog-tag improved">Improved</span>
-        <span class="changelog-tag">Dashboard</span>
-      </div>
+      <h3>Light and dark mode switch</h3>
+      <p>Choose light or dark from the switch in the corner of the homepage, and Sona remembers it across the site. Buttons and tabs were redesigned, and Sona&rsquo;s emails have a new look.</p>
+      <div class="changelog-tags"><span class="changelog-tag new">New</span><span class="changelog-tag improved">Improved</span></div>
     </div>
   </div>
-
   <div class="changelog-entry" data-reveal>
-    <div class="changelog-date">Apr 22, 2026</div>
+    <div class="changelog-date">Oct 20, 2026</div>
     <div class="changelog-content">
-      <h3>Category Mapping API</h3>
-      <p>New endpoint for custom transaction category mappings. Define your own taxonomy and let our enrichment layer automatically classify against it.</p>
-      <div class="changelog-tags">
-        <span class="changelog-tag new">New</span>
-        <span class="changelog-tag">API</span>
-      </div>
+      <h3>A homepage that shows the product</h3>
+      <p>The homepage opens on a working tour: browse real outlier posts, decode one with the same engine as the app, and see how a draft and a week of posts come together.</p>
+      <div class="changelog-tags"><span class="changelog-tag improved">Improved</span></div>
     </div>
   </div>
-
   <div class="changelog-entry" data-reveal>
-    <div class="changelog-date">Apr 15, 2026</div>
+    <div class="changelog-date">Oct 13, 2026</div>
     <div class="changelog-content">
-      <h3>Latency Improvements</h3>
-      <p>P95 enrichment latency reduced from 145ms to 62ms through optimized model inference and edge caching. Particularly impactful for real-time fraud detection flows.</p>
-      <div class="changelog-tags">
-        <span class="changelog-tag improved">Improved</span>
-        <span class="changelog-tag">Performance</span>
-      </div>
+      <h3>Manage billing and clearer terms</h3>
+      <p>Cancel any time from Settings → Billing or the account menu. The terms now spell out renewal, cancellation and refunds, and Sona is for people aged 16 and over.</p>
+      <div class="changelog-tags"><span class="changelog-tag new">New</span></div>
     </div>
   </div>
-
   <div class="changelog-entry" data-reveal>
-    <div class="changelog-date">Apr 4, 2026</div>
+    <div class="changelog-date">Oct 13, 2026</div>
     <div class="changelog-content">
-      <h3>Bug Fixes &amp; Stability</h3>
-      <p>Fixed an edge case where recurring transaction detection would misfire for bi-weekly payment schedules. Also resolved intermittent timeout issues on the /enrich endpoint for payloads exceeding 5MB.</p>
-      <div class="changelog-tags">
-        <span class="changelog-tag fix">Fix</span>
-        <span class="changelog-tag">Stability</span>
-      </div>
+      <h3>Faster, smoother pages</h3>
+      <p>Fonts now load from Sona&rsquo;s own server, pages scroll smoothly, and the phone menus on Docs, Brand and Changelog work again.</p>
+      <div class="changelog-tags"><span class="changelog-tag fix">Fix</span></div>
     </div>
   </div>
 </div>
 
-<!-- Footer -->
 <footer class="footer-main">
   <div class="footer-top">
     <div>
       <ul class="footer-nav-links">
-        <li><a href="index.html">Platform</a></li>
-        <li><a href="company.html">Company</a></li>
-        <li><a href="#">Careers</a></li>
+        <li><a href="index.html">Product</a></li>
+        <li><a href="company.html">About</a></li>
+        <li><a href="changelog.html">Changelog</a></li>
         <li><a href="contact.html">Contact</a></li>
       </ul>
     </div>
     <div>
       <div class="footer-col-title">Contact</div>
       <div class="footer-contact-info">
-        Sona, Inc.<br>
-        548 Market St, Suite 42<br>
-        San Francisco, CA 94104
+        Sona is made by David Tost.<br>
+        Questions and billing help:
       </div>
       <div class="footer-contact-links">
-        <a href="#">&#9993; General Inquiries</a>
-        <a href="#">&#9993; Media Inquiries</a>
+        <a href="mailto:david@buildwithsona.com">&#9993; david@buildwithsona.com</a>
       </div>
     </div>
     <div>
       <div class="footer-col-title">Social</div>
       <ul class="footer-social-list">
-        <li><a href="#">LinkedIn</a></li>
-        <li><a href="#">X</a></li>
-        <li><a href="#">GitHub</a></li>
-        <li><a href="#">Medium</a></li>
+        <li><a href="https://x.com/davidtostscale" target="_blank" rel="noopener">X</a></li>
+        <li><a href="https://www.linkedin.com/in/davidtost/" target="_blank" rel="noopener">LinkedIn</a></li>
+        <li><a href="https://github.com/davidtost5/sona" target="_blank" rel="noopener">GitHub</a></li>
       </ul>
     </div>
   </div>
   <div class="footer-bottom-bar">
-    <span class="footer-copyright">&copy; 2026 Sona, Inc.</span>
+    <span class="footer-copyright">&copy; 2026 David Tost &middot; <a href="privacy.html">Privacy</a> &middot; <a href="terms.html">Terms</a></span>
   </div>
   <div class="footer-brand">Sona</div>
 </footer>
