@@ -1,0 +1,19 @@
+# Sona
+
+> Sona is a web app for creators who post on X and LinkedIn. It finds posts that did far better than their creator usually does ("outliers"), explains how each one is built (hook, turn, where it lands, reusable pattern), and helps you write your own version in your own words. Sona does not write posts for you.
+
+- Website: https://buildwithsona.com/
+- Free post decoder (no account): https://buildwithsona.com/#try
+- Pricing: https://buildwithsona.com/#pricing (Free plan; Creator and Creator Pro, monthly or yearly)
+- Docs, connecting Sona to Claude with MCP: https://buildwithsona.com/docs.html
+- Changelog: https://buildwithsona.com/changelog.html
+- About: https://buildwithsona.com/company.html
+- Contact: david@buildwithsona.com
+
+## What Sona does
+
+- Discover: a feed of public X and LinkedIn posts that beat their creator's usual performance, with the multiple shown.
+- Decode: names a post's hook, turn, landing and reusable pattern. The same engine runs free on the homepage.
+- Playbook: notes on how you write, kept beside the editor.
+- Calendar, Lists, Digest, Scripts, Canvas, Idea swipe and a hooks library.
+- Sona MCP: search your saved posts, hooks and drafts from Claude (Creator Pro).

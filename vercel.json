@@ -52,6 +52,10 @@
     {
       "source": "/app",
       "destination": "/app.html"
+    },
+    {
+      "source": "/favicon.ico",
+      "destination": "/favicon-96.png"
     }
   ],
   "headers": [
@@ -107,6 +111,18 @@
     {
       "path": "/api/health",
       "schedule": "0 18 * * *"
+    }
+  ],
+  "redirects": [
+    {
+      "source": "/resources.html",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/resources",
+      "destination": "/",
+      "permanent": true
     }
   ]
 }

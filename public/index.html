@@ -13,20 +13,22 @@
 <meta name="color-scheme" content="light dark">
 <link rel="icon" type="image/svg+xml" href="/logo.svg">
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+<link rel="icon" type="image/png" sizes="96x96" href="/favicon-96.png">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
-<title>Sona — Find proven ideas. Write in your voice.</title>
-<meta name="description" content="Sona shows you posts that did several times better than their creator usually does, explains how each one is built, and helps you write your own version in your voice.">
+<title>Find viral X and LinkedIn posts in your niche | Sona</title>
+<meta name="description" content="Sona finds X and LinkedIn posts that beat their creator&#x27;s usual, shows the hook and structure behind each one, and helps you write your own. Free to start.">
 <link rel="canonical" href="https://buildwithsona.com/">
-<!-- Open Graph / social share -->
 <meta property="og:type" content="website">
-<meta property="og:url" content="https://buildwithsona.com/">
-<meta property="og:title" content="Sona — Find proven ideas. Write in your voice.">
-<meta property="og:description" content="Sona shows you posts that did several times better than their creator usually does, explains how each one is built, and helps you write your own version in your voice.">
-<meta property="og:image" content="https://buildwithsona.com/og.png">
 <meta property="og:site_name" content="Sona">
+<meta property="og:title" content="Find viral X and LinkedIn posts in your niche | Sona">
+<meta property="og:description" content="Sona finds X and LinkedIn posts that beat their creator&#x27;s usual, shows the hook and structure behind each one, and helps you write your own. Free to start.">
+<meta property="og:url" content="https://buildwithsona.com/">
+<meta property="og:image" content="https://buildwithsona.com/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Sona — Find proven ideas. Write in your voice.">
-<meta name="twitter:description" content="Sona shows you posts that did several times better than their creator usually does, explains how each one is built, and helps you write your own version in your voice.">
+<meta name="twitter:title" content="Find viral X and LinkedIn posts in your niche | Sona">
+<meta name="twitter:description" content="Sona finds X and LinkedIn posts that beat their creator&#x27;s usual, shows the hook and structure behind each one, and helps you write your own. Free to start.">
 <meta name="twitter:image" content="https://buildwithsona.com/og.png">
 <link rel="stylesheet" href="/fonts/fonts.css">
 <style>
@@ -219,7 +221,7 @@
   .hero .small { margin-top: 16px; }
   /* The one page-load moment: the headline comes into focus word by word. */
   .hero h1 .w { display: inline-block; animation: focus-in .8s cubic-bezier(.16,.86,.21,1) both; animation-delay: calc(var(--i) * 55ms); }
-  @keyframes focus-in { from { opacity: 0; filter: blur(8px); transform: translateY(.35em); } }
+  @keyframes focus-in { from { opacity: .01; filter: blur(8px); transform: translateY(.35em); } }
 
   /* ─── Product demo ─── */
   .demo { padding-bottom: 40px; }
@@ -323,6 +325,9 @@
   .try-text:focus { outline: 2px solid var(--green); outline-offset: 0; border-color: transparent; }
   .try-actions { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; }
   .try-out { padding: 6px 18px 12px; min-height: 220px; }
+  .try-cta { display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap; margin: 6px 0 4px; padding: 14px 16px; border-radius: var(--r); background: var(--green-wash); }
+  .try-cta p { font-size: 15px; color: var(--ink); }
+  .try-cta[hidden] { display: none; }
   .try-empty { padding: 30px 0; color: var(--ink-3); font-size: 15px; }
 
   /* Feature rows: text left, product right, always in that order so the eye
@@ -481,6 +486,7 @@
 </style>
 <script src="local-decode.js?v=20260830a" defer></script>
 <style>/* New mark (logo.svg) carries its own tile, so the old frames are switched off. */.mark-img{display:block;width:100%;height:100%}:is(.logo-mark,.lm,.hm-mark,.lc-mark,.mark):has(>.mark-img){background:none!important;border:0!important;box-shadow:none!important;padding:0!important;border-radius:0!important}.logo>.mark-img{width:24px;height:24px}</style>
+<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "Organization", "@id": "https://buildwithsona.com/#org", "name": "Sona", "url": "https://buildwithsona.com/", "logo": "https://buildwithsona.com/apple-touch-icon.png", "email": "david@buildwithsona.com", "founder": {"@type": "Person", "name": "David Tost"}, "sameAs": ["https://x.com/davidtostscale", "https://www.linkedin.com/in/davidtost/", "https://github.com/davidtost5/sona"]}, {"@type": "WebSite", "@id": "https://buildwithsona.com/#site", "url": "https://buildwithsona.com/", "name": "Sona", "publisher": {"@id": "https://buildwithsona.com/#org"}}, {"@type": "SoftwareApplication", "name": "Sona", "url": "https://buildwithsona.com/", "applicationCategory": "BusinessApplication", "operatingSystem": "Web", "description": "Find X and LinkedIn posts that beat their creator's usual, see the hook and structure behind each one, and write your own version.", "publisher": {"@id": "https://buildwithsona.com/#org"}}]}</script>
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
@@ -521,7 +527,7 @@
 <section class="hero">
   <div class="wrap">
     <h1 data-split>Write from the posts that beat the average in your niche.</h1>
-    <p class="lede">Sona shows you posts that did several times better than their creator usually does, explains how each one is built, and helps you write your own version, in your voice.</p>
+    <p class="lede">Sona shows you X and LinkedIn posts that did several times better than their creator usually does, explains how each one is built, and helps you write your own version, in your voice.</p>
     <div class="hero-cta">
       <a href="#" class="btn btn-go" onclick="event.preventDefault(); SonaAuth.openSignup();"><span class="ba"><span class="ba-track"><svg class="ba-i" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg><span>Start free</span><svg class="ba-i" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></span></span></a>
       <a href="#try" class="link">Try it on a post</a>
@@ -655,6 +661,10 @@
           <div class="read-row"><dt>Shape</dt><dd id="try-why"></dd></div>
           <div class="read-row key"><dt>Reusable</dt><dd id="try-pattern"></dd></div>
         </dl>
+        <div class="try-cta" id="try-cta" hidden>
+          <p>Save this pattern and draft your own version with it.</p>
+          <a href="#" class="btn btn-go btn-sm" onclick="event.preventDefault(); SonaAuth.openSignup();">Start free</a>
+        </div>
       </div>
     </div>
   </div>
@@ -849,7 +859,6 @@
       <nav class="foot-col" aria-label="Resources">
         <h3>Resources</h3>
         <a href="docs.html">Docs</a>
-        <a href="resources.html">Guides</a>
         <a href="changelog.html">Changelog</a>
         <a href="brand.html">Brand</a>
       </nav>
@@ -1166,6 +1175,7 @@
       const d = window.SonaDecode.decode(text, {});
       for (const k in F) document.getElementById(F[k]).textContent = d[k] || '—';
       empty.hidden = true; out.hidden = false;
+      document.getElementById('try-cta').hidden = false;
     }
     ta.addEventListener('input', () => { clearTimeout(t); t = setTimeout(run, 180); });
     document.getElementById('try-eg').addEventListener('click', () => { ta.value = EXAMPLE; ta.focus(); run(); });
