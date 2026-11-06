@@ -59,6 +59,103 @@ window.SonaAuth = window.SonaAuth || {
   paint();
 })();
 
+// Cursor-lit dot grid, after eden.so. Every <canvas data-dots> draws a 24px
+// grid; dots within ~150px of the pointer brighten, grow and lean toward it,
+// and the pointer is followed with easing so the light trails slightly. The
+// loop runs only while something is moving and the canvas is on screen.
+// Touch screens and reduced motion get the still grid.
+(function () {
+  var canvases = document.querySelectorAll('canvas[data-dots]');
+  if (!canvases.length) return;
+  var live = matchMedia('(hover: hover) and (pointer: fine)').matches &&
+             !matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var GAP = 24, R = 150, PULL = 0.18;
+
+  canvases.forEach(function (cv) {
+    var ctx = cv.getContext('2d');
+    var w = 0, h = 0, cols = 0, rows = 0, ox = 0, oy = 0;
+    var mx = 0, my = 0, tx = 0, ty = 0, strength = 0, target = 0;
+    var raf = 0, onScreen = true;
+    var rgb = '15,23,42', base = 0.11, peak = 0.7;
+
+    function readTheme() {
+      var cs = getComputedStyle(cv);
+      rgb = cs.getPropertyValue('--dot-rgb').trim() || rgb;
+      base = parseFloat(cs.getPropertyValue('--dot-base')) || base;
+      peak = parseFloat(cs.getPropertyValue('--dot-peak')) || peak;
+    }
+    function resize() {
+      var r = cv.getBoundingClientRect(), dpr = Math.min(window.devicePixelRatio || 1, 2);
+      w = r.width; h = r.height;
+      cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      cols = Math.ceil(w / GAP) + 1; rows = Math.ceil(h / GAP) + 1;
+      ox = (w - (cols - 1) * GAP) / 2; oy = GAP / 2;
+      draw();
+    }
+    function draw() {
+      ctx.clearRect(0, 0, w, h);
+      var lit = strength > 0.002, near = [];
+      // Resting dots in one pass, one fill.
+      ctx.fillStyle = 'rgba(' + rgb + ',' + base + ')';
+      ctx.beginPath();
+      for (var j = 0; j < rows; j++) {
+        var y = oy + j * GAP;
+        for (var i = 0; i < cols; i++) {
+          var x = ox + i * GAP;
+          if (lit) {
+            var dx = mx - x, dy = my - y;
+            if (dx > -R && dx < R && dy > -R && dy < R) {
+              var d = Math.sqrt(dx * dx + dy * dy);
+              if (d < R) { near.push(x, y, dx, dy, d); continue; }
+            }
+          }
+          ctx.rect(x - 1, y - 1, 2, 2);
+        }
+      }
+      ctx.fill();
+      // Dots near the pointer, each with its own light.
+      for (var k = 0; k < near.length; k += 5) {
+        var f = 1 - near[k + 4] / R;
+        f = f * f * (3 - 2 * f) * strength;           // smoothstep falloff
+        var s = 2 + f * 1.4;
+        var px = near[k] + near[k + 2] * f * PULL, py = near[k + 1] + near[k + 3] * f * PULL;
+        ctx.fillStyle = 'rgba(' + rgb + ',' + (base + (peak - base) * f).toFixed(3) + ')';
+        ctx.fillRect(px - s / 2, py - s / 2, s, s);
+      }
+    }
+    function tick() {
+      raf = 0;
+      mx += (tx - mx) * 0.18; my += (ty - my) * 0.18;
+      strength += (target - strength) * 0.12;
+      draw();
+      if (Math.abs(tx - mx) > 0.3 || Math.abs(ty - my) > 0.3 || Math.abs(target - strength) > 0.004) kick();
+    }
+    function kick() { if (!raf && onScreen) raf = requestAnimationFrame(tick); }
+
+    readTheme();
+    new ResizeObserver(resize).observe(cv);
+    new MutationObserver(function () { readTheme(); draw(); })
+      .observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+    new IntersectionObserver(function (es) { onScreen = es[0].isIntersecting; if (onScreen) kick(); }).observe(cv);
+    if (!live) return;
+
+    window.addEventListener('pointermove', function (e) {
+      if (e.pointerType && e.pointerType !== 'mouse') return;
+      var r = cv.getBoundingClientRect(), x = e.clientX - r.left, y = e.clientY - r.top;
+      var inside = x > -R && y > -R && x < r.width + R && y < r.height + R;
+      if (inside) {
+        if (strength < 0.02) { mx = x; my = y; }    // arrive where the pointer is, don't sweep in
+        tx = x; ty = y; target = 1;
+      } else target = 0;
+      kick();
+    }, { passive: true });
+    document.documentElement.addEventListener('pointerleave', function () { target = 0; kick(); });
+    window.addEventListener('blur', function () { target = 0; kick(); });
+    window.addEventListener('scroll', function () { if (target) { target = 0; kick(); } }, { passive: true });
+  });
+})();
+
 // Mobile menu: focus stays inside while open, Escape closes, the page behind
 // is inert, and same-page links close the sheet before gliding.
 (function () {

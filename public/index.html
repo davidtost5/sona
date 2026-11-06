@@ -11,11 +11,11 @@
 <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96.png">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <link rel="stylesheet" href="/fonts/fonts.css">
-<link rel="stylesheet" href="/site.css?v=20261106c">
+<link rel="stylesheet" href="/site.css?v=20261106d">
 <link rel="stylesheet" href="/vendor/lenis-1.2.3.css">
 <script src="/vendor/lenis-1.2.3.min.js" defer></script>
 <script src="/smooth-scroll.js?v=20261012a" defer></script>
-<script src="/site.js?v=20261106c" defer></script>
+<script src="/site.js?v=20261106d" defer></script>
 <title>Find viral X and LinkedIn posts in your niche | Sona</title>
 <meta name="description" content="Sona finds X and LinkedIn posts that beat their creator&#x27;s usual, shows the hook and structure behind each one, and helps you write your own. Free to start.">
 <link rel="canonical" href="https://buildwithsona.com/">
@@ -35,7 +35,7 @@
   /* Homepage only. Tokens, rails, nav, keys and footer live in site.css. */
 
   /* ─── Hero: words left, a post being read on the blueprint right ─── */
-  .hero { position: relative; padding: clamp(56px, 9vh, 96px) 0 clamp(56px, 8vh, 88px); }
+  .hero { position: relative; isolation: isolate; padding: clamp(56px, 9vh, 96px) 0 clamp(56px, 8vh, 88px); }
   .hero .wrap { display: grid; grid-template-columns: 1fr 1.08fr; gap: clamp(32px, 5vw, 64px); align-items: center; }
   .hero h1 { max-width: 13ch; }
   .hero .lede { max-width: 44ch; margin-top: 22px; }
@@ -284,7 +284,6 @@
   @media (max-width: 760px) {
     .hero { padding: 40px 0 48px; }
     .hero-vis { min-height: 0; padding: 0; display: block; }
-    .hero-vis .blueprint { inset: -24px -18px; }
     .hv-card { margin: 0 auto; justify-self: auto; width: min(370px, 100%); }
     .hv-tag, .hv-tag.t1, .hv-tag.t2, .hv-tag.t3 { position: static; max-width: none; margin: 10px auto 0; width: min(370px, 100%); }
     .hv-tag::after { display: none; }
@@ -324,7 +323,7 @@
     </ul>
     <div class="nav-right">
       <button type="button" class="nav-signin" onclick="SonaAuth.openLogin()">Sign in</button>
-      <a href="#" class="btn btn-go btn-sm" onclick="event.preventDefault(); SonaAuth.openSignup();">Start free</a>
+      <a href="#" class="btn btn-go btn-sm" onclick="event.preventDefault(); SonaAuth.openSignup();"><span>Start free</span><svg class="btn-arr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 18l6-6M13 6l6 6"/></svg></a>
     </div>
     <button class="menu-btn" type="button" aria-label="Open menu" aria-controls="mobile-menu" aria-expanded="false"><span></span><span></span></button>
   </div>
@@ -340,25 +339,25 @@
   </ul>
   <div class="mm-actions" style="--i:5">
     <a href="#" class="btn btn-line" onclick="event.preventDefault(); SonaAuth.openLogin();">Sign in</a>
-    <a href="#" class="btn btn-go" onclick="event.preventDefault(); SonaAuth.openSignup();">Start free</a>
+    <a href="#" class="btn btn-go" onclick="event.preventDefault(); SonaAuth.openSignup();"><span>Start free</span><svg class="btn-arr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 18l6-6M13 6l6 6"/></svg></a>
   </div>
 </div>
 
 <main id="main">
 
 <section class="hero">
+  <canvas class="dots" data-dots aria-hidden="true"></canvas>
   <div class="wrap">
     <div>
       <h1>Write from the posts that beat the average <span class="tone">in your niche.</span></h1>
       <p class="lede">Sona shows you X and LinkedIn posts that did several times better than their creator usually does, explains how each one is built, and helps you <b>write your own version, in your voice.</b></p>
       <div class="hero-cta">
-        <a href="#" class="btn btn-go btn-lg" onclick="event.preventDefault(); SonaAuth.openSignup();">Start free</a>
+        <a href="#" class="btn btn-go btn-lg" onclick="event.preventDefault(); SonaAuth.openSignup();"><span>Start free</span><svg class="btn-arr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 18l6-6M13 6l6 6"/></svg></a>
         <a href="#try" class="btn btn-line btn-lg">Try it on a post</a>
       </div>
       <p class="small">Free for 10 saved ideas. No credit card.</p>
     </div>
     <div class="hero-vis" role="img" aria-label="Example: a LinkedIn post by Justin Welsh, read by Sona. It did 3 times his usual. The hook is a statement opener; it lands on what you care about; the reusable line is: The older I get, the more I realize [truth].">
-      <div class="blueprint" aria-hidden="true"><svg><defs><pattern id="bp-hero" width="88" height="88" patternUnits="userSpaceOnUse"><rect x=".5" y=".5" width="87" height="87" rx="2" fill="none" stroke="currentColor" stroke-dasharray="4 4"/></pattern></defs><rect width="100%" height="100%" fill="url(#bp-hero)"/></svg></div>
       <div class="hv-tag t1" aria-hidden="true"><b>Hook</b>Statement opener, 15 words</div>
       <div class="hv-card" aria-hidden="true">
         <div class="hv-who"><span class="av">JW</span><div><b>Justin Welsh</b><span>@justinwelsh on LinkedIn</span></div></div>
@@ -639,7 +638,7 @@
           <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Follow the creators you learn from</li>
           <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Your playbook on every device</li>
         </ul>
-        <button type="button" class="btn btn-go" onclick="startCheckout('creator-monthly', this)">Get Creator</button>
+        <button type="button" class="btn btn-go" onclick="startCheckout('creator-monthly', this)"><span>Get Creator</span><svg class="btn-arr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 18l6-6M13 6l6 6"/></svg></button>
         <p class="tier-foot">Renews automatically until you cancel. Cancel anytime.</p>
       </div>
       <div class="tier">
@@ -654,7 +653,7 @@
           <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Multiple brands and playbooks</li>
           <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Priority support</li>
         </ul>
-        <button type="button" class="btn btn-line" onclick="startCheckout('pro-monthly', this)">Get Creator Pro</button>
+        <button type="button" class="btn btn-line" onclick="startCheckout('pro-monthly', this)"><span>Get Creator Pro</span><svg class="btn-arr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 18l6-6M13 6l6 6"/></svg></button>
         <p class="tier-foot">Renews automatically until you cancel. Cancel anytime.</p>
       </div>
     </div>
