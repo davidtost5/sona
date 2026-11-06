@@ -35,6 +35,12 @@ html[data-theme="light"] {
   --on-accent: #ffffff;
   --nav-bg: #ffffff;
   --foot-bg: #f8fafc;
+  /* Keys, after eden.so: dark key in daylight */
+  --key-top: #383838; --key-bot: #111111; --key-hover: #383838; --key-ink: #ffffff;
+  --key-edge: rgba(255,255,255,.18); --key-edge-hover: rgba(255,255,255,.22);
+  --sec-top: #ffffff; --sec-bot: #f5f6f8; --sec-line: rgba(15,23,42,.10); --sec-edge: #ffffff;
+  /* Cursor-lit dot grid */
+  --dot-rgb: 15,23,42; --dot-base: .11; --dot-peak: .7;
   --tray: #f1f5f9; --tray-line: #e2e8f0; --seg-on: #ffffff; --seg-off: #64748b;
   --seg-drop: 0 1px 2px rgba(15,23,42,.08), 0 0 0 1px rgba(15,23,42,.06);
   --shadow-card: 0 1px 2px rgba(15,23,42,.05);
@@ -65,6 +71,10 @@ html[data-theme="dark"],
   --on-accent: #0b1120;
   --nav-bg: #111a2e;
   --foot-bg: #0f172a;
+  --key-top: #ffffff; --key-bot: #e5e7eb; --key-hover: #ffffff; --key-ink: #0b1120;
+  --key-edge: rgba(255,255,255,.18); --key-edge-hover: rgba(255,255,255,.22);
+  --sec-top: rgba(255,255,255,.08); --sec-bot: rgba(255,255,255,.04); --sec-line: rgba(255,255,255,.10); --sec-edge: rgba(255,255,255,.07);
+  --dot-rgb: 241,245,249; --dot-base: .08; --dot-peak: .85;
   --tray: #111a2e; --tray-line: #1e293b; --seg-on: #1e293b; --seg-off: #94a3b8;
   --seg-drop: 0 0 0 1px #334155;
   --shadow-card: 0 1px 2px rgba(0,0,0,.3);
@@ -130,22 +140,48 @@ p { text-wrap: pretty; }
 .link { color: var(--ink); font-weight: 500; text-decoration: underline; text-decoration-color: var(--line-2); text-underline-offset: 4px; transition: text-decoration-color .2s; }
 .link:hover { text-decoration-color: currentColor; }
 
-/* ─── Buttons: flat, one solid blue for the action, outlined for the rest ─── */
+/* ─── Buttons, after eden.so ───
+   A key with a lit top edge and three stacked soft shadows. On hover the
+   gradient flattens, the key lifts 2px, the shadow deepens and the arrow
+   nudges forward; pressing sets it back down. 200ms ease-out throughout. */
 .btn, .mini {
-  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-  min-height: 40px; padding: 0 16px; border-radius: 8px; border: 0;
-  font-size: 14.5px; font-weight: 500; letter-spacing: -.01em; text-decoration: none; cursor: pointer; white-space: nowrap;
-  touch-action: manipulation; -webkit-tap-highlight-color: transparent;
-  transition: background-color .15s, box-shadow .15s, color .15s;
+  display: inline-flex; align-items: center; justify-content: center; gap: 7px;
+  min-height: 40px; padding: 0 18px; border-radius: 10px; border: 0;
+  font-size: 14.5px; font-weight: 500; letter-spacing: -.015em; text-decoration: none; cursor: pointer; white-space: nowrap;
+  touch-action: manipulation; -webkit-tap-highlight-color: transparent; will-change: transform;
+  transition: transform .2s var(--ease-out), box-shadow .2s var(--ease-out), background .2s var(--ease-out);
 }
-.btn-go, .mini.go { color: var(--on-accent); background: var(--accent); box-shadow: 0 1px 2px rgba(15,23,42,.12); }
-.btn-go:hover, .mini.go:hover { background: var(--accent-hover); }
-.btn-line, .mini { color: var(--ink); background: var(--card); box-shadow: inset 0 0 0 1px var(--line-2); }
-.btn-line:hover, .mini:hover { background: var(--raise); }
-.btn[disabled], .mini[disabled] { opacity: .5; cursor: progress; }
-.btn-lg { min-height: 44px; padding: 0 18px; font-size: 15px; }
-.btn-sm { min-height: 34px; padding: 0 12px; font-size: 14px; border-radius: 7px; }
-.mini { min-height: 32px; padding: 0 12px; border-radius: 7px; font-size: 13.5px; }
+.btn-go, .mini.go {
+  color: var(--key-ink); background: linear-gradient(var(--key-top), var(--key-bot));
+  box-shadow: inset 0 1px 0 var(--key-edge), 0 1px 1.5px rgba(0,0,0,.16), 0 3px 6px -1px rgba(0,0,0,.22), 0 8px 14px -4px rgba(0,0,0,.18);
+}
+.btn-go:hover, .mini.go:hover {
+  background: linear-gradient(var(--key-hover), var(--key-hover));
+  box-shadow: inset 0 1px 0 var(--key-edge-hover), 0 1px 2px rgba(0,0,0,.18), 0 5px 10px -1px rgba(0,0,0,.26), 0 12px 22px -4px rgba(0,0,0,.22);
+}
+.btn-line, .mini {
+  color: var(--ink); background: linear-gradient(var(--sec-top), var(--sec-bot));
+  box-shadow: inset 0 1px 0 var(--sec-edge), 0 0 0 1px var(--sec-line), 0 1px 2px rgba(15,23,42,.06), 0 4px 10px -4px rgba(15,23,42,.12);
+}
+.btn-line:hover, .mini:hover {
+  box-shadow: inset 0 1px 0 var(--sec-edge), 0 0 0 1px var(--sec-line), 0 2px 4px rgba(15,23,42,.08), 0 10px 18px -6px rgba(15,23,42,.2);
+}
+@media (hover: hover) { .btn:hover, .mini:hover { transform: translateY(-2px); } }
+.btn:active, .mini:active { transform: translateY(0); transition-duration: .08s; }
+.btn[disabled], .mini[disabled] { opacity: .5; cursor: progress; transform: none; }
+.btn-arr { width: 16px; height: 16px; flex: none; transition: transform .2s var(--ease-out); }
+.btn:hover .btn-arr, .btn:focus-visible .btn-arr { transform: translateX(2px); }
+.btn-lg { min-height: 44px; padding: 0 22px; font-size: 15px; border-radius: 12px; }
+.btn-sm { min-height: 34px; padding: 0 14px; font-size: 14px; border-radius: 9px; }
+.btn-sm .btn-arr { width: 14px; height: 14px; }
+.mini { min-height: 32px; padding: 0 12px; border-radius: 8px; font-size: 13.5px; }
+
+/* ─── Cursor-lit dot grid (drawn by site.js) ───
+   Dots brighten, grow and lean toward the pointer within ~150px, then ease
+   back. Static on touch screens and with reduced motion. */
+.dots { position: absolute; left: 0; top: 0; width: 100%; height: min(820px, 100%); z-index: -1; pointer-events: none;
+  -webkit-mask-image: radial-gradient(85% 85% at 50% 38%, #000 45%, transparent 100%);
+          mask-image: radial-gradient(85% 85% at 50% 38%, #000 45%, transparent 100%); }
 
 /* ─── Nav: a floating pill ─── */
 .nav { position: sticky; top: 12px; z-index: 40; padding: 0 16px; margin-top: 12px; }
@@ -165,7 +201,7 @@ p { text-wrap: pretty; }
 
 /* Mobile menu: one button opens and closes it; the sheet unrolls from under
    the nav and the rows rise in one after another. */
-.menu-btn { display: none; position: relative; width: 40px; height: 40px; margin-left: auto; border: 0; border-radius: 8px; cursor: pointer; color: var(--ink); background: var(--card); box-shadow: inset 0 0 0 1px var(--line-2); }
+.menu-btn { display: none; position: relative; width: 40px; height: 40px; margin-left: auto; border: 0; border-radius: 10px; cursor: pointer; color: var(--ink); background: linear-gradient(var(--sec-top), var(--sec-bot)); box-shadow: inset 0 1px 0 var(--sec-edge), 0 0 0 1px var(--sec-line), 0 1px 2px rgba(15,23,42,.06); }
 .menu-btn span { position: absolute; left: 50%; top: 50%; width: 16px; height: 1.6px; margin: 0; border-radius: 2px; background: currentColor; transition: transform .45s cubic-bezier(.32,.72,0,1); }
 .menu-btn span:nth-child(1) { transform: translate(-50%, -4px); }
 .menu-btn span:nth-child(2) { transform: translate(-50%, 3px); }
@@ -203,7 +239,7 @@ html.menu-is-open body { padding-top: 64px; }
 .cells > * { background: var(--bg); }
 
 /* ─── Sub-page shell ─── */
-.page { padding: clamp(64px, 10vh, 104px) 0 112px; }
+.page { position: relative; isolation: isolate; padding: clamp(64px, 10vh, 104px) 0 112px; }
 .page-head { max-width: var(--col, 720px); margin: 0 auto 52px; }
 .page-head .lede { max-width: 58ch; margin-top: 18px; }
 .page-head .updated { margin-top: 14px; font-size: 14px; color: var(--ink-3); }
