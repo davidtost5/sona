@@ -1,15 +1,22 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html lang="en" data-theme="dark">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<!-- Theme — fully automatic, follows the wall clock (7am–7pm light, else dark) -->
-<script>(function(){try{var t=null;try{t=localStorage.getItem('sona-theme');}catch(e){}if(t==='light'||t==='dark'){window.__sonaThemeChosen=true;}else{var h=new Date().getHours();t=(h<7||h>=19)?'dark':'light';}document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
-<meta name="color-scheme" content="light dark">
+<script>(function(){try{var t=null;try{t=localStorage.getItem('sona-theme');}catch(e){}if(t==='light'||t==='dark'){window.__sonaThemeChosen=true;}else{t='dark';}document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
+<meta name="color-scheme" content="dark light">
+<meta name="theme-color" content="#0a0a0a">
 <link rel="icon" type="image/svg+xml" href="/logo.svg">
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
 <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96.png">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="preload" href="/fonts/eb-garamond-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/fonts/fonts.css">
+<link rel="stylesheet" href="/site.css?v=20261106a">
+<link rel="stylesheet" href="/vendor/lenis-1.2.3.css">
+<script src="/vendor/lenis-1.2.3.min.js" defer></script>
+<script src="/smooth-scroll.js?v=20261012a" defer></script>
+<script src="/site.js?v=20261106a" defer></script>
 <title>Contact Sona</title>
 <meta name="description" content="Questions, feedback or billing help? Send a message or email david@buildwithsona.com. Every message gets a personal reply.">
 <link rel="canonical" href="https://buildwithsona.com/contact.html">
@@ -25,208 +32,80 @@
 <meta name="twitter:title" content="Contact Sona">
 <meta name="twitter:description" content="Questions, feedback or billing help? Send a message or email david@buildwithsona.com. Every message gets a personal reply.">
 <meta name="twitter:image" content="https://buildwithsona.com/og.png">
-<link rel="stylesheet" href="/fonts/fonts.css">
 <style>
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-
-  :root {
-    --bg: #f3f3f0; --bg-soft: #ecebe6; --surface: #fcfcfa;
-    --border: rgba(26,26,26,0.09); --border-strong: rgba(26,26,26,0.16);
-    --text: #1a1a1a; --text-mid: #55554f; --text-dim: #71716a;
-    --accent: #28775c; --accent-soft: rgba(40,119,92,0.09);
-    --btn: #1a1a1a; --btn-text: #f3f3f0;
-    --shadow-sm: 0 1px 2px rgba(20,20,30,0.04); --shadow: 0 6px 30px rgba(20,20,30,0.07);
-  }
-  html[data-theme="dark"] {
-    --bg: #111312; --bg-soft: #171918; --surface: #1b1e1c;
-    --border: rgba(255,255,255,0.09); --border-strong: rgba(255,255,255,0.18);
-    --text: #f3f3f0; --text-mid: #a5a59e; --text-dim: #8b8b84;
-    --accent: #5fb896; --accent-soft: rgba(95,184,150,0.13);
-    --btn: #f3f3f0; --btn-text: #1a1a1a;
-    --shadow-sm: 0 1px 2px rgba(0,0,0,0.4); --shadow: 0 6px 30px rgba(0,0,0,0.4);
-  }
-
-  body {
-    font-family: 'Aeonik Pro', 'Aeonik', 'DM Sans', -apple-system, sans-serif; background: var(--bg); color: var(--text);
-    -webkit-font-smoothing: antialiased; overflow-x: hidden; line-height: 1.5; min-height: 100vh;
-    display: flex; flex-direction: column; transition: background .5s, color .5s;
-  }
-  a { color: inherit; }
-  .mono { font-family: 'Geist Mono', monospace; }
-
-  [data-reveal] { opacity: 0; transform: translate3d(0,24px,0); transition: opacity .9s cubic-bezier(.16,1,.3,1), transform 1s cubic-bezier(.16,1,.3,1); }
-  [data-reveal].in { opacity: 1; transform: none; }
-
-  /* NAV */
-  nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; display: flex; align-items: center; justify-content: space-between; padding: 16px 36px; background: color-mix(in srgb, var(--bg) 80%, transparent); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); border-bottom: 1px solid transparent; transition: border-color .3s; }
-  nav.scrolled { border-bottom-color: var(--border); }
-  .logo { display: inline-flex; align-items: center; gap: 10px; text-decoration: none; }
-  .logo-mark { width: 32px; height: 32px; border-radius: 9px; background: var(--surface); border: 1px solid var(--border-strong); box-shadow: var(--shadow-sm); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-  .logo-mark svg { width: 20px; height: 20px; }
-  .logo-word { font-size: 19px; font-weight: 600; letter-spacing: -.5px; color: var(--text); }
-  .nav-links { display: flex; gap: 30px; list-style: none; }
-  .nav-links a { font-size: 14px; font-weight: 500; color: var(--text-mid); text-decoration: none; transition: color .2s; }
-  .nav-links a:hover, .nav-links a.active { color: var(--text); }
-  .nav-right { display: flex; align-items: center; gap: 14px; }
-  /* Theme is fully automatic — clock-based, no toggle */
-  .nav-signin { font-size: 14px; font-weight: 500; color: var(--text-mid); text-decoration: none; cursor: pointer; transition: color .2s; background: none; border: 0; padding: 0; font-family: inherit; }
-  .nav-signin:hover { color: var(--text); }
-  .btn { display: inline-flex; align-items: center; gap: 9px; justify-content: center; font-family: inherit; font-size: 14px; font-weight: 500; border: none; border-radius: 999px; cursor: pointer; text-decoration: none; transition: transform .2s, box-shadow .3s, background .2s, border-color .2s, filter .2s, opacity .2s; white-space: nowrap; }
-  .btn-primary {
-    padding: 10px 18px; color: var(--btn-text);
-    background: var(--btn);
-    box-shadow: 0 1px 2px rgba(26,26,26,0.16);
-  }
-  .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 10px 24px rgba(26,26,26,0.22); }
-  .menu-btn {
-    display: none; width: 40px; height: 40px; position: relative; padding: 0;
-    border: 1px solid var(--border-strong); background: var(--surface); border-radius: 50%;
-    cursor: pointer; z-index: 200;
-    transition: background .2s, border-color .2s, transform .15s;
-    -webkit-tap-highlight-color: transparent; -webkit-appearance: none; appearance: none;
-  }
-  .menu-btn:hover { background: var(--bg-soft); border-color: var(--text-mid); }
-  .menu-btn:active { transform: scale(0.94); }
-  .menu-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-  .menu-btn span {
-    position: absolute; left: calc(50% - 8px); width: 16px; height: 2px;
-    background: var(--text); border-radius: 2px;
-    transition: top .3s cubic-bezier(.16,.86,.21,1), transform .3s cubic-bezier(.16,.86,.21,1);
-  }
-  .menu-btn span:nth-child(1) { top: 15px; } .menu-btn span:nth-child(2) { top: 21px; }
-  .menu-btn.open span:nth-child(1) { top: 18px; transform: rotate(45deg); }
-  .menu-btn.open span:nth-child(2) { top: 18px; transform: rotate(-45deg); }
-  .mobile-menu { display: none; position: fixed; inset: 0; z-index: 150; background: var(--bg); flex-direction: column; align-items: center; justify-content: center; gap: 26px; opacity: 0; transition: opacity .3s; pointer-events: none; }
-  .mobile-menu.open { display: flex; opacity: 1; pointer-events: auto; }
-  .mobile-menu a { font-size: 25px; font-weight: 600; color: var(--text); text-decoration: none; }
-
-  main { flex: 1; }
-  .wrap { max-width: 1080px; margin: 0 auto; padding: 150px 36px 80px; display: grid; grid-template-columns: 1fr 1.1fr; gap: 72px; align-items: start; }
-
-  .eyebrow { font-family: 'Geist Mono', monospace; font-size: 12px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--accent); margin-bottom: 18px; display: inline-block; }
-  .info h1 { font-size: clamp(38px, 5vw, 60px); font-weight: 600; letter-spacing: -2.4px; line-height: 1.02; margin-bottom: 18px; }
-  .info > p { font-size: 18px; color: var(--text-mid); line-height: 1.55; margin-bottom: 40px; max-width: 420px; }
-  .channels { display: flex; flex-direction: column; gap: 24px; }
-  .channel .k { font-family: 'Geist Mono', monospace; font-size: 11px; letter-spacing: 1px; text-transform: uppercase; color: var(--text-dim); margin-bottom: 6px; }
-  .channel .v { font-size: 16px; font-weight: 500; text-decoration: none; color: var(--text); transition: color .2s; }
-  a.channel-v:hover { color: var(--accent); }
-
-  .form-card { background: var(--surface); border: 1px solid var(--border); border-radius: 20px; box-shadow: var(--shadow); padding: 36px; }
-  .form-msg { font-size: 14px; padding: 13px 16px; border-radius: 12px; margin-bottom: 22px; display: none; line-height: 1.5; }
-  .form-msg.success { display: block; color: var(--accent); background: var(--accent-soft); border: 1px solid var(--accent-soft); }
-  .form-msg.error { display: block; color: #d4493f; background: rgba(212,73,63,.08); border: 1px solid rgba(212,73,63,.18); }
-  .form { display: flex; flex-direction: column; gap: 18px; }
-  .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-  .field { display: flex; flex-direction: column; gap: 7px; }
-  .field label { font-size: 12px; font-weight: 600; letter-spacing: .3px; color: var(--text-mid); text-transform: uppercase; font-family: 'Geist Mono', monospace; }
-  .field input, .field textarea, .field select {
-    font-family: inherit; font-size: 15px; padding: 13px 15px;
-    border: 1px solid var(--border-strong); border-radius: 11px; background: var(--bg);
-    color: var(--text); outline: none; transition: border-color .2s, box-shadow .2s; -webkit-appearance: none; appearance: none;
-  }
-  .field select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' fill='none'%3E%3Cpath d='M1 1.5l5 5 5-5' stroke='%2395959d' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; padding-right: 36px; cursor: pointer; }
-  .field textarea { resize: vertical; min-height: 130px; line-height: 1.6; }
-  .field input:focus, .field textarea:focus, .field select:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
-  .field input::placeholder, .field textarea::placeholder { color: var(--text-dim); }
-  .submit {
-    font-family: inherit; font-size: 15px; font-weight: 500; width: 100%;
-    padding: 15px; color: var(--btn-text); border: none; border-radius: 999px; cursor: pointer;
-    background: var(--btn);
-    box-shadow: 0 1px 2px rgba(26,26,26,0.16);
-    transition: filter .2s, transform .15s, box-shadow .3s; margin-top: 4px;
-  }
-  .submit:hover { filter: brightness(1.05); transform: translateY(-1px); box-shadow: inset 0 1px 0 rgba(255,255,255,0.28), inset 0 -1px 0 rgba(0,0,0,0.22), 0 10px 24px rgba(79,70,229,0.32); }
-  .submit:active { transform: translateY(0); filter: brightness(.97); }
-  .submit:disabled { opacity: .5; cursor: not-allowed; transform: none; }
-  .form-foot { text-align: center; font-size: 13px; color: var(--text-dim); margin-top: 2px; }
-
-  footer { border-top: 1px solid var(--border); }
-  .footer-base { max-width: 1080px; margin: 0 auto; padding: 28px 36px; display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; }
-  .foot-credit { text-align: center; padding: 36px 24px 24px; max-width: 1080px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; gap: 4px; border-top: 1px solid var(--border); }
-  .foot-credit .label { font-family: 'Geist Mono', monospace; font-size: 11px; letter-spacing: 1.2px; text-transform: uppercase; color: var(--text-dim); display: inline-flex; align-items: center; gap: 10px; margin-bottom: 8px; }
-  .foot-credit .label::before, .foot-credit .label::after { content: ''; width: 22px; height: 1px; background: currentColor; opacity: .5; }
-  .foot-credit .name { font-size: clamp(20px, 3vw, 24px); font-weight: 600; letter-spacing: -.6px; line-height: 1.15; color: var(--text); text-decoration: none; transition: color .2s; }
-  a.foot-credit-name:hover { color: var(--accent); }
-  .foot-credit .role { font-size: 13px; color: var(--text-mid); margin-top: 2px; }
-  .footer-base .logo .logo-word { font-size: 16px; }
-  .footer-base span { font-size: 13px; color: var(--text-dim); }
-
-  @media (max-width: 860px) {
-    nav { padding: 14px 20px; }
-    .nav-links, .nav-signin { display: none; }
-    .menu-btn { display: block; }
-    .mobile-menu { display: flex; }
-    .wrap { grid-template-columns: 1fr; gap: 44px; padding: 120px 22px 60px; }
-    .form-card { padding: 26px; }
-    .footer-base { flex-direction: column; }
-  }
-  @media (max-width: 768px) {
-    nav { padding: max(12px, env(safe-area-inset-top)) max(18px, env(safe-area-inset-right)) 12px max(18px, env(safe-area-inset-left)); }
-    .wrap { padding: 100px 18px 50px; gap: 32px; }
-    .info h1 { font-size: clamp(32px, 9vw, 44px); letter-spacing: -1.4px; }
-    .info > p { font-size: 16px; margin-bottom: 32px; }
-    .channel .v { font-size: 15px; padding: 4px 0; display: inline-block; } /* tap target */
-    .form-card { padding: 22px; }
-    .field input, .field textarea, .field select { font-size: 16px; padding: 14px 14px; } /* 16px = no zoom on iOS focus */
-    .submit { padding: 16px; min-height: 48px; }
-    .footer-base { padding: max(20px, env(safe-area-inset-bottom)) 18px; }
-  }
-  @media (max-width: 480px) { .row2 { grid-template-columns: 1fr; } }
-  @media (hover: none) and (pointer: coarse) {
-    .submit:hover { transform: none !important; }
-  }
-
-  .lg-wave { stroke: #28775c; }
-  .lg-spark { fill: #28775c; }
-  html[data-theme="dark"] .lg-wave { stroke: #5fb896; }
-  html[data-theme="dark"] .lg-spark { fill: #5fb896; }
+.contact { display: grid; grid-template-columns: 1fr 1.1fr; gap: clamp(40px, 6vw, 88px); align-items: start; max-width: 1040px; margin: 0 auto; }
+  .contact h1 { font-size: clamp(2.6rem, 5vw, 3.8rem); }
+  .contact .lede { margin-top: 18px; max-width: 40ch; }
+  .channels { margin-top: 36px; display: grid; gap: 10px; max-width: 380px; }
+  .channel { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 14px 16px; border-radius: 14px; background: var(--raise); box-shadow: inset 0 0 0 1px var(--line); }
+  .channel .k { font-size: 13.5px; color: var(--ink-3); }
+  .channel a { color: var(--ink); text-decoration: none; font-weight: 500; font-size: 15px; }
+  .channel a:hover { text-decoration: underline; text-underline-offset: 3px; }
+  .form-card { padding: clamp(22px, 3.5vw, 32px); border-radius: 17px; background: var(--card); }
+  .form { display: grid; gap: 16px; }
+  .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .field label { display: block; font-size: 13.5px; font-weight: 500; color: var(--ink-2); margin-bottom: 7px; }
+  .field input, .field textarea { width: 100%; min-height: 46px; padding: 12px 14px; border: 0; border-radius: 12px; background: var(--raise); box-shadow: inset 0 0 0 1px var(--line); color: var(--ink); font-size: 16px; }
+  .field textarea { min-height: 160px; resize: vertical; line-height: 1.5; }
+  .field input::placeholder, .field textarea::placeholder { color: var(--ink-3); }
+  .field input:focus, .field textarea:focus { outline: 2px solid var(--ink-2); outline-offset: 0; }
+  .form .btn { width: 100%; }
+  .form-msg { display: none; margin-bottom: 14px; padding: 12px 14px; border-radius: 12px; font-size: 14.5px; }
+  .form-msg.success { display: block; background: var(--green-wash); color: var(--green-ink); }
+  .form-msg.error { display: block; background: rgba(220,80,80,.12); color: #e58b8b; }
+  html[data-theme="light"] .form-msg.error { color: #a33a3a; }
+  @media (max-width: 860px) { .contact { grid-template-columns: 1fr; } .row2 { grid-template-columns: 1fr; } }
 </style>
-<link rel="stylesheet" href="vendor/lenis-1.2.3.css">
-<script src="vendor/lenis-1.2.3.min.js" defer></script>
-<script src="smooth-scroll.js?v=20261012a" defer></script>
-<style>/* New mark (logo.svg) carries its own tile, so the old frames are switched off. */.mark-img{display:block;width:100%;height:100%}:is(.logo-mark,.lm,.hm-mark,.lc-mark,.mark):has(>.mark-img){background:none!important;border:0!important;box-shadow:none!important;padding:0!important;border-radius:0!important}.logo>.mark-img{width:24px;height:24px}</style>
 </head>
 <body>
+<a class="skip" href="#main">Skip to content</a>
+<div class="stage stage-short" aria-hidden="true"></div>
 
-<nav>
-  <a href="index.html" class="logo">
-    <span class="logo-mark"><img class="mark-img" src="/logo.svg" alt="" width="26" height="26"></span>
-    <span class="logo-word">Sona</span>
-  </a>
-  <ul class="nav-links">
-    <li><a href="index.html#features">Features</a></li>
-    <li><a href="index.html#product">How it works</a></li>
-    <li><a href="index.html#pricing">Pricing</a></li>
-    <li><a href="contact.html" class="active">Contact</a></li>
-  </ul>
-  <div class="nav-right">
-    <button type="button" class="nav-signin" onclick="SonaAuth.openLogin()">Sign in</button>
-    <a href="#" class="btn btn-primary" onclick="event.preventDefault(); SonaAuth.openSignup();">Get started</a>
+<header class="nav" id="top">
+  <div class="wrap">
+    <a href="/" class="logo" aria-label="Sona home"><span class="logo-mark"><img class="mark-img" src="/logo.svg" alt="" width="26" height="26"></span><span class="logo-word">Sona</span></a>
+    <ul class="nav-links">
+      <li><a href="/#product">Product</a></li>
+      <li><a href="/#features">Features</a></li>
+      <li><a href="/#pricing">Pricing</a></li>
+      <li><a href="/docs.html">Docs</a></li>
+      <li><a href="/changelog.html">Changelog</a></li>
+    </ul>
+    <div class="nav-right">
+      <button type="button" class="nav-signin" onclick="SonaAuth.openLogin()">Sign in</button>
+      <a href="#" class="btn btn-go btn-sm" onclick="event.preventDefault(); SonaAuth.openSignup();"><span class="ba"><span class="ba-track"><svg class="ba-i" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg><span>Start free</span><svg class="ba-i" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></span></span></a>
+    </div>
+    <button class="menu-btn" type="button" aria-label="Open menu" aria-controls="mobile-menu" aria-expanded="false"><span></span><span></span></button>
   </div>
-  <button class="menu-btn" aria-label="Menu"><span></span><span></span></button>
-</nav>
+</header>
 
-<div class="mobile-menu">
-  <a href="index.html#features">Features</a>
-  <a href="index.html#product">How it works</a>
-  <a href="index.html#pricing">Pricing</a>
-  <a href="contact.html">Contact</a>
-  <a href="#" class="btn btn-primary" onclick="event.preventDefault(); SonaAuth.openSignup();">Start free</a>
+<div class="mobile-menu" id="mobile-menu" role="dialog" aria-modal="true" aria-label="Menu">
+  <ul class="mm-links">
+    <li style="--i:0"><a href="/#product"><b>Product</b><small>See Find, Decode, Write and Plan</small><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></a></li>
+    <li style="--i:1"><a href="/#features"><b>Features</b><small>What Sona does, in detail</small><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></a></li>
+    <li style="--i:2"><a href="/#pricing"><b>Pricing</b><small>Free, €19 or €39 a month</small><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></a></li>
+    <li style="--i:3"><a href="/docs.html"><b>Docs</b><small>Connect Sona to Claude</small><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></a></li>
+    <li style="--i:4"><a href="/changelog.html"><b>Changelog</b><small>What shipped, newest first</small><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></a></li>
+  </ul>
+  <div class="mm-actions" style="--i:5">
+    <a href="#" class="btn btn-line" onclick="event.preventDefault(); SonaAuth.openLogin();">Sign in</a>
+    <a href="#" class="btn btn-go" onclick="event.preventDefault(); SonaAuth.openSignup();"><span class="ba"><span class="ba-track"><svg class="ba-i" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg><span>Start free</span><svg class="ba-i" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></span></span></a>
+  </div>
 </div>
 
-<main>
-  <div class="wrap">
-    <div class="info" data-reveal>
-      <span class="eyebrow">Contact</span>
-      <h1>Let's talk.</h1>
-      <p>Questions, feedback, or just saying hello. I read every message.</p>
-      <div class="channels">
-        <div class="channel"><div class="k">Email</div><a href="mailto:david@buildwithsona.com" class="v channel-v">david@buildwithsona.com</a></div>
-        <div class="channel"><div class="k">X</div><a href="https://x.com/davidtostscale" class="v channel-v" target="_blank" rel="noopener">@davidtostscale</a></div>
-      </div>
+<main id="main" class="page">
+<div class="wrap contact">
+  <div>
+    <h1>Let's <em>talk</em>.</h1>
+    <p class="lede">Questions, feedback, or just saying hello. I read every message and reply personally.</p>
+    <div class="channels">
+      <div class="channel"><span class="k">Email</span><a href="mailto:david@buildwithsona.com">david@buildwithsona.com</a></div>
+      <div class="channel"><span class="k">X</span><a href="https://x.com/davidtostscale" target="_blank" rel="noopener">@davidtostscale</a></div>
     </div>
-    <div class="form-card" data-reveal style="transition-delay:.08s">
-      <div class="form-msg" id="form-msg"></div>
+  </div>
+  <div class="edge">
+    <div class="form-card">
+<div class="form-msg" id="form-msg"></div>
       <!-- Name, email, message — the three the API actually requires. Company
            and Topic were optional on both sides: work asked of the sender that
            nothing downstream read. -->
@@ -236,111 +115,59 @@
           <div class="field"><label for="c-email">Email</label><input type="email" id="c-email" placeholder="you@email.com" required autocomplete="email"></div>
         </div>
         <div class="field"><label for="c-message">Message</label><textarea id="c-message" placeholder="What's on your mind?" required></textarea></div>
-        <button type="submit" class="submit" id="c-submit">Send message</button>
+        <button type="submit" class="btn btn-go" id="c-submit">Send message</button>
       </form>
     </div>
   </div>
+</div>
 </main>
 
-<footer>
-  <div class="footer-base">
-    <a href="index.html" class="logo">
-      <span class="logo-mark"><img class="mark-img" src="/logo.svg" alt="" width="26" height="26"></span>
-      <span class="logo-word">Sona</span>
-    </a>
-    <span>&copy; 2026 David Tost</span>
+<footer class="site-foot">
+  <div class="wrap">
+    <div class="foot-top">
+      <div class="foot-brand">
+        <a href="/" class="logo" aria-label="Sona home"><span class="logo-mark"><img class="mark-img" src="/logo.svg" alt="" width="26" height="26"></span><span class="logo-word">Sona</span></a>
+        <p>Find the posts that worked, see why, and write your own version.</p>
+      </div>
+      <nav class="foot-col" aria-label="Product">
+        <h3>Product</h3>
+        <a href="/#product">Tour</a>
+        <a href="/#features">Features</a>
+        <a href="/#pricing">Pricing</a>
+        <a href="/docs.html">Sona in Claude</a>
+      </nav>
+      <nav class="foot-col" aria-label="Resources">
+        <h3>Resources</h3>
+        <a href="/docs.html">Docs</a>
+        <a href="/changelog.html">Changelog</a>
+        <a href="/contact.html">Contact</a>
+      </nav>
+      <nav class="foot-col" aria-label="Company">
+        <h3>Company</h3>
+        <a href="/company.html">About</a>
+        <a href="https://x.com/davidtostscale" target="_blank" rel="noopener">X</a>
+        <a href="https://www.linkedin.com/in/davidtost/" target="_blank" rel="noopener">LinkedIn</a>
+        <a href="https://github.com/davidtost5/sona" target="_blank" rel="noopener">GitHub</a>
+      </nav>
+    </div>
+    <div class="foot-base">
+      <span>&copy; 2026 David Tost</span>
+      <div class="links">
+        <a href="/privacy.html">Privacy</a>
+        <a href="/terms.html">Terms</a>
+        <a href="/security.html">Security</a>
+      </div>
+    </div>
   </div>
 </footer>
-<script defer src="data.js"></script>
+
+<div class="theme-toggle" role="group" aria-label="Colour theme">
+  <button type="button" data-theme-set="light" aria-pressed="false" aria-label="Light mode" title="Light mode"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2M12 19.5v2M4.6 4.6l1.4 1.4M18 18l1.4 1.4M2.5 12h2M19.5 12h2M4.6 19.4 6 18M18 6l1.4-1.4"/></svg></button>
+  <button type="button" data-theme-set="dark" aria-pressed="false" aria-label="Dark mode" title="Dark mode"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5Z"/></svg></button>
+</div>
+<script defer src="/data.js"></script>
 <script>
-  // Lazy load Sona Auth & Supabase
-  window.SonaAuth = window.SonaAuth || {
-    _queue: [],
-    openLogin: function() { this._queue.push(['openLogin']); window.loadAuthScripts && window.loadAuthScripts(); },
-    openSignup: function() { this._queue.push(['openSignup']); window.loadAuthScripts && window.loadAuthScripts(); },
-    openWaitlist: function() { this._queue.push(['openWaitlist']); window.loadAuthScripts && window.loadAuthScripts(); },
-    openSettings: function() { this._queue.push(['openSettings']); window.loadAuthScripts && window.loadAuthScripts(); },
-    getUser: function() { return null; },
-    signOut: function() { this._queue.push(['signOut']); window.loadAuthScripts && window.loadAuthScripts(); }
-  };
 
-  (function() {
-    window.loadAuthScripts = function() {
-      if (window.__authScriptsLoaded) return;
-      window.__authScriptsLoaded = true;
-      const authScript = document.createElement('script');
-      // Versioned URL. A response cached under the old max-age=86400 keeps that
-      // lifetime and will not revalidate, so browsers that loaded auth.js before
-      // the header fix stay on a stale copy for up to a day — which is exactly how
-      // a fixed auth modal kept rendering empty. A new URL sidesteps the cache
-      // entirely. Bump this string whenever auth.js changes.
-      authScript.src = "auth.js?v=20261002a";
-      authScript.async = false;
-      document.head.appendChild(authScript);
-
-      // Clerk layer, loaded after auth.js so it can capture the Supabase
-      // implementation and delegate to it while CLERK_PUBLISHABLE_KEY is unset.
-      // Injected scripts run as soon as each downloads unless async is false;
-      // async = false makes them run in insertion order, so this always runs second.
-      const clerkScript = document.createElement('script');
-      clerkScript.src = "clerk-auth.js?v=20261002a";
-      clerkScript.async = false;
-      document.head.appendChild(clerkScript);
-    };
-
-    // Auto-load if user has a cached session in localStorage
-    let hasSession = false;
-    try {
-      for (let i = 0; i < localStorage.length; i++) {
-        const key = localStorage.key(i);
-        if (key && key.startsWith('sb-') && key.endsWith('-auth-token')) {
-          hasSession = true;
-          break;
-        }
-        if (key && key.indexOf('clerk') !== -1) {
-          hasSession = true;
-          break;
-        }
-      }
-    } catch(e) {}
-
-    if (hasSession) {
-      window.loadAuthScripts();
-    } else {
-      // Lazy load after page is fully loaded to maximize LCP/FCP
-      window.addEventListener('load', () => {
-        if (window.requestIdleCallback) {
-          requestIdleCallback(() => setTimeout(window.loadAuthScripts, 1000));
-        } else {
-          setTimeout(window.loadAuthScripts, 2000);
-        }
-      });
-    }
-  })();
-</script>
-<script>
-  // Theme — fully automatic, follows the clock (head bootstrap set the initial state)
-  setInterval(() => {
-    const h = new Date().getHours();
-    if (!window.__sonaThemeChosen) document.documentElement.setAttribute('data-theme', (h < 7 || h >= 19) ? 'dark' : 'light');
-  }, 60 * 1000);
-
-  const nav = document.querySelector('nav');
-  window.addEventListener('scroll', () => nav.classList.toggle('scrolled', window.scrollY > 16), { passive: true });
-
-  const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }), { threshold: .15 });
-  document.querySelectorAll('[data-reveal]').forEach(el => io.observe(el));
-
-  const menuBtn = document.querySelector('.menu-btn');
-  const mm = document.querySelector('.mobile-menu');
-  menuBtn.addEventListener('click', () => {
-    const open = !mm.classList.contains('open');
-    menuBtn.classList.toggle('open', open); mm.classList.toggle('open', open);
-    document.body.style.overflow = open ? 'hidden' : '';
-  });
-  mm.querySelectorAll('a').forEach(a => a.addEventListener('click', () => { menuBtn.classList.remove('open'); mm.classList.remove('open'); document.body.style.overflow = ''; }));
-
-  // Contact form -> SonaData (Supabase)
   const form = document.getElementById('contact-form');
   const msg = document.getElementById('form-msg');
   const btn = document.getElementById('c-submit');
