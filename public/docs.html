@@ -1,8 +1,21 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script>(function(){try{var t=null;try{t=localStorage.getItem('sona-theme');}catch(e){}if(t==='light'||t==='dark'){window.__sonaThemeChosen=true;}else{t='light';}document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#ffffff">
+<link rel="icon" type="image/svg+xml" href="/logo.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+<link rel="icon" type="image/png" sizes="96x96" href="/favicon-96.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="stylesheet" href="/fonts/fonts.css">
+<link rel="stylesheet" href="/site.css?v=20261106c">
+<link rel="stylesheet" href="/vendor/lenis-1.2.3.css">
+<script src="/vendor/lenis-1.2.3.min.js" defer></script>
+<script src="/smooth-scroll.js?v=20261012a" defer></script>
+<script src="/site.js?v=20261106c" defer></script>
 <title>Sona MCP: search your saved posts from Claude</title>
 <meta name="description" content="Connect Sona to Claude with MCP and search your saved outlier posts, hooks and drafts from the chat. Setup steps and every available tool.">
 <link rel="canonical" href="https://buildwithsona.com/docs.html">
@@ -19,602 +32,81 @@
 <meta name="twitter:description" content="Connect Sona to Claude with MCP and search your saved outlier posts, hooks and drafts from the chat. Setup steps and every available tool.">
 <meta name="twitter:image" content="https://buildwithsona.com/og.png">
 <style>
-  @font-face { font-family: 'Aeonik Pro'; src: local('Aeonik Pro'), local('AeonikPro-Regular'); font-weight: 400; font-style: normal; }
-  @font-face { font-family: 'Aeonik Pro'; src: local('Aeonik Pro Medium'), local('AeonikPro-Medium'); font-weight: 500; font-style: normal; }
-  @font-face { font-family: 'Aeonik Pro'; src: local('Aeonik Pro Bold'), local('AeonikPro-Bold'); font-weight: 700; font-style: normal; }
-</style>
-<style>
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-
-  :root {
-    --green-dark: #1a2e1a;
-    --green-deep: #0f1f0f;
-    --green-accent: #c8e64a;
-    --green-muted: #a3b858;
-    --off-white: #f5f4f0;
-    --light-grey: #eae9e4;
-    --text-dark: #1a1a1a;
-    --text-mid: #5a5a56;
-    --text-light: #8a8a84;
-    --border: #ddd9d0;
-  }
-
-  html { scroll-behavior: smooth; }
-
-  body {
-    font-family: 'Aeonik Pro', -apple-system, sans-serif;
-    background: var(--off-white);
-    color: var(--text-dark);
-    -webkit-font-smoothing: antialiased;
-    overflow-x: hidden;
-  }
-
-  /* ─── NAV ─── */
-  nav {
-    position: fixed;
-    top: 0; left: 0; right: 0;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 20px 40px;
-    z-index: 1000;
-    background: rgba(245,244,240,0.9);
-    backdrop-filter: blur(12px);
-    border-bottom: 1px solid var(--border);
-  }
-
-  .nav-logo {
-    font-size: 20px;
-    font-weight: 700;
-    letter-spacing: -0.5px;
-    color: var(--text-dark);
-    text-decoration: none;
-  }
-
-  .nav-links {
-    display: flex;
-    list-style: none;
-    gap: 32px;
-  }
-
-  .nav-links a {
-    font-size: 14px;
-    color: var(--text-mid);
-    text-decoration: none;
-    font-weight: 500;
-    position: relative;
-    transition: color 0.3s;
-  }
-
-  .nav-links a::after {
-    content: '';
-    position: absolute;
-    bottom: -4px;
-    left: 0;
-    width: 0;
-    height: 1.5px;
-    background: var(--green-accent);
-    transition: width 0.3s ease;
-  }
-
-  .nav-links a:hover { color: var(--text-dark); }
-  .nav-links a:hover::after { width: 100%; }
-  .nav-links a.active { color: var(--text-dark); }
-  .nav-links a.active::after { width: 100%; }
-
-  .nav-right {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-  }
-
-  .nav-right > a:first-child {
-    font-size: 14px;
-    color: var(--text-mid);
-    text-decoration: none;
-    font-weight: 500;
-    transition: color 0.3s;
-  }
-
-  .nav-right > a:first-child:hover { color: var(--text-dark); }
-
-  .btn-primary {
-    padding: 10px 22px;
-    background: var(--green-dark);
-    color: #fff;
-    border-radius: 40px;
-    font-size: 14px;
-    font-weight: 500;
-    text-decoration: none;
-    transition: background 0.3s, transform 0.3s;
-  }
-
-  .btn-primary:hover { background: #243d24; transform: scale(1.04); }
-
-  /* ─── DOCS LAYOUT ─── */
-  .docs-layout {
-    display: grid;
-    grid-template-columns: 240px 1fr;
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 100px 48px 80px;
-    gap: 60px;
-    min-height: 100vh;
-  }
-
-  /* ─── SIDEBAR ─── */
-  .docs-sidebar {
-    position: sticky;
-    top: 100px;
-    height: fit-content;
-    padding-top: 40px;
-  }
-
-  .sidebar-section {
-    margin-bottom: 32px;
-  }
-
-  .sidebar-section h4 {
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 1.5px;
-    color: var(--text-light);
-    font-weight: 600;
-    margin-bottom: 12px;
-  }
-
-  .sidebar-section ul {
-    list-style: none;
-  }
-
-  .sidebar-section li {
-    margin-bottom: 4px;
-  }
-
-  .sidebar-section a {
-    font-size: 14px;
-    color: var(--text-mid);
-    text-decoration: none;
-    padding: 6px 12px;
-    display: block;
-    border-radius: 8px;
-    transition: background 0.2s, color 0.2s;
-  }
-
-  .sidebar-section a:hover {
-    background: var(--light-grey);
-    color: var(--text-dark);
-  }
-
-  .sidebar-section a.active {
-    background: var(--green-dark);
-    color: #fff;
-  }
-
-  /* ─── DOCS CONTENT ─── */
-  .docs-content {
-    padding-top: 40px;
-    max-width: 720px;
-  }
-
-  .docs-content h1 {
-    font-size: 40px;
-    font-weight: 700;
-    letter-spacing: -1.5px;
-    margin-bottom: 12px;
-  }
-
-  .docs-content .subtitle {
-    font-size: 17px;
-    color: var(--text-mid);
-    line-height: 1.6;
-    margin-bottom: 48px;
-  }
-
-  .docs-content h2 {
-    font-size: 24px;
-    font-weight: 600;
-    letter-spacing: -0.5px;
-    margin: 48px 0 16px;
-    padding-top: 24px;
-    border-top: 1px solid var(--border);
-  }
-
-  .docs-content h3 {
-    font-size: 18px;
-    font-weight: 600;
-    margin: 32px 0 12px;
-  }
-
-  .docs-content p {
-    font-size: 15px;
-    color: var(--text-mid);
-    line-height: 1.7;
-    margin-bottom: 16px;
-  }
-
-  .docs-content ul {
-    margin: 0 0 20px 20px;
-    color: var(--text-mid);
-    font-size: 15px;
-    line-height: 1.8;
-  }
-
-  /* Code blocks */
-  .code-block {
-    background: var(--green-dark);
-    border-radius: 12px;
-    padding: 24px;
-    margin: 20px 0 28px;
-    overflow-x: auto;
-    position: relative;
-  }
-
-  .code-block-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 16px;
-  }
-
-  .code-block-label {
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    color: rgba(255,255,255,0.4);
-    font-weight: 600;
-  }
-
-  .code-block-lang {
-    font-size: 11px;
-    padding: 3px 8px;
-    background: rgba(255,255,255,0.08);
-    border-radius: 4px;
-    color: rgba(255,255,255,0.5);
-  }
-
-  .code-block pre {
-    font-family: 'SF Mono', 'Fira Code', monospace;
-    font-size: 13px;
-    line-height: 1.7;
-    color: rgba(255,255,255,0.85);
-    white-space: pre;
-    margin: 0;
-  }
-
-  .code-block .keyword { color: var(--green-accent); }
-  .code-block .string { color: #a8d8a8; }
-  .code-block .comment { color: rgba(255,255,255,0.3); }
-  .code-block .punctuation { color: rgba(255,255,255,0.5); }
-
-  /* Info callout */
-  .callout {
-    background: rgba(200,230,74,0.08);
-    border-left: 3px solid var(--green-accent);
-    border-radius: 0 12px 12px 0;
-    padding: 20px 24px;
-    margin: 24px 0;
-  }
-
-  .callout p {
-    font-size: 14px;
-    color: var(--text-dark);
-    margin: 0;
-  }
-
-  .callout strong {
-    font-weight: 600;
-  }
-
-  /* Endpoint pills */
-  .endpoint {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    background: #fff;
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 8px 14px;
-    margin: 8px 0 16px;
-    font-family: 'SF Mono', monospace;
-    font-size: 13px;
-  }
-
-  .endpoint .method {
-    font-weight: 700;
-    font-size: 11px;
-    padding: 2px 6px;
-    border-radius: 4px;
-    text-transform: uppercase;
-  }
-
-  .method-get { background: rgba(74,144,226,0.12); color: #2d6bc4; }
-  .method-post { background: rgba(200,230,74,0.2); color: #4a6810; }
-
-  /* Table */
-  .docs-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin: 16px 0 28px;
-    font-size: 14px;
-  }
-
-  .docs-table th {
-    text-align: left;
-    font-weight: 600;
-    font-size: 12px;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    color: var(--text-light);
-    padding: 12px 16px;
-    border-bottom: 1px solid var(--border);
-  }
-
-  .docs-table td {
-    padding: 12px 16px;
-    border-bottom: 1px solid var(--border);
-    color: var(--text-mid);
-  }
-
-  .docs-table code {
-    font-family: 'SF Mono', monospace;
-    font-size: 12px;
-    padding: 2px 6px;
-    background: var(--light-grey);
-    border-radius: 4px;
-  }
-
-  /* ─── FOOTER ─── */
-  .footer-main {
-    background: var(--off-white);
-    border-top: 1px solid var(--border);
-    padding: 72px 48px 0;
-  }
-
-  .footer-top {
-    max-width: 1100px;
-    margin: 0 auto;
-    display: grid;
-    grid-template-columns: 1.2fr 1fr 0.8fr;
-    gap: 60px;
-    padding-bottom: 60px;
-  }
-
-  .footer-nav-links {
-    list-style: none;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-  }
-
-  .footer-nav-links a {
-    font-size: 28px;
-    font-weight: 500;
-    color: var(--text-dark);
-    text-decoration: none;
-    letter-spacing: -0.5px;
-    transition: color 0.3s, transform 0.3s;
-    display: inline-block;
-  }
-
-  .footer-nav-links a:hover {
-    color: var(--green-muted);
-    transform: translateX(6px);
-  }
-
-  .footer-col-title {
-    font-size: 12px;
-    text-transform: uppercase;
-    letter-spacing: 1.5px;
-    color: var(--text-light);
-    font-weight: 600;
-    margin-bottom: 20px;
-  }
-
-  .footer-contact-info {
-    font-size: 14px;
-    line-height: 1.8;
-    color: var(--text-mid);
-  }
-
-  .footer-contact-links {
-    margin-top: 20px;
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-  }
-
-  .footer-contact-links a {
-    font-size: 14px;
-    color: var(--text-mid);
-    text-decoration: none;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    transition: color 0.3s;
-  }
-
-  .footer-contact-links a:hover { color: var(--text-dark); }
-
-  .footer-social-list {
-    list-style: none;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-  }
-
-  .footer-social-list a {
-    font-size: 14px;
-    color: var(--text-mid);
-    text-decoration: none;
-    transition: color 0.3s;
-  }
-
-  .footer-social-list a:hover { color: var(--text-dark); }
-
-  .footer-bottom-bar {
-    max-width: 1100px;
-    margin: 0 auto;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 20px 0;
-    border-top: 1px solid var(--border);
-  }
-
-  .footer-copyright { font-size: 13px; color: var(--text-light); }
-
-  .footer-bottom-links {
-    display: flex;
-    gap: 24px;
-    list-style: none;
-  }
-
-  .footer-bottom-links a {
-    font-size: 13px;
-    color: var(--text-light);
-    text-decoration: none;
-    transition: color 0.3s;
-  }
-
-  .footer-bottom-links a:hover { color: var(--text-dark); }
-
-  .footer-brand {
-    text-align: center;
-    padding: 40px 48px 24px;
-    font-size: clamp(48px, 10vw, 120px);
-    font-weight: 800;
-    letter-spacing: -4px;
-    color: var(--light-grey);
-    user-select: none;
-  }
-
-  /* ─── ANIMATIONS (Motion-driven) ─── */
-  [data-reveal] {
-    opacity: 0;
-    transform: translateY(18px);
-  }
-  [data-reveal].revealed { opacity: 1; transform: translateY(0); }
-
-  /* ─── MOBILE MENU ─── */
-  .mobile-menu-btn {
-    display: none;
-    background: none;
-    border: none;
-    width: 28px;
-    height: 20px;
-    position: relative;
-    cursor: pointer;
-    z-index: 2;
-  }
-  .mobile-menu-btn span {
-    display: block;
-    width: 100%;
-    height: 2px;
-    background: var(--text-dark);
-    border-radius: 2px;
-    position: absolute;
-    left: 0;
-    transition: transform 0.3s ease, opacity 0.3s ease;
-  }
-  .mobile-menu-btn span:first-child { top: 4px; }
-  .mobile-menu-btn span:last-child { bottom: 4px; }
-  .mobile-menu-btn.open span:first-child { top: 50%; transform: translateY(-50%) rotate(45deg); }
-  .mobile-menu-btn.open span:last-child { bottom: auto; top: 50%; transform: translateY(-50%) rotate(-45deg); }
-
-  .mobile-menu {
-    display: none;
-    position: fixed;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background: var(--off-white);
-    z-index: 99;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    gap: 24px;
-    padding: 80px 20px 40px;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-    pointer-events: none;
-  }
-  .mobile-menu.open {
-    display: flex;
-    opacity: 1;
-    pointer-events: auto;
-  }
-  .mobile-menu a {
-    font-size: 28px;
-    font-weight: 600;
-    color: var(--text-dark);
-    text-decoration: none;
-    letter-spacing: -0.5px;
-  }
-  .mobile-menu-cta {
-    margin-top: 16px;
-    padding: 14px 40px !important;
-    background: var(--green-dark);
-    color: #fff !important;
-    border-radius: 10px;
-    font-size: 16px !important;
-  }
-
-  @media (max-width: 768px) {
-    nav { padding: 16px 24px; }
-    .nav-links { display: none; }
-    .nav-right { display: none; }
-    .mobile-menu-btn { display: block; }
-    .mobile-menu { display: flex; }
-    .docs-layout { grid-template-columns: 1fr; padding: 100px 24px 60px; gap: 0; }
-    .docs-sidebar { position: static; padding-top: 20px; }
-    .docs-content { padding-top: 20px; }
-    .docs-content h1 { font-size: 32px; }
-    .footer-top { grid-template-columns: 1fr; }
-    .footer-main { padding: 48px 24px 0; }
+.docs { display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 64px; max-width: 1040px; margin: 0 auto; }
+  .docs-side { position: sticky; top: 96px; align-self: start; max-height: calc(100vh - 120px); overflow-y: auto; }
+  .sidebar-section + .sidebar-section { margin-top: 26px; }
+  .sidebar-section h4 { font-size: 13px; font-weight: 500; color: var(--ink); margin-bottom: 8px; }
+  .sidebar-section ul { list-style: none; padding: 0; display: grid; gap: 1px; }
+  .sidebar-section a { display: block; padding: 6px 10px; margin-left: -10px; border-radius: 8px; font-size: 14px; color: var(--ink-3); text-decoration: none; transition: color .2s, background-color .2s; }
+  .sidebar-section a:hover { color: var(--ink); }
+  .sidebar-section a.active { color: var(--ink); background: var(--raise-2); }
+  .docs .prose { max-width: none; margin: 0; }
+  .docs .prose h2:first-of-type { margin-top: 48px; }
+  .docs .prose h2 { font-size: clamp(1.6rem, 2.4vw, 2rem); }
+  .docs .prose h2[id*="_"] { font-family: var(--mono); font-size: 1.2rem; letter-spacing: -.02em; }
+  .docs .prose > h2:first-child, .docs .prose > p:first-child + * { margin-top: 0; }
+  .callout { padding: 14px 16px; border-radius: 10px; background: var(--raise); border: 1px solid var(--line); }
+  .callout strong { display: block; color: var(--ink); margin-bottom: 4px; }
+  .callout p { margin: 0; }
+  .code-block { border-radius: 10px; background: var(--card); border: 1px solid var(--line); box-shadow: var(--shadow-card); overflow: hidden; }
+  .code-block-header { display: flex; justify-content: space-between; padding: 10px 16px; border-bottom: 1px solid var(--line); font-size: 12.5px; color: var(--ink-3); }
+  .code-block pre { padding: 16px; }
+  .docs-table { width: 100%; border-collapse: collapse; font-size: 14.5px; border-radius: 10px; overflow: hidden; box-shadow: inset 0 0 0 1px var(--line); }
+  .docs-table th { text-align: left; font-weight: 500; color: var(--ink); background: var(--raise); }
+  .docs-table th, .docs-table td { padding: 11px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  .docs-table tr:last-child td { border-bottom: 0; }
+  @media (max-width: 860px) {
+    .docs { grid-template-columns: minmax(0, 1fr); gap: 0; }
+    .docs-side { display: none; }
+    .docs-table { display: block; overflow-x: auto; }
   }
 </style>
-<link rel="stylesheet" href="vendor/lenis-1.2.3.css">
-<script src="vendor/lenis-1.2.3.min.js" defer></script>
-<script src="smooth-scroll.js?v=20261012a" defer></script>
-<link rel="icon" type="image/svg+xml" href="/logo.svg">
-<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
-<link rel="icon" type="image/png" sizes="96x96" href="/favicon-96.png">
-<link rel="apple-touch-icon" href="/apple-touch-icon.png">
 </head>
 <body>
+<a class="skip" href="#main">Skip to content</a>
+<div class="rails" aria-hidden="true"></div>
 
-<nav>
-  <a href="index.html" class="nav-logo">Sona</a>
-  <ul class="nav-links">
-    <li><a href="company.html">About</a></li>
-    <li><a href="changelog.html">Changelog</a></li>
-    <li><a href="docs.html" class="active">Docs</a></li>
-    <li><a href="brand.html">Brand</a></li>
-  </ul>
-  <div class="nav-right">
-    <a href="contact.html">Contact</a>
-    <a href="#" class="btn-primary">Log in</a>
+<header class="nav" id="top">
+  <div class="wrap">
+    <a href="/" class="logo" aria-label="Sona home"><span class="logo-mark"><img class="mark-img" src="/logo.svg" alt="" width="24" height="24"></span><span class="logo-word">Sona</span></a>
+    <ul class="nav-links">
+      <li><a href="/#product">Product</a></li>
+      <li><a href="/#features">Features</a></li>
+      <li><a href="/#pricing">Pricing</a></li>
+      <li><a href="/docs.html" aria-current="page">Docs</a></li>
+      <li><a href="/changelog.html">Changelog</a></li>
+    </ul>
+    <div class="nav-right">
+      <button type="button" class="nav-signin" onclick="SonaAuth.openLogin()">Sign in</button>
+      <a href="#" class="btn btn-go btn-sm" onclick="event.preventDefault(); SonaAuth.openSignup();">Start free</a>
+    </div>
+    <button class="menu-btn" type="button" aria-label="Open menu" aria-controls="mobile-menu" aria-expanded="false"><span></span><span></span></button>
   </div>
-  <button class="mobile-menu-btn" aria-label="Menu">
-    <span></span><span></span>
-  </button>
-</nav>
+</header>
 
-<div class="mobile-menu">
-  <a href="index.html">Home</a>
-  <a href="company.html">About</a>
-  <a href="changelog.html">Changelog</a>
-  <a href="docs.html">Docs</a>
-  <a href="brand.html">Brand</a>
-  <a href="#" class="mobile-menu-cta">Log in</a>
+<div class="mobile-menu" id="mobile-menu" role="dialog" aria-modal="true" aria-label="Menu">
+  <ul class="mm-links">
+    <li style="--i:0"><a href="/#product"><b>Product</b><small>See Find, Decode, Write and Plan</small><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></a></li>
+    <li style="--i:1"><a href="/#features"><b>Features</b><small>What Sona does, in detail</small><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></a></li>
+    <li style="--i:2"><a href="/#pricing"><b>Pricing</b><small>Free, €19 or €39 a month</small><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></a></li>
+    <li style="--i:3"><a href="/docs.html"><b>Docs</b><small>Connect Sona to Claude</small><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></a></li>
+    <li style="--i:4"><a href="/changelog.html"><b>Changelog</b><small>What shipped, newest first</small><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></a></li>
+  </ul>
+  <div class="mm-actions" style="--i:5">
+    <a href="#" class="btn btn-line" onclick="event.preventDefault(); SonaAuth.openLogin();">Sign in</a>
+    <a href="#" class="btn btn-go" onclick="event.preventDefault(); SonaAuth.openSignup();">Start free</a>
+  </div>
 </div>
 
-<!-- Docs Layout -->
-<div class="docs-layout">
-  <!-- Sidebar. Sections mirror what the server actually exposes: three tools,
-       one endpoint. The previous page documented a transaction-enrichment API
-       at api.sona.dev that has never existed. -->
-  <aside class="docs-sidebar">
-    <div class="sidebar-section">
+<main id="main" class="page">
+<div class="wrap" style="--col:1040px">
+  <div class="page-head" id="intro">
+    <h1>Sona in Claude <span class="tone">through MCP.</span></h1>
+    <p class="lede">Connect Sona to Claude with MCP and search outlier posts, hooks and decodes from the chat.</p>
+  </div>
+  <div class="docs">
+    <aside class="docs-side" aria-label="On this page">
+<div class="sidebar-section">
       <h4>Getting Started</h4>
       <ul>
         <li><a href="#intro" class="active">Introduction</a></li>
@@ -637,11 +129,9 @@
         <li><a href="#errors">Errors</a></li>
       </ul>
     </div>
-  </aside>
-
-  <main class="docs-content">
-    <h1 id="intro">Sona MCP</h1>
-    <p>Sona indexes high-performing posts and videos from entrepreneurs and creators, with real engagement figures. The MCP server exposes that index to any Model Context Protocol client — search it for proven hooks, then decode a post to get the reusable pattern behind it.</p>
+    </aside>
+    <article class="prose">
+<p>Sona indexes high-performing posts and videos from entrepreneurs and creators, with real engagement figures. The MCP server exposes that index to any Model Context Protocol client — search it for proven hooks, then decode a post to get the reusable pattern behind it.</p>
 
     <div class="callout">
       <strong>Endpoint</strong>
@@ -720,174 +210,69 @@
         <tr><td><code>503</code></td><td><code>decode_post</code> only: the decoder is not configured or is out of credit</td></tr>
       </tbody>
     </table>
-  </main>
+    </article>
+  </div>
 </div>
+</main>
 
-<!-- Footer -->
-<footer class="footer-main">
-  <div class="footer-top">
-    <div>
-      <ul class="footer-nav-links">
-        <li><a href="index.html">Product</a></li>
-        <li><a href="company.html">About</a></li>
-        <li><a href="changelog.html">Changelog</a></li>
-        <li><a href="contact.html">Contact</a></li>
-      </ul>
-    </div>
-    <div>
-      <div class="footer-col-title">Contact</div>
-      <div class="footer-contact-info">
-        Sona is made by David Tost.<br>
-        Questions and billing help:
+<footer class="site-foot">
+  <div class="wrap">
+    <div class="foot-top">
+      <div class="foot-brand">
+        <a href="/" class="logo" aria-label="Sona home"><span class="logo-mark"><img class="mark-img" src="/logo.svg" alt="" width="24" height="24"></span><span class="logo-word">Sona</span></a>
+        <p>Find the posts that worked, see why, and write your own version.</p>
       </div>
-      <div class="footer-contact-links">
-        <a href="mailto:david@buildwithsona.com">&#9993; david@buildwithsona.com</a>
-      </div>
+      <nav class="foot-col" aria-label="Product">
+        <h3>Product</h3>
+        <a href="/#product">Tour</a>
+        <a href="/#features">Features</a>
+        <a href="/#pricing">Pricing</a>
+        <a href="/docs.html">Sona in Claude</a>
+      </nav>
+      <nav class="foot-col" aria-label="Resources">
+        <h3>Resources</h3>
+        <a href="/docs.html">Docs</a>
+        <a href="/changelog.html">Changelog</a>
+        <a href="/contact.html">Contact</a>
+      </nav>
+      <nav class="foot-col" aria-label="Company">
+        <h3>Company</h3>
+        <a href="/company.html">About</a>
+        <a href="https://x.com/davidtostscale" target="_blank" rel="noopener">X</a>
+        <a href="https://www.linkedin.com/in/davidtost/" target="_blank" rel="noopener">LinkedIn</a>
+        <a href="https://github.com/davidtost5/sona" target="_blank" rel="noopener">GitHub</a>
+      </nav>
     </div>
-    <div>
-      <div class="footer-col-title">Social</div>
-      <ul class="footer-social-list">
-        <li><a href="https://x.com/davidtostscale" target="_blank" rel="noopener">X</a></li>
-        <li><a href="https://www.linkedin.com/in/davidtost/" target="_blank" rel="noopener">LinkedIn</a></li>
-        <li><a href="https://github.com/davidtost5/sona" target="_blank" rel="noopener">GitHub</a></li>
-      </ul>
+    <div class="foot-base">
+      <span>&copy; 2026 David Tost</span>
+      <div class="links">
+        <a href="/privacy.html">Privacy</a>
+        <a href="/terms.html">Terms</a>
+        <a href="/security.html">Security</a>
+      </div>
+      <div class="theme-toggle" role="group" aria-label="Colour theme">
+  <button type="button" data-theme-set="light" aria-pressed="false" aria-label="Light mode" title="Light mode"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2M12 19.5v2M4.6 4.6l1.4 1.4M18 18l1.4 1.4M2.5 12h2M19.5 12h2M4.6 19.4 6 18M18 6l1.4-1.4"/></svg></button>
+  <button type="button" data-theme-set="dark" aria-pressed="false" aria-label="Dark mode" title="Dark mode"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5Z"/></svg></button>
+</div>
     </div>
   </div>
-  <div class="footer-bottom-bar">
-    <span class="footer-copyright">&copy; 2026 David Tost &middot; <a href="privacy.html">Privacy</a> &middot; <a href="terms.html">Terms</a></span>
-  </div>
-  <div class="footer-brand">Sona</div>
 </footer>
 
+
 <script>
-  // ─── Mobile menu ───
-  const menuBtn = document.querySelector('.mobile-menu-btn');
-  const mobileMenu = document.querySelector('.mobile-menu');
-  if (menuBtn && mobileMenu) {
-    menuBtn.addEventListener('click', () => {
-      const opening = !mobileMenu.classList.contains('open');
-      menuBtn.classList.toggle('open', opening);
-      mobileMenu.classList.toggle('open', opening);
-      document.body.style.overflow = opening ? 'hidden' : '';
-    });
-    mobileMenu.querySelectorAll('a').forEach(link => {
-      link.addEventListener('click', () => {
-        menuBtn.classList.remove('open');
-        mobileMenu.classList.remove('open');
-        document.body.style.overflow = '';
+  // Sidebar: highlight the section in view.
+  (function () {
+    var links = document.querySelectorAll('.sidebar-section a');
+    var byId = {}; links.forEach(function (a) { byId[a.getAttribute('href').slice(1)] = a; });
+    var heads = document.querySelectorAll('.docs .prose h2[id]');
+    var io = new IntersectionObserver(function (es) {
+      es.forEach(function (e) {
+        if (!e.isIntersecting || !byId[e.target.id]) return;
+        links.forEach(function (l) { l.classList.remove('active'); });
+        byId[e.target.id].classList.add('active');
       });
-    });
-  }
-
-  // ─── Scroll reveal ───
-  const revealObserver = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        const el = entry.target;
-        if (el.hasAttribute('data-stagger')) {
-          Array.from(el.children).forEach((child, i) => {
-            child.style.transitionDelay = `${i * 0.08}s`;
-          });
-        }
-        el.classList.add('revealed');
-        revealObserver.unobserve(el);
-      }
-    });
-  }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
-  document.querySelectorAll('[data-reveal], [data-stagger]').forEach(el => revealObserver.observe(el));
-
-  // ─── Sidebar active tracking ───
-  const sidebarLinks = document.querySelectorAll('.sidebar-section a');
-  const sections = document.querySelectorAll('.docs-content h2');
-  const sidebarObserver = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        const idx = [...sections].indexOf(entry.target);
-        sidebarLinks.forEach(l => l.classList.remove('active'));
-        if (sidebarLinks[idx + 1]) sidebarLinks[idx + 1].classList.add('active');
-      }
-    });
-  }, { rootMargin: '-30% 0px -70% 0px' });
-  sections.forEach(s => sidebarObserver.observe(s));
-
-  // ─── Nav hide on scroll ───
-  let lastScrollY = 0;
-  const navEl = document.querySelector('nav');
-  window.addEventListener('scroll', () => {
-    const current = window.scrollY;
-    if (current > 80) {
-      navEl.classList.toggle('hidden', current > lastScrollY);
-    } else {
-      navEl.classList.remove('hidden');
-    }
-    lastScrollY = current;
-  }, { passive: true });
-</script>
-<script src="data.js" defer></script>
-<script>
-  // Lazy load Sona Auth & Supabase
-  window.SonaAuth = window.SonaAuth || {
-    _queue: [],
-    openLogin: function() { this._queue.push(['openLogin']); window.loadAuthScripts && window.loadAuthScripts(); },
-    openSignup: function() { this._queue.push(['openSignup']); window.loadAuthScripts && window.loadAuthScripts(); },
-    openWaitlist: function() { this._queue.push(['openWaitlist']); window.loadAuthScripts && window.loadAuthScripts(); },
-    openSettings: function() { this._queue.push(['openSettings']); window.loadAuthScripts && window.loadAuthScripts(); },
-    getUser: function() { return null; },
-    signOut: function() { this._queue.push(['signOut']); window.loadAuthScripts && window.loadAuthScripts(); }
-  };
-
-  (function() {
-    window.loadAuthScripts = function() {
-      if (window.__authScriptsLoaded) return;
-      window.__authScriptsLoaded = true;
-      const authScript = document.createElement('script');
-      // Versioned URL. A response cached under the old max-age=86400 keeps that
-      // lifetime and will not revalidate, so browsers that loaded auth.js before
-      // the header fix stay on a stale copy for up to a day — which is exactly how
-      // a fixed auth modal kept rendering empty. A new URL sidesteps the cache
-      // entirely. Bump this string whenever auth.js changes.
-      authScript.src = "auth.js?v=20261002a";
-      authScript.async = false;
-      document.head.appendChild(authScript);
-
-      // Clerk layer, loaded after auth.js so it can capture the Supabase
-      // implementation and delegate to it while CLERK_PUBLISHABLE_KEY is unset.
-      // Injected scripts run as soon as each downloads unless async is false;
-      // async = false makes them run in insertion order, so this always runs second.
-      const clerkScript = document.createElement('script');
-      clerkScript.src = "clerk-auth.js?v=20261002a";
-      clerkScript.async = false;
-      document.head.appendChild(clerkScript);
-    };
-
-    // Auto-load if user has a cached session in localStorage
-    let hasSession = false;
-    try {
-      for (let i = 0; i < localStorage.length; i++) {
-        const key = localStorage.key(i);
-        if (key && key.startsWith('sb-') && key.endsWith('-auth-token')) {
-          hasSession = true;
-          break;
-        }
-        if (key && key.indexOf('clerk') !== -1) {
-          hasSession = true;
-          break;
-        }
-      }
-    } catch(e) {}
-
-    if (hasSession) {
-      window.loadAuthScripts();
-    } else {
-      // Lazy load after page is fully loaded to maximize LCP/FCP
-      window.addEventListener('load', () => {
-        if (window.requestIdleCallback) {
-          requestIdleCallback(() => setTimeout(window.loadAuthScripts, 1000));
-        } else {
-          setTimeout(window.loadAuthScripts, 2000);
-        }
-      });
-    }
+    }, { rootMargin: '-20% 0px -70% 0px' });
+    heads.forEach(function (h) { io.observe(h); });
   })();
 </script>
 </body>
