@@ -556,37 +556,103 @@
   .hx-menu button:hover, .hx-menu button:focus-visible { background: var(--bg-soft); outline: 0; }
   .hx-menu svg { width: 16px; height: 16px; color: var(--text-mid); }
 
-  /* Zeno conversation */
-  .hx.chatting { padding-top: 4px; }
-  .hx.chatting .hx-orb, .hx.chatting .hx-hello, .hx.chatting .hx-sub, .hx.chatting .hx-setup { display: none; }
+  /* ─── Zeno conversation ───
+     Messages scroll; the composer stays pinned to the bottom of the view.
+     Zeno's turns carry its mark and a name, the user's sit in a bubble on
+     the right. Actions appear under a finished answer. */
+  .hx.chatting { display: flex; flex-direction: column; min-height: calc(100vh - 140px); padding: 0; }
+  .hx.chatting .hx-orb, .hx.chatting .hx-hello, .hx.chatting .hx-sub, .hx.chatting .hx-setup, .hx.chatting .hx-starters { display: none; }
   .view[data-view="home"]:has(.hx.chatting) > .hm-sec, .view[data-view="home"]:has(.hx.chatting) > .hm-recents { display: none; }
-  .hx-thread { text-align: left; }
+  .hx-thread { position: relative; flex: 1; text-align: left; }
   .hx-thread[hidden] { display: none; }
-  .hx-thread-head { display: flex; align-items: center; justify-content: space-between; padding: 4px 2px 14px; border-bottom: 1px solid var(--border); }
-  .hx-who { display: inline-flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 600; }
-  .hx-mini { width: 20px; height: 20px; }
-  .hx-new { padding: 6px 12px; border: 0; border-radius: 9px; background: var(--border); color: var(--text); font: inherit; font-size: 13px; cursor: pointer; }
-  .hx-new:hover { background: var(--border-strong); }
-  .hx-msgs { display: flex; flex-direction: column; gap: 18px; padding: 20px 0 8px; }
-  .hx-msg.you { align-self: flex-end; max-width: 85%; padding: 10px 14px; border-radius: 18px 18px 6px 18px; background: var(--hx-box); box-shadow: inset 0 0 0 1px var(--border); font-size: 15px; line-height: 1.55; white-space: pre-wrap; overflow-wrap: anywhere; }
-  .hx-msg.zeno { font-size: 15.5px; line-height: 1.65; color: var(--text); overflow-wrap: anywhere; }
-  .hx-msg.zeno p + p, .hx-msg.zeno p + ul, .hx-msg.zeno ul + p, .hx-msg.zeno p + ol, .hx-msg.zeno ol + p { margin-top: 10px; }
+  .hx-thread-head { position: sticky; top: -24px; z-index: 5; display: flex; align-items: center; justify-content: space-between; margin: -4px 0 0; padding: 12px 0; background: var(--bg); border-bottom: 1px solid var(--border); }
+  .hx-who { display: inline-flex; align-items: center; gap: 10px; }
+  .hx-who b { display: block; font-size: 14px; font-weight: 600; line-height: 1.2; }
+  .hx-who small { display: block; font-size: 12px; color: var(--text-dim); }
+  .hx-mini { width: 28px; height: 28px; }
+  .hx-new { display: inline-flex; align-items: center; gap: 6px; min-height: 34px; padding: 0 12px; border: 0; border-radius: 10px; background: transparent; color: var(--text-mid); font: inherit; font-size: 13.5px; cursor: pointer; box-shadow: inset 0 0 0 1px var(--border-strong); transition: background-color .15s, color .15s; }
+  .hx-new:hover { background: var(--bg-soft); color: var(--text); }
+  .hx-new svg { width: 15px; height: 15px; }
+  .hx-msgs { display: flex; flex-direction: column; gap: 26px; padding: 24px 0 16px; }
+
+  .hx-msg.you { align-self: flex-end; max-width: min(85%, 560px); padding: 10px 15px; border-radius: 20px 20px 6px 20px; background: var(--hx-box); box-shadow: inset 0 0 0 1px var(--border); font-size: 15px; line-height: 1.55; white-space: pre-wrap; overflow-wrap: anywhere; }
+  .hx-turn { display: grid; grid-template-columns: 28px minmax(0, 1fr); gap: 12px; align-items: start; }
+  .hx-ava { width: 28px; height: 28px; border-radius: 999px; background: radial-gradient(circle at 35% 30%, #a5b4fc, #818cf8 35%, #c084fc 65%, #f0abfc); box-shadow: 0 0 0 3px var(--bg), 0 2px 8px -2px rgba(129,140,248,.5); }
+  .hx-turn.streaming .hx-ava { animation: hxspin 2.4s linear infinite; }
+  @keyframes hxspin { to { filter: hue-rotate(360deg); } }
+  .hx-msg.zeno { max-width: 68ch; padding-top: 3px; font-size: 15.5px; line-height: 1.7; color: var(--text); overflow-wrap: anywhere; }
+  .hx-msg.zeno p + p, .hx-msg.zeno p + ul, .hx-msg.zeno ul + p, .hx-msg.zeno p + ol, .hx-msg.zeno ol + p { margin-top: 12px; }
   .hx-msg.zeno ul, .hx-msg.zeno ol { padding-left: 20px; }
-  .hx-msg.zeno li + li { margin-top: 4px; }
+  .hx-msg.zeno li + li { margin-top: 6px; }
+  .hx-msg.zeno li::marker { color: var(--text-dim); }
   .hx-msg.zeno strong { font-weight: 600; }
-  .hx-status { font-size: 13.5px; color: var(--text-dim); }
-  .hx-status::before { content: ''; display: inline-block; width: 6px; height: 6px; margin-right: 8px; border-radius: 99px; background: var(--accent); vertical-align: 1px; animation: hxpulse 1s ease-in-out infinite; }
-  @keyframes hxpulse { 50% { opacity: .25; } }
-  .hx-err { font-size: 14px; color: #d9534f; }
-  .hx-posts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-top: 12px; }
-  .hx-post { display: flex; flex-direction: column; gap: 8px; padding: 12px 14px; border-radius: 14px; background: var(--hx-box); box-shadow: inset 0 0 0 1px var(--border); font-size: 13.5px; }
-  .hx-post-top { display: flex; align-items: baseline; gap: 8px; }
+  .hx-msg.zeno .stopped { display: block; margin-top: 10px; font-size: 12.5px; color: var(--text-dim); }
+
+  /* Waiting: three dots, plus what Zeno is doing in words */
+  .hx-typing { display: inline-flex; align-items: center; gap: 10px; min-height: 26px; font-size: 13.5px; color: var(--text-dim); }
+  .hx-dots { display: inline-flex; gap: 4px; }
+  .hx-dots i { width: 6px; height: 6px; border-radius: 99px; background: var(--text-dim); animation: hxdot 1.2s ease-in-out infinite; }
+  .hx-dots i:nth-child(2) { animation-delay: .15s; } .hx-dots i:nth-child(3) { animation-delay: .3s; }
+  @keyframes hxdot { 0%, 80%, 100% { opacity: .25; transform: translateY(0); } 40% { opacity: 1; transform: translateY(-3px); } }
+
+  /* Actions under a finished answer */
+  .hx-acts { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 10px; margin-left: -8px; }
+  .hx-act { display: inline-flex; align-items: center; gap: 6px; min-height: 32px; padding: 0 10px; border: 0; border-radius: 8px; background: none; color: var(--text-dim); font: inherit; font-size: 13px; cursor: pointer; transition: background-color .15s, color .15s; }
+  .hx-act:hover { background: var(--bg-soft); color: var(--text); }
+  .hx-act svg { width: 15px; height: 15px; }
+  .hx-act.done { color: var(--accent); }
+
+  /* Failure: say what happened and offer the way back */
+  .hx-err { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; padding: 12px 14px; border-radius: 14px; background: rgba(220,38,38,.06); box-shadow: inset 0 0 0 1px rgba(220,38,38,.18); font-size: 14px; color: var(--text); }
+  .hx-err a, .hx-err button { display: inline-flex; align-items: center; min-height: 32px; padding: 0 12px; border: 0; border-radius: 9px; background: var(--surface); box-shadow: inset 0 0 0 1px var(--border-strong); color: var(--text); font: inherit; font-size: 13px; text-decoration: none; cursor: pointer; }
+
+  /* Post cards from the feed */
+  .hx-posts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-top: 14px; }
+  .hx-post { display: flex; flex-direction: column; gap: 8px; padding: 13px 14px; border-radius: 14px; background: var(--surface); box-shadow: inset 0 0 0 1px var(--border), 0 1px 2px rgba(20,20,30,.04); font-size: 13.5px; transition: box-shadow .15s; }
+  .hx-post:hover { box-shadow: inset 0 0 0 1px var(--border-strong), 0 6px 18px -10px rgba(20,20,30,.25); }
+  .hx-post-top { display: flex; align-items: center; gap: 8px; }
   .hx-post-top b { font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .hx-post-top .m { margin-left: auto; font-weight: 600; color: var(--accent); flex: none; }
+  .hx-post-top .m { margin-left: auto; flex: none; padding: 2px 8px; border-radius: 999px; background: var(--accent-soft); color: var(--accent); font-size: 12px; font-weight: 600; }
   .hx-post p { color: var(--text-mid); line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
-  .hx-post-act { display: flex; gap: 12px; font-size: 12.5px; }
-  .hx-post-act a, .hx-post-act button { padding: 0; border: 0; background: none; color: var(--text); font: inherit; text-decoration: underline; text-decoration-color: var(--border-strong); text-underline-offset: 3px; cursor: pointer; }
-  @media (max-width: 720px) { .hx-posts { grid-template-columns: 1fr; } .hx-msg.you { max-width: 92%; } }
+  .hx-post-act { display: flex; gap: 6px; margin-top: auto; }
+  .hx-post-act a, .hx-post-act button { display: inline-flex; align-items: center; min-height: 28px; padding: 0 10px; border: 0; border-radius: 8px; background: var(--bg-soft); color: var(--text); font: inherit; font-size: 12.5px; text-decoration: none; cursor: pointer; }
+  .hx-post-act a:hover, .hx-post-act button:hover { background: var(--border); }
+
+  /* The composer pins to the bottom while chatting */
+  .hx.chatting .hx-box { position: sticky; bottom: 30px; z-index: 6; margin-top: 8px; box-shadow: inset 0 0 0 1px var(--border-strong), 0 -12px 24px -8px var(--bg), 0 14px 34px -20px rgba(20,20,30,.4); }
+  .hx-send .hx-stop-ico { display: none; width: 16px; height: 16px; }
+  .hx-send.stop svg:not(.hx-stop-ico) { display: none; }
+  .hx-send.stop .hx-stop-ico { display: block; }
+  .hx-foot { display: none; margin: 0; font-size: 12px; line-height: 30px; color: var(--text-dim); text-align: center; }
+  /* Reaches into the scroller's bottom padding, so nothing shows through under the composer */
+  .hx.chatting .hx-foot { display: block; position: sticky; bottom: -28px; z-index: 6; height: 58px; padding-bottom: 28px; margin-bottom: -28px; background: var(--bg); }
+  .hx-jump { position: sticky; bottom: 168px; left: 50%; z-index: 7; display: flex; align-items: center; gap: 6px; margin: 0 auto; padding: 6px 12px; border: 0; border-radius: 999px; background: var(--surface); color: var(--text); font: inherit; font-size: 12.5px; cursor: pointer; box-shadow: 0 0 0 1px var(--border-strong), 0 8px 20px -8px rgba(20,20,30,.35); }
+  .hx-jump[hidden] { display: none; }
+  .hx-jump svg { width: 14px; height: 14px; }
+
+  /* Starters: four ways in, under the empty composer */
+  .hx-starters { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-top: 16px; }
+  .hx-chip { display: inline-flex; align-items: center; gap: 8px; min-height: 36px; padding: 0 14px; border: 0; border-radius: 999px; background: transparent; color: var(--text-mid); font: inherit; font-size: 13.5px; cursor: pointer; box-shadow: inset 0 0 0 1px var(--border-strong); transition: background-color .15s, color .15s, box-shadow .15s; }
+  .hx-chip:hover { background: var(--bg-soft); color: var(--text); }
+  .hx-chip svg { width: 15px; height: 15px; color: var(--accent); }
+
+  /* At 880px and below the page itself scrolls, so the composer pins to the
+     viewport instead of the content panel. */
+  @media (max-width: 880px) {
+    .content:has(.hx.chatting) { overflow: visible; }
+    .hx-thread-head { position: static; margin-top: 0; }
+    .hx.chatting .hx-box { bottom: calc(30px + env(safe-area-inset-bottom)); }
+    .hx.chatting .hx-foot { bottom: 0; height: calc(30px + env(safe-area-inset-bottom)); padding-bottom: env(safe-area-inset-bottom); margin-bottom: 0; }
+  }
+  @media (max-width: 720px) {
+    .hx.chatting { min-height: calc(100vh - 120px); }
+    .hx-posts { grid-template-columns: 1fr; }
+    .hx-msg.you { max-width: 92%; }
+    .hx-turn { grid-template-columns: 24px minmax(0, 1fr); gap: 10px; }
+    .hx-ava { width: 24px; height: 24px; }
+    .hx-chip { font-size: 13px; }
+    .hx-foot-more { display: none; }
+  }
   .hx-setup { margin-top: 28px; padding: 22px 20px 12px; text-align: left; border-radius: 24px; background: var(--hx-box); box-shadow: inset 0 0 0 1px var(--border); }
   .hx-setup[hidden] { display: none; }
   .hx-setup header { display: flex; align-items: center; gap: 12px; padding: 0 4px 10px; }
@@ -1350,10 +1416,11 @@
 
           <div class="hx-thread" id="hx-thread" hidden>
             <div class="hx-thread-head">
-              <span class="hx-who"><canvas class="hx-mini" id="hx-mini" width="40" height="40" aria-hidden="true"></canvas>Zeno</span>
-              <button type="button" class="hx-new" id="hx-new">New chat</button>
+              <span class="hx-who"><canvas class="hx-mini" id="hx-mini" width="40" height="40" aria-hidden="true"></canvas><span><b>Zeno</b><small>AI research partner</small></span></span>
+              <button type="button" class="hx-new" id="hx-new"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>New chat</button>
             </div>
-            <div class="hx-msgs" id="hx-msgs" aria-live="polite"></div>
+            <div class="hx-msgs" id="hx-msgs" role="log" aria-label="Conversation with Zeno" aria-live="polite"></div>
+            <button type="button" class="hx-jump" id="hx-jump" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M6 13l6 6 6-6"/></svg>Latest</button>
           </div>
 
           <form class="hx-box" id="hx-form" autocomplete="off">
@@ -1371,9 +1438,18 @@
               </div>
               <span class="hx-mode" id="hx-mode">Zeno</span>
               <button type="button" class="hx-mic" id="hx-mic" aria-label="Dictate" title="Dictate (uses your browser's speech recognition)" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg></button>
-              <button type="submit" class="hx-send" id="hx-send" aria-label="Send to Zeno" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M6 11l6-6 6 6"/></svg></button>
+              <button type="submit" class="hx-send" id="hx-send" aria-label="Send to Zeno" disabled>
+                <svg class="hx-stop-ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="7" y="7" width="10" height="10" rx="2" fill="currentColor"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M6 11l6-6 6 6"/></svg></button>
             </div>
           </form>
+          <p class="hx-foot" id="hx-foot">Zeno is an AI and can get things wrong.<span class="hx-foot-more"> Check posts against the originals.</span></p>
+
+          <div class="hx-starters" id="hx-starters" aria-label="Ways to start">
+            <button type="button" class="hx-chip" data-ask="send" data-q="What's working for founders this week?"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 17l6-6 4 4 8-8"/><path d="M14 7h7v7"/></svg>What's working for founders this week?</button>
+            <button type="button" class="hx-chip" data-ask="send" data-q="Give me three hooks for a post about pricing"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18h6M10 22h4M12 2a7 7 0 0 0-4 12.7V17h8v-2.3A7 7 0 0 0 12 2Z"/></svg>Give me three hooks for a post about pricing</button>
+            <button type="button" class="hx-chip" data-ask="fill" data-q="Here’s my draft. What would make it land harder?&#10;&#10;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>Critique my draft</button>
+            <button type="button" class="hx-chip" data-ask="fill" data-q="Decode this post:&#10;&#10;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6h16M4 12h10M4 18h6"/></svg>Decode a post I paste</button>
+          </div>
 
           <section class="hx-setup" id="hx-setup" aria-labelledby="hx-setup-h">
             <header>
@@ -4781,15 +4857,26 @@
     var hx = document.querySelector('.hx');
     var thread = document.getElementById('hx-thread');
     var msgsEl = document.getElementById('hx-msgs');
+    var jump = document.getElementById('hx-jump');
+    var panel = document.querySelector('.content');
+    var pageScrolls = matchMedia('(max-width: 880px)');
+    function sc() { return pageScrolls.matches ? document.scrollingElement : panel; }
     var CHAT_KEY = 'sona-zeno-chat';
-    var convo = [];          // [{ role, content, posts? }]
-    var busy = false;
+    var convo = [];          // [{ role, content, posts?, stopped? }]
+    var busy = false, controller = null;
+    var IC = {
+      copy: '<rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/>',
+      check: '<path d="M20 6 9 17l-5-5"/>',
+      redo: '<path d="M21 12a9 9 0 1 1-3-6.7L21 8"/><path d="M21 3v5h-5"/>',
+      draft: '<path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/>'
+    };
+    function icon(p) { return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + p + '</svg>'; }
 
     function esc(t) { return String(t).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
     // A small, safe subset of Markdown: paragraphs, - and 1. lists, **bold**.
     function md(text) {
-      var blocks = String(text).trim().split(/\n{2,}/), out = [];
-      blocks.forEach(function (b) {
+      var out = [];
+      String(text).trim().split(/\n{2,}/).forEach(function (b) {
         var lines = b.split('\n');
         var inline = function (l) { return esc(l).replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>'); };
         if (lines.every(function (l) { return /^\s*[-*•]\s+/.test(l); })) {
@@ -4810,11 +4897,11 @@
         var top = document.createElement('div'); top.className = 'hx-post-top';
         var who = document.createElement('b'); who.textContent = p.creator || p.handle || 'Post';
         top.appendChild(who);
-        if (p.multiple) { var m = document.createElement('span'); m.className = 'm'; m.textContent = p.multiple; top.appendChild(m); }
+        if (p.multiple) { var m = document.createElement('span'); m.className = 'm'; m.textContent = p.multiple; m.title = 'Compared with this creator’s usual post'; top.appendChild(m); }
         var tx = document.createElement('p'); tx.textContent = p.text || '';
         var act = document.createElement('div'); act.className = 'hx-post-act';
         if (p.url && /^https:\/\//.test(p.url)) {
-          var a = document.createElement('a'); a.href = p.url; a.target = '_blank'; a.rel = 'noopener noreferrer'; a.textContent = 'Original';
+          var a = document.createElement('a'); a.href = p.url; a.target = '_blank'; a.rel = 'noopener noreferrer'; a.textContent = 'Open original';
           act.appendChild(a);
         }
         var d = document.createElement('button'); d.type = 'button'; d.textContent = 'Decode';
@@ -4829,26 +4916,94 @@
       });
       return wrap;
     }
-    function bubble(m) {
-      var el = document.createElement('div');
-      el.className = 'hx-msg ' + (m.role === 'user' ? 'you' : 'zeno');
-      if (m.role === 'user') el.textContent = m.content;
-      else { el.innerHTML = m.content ? md(m.content) : ''; if (m.posts && m.posts.length) el.appendChild(postCards(m.posts)); }
-      return el;
+
+    // Scrolling follows the answer only while the reader is at the bottom.
+    function nearBottom() { var el = sc(); return !el || el.scrollHeight - el.scrollTop - el.clientHeight < 140; }
+    function toBottom(smooth) { var el = sc(); if (el) el.scrollTo({ top: el.scrollHeight, behavior: smooth && !reduce ? 'smooth' : 'auto' }); }
+    function syncJump() { if (jump) jump.hidden = nearBottom() || !hx.classList.contains('chatting'); }
+    if (panel) panel.addEventListener('scroll', syncJump, { passive: true });
+    window.addEventListener('scroll', syncJump, { passive: true });
+    if (jump) jump.addEventListener('click', function () { toBottom(true); });
+
+    // One Zeno turn: avatar, the answer, then its actions.
+    function zenoTurn() {
+      var turn = document.createElement('div'); turn.className = 'hx-turn';
+      var ava = document.createElement('span'); ava.className = 'hx-ava'; ava.setAttribute('aria-hidden', 'true');
+      var body = document.createElement('div');
+      var msg = document.createElement('div'); msg.className = 'hx-msg zeno';
+      body.appendChild(msg);
+      turn.appendChild(ava); turn.appendChild(body);
+      return { turn: turn, body: body, msg: msg };
     }
+    function paintReply(t, reply) {
+      t.msg.innerHTML = reply.content ? md(reply.content) : '';
+      if (reply.stopped) { var s = document.createElement('span'); s.className = 'stopped'; s.textContent = 'Stopped'; t.msg.appendChild(s); }
+      if (reply.posts && reply.posts.length) t.msg.appendChild(postCards(reply.posts));
+    }
+    function actions(t, reply, isLast) {
+      var row = document.createElement('div'); row.className = 'hx-acts';
+      function btn(label, ic, fn) {
+        var b = document.createElement('button'); b.type = 'button'; b.className = 'hx-act';
+        b.innerHTML = icon(ic) + '<span></span>'; b.lastChild.textContent = label;
+        b.addEventListener('click', function () { fn(b); });
+        row.appendChild(b); return b;
+      }
+      btn('Copy', IC.copy, function (b) {
+        var done = function () { b.classList.add('done'); b.innerHTML = icon(IC.check) + '<span>Copied</span>'; setTimeout(function () { b.classList.remove('done'); b.innerHTML = icon(IC.copy) + '<span>Copy</span>'; }, 1600); };
+        if (navigator.clipboard) navigator.clipboard.writeText(reply.content).then(done, function () {}); else done();
+      });
+      btn('Use in a draft', IC.draft, function () {
+        switchView('studio');
+        var n = document.getElementById('draft-new'); if (n) n.click();
+        var body = document.getElementById('draft-body');
+        if (body) {
+          body.value = (body.value ? body.value + '\n\n' : '') + reply.content.replace(/\*\*(.+?)\*\*/g, '$1');
+          body.dispatchEvent(new Event('input', { bubbles: true }));
+          body.focus();
+        }
+      });
+      if (isLast) btn('Try again', IC.redo, function () { regenerate(); });
+      t.body.appendChild(row);
+    }
+    function failure(t, message, retry, signin) {
+      t.msg.innerHTML = '';
+      var e = document.createElement('div'); e.className = 'hx-err'; e.setAttribute('role', 'alert');
+      var p = document.createElement('span'); p.textContent = message; e.appendChild(p);
+      if (signin) { var a = document.createElement('a'); a.href = '/?signin=1'; a.textContent = 'Sign in'; e.appendChild(a); }
+      else if (retry) { var b = document.createElement('button'); b.type = 'button'; b.textContent = 'Try again'; b.addEventListener('click', retry); e.appendChild(b); }
+      t.msg.appendChild(e);
+    }
+
     function save() { try { sessionStorage.setItem(CHAT_KEY, JSON.stringify(convo.slice(-30))); } catch (e) {} }
     function setChatting(on) {
       hx.classList.toggle('chatting', on);
       thread.hidden = !on;
+      if (!on && jump) jump.hidden = true;
       input.placeholder = on ? 'Reply to Zeno' : 'Ask Zeno anything, or paste a post';
     }
     function renderAll() {
       msgsEl.innerHTML = '';
-      convo.forEach(function (m) { msgsEl.appendChild(bubble(m)); });
+      var lastZeno = -1;
+      convo.forEach(function (m, i) { if (m.role === 'assistant') lastZeno = i; });
+      convo.forEach(function (m, i) {
+        if (m.role === 'user') {
+          var u = document.createElement('div'); u.className = 'hx-msg you'; u.textContent = m.content; msgsEl.appendChild(u);
+        } else {
+          var t = zenoTurn(); paintReply(t, m); actions(t, m, i === lastZeno); msgsEl.appendChild(t.turn);
+        }
+      });
       setChatting(convo.length > 0);
     }
+    function setBusy(on) {
+      busy = on;
+      send.classList.toggle('stop', on);
+      send.setAttribute('aria-label', on ? 'Stop Zeno' : 'Send to Zeno');
+      send.type = on ? 'button' : 'submit';
+      msgsEl.setAttribute('aria-busy', String(on));
+      syncBox();
+    }
     function syncBox() {
-      send.disabled = busy || !input.value.trim();
+      send.disabled = !busy && !input.value.trim();
       input.style.height = 'auto';
       input.style.height = Math.min(input.scrollHeight, 240) + 'px';
     }
@@ -4859,41 +5014,33 @@
       }
       return null;
     }
-    function scrollDown() {
-      var sc = document.querySelector('.content');
-      if (sc) sc.scrollTo({ top: sc.scrollHeight, behavior: reduce ? 'auto' : 'smooth' });
-    }
 
-    async function ask(text) {
-      busy = true; syncBox();
-      convo.push({ role: 'user', content: text });
+    // Sends the conversation as it stands (it must end on a user turn).
+    async function respond() {
+      setBusy(true);
       setChatting(true);
-      msgsEl.appendChild(bubble(convo[convo.length - 1]));
+      renderAll();
       var reply = { role: 'assistant', content: '', posts: [] };
-      var el = document.createElement('div'); el.className = 'hx-msg zeno';
-      var status = document.createElement('div'); status.className = 'hx-status'; status.textContent = 'Zeno is thinking…';
-      el.appendChild(status);
-      msgsEl.appendChild(el);
-      scrollDown();
+      var t = zenoTurn(); t.turn.classList.add('streaming');
+      t.msg.innerHTML = '<span class="hx-typing"><span class="hx-dots" aria-hidden="true"><i></i><i></i><i></i></span><span class="hx-typing-t">Thinking</span></span>';
+      msgsEl.appendChild(t.turn);
+      toBottom(true);
       orb.busy(true); mini.busy(true);
-
+      var follow = true;
       function paint() {
-        el.innerHTML = reply.content ? md(reply.content) : '';
-        if (!reply.content) el.appendChild(status);
-        if (reply.posts.length) el.appendChild(postCards(reply.posts));
+        follow = nearBottom();
+        if (reply.content) paintReply(t, reply);
+        if (follow) toBottom(false);
       }
-      function fail(message) {
-        el.innerHTML = '';
-        var e = document.createElement('div'); e.className = 'hx-err'; e.textContent = message;
-        el.appendChild(e);
-      }
+      function retry() { t.turn.remove(); respond(); }
+      controller = new AbortController();
 
       try {
         var token = await sessionToken();
-        if (!token) { fail('Sign in to talk to Zeno.'); convo.pop(); return; }
+        if (!token) { failure(t, 'Sign in to talk to Zeno.', null, true); return; }
         var sg = (typeof styleGuide !== 'undefined' && styleGuide) || {};
         var r = await fetch('/api/agent', {
-          method: 'POST',
+          method: 'POST', signal: controller.signal,
           headers: { 'content-type': 'application/json', authorization: 'Bearer ' + token },
           body: JSON.stringify({
             messages: convo.map(function (m) { return { role: m.role, content: m.content }; }),
@@ -4905,9 +5052,10 @@
         });
         if (!r.ok || !r.body) {
           var j = await r.json().catch(function () { return {}; });
-          fail(j.error || 'Zeno couldn’t answer that. Try again.'); convo.pop(); return;
+          failure(t, j.error || 'Zeno couldn’t answer that.', r.status === 401 ? null : retry, r.status === 401);
+          return;
         }
-        var reader = r.body.getReader(), dec = new TextDecoder(), buf = '', errored = false;
+        var reader = r.body.getReader(), dec = new TextDecoder(), buf = '', errMsg = '';
         while (true) {
           var chunk = await reader.read();
           if (chunk.done) break;
@@ -4917,41 +5065,77 @@
             if (!line.trim()) return;
             var ev; try { ev = JSON.parse(line); } catch (e) { return; }
             if (ev.t === 'text') { reply.content += ev.d; paint(); }
-            else if (ev.t === 'search') { status.textContent = ev.q ? 'Searching the feed for “' + ev.q + '”…' : 'Looking through the feed…'; if (!reply.content) paint(); }
-            else if (ev.t === 'posts' && Array.isArray(ev.items)) { ev.items.forEach(function (p) { if (!reply.posts.some(function (x) { return x.id === p.id; })) reply.posts.push(p); }); paint(); }
-            else if (ev.t === 'error') { errored = true; fail(ev.message || 'Zeno couldn’t answer that. Try again.'); }
+            else if (ev.t === 'search' && !reply.content) {
+              var tt = t.msg.querySelector('.hx-typing-t');
+              if (tt) tt.textContent = ev.q ? 'Searching the feed for “' + ev.q + '”' : 'Looking through the feed';
+            }
+            else if (ev.t === 'posts' && Array.isArray(ev.items)) { ev.items.forEach(function (p) { if (!reply.posts.some(function (x) { return x.id === p.id; })) reply.posts.push(p); }); if (reply.content) paint(); }
+            else if (ev.t === 'error') errMsg = ev.message || 'Zeno couldn’t answer that.';
           });
-          scrollDown();
         }
-        if (errored || !reply.content.trim()) { if (!errored) fail('Zeno couldn’t answer that. Try again.'); convo.pop(); return; }
+        if (errMsg || !reply.content.trim()) { failure(t, errMsg || 'Zeno couldn’t answer that.', retry); return; }
         reply.posts = reply.posts.slice(0, 4);
-        convo.push(reply);
-        save();
+        convo.push(reply); save();
+        renderAll();
+        if (follow) toBottom(false);
       } catch (e) {
-        fail('Zeno couldn’t be reached. Check your connection and try again.'); convo.pop();
+        if (e && e.name === 'AbortError') {
+          if (reply.content.trim()) { reply.stopped = true; reply.posts = reply.posts.slice(0, 4); convo.push(reply); save(); renderAll(); }
+          else t.turn.remove();
+        } else {
+          failure(t, 'Zeno couldn’t be reached. Check your connection.', retry);
+        }
       } finally {
-        busy = false; syncBox();
+        controller = null;
+        t.turn.classList.remove('streaming');
+        setBusy(false);
         orb.busy(false); mini.busy(false);
-        input.focus();
+        input.focus({ preventScroll: true });
       }
     }
+    function ask(text) {
+      if (busy || !text.trim()) return;
+      convo.push({ role: 'user', content: text.trim() }); save();
+      respond();
+    }
+    function regenerate() {
+      if (busy) return;
+      if (convo.length && convo[convo.length - 1].role === 'assistant') convo.pop();
+      if (!convo.length || convo[convo.length - 1].role !== 'user') return;
+      save(); respond();
+    }
+    function stop() { if (controller) controller.abort(); }
     function run() {
+      if (busy) { stop(); return; }
       var v = input.value.trim();
-      if (!v || busy) return;
+      if (!v) return;
       input.value = ''; syncBox();
       ask(v);
     }
     if (form) {
       input.addEventListener('input', syncBox);
       input.addEventListener('keydown', function (e) {
-        if (e.key === 'Enter' && !e.shiftKey && !e.isComposing) { e.preventDefault(); run(); }
+        if (e.key === 'Enter' && !e.shiftKey && !e.isComposing) { e.preventDefault(); if (!busy) run(); }
+        else if (e.key === 'Escape' && busy) { e.preventDefault(); stop(); }
       });
       form.addEventListener('submit', function (e) { e.preventDefault(); run(); });
+      send.addEventListener('click', function (e) { if (busy) { e.preventDefault(); stop(); } });
       document.getElementById('hx-new').addEventListener('click', function () {
-        if (busy) return;
-        convo = []; save(); renderAll(); input.focus();
+        if (busy) stop();
+        convo = []; save(); renderAll(); input.value = ''; syncBox(); input.focus();
       });
-      try { convo = JSON.parse(sessionStorage.getItem(CHAT_KEY) || '[]').filter(function (m) { return m && typeof m.content === 'string'; }); } catch (e) { convo = []; }
+      document.querySelectorAll('.hx-chip').forEach(function (c) {
+        c.addEventListener('click', function () {
+          var q = c.dataset.q || c.textContent;
+          if (c.dataset.ask === 'fill') {
+            input.value = q; syncBox(); input.focus();
+            input.setSelectionRange(input.value.length, input.value.length);
+          } else ask(q);
+        });
+      });
+      try { convo = JSON.parse(sessionStorage.getItem(CHAT_KEY) || '[]').filter(function (m) { return m && typeof m.content === 'string' && (m.role === 'user' || m.role === 'assistant'); }); } catch (e) { convo = []; }
+      // A conversation left on a user turn (closed mid-answer) is trimmed.
+      while (convo.length && convo[convo.length - 1].role === 'user') convo.pop();
       renderAll();
       syncBox();
     }
