@@ -19,10 +19,7 @@
 --text-swap-ease: Easing
 --text-swap-translate-y: Distance
 more --text-swap-blur: Blur
-[Voice lines] bars in the voice button
---wave-dur: Duration
---wave-min: Rest scale
-more [Bubble float] assistant message
+[Bubble float] assistant message
 --float-dur: Duration
 --float-distance: Distance
 more [Button press] voice button
@@ -46,8 +43,6 @@ more [Button press] voice button
   --text-swap-translate-y: 4px;
   --text-swap-blur: 2px;
   --text-swap-ease: ease-in-out;
-  --wave-dur: 900ms;
-  --wave-min: 0.35;
   --float-dur: 4000ms;
   --float-distance: 3px;
   --press-scale: 0.99;
@@ -59,11 +54,11 @@ more [Button press] voice button
   --va-card-shadow: 0 0 0 1px rgba(0,0,0,.04), 0 8px 32px -4px rgba(0,0,0,.06), 0 1px 3px 0 rgba(0,0,0,.04);
   --divider: color-mix(in srgb, var(--stage-border) 49%, transparent);
   --bubble: color-mix(in srgb, var(--stage-fg) 6%, var(--stage-surface));
-  /* Glow palette (cool: no green) */
-  --vb-core: 165, 180, 252;
-  --vb-above: 244, 114, 182;
-  --vb-mid: 96, 165, 250;
-  --vb-below: 167, 139, 250;
+  /* Glow palette: warm, to match Zeno's orange orbit */
+  --vb-core: 253, 186, 116;
+  --vb-above: 251, 113, 133;
+  --vb-mid: 249, 115, 22;
+  --vb-below: 251, 146, 60;
   --vb-blend: multiply;
 }
 html[data-theme="dark"] .va-card {
@@ -72,10 +67,10 @@ html[data-theme="dark"] .va-card {
   --va-hover: rgba(255, 255, 255, 0.02);
   --va-card-shadow: 0 0 0 1px rgba(255,255,255,.06), 0 8px 32px -4px rgba(0,0,0,.5), 0 1px 3px 0 rgba(0,0,0,.4);
   --bubble: color-mix(in srgb, var(--stage-fg) 9%, var(--stage-surface));
-  --vb-core: 255, 255, 255;
+  --vb-core: 255, 237, 213;
   --vb-above: 251, 113, 133;
-  --vb-mid: 129, 140, 248;
-  --vb-below: 59, 130, 246;
+  --vb-mid: 249, 115, 22;
+  --vb-below: 234, 88, 12;
   --vb-blend: screen;
 }
 
@@ -84,7 +79,7 @@ html[data-theme="dark"] .va-card {
   display: grid;
   width: 360px;
   max-width: 100%;
-  height: 340px;
+  height: 384px;
   border-radius: 24px;
   background: var(--stage-surface);
   box-shadow: var(--va-card-shadow);
@@ -220,10 +215,11 @@ html[data-theme="dark"] .va-card {
   transition: none;
 }
 
+/* The voice button is Zeno's orbit. Same press motion as the original. */
 .va-mic {
   --press-scale: 0.95;
-  width: 48px;
-  height: 48px;
+  width: 96px;
+  height: 96px;
   border-radius: 50%;
   display: grid;
   place-items: center;
@@ -243,28 +239,7 @@ html[data-theme="dark"] .va-card {
   outline: none;
   box-shadow: var(--va-btn-shadow), 0 0 0 2px var(--stage-surface), 0 0 0 4px var(--stage-accent);
 }
-.va-wave { display: flex; align-items: center; gap: 2px; height: 20px; }
-.va-wave i {
-  display: block;
-  width: 2px;
-  border-radius: 1px;
-  background: currentColor;
-  transform-origin: center;
-}
-.va-wave i:nth-child(1) { height: 6px; }
-.va-wave i:nth-child(2) { height: 12px; }
-.va-wave i:nth-child(3) { height: 18px; }
-.va-wave i:nth-child(4) { height: 12px; }
-.va-wave i:nth-child(5) { height: 6px; }
-.va-mic.is-live .va-wave i { animation: va-wave var(--wave-dur) ease-in-out infinite; }
-.va-mic.is-live .va-wave i:nth-child(2) { animation-delay: calc(var(--wave-dur) * -0.3); }
-.va-mic.is-live .va-wave i:nth-child(3) { animation-delay: calc(var(--wave-dur) * -0.6); }
-.va-mic.is-live .va-wave i:nth-child(4) { animation-delay: calc(var(--wave-dur) * -0.15); }
-.va-mic.is-live .va-wave i:nth-child(5) { animation-delay: calc(var(--wave-dur) * -0.45); }
-@keyframes va-wave {
-  0%, 100% { transform: scaleY(1); }
-  50% { transform: scaleY(var(--wave-min)); }
-}
+.va-orbit { display: block; width: 84px; height: 84px; --orbit-hue-from: 14; --orbit-hue-to: 40; }
 
 /* ─── Voice glow ───
  * Four soft lobes anchored to the bottom edge. --vb-level (0–1, smoothed in
@@ -309,7 +284,7 @@ html[data-theme="dark"] .va-card {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .va-bubble-row, .va-mic.is-live .va-wave i { animation: none !important; }
+  .va-bubble-row { animation: none !important; }
   .t-text-swap { transition: none !important; }
   .t-stream-w { transition: none !important; filter: none !important; }
   .va-mic { transition: none; }

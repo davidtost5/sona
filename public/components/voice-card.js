@@ -3,7 +3,10 @@
  * level curve as the React original; the glow replaces voice-glow's
  * <VoiceBeam> with CSS layers fed one smoothed --vb-level per frame.
  *
- * Usage: <div data-voice-card></div> plus voice-card.css and this file.
+ * The voice button is Zeno's orbit (zeno-orbit.js), Zeno's own mark.
+ *
+ * Usage: <div data-voice-card></div> plus voice-card.css, zeno-orbit.js and
+ * this file.
  * Tapping the button plays a scripted demo; it does not use the microphone.
  */
 (function () {
@@ -12,7 +15,7 @@
   var WORDS = "Find posts about pricing that beat their creator's usual this month".split(' ');
   var WORD_MS = 280;
   var STRENGTH = 0.6;
-  var CAPTIONS = { idle: 'Tap to speak', listening: 'Listening…', thinking: 'One moment' };
+  var CAPTIONS = { idle: 'Tap to call Zeno', listening: 'Listening…', thinking: 'One moment' };
   var reduce = matchMedia('(prefers-reduced-motion: reduce)');
 
   function cssMs(el, name, fb) {
@@ -48,7 +51,7 @@
           '<div class="va-inner"><div class="va-content">' +
             '<header class="va-top">' +
               '<span class="va-av" role="img" aria-label="Zeno"><img src="/logo.svg" alt="" width="32" height="32"></span>' +
-              '<div class="va-top-text"><span class="va-name">Zeno</span><span class="va-meta">Voice preview</span></div>' +
+              '<div class="va-top-text"><span class="va-name">Zeno</span><span class="va-meta">Call preview</span></div>' +
             '</header>' +
             '<div class="va-divider" aria-hidden="true"></div>' +
             '<div class="va-body">' +
@@ -57,8 +60,8 @@
             '</div>' +
             '<div class="va-bottom">' +
               '<span class="va-caption"><span class="t-text-swap" aria-live="polite">' + CAPTIONS.idle + '</span></span>' +
-              '<button type="button" class="va-mic" aria-label="Start speaking" aria-pressed="false">' +
-                '<span class="va-wave" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span>' +
+              '<button type="button" class="va-mic" aria-label="Call Zeno" aria-pressed="false">' +
+                '<canvas class="va-orbit" width="144" height="144" aria-hidden="true"></canvas>' +
               '</button>' +
             '</div>' +
           '</div></div>' +
@@ -70,6 +73,7 @@
     var transcript = host.querySelector('.va-transcript');
     var mic = host.querySelector('.va-mic');
     var swap = makeSwap(host.querySelector('.t-text-swap'), card);
+    var orbit = window.SonaOrbit ? window.SonaOrbit.create(host.querySelector('.va-orbit')) : { setMode: function () {}, setLevel: function () {} };
 
     var phase = 'idle', speaking = false, timers = [];
     function clearTimers() { timers.forEach(clearTimeout); timers = []; }
@@ -81,8 +85,9 @@
       var live = p === 'listening';
       mic.classList.toggle('is-live', live);
       mic.setAttribute('aria-pressed', String(live));
-      mic.setAttribute('aria-label', live ? 'Stop speaking' : 'Start speaking');
+      mic.setAttribute('aria-label', live ? 'Hang up' : 'Call Zeno');
       beam.classList.toggle('is-processing', p === 'thinking');
+      orbit.setMode(p);
       kick();
     }
     function setCount(n) {
@@ -139,6 +144,7 @@
       var k = target > cur ? 0.35 : 0.08;
       cur = reduce.matches ? target : cur + (target - cur) * k;
       beam.style.setProperty('--vb-level', cur.toFixed(3));
+      orbit.setLevel((cur - 0.06) / (STRENGTH - 0.06));
       if (speaking || Math.abs(target - cur) > 0.002) raf = requestAnimationFrame(frame);
     }
     function kick() { if (!raf) raf = requestAnimationFrame(frame); }
