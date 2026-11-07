@@ -35,7 +35,25 @@
   /* Homepage only. Tokens, rails, nav, keys and footer live in site.css. */
 
   /* ─── Hero: words left, a post being read on the blueprint right ─── */
-  .hero { position: relative; isolation: isolate; padding: clamp(56px, 9vh, 96px) 0 clamp(56px, 8vh, 88px); }
+  /* The hero sits in a painted panel inset from the page: a soft sky built
+     from layered gradients and a little grain, in Sona's own blues and a
+     warm horizon. The nav floats over its top edge. */
+  .hero { position: relative; isolation: isolate; margin: -64px 12px 0; padding: calc(64px + clamp(48px, 8vh, 88px)) 0 clamp(56px, 8vh, 88px); border-radius: 24px; overflow: hidden;
+    background:
+      radial-gradient(60% 55% at 18% 18%, rgba(255,255,255,.75), transparent 70%),
+      radial-gradient(45% 40% at 82% 22%, rgba(219,234,254,.9), transparent 70%),
+      radial-gradient(70% 45% at 70% 92%, rgba(254,215,170,.85), transparent 72%),
+      radial-gradient(60% 40% at 18% 96%, rgba(253,186,116,.55), transparent 70%),
+      radial-gradient(90% 60% at 50% 60%, rgba(196,181,253,.35), transparent 75%),
+      linear-gradient(180deg, #dbe6fb 0%, #e9eefc 45%, #fbe7d6 100%); }
+  .hero::after { content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none; opacity: .22; mix-blend-mode: soft-light;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
+  html[data-theme="dark"] .hero { background:
+      radial-gradient(55% 50% at 20% 15%, rgba(59,130,246,.28), transparent 70%),
+      radial-gradient(45% 40% at 85% 25%, rgba(129,140,248,.22), transparent 70%),
+      radial-gradient(70% 45% at 70% 95%, rgba(234,88,12,.30), transparent 72%),
+      radial-gradient(60% 40% at 15% 98%, rgba(249,115,22,.18), transparent 70%),
+      linear-gradient(180deg, #0f1a33 0%, #131a33 50%, #2a1a1a 100%); }
   .hero .wrap { display: grid; grid-template-columns: 1fr 1.08fr; gap: clamp(32px, 5vw, 64px); align-items: center; }
   .hero h1 { max-width: 13ch; }
   .hero .lede { max-width: 44ch; margin-top: 22px; }
@@ -70,6 +88,8 @@
   .strip > :first-child { justify-content: flex-start; border-left: 0; font-weight: 400; font-size: 14.5px; letter-spacing: -.006em; color: var(--ink-2); }
   .strip > :first-child b { color: var(--ink); font-weight: 600; }
   .strip svg { width: 17px; height: 17px; flex: none; }
+  .strip .logo-x { width: 15px; height: 15px; color: var(--ink); }
+  html[data-theme="dark"] .strip .logo-in path { fill: #4c9be8; }
   .strip small { font-weight: 400; font-size: 13px; }
 
   /* ─── Sections ─── */
@@ -78,9 +98,33 @@
   .sec-head .lede { margin-top: 16px; }
   .sec-head.center { margin-left: auto; margin-right: auto; text-align: center; }
 
-  /* Statement: what Sona does, as one sentence */
-  .statement { max-width: 25em; margin: 0 auto; text-align: center; font-size: clamp(1.6rem, 3vw, 2.3rem); line-height: 1.22; letter-spacing: -.028em; font-weight: 500; color: var(--ink); }
-  .statement .acc { color: var(--accent); }
+  /* How it works: a sticky heading whose words light up step by step, and a
+     rail of steps that fills as you scroll. */
+  .steps { --c0: #2563eb; --c1: #7c3aed; --c2: #ea580c; }
+  html[data-theme="dark"] .steps { --c0: #60a5fa; --c1: #a78bfa; --c2: #fb923c; }
+  .steps-grid { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(32px, 6vw, 80px); align-items: start; }
+  .steps-head { position: sticky; top: 120px; }
+  .steps-head h2 { font-size: clamp(2rem, 4vw, 3.2rem); }
+  .steps-head .lede { margin-top: 16px; max-width: 36ch; }
+  .sw { color: var(--mute); transition: color .5s cubic-bezier(.22,1,.36,1); }
+  .sw.is-lit[data-sw="0"] { color: var(--c0); }
+  .sw.is-lit[data-sw="1"] { color: var(--c1); }
+  .sw.is-lit[data-sw="2"] { color: var(--c2); }
+  .steps-list { position: relative; list-style: none; margin: 0; padding: 8px 0 0 52px; }
+  /* The rail, and its fill up to the step you're on */
+  .steps-list::before, .steps-list::after { content: ''; position: absolute; left: 17px; top: 26px; bottom: 26px; width: 2px; border-radius: 2px; }
+  .steps-list::before { background: var(--line); }
+  .steps-list::after { background: linear-gradient(var(--c0), var(--c1) 50%, var(--c2)); transform-origin: top; transform: scaleY(max(0, calc((var(--steps-done, 1) - 1) / 2))); transition: transform .6s cubic-bezier(.22,1,.36,1); }
+  .step { position: relative; padding: 18px 0 clamp(72px, 14vh, 140px); }
+  .step:last-child { padding-bottom: 18px; }
+  .step-node { position: absolute; left: -52px; top: 16px; width: 36px; height: 36px; display: grid; place-items: center; border-radius: 11px; background: var(--card); color: var(--ink-3); box-shadow: 0 0 0 1px var(--line), 0 1px 2px rgba(15,23,42,.06); transition: color .4s, box-shadow .4s; z-index: 1; }
+  .step-node svg { width: 17px; height: 17px; }
+  .step.is-on[data-step="0"] .step-node { color: var(--c0); box-shadow: 0 0 0 1px var(--c0), 0 4px 14px -6px var(--c0); }
+  .step.is-on[data-step="1"] .step-node { color: var(--c1); box-shadow: 0 0 0 1px var(--c1), 0 4px 14px -6px var(--c1); }
+  .step.is-on[data-step="2"] .step-node { color: var(--c2); box-shadow: 0 0 0 1px var(--c2), 0 4px 14px -6px var(--c2); }
+  .step h3 { font-size: 1.2rem; font-weight: 600; letter-spacing: -.02em; }
+  .step p { margin-top: 8px; max-width: 44ch; color: var(--ink-2); font-size: 15.5px; line-height: 1.6; opacity: .55; transition: opacity .4s; }
+  .step.is-on p { opacity: 1; }
 
   /* ─── Product tour: the one dark band ─── */
   .tour { position: relative; background: var(--bg); color: var(--ink); padding: clamp(72px, 9vw, 112px) 0 clamp(64px, 8vw, 96px); overflow-x: clip; }
@@ -268,7 +312,9 @@
 
   /* ─── Responsive ─── */
   @media (max-width: 980px) {
-    .hero .wrap, .try, .faq-grid { grid-template-columns: 1fr; gap: 36px; }
+    .hero .wrap, .try, .faq-grid, .steps-grid { grid-template-columns: 1fr; gap: 36px; }
+    .steps-head { position: static; }
+    .step { padding-bottom: 48px; }
     .hero-vis { min-height: 420px; }
     .strip { grid-template-columns: repeat(2, 1fr); }
     .strip > :first-child { grid-column: 1 / -1; justify-content: center; border-bottom: 1px solid var(--line); }
@@ -282,7 +328,7 @@
     .also { grid-template-columns: 1fr 1fr; }
   }
   @media (max-width: 760px) {
-    .hero { padding: 40px 0 48px; }
+    .hero { margin: -60px 8px 0; padding: calc(60px + 32px) 0 40px; border-radius: 20px; }
     .hero-vis { min-height: 0; padding: 0; display: block; }
     .hv-card { margin: 0 auto; justify-self: auto; width: min(370px, 100%); }
     .hv-tag, .hv-tag.t1, .hv-tag.t2, .hv-tag.t3 { position: static; max-width: none; margin: 10px auto 0; width: min(370px, 100%); }
@@ -373,16 +419,38 @@
 <div class="wrap" style="padding:0">
   <div class="strip">
     <div><span><b>Works where you post.</b> Find, decode and draft for:</span></div>
-    <div>X</div>
-    <div>LinkedIn</div>
-    <div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 7V3M15 7V3M7 7h10v4a5 5 0 0 1-10 0V7ZM12 16v5"/></svg>Claude <small>via MCP</small></div>
+    <div><svg class="logo-x" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z"/></svg>X</div>
+    <div><svg class="logo-in" viewBox="0 0 24 24" aria-hidden="true"><path fill="#0A66C2" d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>LinkedIn</div>
+    <div><svg class="logo-claude" viewBox="0 0 24 24" aria-hidden="true"><path fill="#D97757" d="m4.7144 15.9555 4.7174-2.6471.079-.2307-.079-.1275h-.2307l-.7893-.0486-2.6956-.0729-2.3375-.0971-2.2646-.1214-.5707-.1215-.5343-.7042.0546-.3522.4797-.3218.686.0608 1.5179.1032 2.2767.1578 1.6514.0972 2.4468.255h.3886l.0546-.1579-.1336-.0971-.1032-.0972L6.973 9.8356l-2.55-1.6879-1.3356-.9714-.7225-.4918-.3643-.4614-.1578-1.0078.6557-.7225.8803.0607.2246.0607.8925.686 1.9064 1.4754 2.4893 1.8336.3643.3035.1457-.1032.0182-.0728-.164-.2733-1.3539-2.4467-1.445-2.4893-.6435-1.032-.17-.6194c-.0607-.255-.1032-.4674-.1032-.7285L6.287.1335 6.6997 0l.9957.1336.419.3642.6192 1.4147 1.0018 2.2282 1.5543 3.0296.4553.8985.2429.8318.091.255h.1579v-.1457l.1275-1.706.2368-2.0947.2307-2.6957.0789-.7589.3764-.9107.7468-.4918.5828.2793.4797.686-.0668.4433-.2853 1.8517-.5586 2.9021-.3643 1.9429h.2125l.2429-.2429.9835-1.3053 1.6514-2.0643.7286-.8196.85-.9046.5464-.4311h1.0321l.759 1.1293-.34 1.1657-1.0625 1.3478-.8804 1.1414-1.2628 1.7-.7893 1.36.0729.1093.1882-.0183 2.8535-.607 1.5421-.2794 1.8396-.3157.8318.3886.091.3946-.3278.8075-1.967.4857-2.3072.4614-3.4364.8136-.0425.0304.0486.0607 1.5482.1457.6618.0364h1.621l3.0175.2247.7892.522.4736.6376-.079.4857-1.2142.6193-1.6393-.3886-3.825-.9107-1.3113-.3279h-.1822v.1093l1.0929 1.0686 2.0035 1.8092 2.5075 2.3314.1275.5768-.3218.4554-.34-.0486-2.2039-1.6575-.85-.7468-1.9246-1.621h-.1275v.17l.4432.6496 2.3436 3.5214.1214 1.0807-.17.3521-.6071.2125-.6679-.1214-1.3721-1.9246L14.38 17.959l-1.1414-1.9428-.1397.079-.674 7.2552-.3156.3703-.7286.2793-.6071-.4614-.3218-.7468.3218-1.4753.3886-1.9246.3157-1.53.2853-1.9004.17-.6314-.0121-.0425-.1397.0182-1.4328 1.9672-2.1796 2.9446-1.7243 1.8456-.4128.164-.7164-.3704.0667-.6618.4008-.5889 2.386-3.0357 1.4389-1.882.929-1.0868-.0062-.1579h-.0546l-6.3385 4.1164-1.1293.1457-.4857-.4554.0608-.7467.2307-.2429 1.9064-1.3114Z"/></svg>Claude <small>via MCP</small></div>
     <div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6" y="4" width="12" height="17" rx="2"/><path d="M9 4V3h6v1M9 10h6M9 14h4"/></svg>Any pasted post</div>
   </div>
 </div>
 
-<section class="sec">
-  <div class="wrap">
-    <p class="statement"><span class="acc">Sona reads the posts that beat their creator's average,</span> names the hook, the turn and where each one lands, and keeps your playbook beside the editor, <span class="acc">so you write from evidence, not guesswork.</span></p>
+<!-- How it works: the heading's words light up as you scroll past each
+     step, and the rail fills to the step you're on. -->
+<section class="sec steps" id="how" aria-labelledby="how-h">
+  <div class="wrap steps-grid">
+    <div class="steps-head">
+      <h2 id="how-h"><span class="sw" data-sw="0">Find it.</span> <span class="sw" data-sw="1">Decode it.</span> <span class="sw" data-sw="2">Write it.</span></h2>
+      <p class="lede">Three steps from a post that worked to one in your own words.</p>
+    </div>
+    <ol class="steps-list">
+      <li class="step" data-step="0">
+        <span class="step-node" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg></span>
+        <h3>Find what broke through.</h3>
+        <p>Browse X and LinkedIn posts that beat their creator's own average, by niche, with the multiple beside each one.</p>
+      </li>
+      <li class="step" data-step="1">
+        <span class="step-node" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M4 12h10M4 18h6"/></svg></span>
+        <h3>See why it worked.</h3>
+        <p>Decode any post into its hook, the turn, where it lands, and the pattern you can reuse. Patterns collects what keeps coming back.</p>
+      </li>
+      <li class="step" data-step="2">
+        <span class="step-node" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg></span>
+        <h3>Write your own version.</h3>
+        <p>Draft with the pattern and your playbook beside the editor. Ask Zeno for angles or a critique. The words stay yours.</p>
+      </li>
+    </ol>
   </div>
 </section>
 
@@ -733,7 +801,32 @@
 
 
 <script defer src="/data.js"></script>
-
+<script>
+  // How it works: light the heading's words and fill the rail as each step
+  // crosses the middle of the screen.
+  (function () {
+    var sec = document.getElementById('how'); if (!sec) return;
+    var steps = Array.prototype.slice.call(sec.querySelectorAll('.step'));
+    var words = sec.querySelectorAll('.sw');
+    function light(n) {
+      sec.style.setProperty('--steps-done', String(n + 1));
+      words.forEach(function (w) { w.classList.toggle('is-lit', Number(w.dataset.sw) <= n); });
+      steps.forEach(function (s) { s.classList.toggle('is-on', Number(s.dataset.step) <= n); });
+    }
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) { light(steps.length - 1); return; }
+    // The current step is the last one whose top has passed 55% of the screen.
+    var current = -2, ticking = false;
+    function update() {
+      ticking = false;
+      var line = window.innerHeight * 0.55, n = -1;
+      steps.forEach(function (s, i) { if (s.getBoundingClientRect().top < line) n = i; });
+      if (n !== current) { current = n; light(n); }
+    }
+    window.addEventListener('scroll', function () { if (!ticking) { ticking = true; requestAnimationFrame(update); } }, { passive: true });
+    window.addEventListener('resize', update);
+    update();
+  })();
+</script>
 <script>
   // ─── Product tour ───
   // POSTS mirrors the live outlier feed (/api/outliers): real posts, real
