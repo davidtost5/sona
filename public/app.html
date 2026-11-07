@@ -18,14 +18,16 @@
     --bg:#fff; --bg-soft:#f7f7f4; --surface:#fff;
     --border:rgba(20,20,28,0.08); --border-strong:rgba(20,20,28,0.16);
     --text:#15151a; --text-mid:#5a5a62; --text-dim:#6f6f78;
-    --accent:#28775c; --accent-2:#1d5c47; --accent-soft:rgba(40,119,92,0.09);
+    --accent:#2563eb; --accent-2:#1d4ed8; --accent-soft:rgba(37,99,235,0.09);
+    --key-top:#383838; --key-bot:#111; --key-ink:#fff; --hx-box:#f4f4f2;
     --shadow-sm:0 1px 2px rgba(20,20,30,.04);
   }
   html[data-theme="dark"] {
     --bg:#0a0a0b; --bg-soft:#121213; --surface:#151517;
     --border:rgba(255,255,255,.07); --border-strong:rgba(255,255,255,.13);
     --text:#f4f4f6; --text-mid:#a0a0aa; --text-dim:#8a8a94;
-    --accent:#5fb896; --accent-soft:rgba(95,184,150,.13);
+    --accent:#60a5fa; --accent-2:#3b82f6; --accent-soft:rgba(96,165,250,.13);
+    --key-top:#fff; --key-bot:#e5e7eb; --key-ink:#0b1120; --hx-box:#1c1c1f;
     --shadow-sm:0 1px 2px rgba(0,0,0,.4);
   }
   body { font-family:'Geist',-apple-system,sans-serif; background:var(--bg); color:var(--text); -webkit-font-smoothing:antialiased; line-height:1.5; overflow:hidden; height:100vh; }
@@ -472,7 +474,7 @@
   }
   .lc-ico svg { width:17px; height:17px; }
   /* Per-card accent, like the reference — one hue each so the row scans fast. */
-  .lc-green  { background:rgba(95,184,150,.14);  color:#5fb896; }
+  .lc-green  { background:rgba(96,165,250,.14);  color:#60a5fa; }
   .lc-blue   { background:rgba(90,150,255,.14);  color:#6f9dff; }
   .lc-amber  { background:rgba(230,170,70,.14);  color:#e2a94a; }
   .lc-violet { background:rgba(150,120,240,.14); color:#9b83f0; }
@@ -527,6 +529,56 @@
   .ir-use:hover { border-color:var(--accent); color:var(--accent); }
 
   /* ─── Home ─── */
+
+  /* ─── Home (after Eden's idea agent) ─── */
+  .hx { max-width: 640px; margin: 0 auto; padding: 28px 0 8px; text-align: center; }
+  .hx-orb { display: block; width: 120px; height: 120px; margin: 0 auto 22px; }
+  .hx-hello { font-size: clamp(28px, 4vw, 38px); font-weight: 600; letter-spacing: -.035em; line-height: 1.1; color: var(--text); }
+  .hx-sub { margin: 12px auto 0; max-width: 46ch; font-size: 15.5px; line-height: 1.55; color: var(--text-mid); }
+  .hx-box { margin: 32px 0 0; padding: 16px 14px 12px 18px; text-align: left; border-radius: 26px; background: var(--hx-box); box-shadow: inset 0 0 0 1px var(--border); transition: box-shadow .2s; }
+  .hx-box:focus-within { box-shadow: inset 0 0 0 1px var(--border-strong), 0 10px 30px -18px rgba(20,20,30,.35); }
+  .hx-box textarea { display: block; width: 100%; min-height: 48px; max-height: 240px; resize: none; border: 0; outline: 0; background: transparent; color: var(--text); font: inherit; font-size: 16px; line-height: 1.5; }
+  .hx-box textarea::placeholder { color: var(--text-dim); }
+  .hx-row { display: flex; align-items: center; gap: 8px; margin-top: 8px; }
+  .hx-plus-wrap { position: relative; margin-right: auto; }
+  .hx-plus, .hx-mic { width: 36px; height: 36px; display: grid; place-items: center; border: 0; border-radius: 999px; background: transparent; color: var(--text-mid); cursor: pointer; transition: background-color .15s, color .15s; }
+  .hx-plus:hover, .hx-mic:hover, .hx-plus[aria-expanded="true"] { background: var(--border); color: var(--text); }
+  .hx-mic.on { color: #e5484d; }
+  .hx-plus svg, .hx-mic svg { width: 19px; height: 19px; }
+  .hx-mode { font-size: 13.5px; color: var(--text-dim); white-space: nowrap; }
+  .hx-send { width: 40px; height: 40px; display: grid; place-items: center; border: 0; border-radius: 999px; cursor: pointer; color: var(--key-ink); background: linear-gradient(var(--key-top), var(--key-bot)); box-shadow: inset 0 1px 0 rgba(255,255,255,.18), 0 1px 1.5px rgba(0,0,0,.16), 0 3px 6px -1px rgba(0,0,0,.22); transition: transform .2s cubic-bezier(0,0,.2,1), opacity .2s; }
+  .hx-send:hover:not([disabled]) { transform: translateY(-1px); }
+  .hx-send[disabled] { opacity: .35; cursor: default; box-shadow: none; }
+  .hx-send svg { width: 18px; height: 18px; }
+  .hx-menu { position: absolute; left: 0; bottom: calc(100% + 8px); z-index: 20; min-width: 200px; padding: 6px; border-radius: 14px; background: var(--surface); box-shadow: 0 0 0 1px var(--border), 0 16px 40px -12px rgba(20,20,30,.3); }
+  .hx-menu[hidden] { display: none; }
+  .hx-menu button { display: flex; align-items: center; gap: 10px; width: 100%; padding: 9px 10px; border: 0; border-radius: 9px; background: none; color: var(--text); font: inherit; font-size: 14px; text-align: left; cursor: pointer; }
+  .hx-menu button:hover, .hx-menu button:focus-visible { background: var(--bg-soft); outline: 0; }
+  .hx-menu svg { width: 16px; height: 16px; color: var(--text-mid); }
+
+  .hx-setup { margin-top: 28px; padding: 22px 20px 12px; text-align: left; border-radius: 24px; background: var(--hx-box); box-shadow: inset 0 0 0 1px var(--border); }
+  .hx-setup[hidden] { display: none; }
+  .hx-setup header { display: flex; align-items: center; gap: 12px; padding: 0 4px 10px; }
+  .hx-setup h3 { margin-right: auto; font-size: 17px; font-weight: 600; letter-spacing: -.02em; }
+  .hx-count { font-size: 13.5px; color: var(--text-dim); }
+  .hx-x { width: 30px; height: 30px; display: grid; place-items: center; border: 0; border-radius: 8px; background: none; color: var(--text-dim); cursor: pointer; }
+  .hx-x:hover { background: var(--border); color: var(--text); }
+  .hx-x svg { width: 16px; height: 16px; }
+  .hx-step { display: flex; align-items: center; gap: 14px; width: 100%; padding: 8px 4px; border: 0; border-radius: 14px; background: none; color: var(--text); font: inherit; font-size: 15px; text-align: left; cursor: pointer; transition: background-color .15s; }
+  .hx-step:hover:not(.done) { background: var(--bg-soft); }
+  .hx-step .tile { width: 40px; height: 40px; flex: none; display: grid; place-items: center; border-radius: 11px; color: #fff; }
+  .hx-step .tile svg { width: 18px; height: 18px; }
+  .hx-step .go { margin-left: auto; width: 16px; height: 16px; color: var(--text-dim); transition: transform .2s cubic-bezier(0,0,.2,1); }
+  .hx-step:hover .go { transform: translateX(2px); color: var(--text); }
+  .hx-step.done { cursor: default; color: var(--text-dim); text-decoration: line-through; text-decoration-color: var(--text-dim); }
+  .hx-step.done .tile { background: var(--border) !important; color: var(--text-dim); }
+  .t-amber { background: #8a6d44; } .t-violet { background: #5b4b7a; } .t-blue { background: #3b5b9a; } .t-rose { background: #8a4b5e; }
+  @media (max-width: 720px) {
+    .hx { padding-top: 8px; }
+    .hx-orb { width: 96px; height: 96px; }
+    .hx-mode { display: none; }
+  }
+  .visually-hidden { position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; }
   .hm-head { display:flex; align-items:center; gap:12px; margin-bottom:22px; }
   .hm-mark { width:26px; height:26px; color:var(--accent); flex-shrink:0; }
   .hm-mark svg { width:100%; height:100%; display:block; }
@@ -660,7 +712,7 @@
   .empty h3 { color:var(--text); font-size:18px; font-weight:600; letter-spacing:-.3px; margin-bottom:6px; }
   .empty p { font-size:14px; max-width:380px; line-height:1.55; margin-bottom:18px; }
 
-  .btn { display:inline-flex; align-items:center; gap:8px; padding:11px 20px; font-family:inherit; font-size:14px; font-weight:500; border:0; border-radius:999px; cursor:pointer; color:#fff; background:linear-gradient(180deg,#3f9b78 0%, #28775c 100%); box-shadow:inset 0 1px 0 rgba(255,255,255,.22), inset 0 -1px 0 rgba(0,0,0,.18), 0 1px 2px rgba(40,30,140,.18); transition:filter .2s, transform .2s; text-decoration:none; }
+  .btn { display:inline-flex; align-items:center; gap:8px; padding:11px 20px; font-family:inherit; font-size:14px; font-weight:500; border:0; border-radius:999px; cursor:pointer; color:var(--key-ink); background:linear-gradient(var(--key-top), var(--key-bot)); box-shadow:inset 0 1px 0 rgba(255,255,255,.18), 0 1px 1.5px rgba(0,0,0,.16), 0 3px 6px -1px rgba(0,0,0,.22), 0 8px 14px -4px rgba(0,0,0,.18); transition:filter .2s, transform .2s; text-decoration:none; }
   .btn:hover { filter:brightness(1.05); transform:translateY(-1px); }
   .btn-ghost { background:transparent; color:var(--text); border:1px solid var(--border-strong); box-shadow:none; padding:10px 18px; }
   .btn-ghost:hover { background:var(--bg-soft); transform:none; filter:none; }
@@ -950,7 +1002,7 @@
   .switch input:checked + i::after { transform:translateX(16px); }
 
   /* ─── FOUNDING UPSELL (in-app sidebar — sleeker than Eden's countdown card) ─── */
-  .upsell { position:relative; border-radius:14px; padding:1px; background:linear-gradient(160deg,var(--accent),var(--accent-2) 60%,transparent 100%); margin:14px 0 4px; box-shadow:0 8px 24px rgba(40,119,92,.15); }
+  .upsell { position:relative; border-radius:14px; padding:1px; background:linear-gradient(160deg,var(--accent),var(--accent-2) 60%,transparent 100%); margin:14px 0 4px; box-shadow:0 8px 24px rgba(37,99,235,.15); }
   .upsell-inner { background:var(--bg-soft); border-radius:13px; padding:14px; }
   .upsell-x { position:absolute; top:8px; right:8px; width:18px; height:18px; border:0; background:transparent; cursor:pointer; color:var(--text-dim); font-size:14px; line-height:1; display:flex; align-items:center; justify-content:center; padding:0; z-index:2; }
   .upsell-x:hover { color:var(--text); }
@@ -963,7 +1015,7 @@
   .upsell-seats-row .num b { color:var(--accent); }
   .upsell-bar { height:4px; background:var(--border); border-radius:999px; overflow:hidden; margin-bottom:11px; }
   .upsell-bar i { display:block; height:100%; background:linear-gradient(90deg,var(--accent),var(--accent-2)); border-radius:999px; transition:width .9s cubic-bezier(.16,1,.3,1); }
-  .upsell-btn { display:flex; align-items:center; justify-content:center; gap:6px; width:100%; padding:9px 12px; font-family:inherit; font-size:12px; font-weight:500; color:#fff; background:linear-gradient(180deg,#3f9b78 0%,#28775c 100%); border:0; border-radius:8px; cursor:pointer; box-shadow:inset 0 1px 0 rgba(255,255,255,.22); transition:filter .2s, transform .15s; }
+  .upsell-btn { display:flex; align-items:center; justify-content:center; gap:6px; width:100%; padding:9px 12px; font-family:inherit; font-size:12px; font-weight:500; color:var(--key-ink); background:linear-gradient(var(--key-top), var(--key-bot)); border:0; border-radius:8px; cursor:pointer; box-shadow:inset 0 1px 0 rgba(255,255,255,.22); transition:filter .2s, transform .15s; }
   .upsell-btn svg { width:14px; height:14px; flex-shrink:0; }
   .upsell-btn:hover { filter:brightness(1.07); transform:translateY(-1px); }
   .upsell-btn:disabled { opacity:.6; cursor:not-allowed; }
@@ -1027,10 +1079,10 @@
     .disc-card:hover, .nav-item:hover { transform: none !important; }
   }
 
-  .lg-wave { stroke: #28775c; }
-  .lg-spark { fill: #28775c; }
-  html[data-theme="dark"] .lg-wave { stroke: #5fb896; }
-  html[data-theme="dark"] .lg-spark { fill: #5fb896; }
+  .lg-wave { stroke: #2563eb; }
+  .lg-spark { fill: #2563eb; }
+  html[data-theme="dark"] .lg-wave { stroke: #60a5fa; }
+  html[data-theme="dark"] .lg-spark { fill: #60a5fa; }
   /* ─── Mobile sidebar ───
      Stacked vertically above the feed, the sidebar pushed the first card to
      524px on a 812px screen: two thirds of the studio was navigation before a
@@ -1256,38 +1308,42 @@
            Sona opened straight into Discover, so nothing said "here's where you
            were". One greeting, four ways in, and what you touched last. -->
       <div class="view active" data-view="home">
-        <div class="hm-head">
-          <span class="hm-mark"><img class="mark-img" src="/logo.svg" alt="" width="26" height="26"></span>
-          <h2 id="hm-greeting">Welcome back</h2>
-        </div>
+        <!-- Home, after Eden's idea agent: one living mark, a greeting by name,
+             one box that takes a post or a topic, and the four things that make
+             Sona yours. The box runs Sona's own tools — a long paste goes to
+             Decode, a short phrase searches the feed — it is not a chatbot. -->
+        <div class="hx">
+          <canvas class="hx-orb" id="hx-orb" width="240" height="240" aria-hidden="true"></canvas>
+          <h2 class="hx-hello" id="hm-greeting">Welcome back.</h2>
+          <p class="hx-sub">Your content research studio. Bring a post or a topic, leave with a draft that sounds like you.</p>
 
-        <div class="lc">
-          <div class="lc-head">
-            <span class="lc-mark"><img class="mark-img" src="/logo.svg" alt="" width="26" height="26"></span>
-            <h2>Let's make something</h2>
-          </div>
-          <div class="lc-grid">
-            <button type="button" class="lc-card" data-go="decode">
-              <span class="lc-ico lc-green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3M16 3h3a2 2 0 0 1 2 2v3M8 21H5a2 2 0 0 1-2-2v-3M16 21h3a2 2 0 0 0 2-2v-3"/><path d="M7 12h10"/></svg></span>
-              <b>Decode a post</b>
-              <small>Paste anything that worked</small>
-            </button>
-            <button type="button" class="lc-card" data-go="discover">
-              <span class="lc-ico lc-blue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg></span>
-              <b>Find an outlier</b>
-              <small>See what's beating its baseline</small>
-            </button>
-            <button type="button" class="lc-card" data-go="draft">
-              <span class="lc-ico lc-amber"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg></span>
-              <b>Start a draft</b>
-              <small>Write it in your own words</small>
-            </button>
-            <button type="button" class="lc-card" data-go="voice">
-              <span class="lc-ico lc-violet"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></span>
-              <b>Set your voice</b>
-              <small>Teach Sona how you sound</small>
-            </button>
-          </div>
+          <form class="hx-box" id="hx-form" autocomplete="off">
+            <label class="visually-hidden" for="hx-input">Paste a post or type a topic</label>
+            <textarea id="hx-input" rows="2" placeholder="Paste a post to decode, or type a topic to find outliers" spellcheck="false"></textarea>
+            <div class="hx-row">
+              <div class="hx-plus-wrap">
+                <button type="button" class="hx-plus" id="hx-plus" aria-label="More ways to start" aria-haspopup="menu" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>
+                <div class="hx-menu" id="hx-menu" role="menu" hidden>
+                  <button type="button" role="menuitem" data-hx="decode"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6h16M4 12h10M4 18h6"/></svg>Decode a post</button>
+                  <button type="button" role="menuitem" data-hx="discover"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>Find outliers</button>
+                  <button type="button" role="menuitem" data-hx="draft"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>Start a draft</button>
+                  <button type="button" role="menuitem" data-hx="hooks"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18h6M10 22h4M12 2a7 7 0 0 0-4 12.7V17h8v-2.3A7 7 0 0 0 12 2Z"/></svg>Browse hooks</button>
+                </div>
+              </div>
+              <span class="hx-mode" id="hx-mode" aria-live="polite">Search the feed</span>
+              <button type="button" class="hx-mic" id="hx-mic" aria-label="Dictate" title="Dictate (uses your browser's speech recognition)" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg></button>
+              <button type="submit" class="hx-send" id="hx-send" aria-label="Go" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M6 11l6-6 6 6"/></svg></button>
+            </div>
+          </form>
+
+          <section class="hx-setup" id="hx-setup" aria-labelledby="hx-setup-h">
+            <header>
+              <h3 id="hx-setup-h">Make Sona yours</h3>
+              <span class="hx-count" id="hx-count"></span>
+              <button type="button" class="hx-x" id="hx-setup-x" aria-label="Hide this list"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+            </header>
+            <div class="hx-steps" id="hx-steps"></div>
+          </section>
         </div>
 
         <h3 class="hm-sec">Recents</h3>
@@ -2278,6 +2334,7 @@
     setText('account-workspace', s.workspaceName || 'Personal brand');
     setText('settings-mode', demoMode ? 'Preview' : 'Account');
     renderBrandStrength();
+    if (typeof greet === 'function') greet();
   }
 
   // Eden-style brand-strength ring + checklist (reads the live form so it fills as you type)
@@ -3896,6 +3953,7 @@
     if (v === 'canvas') requestAnimationFrame(drawCanvasEdges);
     if (v === 'library') renderLibrary();
     if (v === 'calendar') renderCalendar();
+    if (v === 'home' && window.sonaHome) window.sonaHome.refresh();
   };
 
   function renderSwipe() {
@@ -4574,6 +4632,7 @@
   // Only drafts carry timestamps. Saved ideas and lists have none, and
   // inventing an order for them would misreport what you touched last.
   function renderHomeRecents() {
+    if (window.sonaHome) window.sonaHome.refresh();
     const host = document.getElementById('hm-recent-list');
     if (!host) return;
     const DOC = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3v5h5"/><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg>';
@@ -4592,11 +4651,236 @@
       b.addEventListener('click', () => { loadDraft(b.dataset.draftId); switchView('studio'); }));
   }
 
-  (function greet() {
+  function greet() {
     const el = document.getElementById('hm-greeting');
     if (!el) return;
     const h = new Date().getHours();
-    el.textContent = h < 12 ? 'Good morning' : h < 18 ? 'Welcome back' : 'Good evening';
+    const part = h < 5 ? 'Good evening' : h < 12 ? 'Good morning' : h < 18 ? 'Good afternoon' : 'Good evening';
+    const full = (typeof workspaceSettings !== 'undefined' && workspaceSettings.fullName) || '';
+    const first = full.trim().split(/\s+/)[0];
+    el.textContent = first ? part + ', ' + first + '.' : part + '.';
+  }
+  greet();
+
+  // ─── Home: orb, composer, "Make Sona yours" ───
+  window.sonaHome = (function () {
+    var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    // The orb: ~900 dots on a sphere, turning slowly, lit by depth. Colour runs
+    // through cool pastels (no green). It leans toward the pointer, spins up
+    // while Sona works, and only animates while it is on screen.
+    var orb = (function () {
+      var cv = document.getElementById('hx-orb');
+      if (!cv) return { busy: function () {} };
+      var ctx = cv.getContext('2d'), N = 900, pts = [], raf = 0, visible = false;
+      var rotY = 0, rotX = -0.35, tiltX = 0, tiltY = 0, aimX = 0, aimY = 0, speed = 0.0035, aimSpeed = 0.0035, t0 = 0;
+      var gold = Math.PI * (3 - Math.sqrt(5));
+      for (var i = 0; i < N; i++) {
+        var y = 1 - (i / (N - 1)) * 2, r = Math.sqrt(1 - y * y), th = gold * i;
+        pts.push([Math.cos(th) * r, y, Math.sin(th) * r]);
+      }
+      function size() {
+        var dpr = Math.min(window.devicePixelRatio || 1, 2), w = cv.clientWidth || 120;
+        cv.width = cv.height = Math.round(w * dpr);
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      }
+      function draw(t) {
+        var w = cv.clientWidth || 120, R = w * 0.44, c = w / 2;
+        var dark = document.documentElement.getAttribute('data-theme') === 'dark';
+        ctx.clearRect(0, 0, w, w);
+        var breathe = 1 + Math.sin(t / 1400) * 0.015;
+        var ay = rotY + tiltY, ax = rotX + tiltX;
+        var cy = Math.cos(ay), sy = Math.sin(ay), cx = Math.cos(ax), sx = Math.sin(ax);
+        for (var i = 0; i < N; i++) {
+          var p = pts[i];
+          var x1 = p[0] * cy + p[2] * sy, z1 = -p[0] * sy + p[2] * cy;
+          var y2 = p[1] * cx - z1 * sx, z2 = p[1] * sx + z1 * cx;
+          if (z2 < -0.15) continue;                       // back of the sphere stays dark
+          var depth = (z2 + 1) / 2;                        // 0 back … 1 front
+          var hue = 195 + ((Math.atan2(p[2], p[0]) / Math.PI + 1) * 0.5 * 140 + (p[1] + 1) * 45) % 185;
+          var light = dark ? 62 + depth * 14 : 52 + depth * 10;
+          ctx.fillStyle = 'hsla(' + hue.toFixed(0) + ',78%,' + light.toFixed(0) + '%,' + (0.25 + depth * 0.75).toFixed(2) + ')';
+          var s = (0.6 + depth * 1.5) * (w / 120);
+          ctx.beginPath();
+          ctx.arc(c + x1 * R * breathe, c + y2 * R * breathe, s, 0, 6.2832);
+          ctx.fill();
+        }
+      }
+      function tick(t) {
+        raf = 0;
+        if (!t0) t0 = t;
+        speed += (aimSpeed - speed) * 0.05;
+        rotY += speed;
+        tiltX += (aimX - tiltX) * 0.06; tiltY += (aimY - tiltY) * 0.06;
+        draw(t);
+        if (visible && !reduce) raf = requestAnimationFrame(tick);
+      }
+      function start() { if (!raf && visible) raf = requestAnimationFrame(tick); }
+      size();
+      new ResizeObserver(function () { size(); draw(performance.now()); }).observe(cv);
+      new IntersectionObserver(function (es) { visible = es[0].isIntersecting; if (visible) { draw(performance.now()); start(); } }).observe(cv);
+      if (!reduce && matchMedia('(hover: hover)').matches) {
+        window.addEventListener('pointermove', function (e) {
+          if (!visible) return;
+          var r = cv.getBoundingClientRect();
+          var dx = (e.clientX - (r.left + r.width / 2)) / window.innerWidth;
+          var dy = (e.clientY - (r.top + r.height / 2)) / window.innerHeight;
+          aimY = Math.max(-0.5, Math.min(0.5, dx * 1.4));
+          aimX = Math.max(-0.4, Math.min(0.4, -dy * 1.2));
+        }, { passive: true });
+      }
+      new MutationObserver(function () { draw(performance.now()); })
+        .observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+      return { busy: function (on) { aimSpeed = on ? 0.03 : 0.0035; start(); } };
+    })();
+
+    // The box: a pasted post goes to Decode, a short topic searches the feed.
+    var form = document.getElementById('hx-form');
+    var input = document.getElementById('hx-input');
+    var send = document.getElementById('hx-send');
+    var mode = document.getElementById('hx-mode');
+    function isPost(text) {
+      var words = text.trim().split(/\s+/).filter(Boolean).length;
+      return words >= 12 || /\n/.test(text.trim());
+    }
+    function syncBox() {
+      var v = input.value;
+      send.disabled = !v.trim();
+      mode.textContent = !v.trim() ? 'Search the feed' : isPost(v) ? 'Decode this post' : 'Search the feed';
+      send.setAttribute('aria-label', mode.textContent);
+      input.style.height = 'auto';
+      input.style.height = Math.min(input.scrollHeight, 240) + 'px';
+    }
+    function run() {
+      var v = input.value.trim();
+      if (!v) return;
+      orb.busy(true);
+      setTimeout(function () {
+        orb.busy(false);
+        if (isPost(v)) {
+          var t = document.getElementById('dec-text'), f = document.getElementById('dec-form');
+          switchView('decode');
+          if (t && f) { t.value = v; if (f.requestSubmit) f.requestSubmit(); else f.dispatchEvent(new Event('submit', { cancelable: true })); }
+        } else {
+          var s = document.getElementById('search-input');
+          if (s) s.value = v;
+          if (typeof applySearch === 'function') applySearch(v);
+          switchView('discover');
+        }
+        input.value = ''; syncBox();
+      }, reduce ? 0 : 450);
+    }
+    if (form) {
+      input.addEventListener('input', syncBox);
+      input.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' && !e.shiftKey && !e.isComposing) { e.preventDefault(); run(); }
+      });
+      form.addEventListener('submit', function (e) { e.preventDefault(); run(); });
+      syncBox();
+    }
+
+    // "+" menu
+    var plus = document.getElementById('hx-plus'), menu = document.getElementById('hx-menu');
+    function closeMenu() { menu.hidden = true; plus.setAttribute('aria-expanded', 'false'); }
+    if (plus && menu) {
+      plus.addEventListener('click', function (e) {
+        e.stopPropagation();
+        var open = menu.hidden;
+        menu.hidden = !open; plus.setAttribute('aria-expanded', String(open));
+        if (open) { var first = menu.querySelector('button'); if (first) first.focus(); }
+      });
+      menu.addEventListener('keydown', function (e) {
+        var items = Array.prototype.slice.call(menu.querySelectorAll('button')), i = items.indexOf(document.activeElement);
+        if (e.key === 'ArrowDown') { e.preventDefault(); items[(i + 1) % items.length].focus(); }
+        else if (e.key === 'ArrowUp') { e.preventDefault(); items[(i - 1 + items.length) % items.length].focus(); }
+        else if (e.key === 'Escape') { e.preventDefault(); closeMenu(); plus.focus(); }
+      });
+      document.addEventListener('click', function (e) { if (!menu.hidden && !menu.contains(e.target)) closeMenu(); });
+      menu.querySelectorAll('[data-hx]').forEach(function (b) {
+        b.addEventListener('click', function () {
+          closeMenu();
+          var go = b.dataset.hx;
+          if (go === 'draft') { switchView('studio'); var n = document.getElementById('draft-new'); if (n) n.click(); }
+          else switchView(go);
+        });
+      });
+    }
+
+    // Dictation, only where the browser offers it.
+    var mic = document.getElementById('hx-mic');
+    var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (mic && SR) {
+      mic.hidden = false;
+      var rec = null;
+      mic.addEventListener('click', function () {
+        if (rec) { rec.stop(); return; }
+        rec = new SR(); rec.interimResults = true; rec.lang = navigator.language || 'en-US';
+        var before = input.value ? input.value.replace(/\s*$/, ' ') : '';
+        rec.onresult = function (ev) {
+          var txt = ''; for (var i = 0; i < ev.results.length; i++) txt += ev.results[i][0].transcript;
+          input.value = before + txt; syncBox();
+        };
+        rec.onend = function () { rec = null; mic.classList.remove('on'); mic.setAttribute('aria-label', 'Dictate'); };
+        mic.classList.add('on'); mic.setAttribute('aria-label', 'Stop dictating');
+        rec.start();
+      });
+    }
+
+    // "Make Sona yours": four steps, each read from what is really there.
+    var DONE_KEY = function () { return storageKey('home-setup-hidden'); };
+    var DECODED_KEY = function () { return storageKey('decoded-once'); };
+    var decForm = document.getElementById('dec-form');
+    if (decForm) decForm.addEventListener('submit', function () {
+      try { localStorage.setItem(DECODED_KEY(), '1'); } catch (e) {}
+      setTimeout(refresh, 0);
+    });
+    var I = {
+      bulb: '<path d="M9 18h6M10 22h4M12 2a7 7 0 0 0-4 12.7V17h8v-2.3A7 7 0 0 0 12 2Z"/>',
+      spark: '<path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5 18 18M6 18l2.5-2.5M15.5 8.5 18 6"/>',
+      save: '<path d="M6 3h12v18l-6-4-6 4z"/>',
+      pen: '<path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/>',
+      check: '<path d="M20 6 9 17l-5-5"/>',
+      go: '<path d="M5 12h14M13 6l6 6-6 6"/>'
+    };
+    function svg(p) { return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + p + '</svg>'; }
+    function steps() {
+      var sg = (typeof styleGuide !== 'undefined' && styleGuide) || {};
+      var playbook = ['hookPatterns', 'voiceRules', 'bannedPhrases', 'signatureLines'].some(function (k) { return String(sg[k] || '').trim(); });
+      var decoded = false; try { decoded = localStorage.getItem(DECODED_KEY()) === '1'; } catch (e) {}
+      var nSaved = (typeof saved !== 'undefined' && saved) ? saved.size : 0;
+      var nDrafts = (typeof drafts !== 'undefined' && drafts) ? drafts.length : 0;
+      return [
+        { label: 'Tell Sona how you sound', done: playbook, tile: 't-amber', icon: I.bulb, go: function () { switchView('voice'); } },
+        { label: 'Decode a post that worked', done: decoded, tile: 't-violet', icon: I.spark, go: function () { input.focus(); input.placeholder = 'Paste a post that beat its creator’s usual…'; } },
+        { label: 'Save 5 ideas you like (' + Math.min(nSaved, 5) + '/5)', done: nSaved >= 5, tile: 't-blue', icon: I.save, go: function () { switchView('discover'); } },
+        { label: 'Write your first draft', done: nDrafts > 0, tile: 't-rose', icon: I.pen, go: function () { switchView('studio'); var n = document.getElementById('draft-new'); if (n) n.click(); } }
+      ];
+    }
+    function refresh() {
+      var box = document.getElementById('hx-setup'), list = document.getElementById('hx-steps');
+      if (!box || !list) return;
+      var hidden = false; try { hidden = localStorage.getItem(DONE_KEY()) === '1'; } catch (e) {}
+      var all = steps(), n = all.filter(function (s) { return s.done; }).length;
+      box.hidden = hidden || n === all.length;
+      document.getElementById('hx-count').textContent = n + ' of ' + all.length + ' done';
+      list.innerHTML = '';
+      all.forEach(function (s) {
+        var b = document.createElement('button');
+        b.type = 'button'; b.className = 'hx-step' + (s.done ? ' done' : '');
+        if (s.done) { b.disabled = true; b.setAttribute('aria-label', s.label + ', done'); }
+        b.innerHTML = '<span class="tile ' + s.tile + '">' + svg(s.done ? I.check : s.icon) + '</span><span></span>' + (s.done ? '' : '<span class="go">' + svg(I.go) + '</span>');
+        b.children[1].textContent = s.label;
+        if (!s.done) b.addEventListener('click', s.go);
+        list.appendChild(b);
+      });
+    }
+    var x = document.getElementById('hx-setup-x');
+    if (x) x.addEventListener('click', function () {
+      try { localStorage.setItem(DONE_KEY(), '1'); } catch (e) {}
+      refresh();
+    });
+    refresh();
+    return { refresh: refresh };
   })();
 
   function syncNavCounts() {
