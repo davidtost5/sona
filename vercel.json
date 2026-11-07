@@ -22,10 +22,6 @@
       "destination": "/api/checkout.js?action=portal"
     },
     {
-      "source": "/api/founding-count",
-      "destination": "/api/founding-count.js"
-    },
-    {
       "source": "/api/outliers",
       "destination": "/api/outliers.js"
     },
@@ -44,6 +40,10 @@
     {
       "source": "/api/ingest",
       "destination": "/api/ingest.js"
+    },
+    {
+      "source": "/api/agent",
+      "destination": "/api/agent.js"
     },
     {
       "source": "/api/health",
@@ -124,5 +124,10 @@
       "destination": "/",
       "permanent": true
     }
-  ]
+  ],
+  "functions": {
+    "api/agent.js": {
+      "maxDuration": 60
+    }
+  }
 }
