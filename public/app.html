@@ -556,6 +556,37 @@
   .hx-menu button:hover, .hx-menu button:focus-visible { background: var(--bg-soft); outline: 0; }
   .hx-menu svg { width: 16px; height: 16px; color: var(--text-mid); }
 
+  /* Zeno conversation */
+  .hx.chatting { padding-top: 4px; }
+  .hx.chatting .hx-orb, .hx.chatting .hx-hello, .hx.chatting .hx-sub, .hx.chatting .hx-setup { display: none; }
+  .view[data-view="home"]:has(.hx.chatting) > .hm-sec, .view[data-view="home"]:has(.hx.chatting) > .hm-recents { display: none; }
+  .hx-thread { text-align: left; }
+  .hx-thread[hidden] { display: none; }
+  .hx-thread-head { display: flex; align-items: center; justify-content: space-between; padding: 4px 2px 14px; border-bottom: 1px solid var(--border); }
+  .hx-who { display: inline-flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 600; }
+  .hx-mini { width: 20px; height: 20px; }
+  .hx-new { padding: 6px 12px; border: 0; border-radius: 9px; background: var(--border); color: var(--text); font: inherit; font-size: 13px; cursor: pointer; }
+  .hx-new:hover { background: var(--border-strong); }
+  .hx-msgs { display: flex; flex-direction: column; gap: 18px; padding: 20px 0 8px; }
+  .hx-msg.you { align-self: flex-end; max-width: 85%; padding: 10px 14px; border-radius: 18px 18px 6px 18px; background: var(--hx-box); box-shadow: inset 0 0 0 1px var(--border); font-size: 15px; line-height: 1.55; white-space: pre-wrap; overflow-wrap: anywhere; }
+  .hx-msg.zeno { font-size: 15.5px; line-height: 1.65; color: var(--text); overflow-wrap: anywhere; }
+  .hx-msg.zeno p + p, .hx-msg.zeno p + ul, .hx-msg.zeno ul + p, .hx-msg.zeno p + ol, .hx-msg.zeno ol + p { margin-top: 10px; }
+  .hx-msg.zeno ul, .hx-msg.zeno ol { padding-left: 20px; }
+  .hx-msg.zeno li + li { margin-top: 4px; }
+  .hx-msg.zeno strong { font-weight: 600; }
+  .hx-status { font-size: 13.5px; color: var(--text-dim); }
+  .hx-status::before { content: ''; display: inline-block; width: 6px; height: 6px; margin-right: 8px; border-radius: 99px; background: var(--accent); vertical-align: 1px; animation: hxpulse 1s ease-in-out infinite; }
+  @keyframes hxpulse { 50% { opacity: .25; } }
+  .hx-err { font-size: 14px; color: #d9534f; }
+  .hx-posts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-top: 12px; }
+  .hx-post { display: flex; flex-direction: column; gap: 8px; padding: 12px 14px; border-radius: 14px; background: var(--hx-box); box-shadow: inset 0 0 0 1px var(--border); font-size: 13.5px; }
+  .hx-post-top { display: flex; align-items: baseline; gap: 8px; }
+  .hx-post-top b { font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .hx-post-top .m { margin-left: auto; font-weight: 600; color: var(--accent); flex: none; }
+  .hx-post p { color: var(--text-mid); line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+  .hx-post-act { display: flex; gap: 12px; font-size: 12.5px; }
+  .hx-post-act a, .hx-post-act button { padding: 0; border: 0; background: none; color: var(--text); font: inherit; text-decoration: underline; text-decoration-color: var(--border-strong); text-underline-offset: 3px; cursor: pointer; }
+  @media (max-width: 720px) { .hx-posts { grid-template-columns: 1fr; } .hx-msg.you { max-width: 92%; } }
   .hx-setup { margin-top: 28px; padding: 22px 20px 12px; text-align: left; border-radius: 24px; background: var(--hx-box); box-shadow: inset 0 0 0 1px var(--border); }
   .hx-setup[hidden] { display: none; }
   .hx-setup header { display: flex; align-items: center; gap: 12px; padding: 0 4px 10px; }
@@ -1315,11 +1346,19 @@
         <div class="hx">
           <canvas class="hx-orb" id="hx-orb" width="240" height="240" aria-hidden="true"></canvas>
           <h2 class="hx-hello" id="hm-greeting">Welcome back.</h2>
-          <p class="hx-sub">Your content research studio. Bring a post or a topic, leave with a draft that sounds like you.</p>
+          <p class="hx-sub">I'm Zeno, your research partner. Ask what's working in your niche, or paste a post and I'll show you how it's built.</p>
+
+          <div class="hx-thread" id="hx-thread" hidden>
+            <div class="hx-thread-head">
+              <span class="hx-who"><canvas class="hx-mini" id="hx-mini" width="40" height="40" aria-hidden="true"></canvas>Zeno</span>
+              <button type="button" class="hx-new" id="hx-new">New chat</button>
+            </div>
+            <div class="hx-msgs" id="hx-msgs" aria-live="polite"></div>
+          </div>
 
           <form class="hx-box" id="hx-form" autocomplete="off">
-            <label class="visually-hidden" for="hx-input">Paste a post or type a topic</label>
-            <textarea id="hx-input" rows="2" placeholder="Paste a post to decode, or type a topic to find outliers" spellcheck="false"></textarea>
+            <label class="visually-hidden" for="hx-input">Message Zeno</label>
+            <textarea id="hx-input" rows="2" placeholder="Ask Zeno anything, or paste a post" spellcheck="false"></textarea>
             <div class="hx-row">
               <div class="hx-plus-wrap">
                 <button type="button" class="hx-plus" id="hx-plus" aria-label="More ways to start" aria-haspopup="menu" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>
@@ -1330,9 +1369,9 @@
                   <button type="button" role="menuitem" data-hx="hooks"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18h6M10 22h4M12 2a7 7 0 0 0-4 12.7V17h8v-2.3A7 7 0 0 0 12 2Z"/></svg>Browse hooks</button>
                 </div>
               </div>
-              <span class="hx-mode" id="hx-mode" aria-live="polite">Search the feed</span>
+              <span class="hx-mode" id="hx-mode">Zeno</span>
               <button type="button" class="hx-mic" id="hx-mic" aria-label="Dictate" title="Dictate (uses your browser's speech recognition)" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg></button>
-              <button type="submit" class="hx-send" id="hx-send" aria-label="Go" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M6 11l6-6 6 6"/></svg></button>
+              <button type="submit" class="hx-send" id="hx-send" aria-label="Send to Zeno" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M6 11l6-6 6 6"/></svg></button>
             </div>
           </form>
 
@@ -4669,10 +4708,9 @@
     // The orb: ~900 dots on a sphere, turning slowly, lit by depth. Colour runs
     // through cool pastels (no green). It leans toward the pointer, spins up
     // while Sona works, and only animates while it is on screen.
-    var orb = (function () {
-      var cv = document.getElementById('hx-orb');
+    function makeOrb(cv, N) {
       if (!cv) return { busy: function () {} };
-      var ctx = cv.getContext('2d'), N = 900, pts = [], raf = 0, visible = false;
+      var ctx = cv.getContext('2d'), pts = [], raf = 0, visible = false;
       var rotY = 0, rotX = -0.35, tiltX = 0, tiltY = 0, aimX = 0, aimY = 0, speed = 0.0035, aimSpeed = 0.0035, t0 = 0;
       var gold = Math.PI * (3 - Math.sqrt(5));
       for (var i = 0; i < N; i++) {
@@ -4700,7 +4738,7 @@
           var hue = 195 + ((Math.atan2(p[2], p[0]) / Math.PI + 1) * 0.5 * 140 + (p[1] + 1) * 45) % 185;
           var light = dark ? 62 + depth * 14 : 52 + depth * 10;
           ctx.fillStyle = 'hsla(' + hue.toFixed(0) + ',78%,' + light.toFixed(0) + '%,' + (0.25 + depth * 0.75).toFixed(2) + ')';
-          var s = (0.6 + depth * 1.5) * (w / 120);
+          var s = (0.6 + depth * 1.5) * Math.max(w / 120, 0.4);
           ctx.beginPath();
           ctx.arc(c + x1 * R * breathe, c + y2 * R * breathe, s, 0, 6.2832);
           ctx.fill();
@@ -4732,43 +4770,176 @@
       new MutationObserver(function () { draw(performance.now()); })
         .observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
       return { busy: function (on) { aimSpeed = on ? 0.03 : 0.0035; start(); } };
-    })();
+    }
+    var orb = makeOrb(document.getElementById('hx-orb'), 900);
+    var mini = makeOrb(document.getElementById('hx-mini'), 220);
 
-    // The box: a pasted post goes to Decode, a short topic searches the feed.
+    // Zeno: the box talks to /api/agent and streams the answer in.
     var form = document.getElementById('hx-form');
     var input = document.getElementById('hx-input');
     var send = document.getElementById('hx-send');
-    var mode = document.getElementById('hx-mode');
-    function isPost(text) {
-      var words = text.trim().split(/\s+/).filter(Boolean).length;
-      return words >= 12 || /\n/.test(text.trim());
+    var hx = document.querySelector('.hx');
+    var thread = document.getElementById('hx-thread');
+    var msgsEl = document.getElementById('hx-msgs');
+    var CHAT_KEY = 'sona-zeno-chat';
+    var convo = [];          // [{ role, content, posts? }]
+    var busy = false;
+
+    function esc(t) { return String(t).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+    // A small, safe subset of Markdown: paragraphs, - and 1. lists, **bold**.
+    function md(text) {
+      var blocks = String(text).trim().split(/\n{2,}/), out = [];
+      blocks.forEach(function (b) {
+        var lines = b.split('\n');
+        var inline = function (l) { return esc(l).replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>'); };
+        if (lines.every(function (l) { return /^\s*[-*•]\s+/.test(l); })) {
+          out.push('<ul>' + lines.map(function (l) { return '<li>' + inline(l.replace(/^\s*[-*•]\s+/, '')) + '</li>'; }).join('') + '</ul>');
+        } else if (lines.every(function (l) { return /^\s*\d+[.)]\s+/.test(l); })) {
+          out.push('<ol>' + lines.map(function (l) { return '<li>' + inline(l.replace(/^\s*\d+[.)]\s+/, '')) + '</li>'; }).join('') + '</ol>');
+        } else {
+          out.push('<p>' + lines.map(inline).join('<br>') + '</p>');
+        }
+      });
+      return out.join('');
+    }
+    function postCards(items) {
+      var wrap = document.createElement('div');
+      wrap.className = 'hx-posts';
+      items.slice(0, 4).forEach(function (p) {
+        var c = document.createElement('div'); c.className = 'hx-post';
+        var top = document.createElement('div'); top.className = 'hx-post-top';
+        var who = document.createElement('b'); who.textContent = p.creator || p.handle || 'Post';
+        top.appendChild(who);
+        if (p.multiple) { var m = document.createElement('span'); m.className = 'm'; m.textContent = p.multiple; top.appendChild(m); }
+        var tx = document.createElement('p'); tx.textContent = p.text || '';
+        var act = document.createElement('div'); act.className = 'hx-post-act';
+        if (p.url && /^https:\/\//.test(p.url)) {
+          var a = document.createElement('a'); a.href = p.url; a.target = '_blank'; a.rel = 'noopener noreferrer'; a.textContent = 'Original';
+          act.appendChild(a);
+        }
+        var d = document.createElement('button'); d.type = 'button'; d.textContent = 'Decode';
+        d.addEventListener('click', function () {
+          var t = document.getElementById('dec-text'), f = document.getElementById('dec-form');
+          switchView('decode');
+          if (t && f) { t.value = p.text || ''; if (f.requestSubmit) f.requestSubmit(); }
+        });
+        act.appendChild(d);
+        c.appendChild(top); c.appendChild(tx); c.appendChild(act);
+        wrap.appendChild(c);
+      });
+      return wrap;
+    }
+    function bubble(m) {
+      var el = document.createElement('div');
+      el.className = 'hx-msg ' + (m.role === 'user' ? 'you' : 'zeno');
+      if (m.role === 'user') el.textContent = m.content;
+      else { el.innerHTML = m.content ? md(m.content) : ''; if (m.posts && m.posts.length) el.appendChild(postCards(m.posts)); }
+      return el;
+    }
+    function save() { try { sessionStorage.setItem(CHAT_KEY, JSON.stringify(convo.slice(-30))); } catch (e) {} }
+    function setChatting(on) {
+      hx.classList.toggle('chatting', on);
+      thread.hidden = !on;
+      input.placeholder = on ? 'Reply to Zeno' : 'Ask Zeno anything, or paste a post';
+    }
+    function renderAll() {
+      msgsEl.innerHTML = '';
+      convo.forEach(function (m) { msgsEl.appendChild(bubble(m)); });
+      setChatting(convo.length > 0);
     }
     function syncBox() {
-      var v = input.value;
-      send.disabled = !v.trim();
-      mode.textContent = !v.trim() ? 'Search the feed' : isPost(v) ? 'Decode this post' : 'Search the feed';
-      send.setAttribute('aria-label', mode.textContent);
+      send.disabled = busy || !input.value.trim();
       input.style.height = 'auto';
       input.style.height = Math.min(input.scrollHeight, 240) + 'px';
     }
+    async function sessionToken() {
+      for (var i = 0; i < 30; i++) {           // Clerk may still be loading
+        try { if (window.Clerk && window.Clerk.loaded) return window.Clerk.session ? await window.Clerk.session.getToken() : null; } catch (e) { return null; }
+        await new Promise(function (r) { setTimeout(r, 100); });
+      }
+      return null;
+    }
+    function scrollDown() {
+      var sc = document.querySelector('.content');
+      if (sc) sc.scrollTo({ top: sc.scrollHeight, behavior: reduce ? 'auto' : 'smooth' });
+    }
+
+    async function ask(text) {
+      busy = true; syncBox();
+      convo.push({ role: 'user', content: text });
+      setChatting(true);
+      msgsEl.appendChild(bubble(convo[convo.length - 1]));
+      var reply = { role: 'assistant', content: '', posts: [] };
+      var el = document.createElement('div'); el.className = 'hx-msg zeno';
+      var status = document.createElement('div'); status.className = 'hx-status'; status.textContent = 'Zeno is thinking…';
+      el.appendChild(status);
+      msgsEl.appendChild(el);
+      scrollDown();
+      orb.busy(true); mini.busy(true);
+
+      function paint() {
+        el.innerHTML = reply.content ? md(reply.content) : '';
+        if (!reply.content) el.appendChild(status);
+        if (reply.posts.length) el.appendChild(postCards(reply.posts));
+      }
+      function fail(message) {
+        el.innerHTML = '';
+        var e = document.createElement('div'); e.className = 'hx-err'; e.textContent = message;
+        el.appendChild(e);
+      }
+
+      try {
+        var token = await sessionToken();
+        if (!token) { fail('Sign in to talk to Zeno.'); convo.pop(); return; }
+        var sg = (typeof styleGuide !== 'undefined' && styleGuide) || {};
+        var r = await fetch('/api/agent', {
+          method: 'POST',
+          headers: { 'content-type': 'application/json', authorization: 'Bearer ' + token },
+          body: JSON.stringify({
+            messages: convo.map(function (m) { return { role: m.role, content: m.content }; }),
+            context: {
+              name: (typeof workspaceSettings !== 'undefined' && workspaceSettings.fullName) || '',
+              playbook: { hookPatterns: sg.hookPatterns, voiceRules: sg.voiceRules, bannedPhrases: sg.bannedPhrases, signatureLines: sg.signatureLines }
+            }
+          })
+        });
+        if (!r.ok || !r.body) {
+          var j = await r.json().catch(function () { return {}; });
+          fail(j.error || 'Zeno couldn’t answer that. Try again.'); convo.pop(); return;
+        }
+        var reader = r.body.getReader(), dec = new TextDecoder(), buf = '', errored = false;
+        while (true) {
+          var chunk = await reader.read();
+          if (chunk.done) break;
+          buf += dec.decode(chunk.value, { stream: true });
+          var lines = buf.split('\n'); buf = lines.pop();
+          lines.forEach(function (line) {
+            if (!line.trim()) return;
+            var ev; try { ev = JSON.parse(line); } catch (e) { return; }
+            if (ev.t === 'text') { reply.content += ev.d; paint(); }
+            else if (ev.t === 'search') { status.textContent = ev.q ? 'Searching the feed for “' + ev.q + '”…' : 'Looking through the feed…'; if (!reply.content) paint(); }
+            else if (ev.t === 'posts' && Array.isArray(ev.items)) { ev.items.forEach(function (p) { if (!reply.posts.some(function (x) { return x.id === p.id; })) reply.posts.push(p); }); paint(); }
+            else if (ev.t === 'error') { errored = true; fail(ev.message || 'Zeno couldn’t answer that. Try again.'); }
+          });
+          scrollDown();
+        }
+        if (errored || !reply.content.trim()) { if (!errored) fail('Zeno couldn’t answer that. Try again.'); convo.pop(); return; }
+        reply.posts = reply.posts.slice(0, 4);
+        convo.push(reply);
+        save();
+      } catch (e) {
+        fail('Zeno couldn’t be reached. Check your connection and try again.'); convo.pop();
+      } finally {
+        busy = false; syncBox();
+        orb.busy(false); mini.busy(false);
+        input.focus();
+      }
+    }
     function run() {
       var v = input.value.trim();
-      if (!v) return;
-      orb.busy(true);
-      setTimeout(function () {
-        orb.busy(false);
-        if (isPost(v)) {
-          var t = document.getElementById('dec-text'), f = document.getElementById('dec-form');
-          switchView('decode');
-          if (t && f) { t.value = v; if (f.requestSubmit) f.requestSubmit(); else f.dispatchEvent(new Event('submit', { cancelable: true })); }
-        } else {
-          var s = document.getElementById('search-input');
-          if (s) s.value = v;
-          if (typeof applySearch === 'function') applySearch(v);
-          switchView('discover');
-        }
-        input.value = ''; syncBox();
-      }, reduce ? 0 : 450);
+      if (!v || busy) return;
+      input.value = ''; syncBox();
+      ask(v);
     }
     if (form) {
       input.addEventListener('input', syncBox);
@@ -4776,6 +4947,12 @@
         if (e.key === 'Enter' && !e.shiftKey && !e.isComposing) { e.preventDefault(); run(); }
       });
       form.addEventListener('submit', function (e) { e.preventDefault(); run(); });
+      document.getElementById('hx-new').addEventListener('click', function () {
+        if (busy) return;
+        convo = []; save(); renderAll(); input.focus();
+      });
+      try { convo = JSON.parse(sessionStorage.getItem(CHAT_KEY) || '[]').filter(function (m) { return m && typeof m.content === 'string'; }); } catch (e) { convo = []; }
+      renderAll();
       syncBox();
     }
 
@@ -4851,7 +5028,7 @@
       var nDrafts = (typeof drafts !== 'undefined' && drafts) ? drafts.length : 0;
       return [
         { label: 'Tell Sona how you sound', done: playbook, tile: 't-amber', icon: I.bulb, go: function () { switchView('voice'); } },
-        { label: 'Decode a post that worked', done: decoded, tile: 't-violet', icon: I.spark, go: function () { input.focus(); input.placeholder = 'Paste a post that beat its creator’s usual…'; } },
+        { label: 'Decode a post that worked', done: decoded, tile: 't-violet', icon: I.spark, go: function () { switchView('decode'); } },
         { label: 'Save 5 ideas you like (' + Math.min(nSaved, 5) + '/5)', done: nSaved >= 5, tile: 't-blue', icon: I.save, go: function () { switchView('discover'); } },
         { label: 'Write your first draft', done: nDrafts > 0, tile: 't-rose', icon: I.pen, go: function () { switchView('studio'); var n = document.getElementById('draft-new'); if (n) n.click(); } }
       ];
