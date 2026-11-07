@@ -50,7 +50,7 @@
           '<div class="vb" aria-hidden="true"><i class="l1"></i><i class="l2"></i><i class="l3"></i><i class="l4"></i></div>' +
           '<div class="va-inner"><div class="va-content">' +
             '<header class="va-top">' +
-              '<span class="va-av" role="img" aria-label="Zeno"><img src="/logo.svg" alt="" width="32" height="32"></span>' +
+              '<span class="va-av" role="img" aria-label="Zeno"><canvas class="va-av-orbit" width="52" height="52" aria-hidden="true"></canvas></span>' +
               '<div class="va-top-text"><span class="va-name">Zeno</span><span class="va-meta">Call preview</span></div>' +
             '</header>' +
             '<div class="va-divider" aria-hidden="true"></div>' +
@@ -74,6 +74,8 @@
     var mic = host.querySelector('.va-mic');
     var swap = makeSwap(host.querySelector('.t-text-swap'), card);
     var orbit = window.SonaOrbit ? window.SonaOrbit.create(host.querySelector('.va-orbit')) : { setMode: function () {}, setLevel: function () {} };
+    // Zeno's logo: the same orbit, small, in a tile. It stays at its resting pace.
+    if (window.SonaOrbit) window.SonaOrbit.create(host.querySelector('.va-av-orbit'), { dots: 90, follow: false });
 
     var phase = 'idle', speaking = false, timers = [];
     function clearTimers() { timers.forEach(clearTimeout); timers = []; }

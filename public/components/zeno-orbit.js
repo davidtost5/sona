@@ -3,7 +3,9 @@
  * A sphere of dots turning slowly, lit by depth, in one warm orange range
  * (amber to coral) rather than a rainbow. It leans toward the pointer, swells
  * and brightens with the voice while listening, and spins up while thinking.
- * Hues can be tuned on the canvas with --orbit-hue-from / --orbit-hue-to.
+ * Hues can be tuned on the canvas with --orbit-hue-from / --orbit-hue-to;
+ * --orbit-on-dark: 1 renders for a dark tile whatever the page theme.
+ * Options: { dots: n, follow: false } (don't lean toward the pointer).
  *
  *   var orbit = SonaOrbit.create(canvas);
  *   orbit.setMode('idle' | 'listening' | 'thinking');
@@ -39,7 +41,7 @@
       var a = parseFloat(cs.getPropertyValue('--orbit-hue-from')), b = parseFloat(cs.getPropertyValue('--orbit-hue-to'));
       if (Number.isFinite(a)) hueFrom = a;
       if (Number.isFinite(b)) hueTo = b;
-      dark = document.documentElement.getAttribute('data-theme') === 'dark';
+      dark = cs.getPropertyValue('--orbit-on-dark').trim() === '1' || document.documentElement.getAttribute('data-theme') === 'dark';
     }
     function resize() {
       var dpr = Math.min(window.devicePixelRatio || 1, 2);
@@ -57,7 +59,8 @@
       var R = size * 0.43 * (1 + lv * 0.08);
       var ay = rotY + tiltY, ax = rotX + tiltX;
       var cy = Math.cos(ay), sy = Math.sin(ay), cx = Math.cos(ax), sx = Math.sin(ax);
-      var dotScale = Math.max(size / 120, 0.5) * (size < 120 ? 1.15 : 1);
+      // Small marks get fewer, larger dots so the sphere still reads at logo size.
+      var dotScale = size < 40 ? 0.62 : Math.max(size / 120, 0.5) * (size < 120 ? 1.15 : 1);
       ctx.clearRect(0, 0, size, size);
       for (var i = 0; i < pts.length; i++) {
         var p = pts[i];
@@ -69,7 +72,7 @@
         // little around the sphere so it reads as turning.
         var mix = (p[1] + 1) / 2 * 0.7 + (Math.atan2(p[2], p[0]) / TAU + 0.5) * 0.3;
         var hue = hueTo - (hueTo - hueFrom) * mix;
-        var light = dark ? 50 + depth * 12 + lv * 6 : 47 + depth * 8 + lv * 4;
+        var light = dark ? (size < 40 ? 56 + depth * 14 : 50 + depth * 12) + lv * 6 : 47 + depth * 8 + lv * 4;
         var alpha = (0.22 + depth * 0.78) * (0.85 + lv * 0.15);
         ctx.fillStyle = 'hsla(' + hue.toFixed(0) + ',92%,' + light.toFixed(0) + '%,' + alpha.toFixed(2) + ')';
         ctx.beginPath();
@@ -97,7 +100,7 @@
     new IntersectionObserver(function (es) { visible = es[0].isIntersecting; if (visible) start(); }).observe(cv);
     new MutationObserver(function () { readTheme(); draw(); })
       .observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
-    if (!reduce.matches && matchMedia('(hover: hover)').matches) {
+    if (opts.follow !== false && !reduce.matches && matchMedia('(hover: hover)').matches) {
       window.addEventListener('pointermove', function (e) {
         if (!visible) return;
         var r = cv.getBoundingClientRect();
