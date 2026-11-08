@@ -98,6 +98,7 @@
       await window.Clerk.load({
         localization: {
           formFieldInputPlaceholder__emailAddress: 'you@email.com',
+          formFieldInputPlaceholder__emailAddress_username: 'you@email.com',
           formButtonPrimary: 'Continue',
         },
       });
@@ -114,20 +115,20 @@
   }
 
   // ─── Appearance ───
-  // Matches the site: Sona green accent, inherited type, pills only on the
-  // primary button. Reads the live theme so the modal doesn't arrive in the
-  // wrong palette.
+  // Matches the site: Sona blue, inherited type, pills only on the primary
+  // button. Reads the live theme so the account dialog doesn't arrive in the
+  // wrong palette. The sign-in page (signin.html) restyles Clerk further.
 
   function appearance() {
     var dark = document.documentElement.getAttribute('data-theme') === 'dark';
     return {
       variables: {
-        colorPrimary: dark ? '#5fb896' : '#28775c',
-        colorBackground: dark ? '#1a1d1b' : '#fcfcfa',
-        colorText: dark ? '#f3f3f0' : '#1a1a1a',
-        colorTextSecondary: dark ? '#a8a8a1' : '#55554f',
-        colorInputBackground: 'transparent',
-        colorInputText: dark ? '#f3f3f0' : '#1a1a1a',
+        colorPrimary: dark ? '#60a5fa' : '#2563eb',
+        colorBackground: dark ? '#111a2e' : '#ffffff',
+        colorText: dark ? '#f1f5f9' : '#0f172a',
+        colorTextSecondary: dark ? '#94a3b8' : '#64748b',
+        colorInputBackground: dark ? '#0b1120' : '#ffffff',
+        colorInputText: dark ? '#f1f5f9' : '#0f172a',
         // Card radius, NOT pill radius. Clerk applies this variable to every
         // rounded element including the modal card, so the 100px this used to
         // carry rounded a 640px-wide card into an oval and clipped the form
@@ -139,7 +140,7 @@
         card: {
           boxShadow: 'none',
           borderRadius: '16px',
-          border: '1px solid ' + (dark ? 'rgba(255,255,255,.12)' : 'rgba(26,26,26,.12)'),
+          border: '1px solid ' + (dark ? 'rgba(148,163,184,.2)' : 'rgba(15,23,42,.12)'),
         },
         formButtonPrimary: { borderRadius: '999px' },
         formFieldInput: { borderRadius: '10px' },
@@ -170,12 +171,12 @@
     return new Promise(function (resolve) {
       var dark = document.documentElement.getAttribute('data-theme') === 'dark';
       var c = {
-        bg: dark ? '#1a1d1b' : '#fcfcfa',
-        text: dark ? '#f3f3f0' : '#1a1a1a',
-        mid: dark ? '#a8a8a1' : '#55554f',
-        accent: dark ? '#5fb896' : '#28775c',
-        onAccent: dark ? '#111312' : '#ffffff',
-        border: dark ? 'rgba(255,255,255,.12)' : 'rgba(26,26,26,.12)',
+        bg: dark ? '#111a2e' : '#ffffff',
+        text: dark ? '#f1f5f9' : '#0f172a',
+        mid: dark ? '#94a3b8' : '#64748b',
+        accent: dark ? '#60a5fa' : '#2563eb',
+        onAccent: dark ? '#0b1120' : '#ffffff',
+        border: dark ? 'rgba(148,163,184,.2)' : 'rgba(15,23,42,.12)',
       };
 
       // The site's reset zeroes margins, which is what centres a modal dialog,
@@ -269,24 +270,48 @@
 
   // ─── Public API ───
 
+  // Sign in and Start free both go to the sign-in page (signin.html), which
+  // asks the age question and mounts Clerk's form inline. One form handles
+  // both: an address without an account becomes a new one.
+  function signinUrl(isNew, afterUrl) {
+    var q = [];
+    if (isNew) q.push('new=1');
+    if (afterUrl && afterUrl !== '/app') q.push('next=' + encodeURIComponent(afterUrl));
+    return '/signin' + (q.length ? '?' + q.join('&') : '');
+  }
+
   async function openSignIn(afterUrl) {
-    if (!(await confirmAge())) return;
-    var clerk = await ensureClerk();
-    clerk.openSignIn({
-      appearance: appearance(),
-      afterSignInUrl: afterUrl || '/app',
-      afterSignUpUrl: afterUrl || '/app',
-    });
+    window.location.href = signinUrl(false, afterUrl);
   }
 
   async function openSignUp(afterUrl) {
-    if (!(await confirmAge())) return;
+    window.location.href = signinUrl(true, afterUrl);
+  }
+
+  // Used by signin.html. Resolves 'signed-in' when there is already a session,
+  // otherwise mounts the form and resolves 'mounted'.
+  async function mountAuth(el, opts) {
+    opts = opts || {};
+    var next = opts.next || '/app';
     var clerk = await ensureClerk();
-    clerk.openSignUp({
-      appearance: appearance(),
-      afterSignInUrl: afterUrl || '/app',
-      afterSignUpUrl: afterUrl || '/app',
+    if (clerk.user) return 'signed-in';
+    // Clerk takes over the node it mounts into (its classes replace the
+    // node's own), so it gets a child of its own.
+    el.innerHTML = '';
+    var slot = document.createElement('div');
+    el.appendChild(slot);
+    clerk.mountSignIn(slot, {
+      withSignUp: true,
+      appearance: {
+        variables: Object.assign(appearance().variables, { colorBackground: 'transparent', colorInputBackground: 'transparent' }),
+      },
+      forceRedirectUrl: next,
+      signUpForceRedirectUrl: next,
     });
+    clerk.addListener(function (state) {
+      if (state && state.user) window.location.replace(next);
+    });
+    return 'mounted';
   }
 
   async function signOut() {
@@ -310,7 +335,7 @@
   async function requireUser(redirectTo) {
     var clerk = await ensureClerk();
     if (!clerk.user) {
-      window.location.href = redirectTo || '/?signin=1';
+      window.location.href = redirectTo || '/signin';
       return null;
     }
     return await getUser();
@@ -458,6 +483,7 @@
     getUser:    route('getUser',    getUser),
     requireUser: requireUser,
     getSupabase: getSupabase,
+    mountAuth: mountAuth,
   };
 
   // ─── Boot ───
@@ -473,7 +499,8 @@
 
     // ?signin=1 comes from the /app gate bouncing a signed-out visitor back here.
     if (new URLSearchParams(window.location.search).get('signin') === '1') {
-      openSignIn();
+      window.location.replace('/signin');
+      return;
     }
 
     document.querySelectorAll('[data-clerk-signin]').forEach(function (el) {

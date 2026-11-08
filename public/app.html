@@ -2527,7 +2527,7 @@
     retry.style.cssText = 'color:inherit;text-decoration:underline;cursor:pointer';
     const sep = document.createTextNode('  ·  ');
     const signin = document.createElement('a');
-    signin.href = '/?signin=1';
+    signin.href = '/signin';
     signin.textContent = 'Sign in again';
     signin.style.cssText = 'color:inherit;text-decoration:underline';
     actions.append(retry, sep, signin);
@@ -2587,7 +2587,7 @@
           step = 'loading sign-in';
           await withTimeout(new Promise((resolve, reject) => {
             const s = document.createElement('script');
-            s.src = 'clerk-auth.js?v=20261002a';
+            s.src = 'clerk-auth.js?v=20261108a';
             s.onload = resolve;
             s.onerror = () => reject(new Error('clerk-auth.js failed to load'));
             document.head.appendChild(s);
@@ -2596,7 +2596,7 @@
         // Clerk reaches its own frontend API here, so this can stall for the
         // same reasons the Supabase path could. Same budget, same named step.
         step = 'checking your session';
-        const clerkUser = await withTimeout(window.SonaAuth.requireUser('/?signin=1'), 8000, step);
+        const clerkUser = await withTimeout(window.SonaAuth.requireUser('/signin'), 8000, step);
         if (!clerkUser) return;               // requireUser already redirected
         sb = await window.SonaAuth.getSupabase();
         if (!sb) throw new Error('Supabase client unavailable under Clerk');
@@ -2610,7 +2610,7 @@
         step = 'checking your session';
         const { data: { session } } = await withTimeout(sb.auth.getSession(), 8000, step);
         if (!session) {
-          window.location.href = '/?signin=1';
+          window.location.href = '/signin';
           return;
         }
         user = session.user;
@@ -4870,7 +4870,7 @@
       n.body.innerHTML = '';
       var e = document.createElement('div'); e.className = 'hx-err'; e.setAttribute('role', 'alert');
       var p = document.createElement('span'); p.textContent = message; e.appendChild(p);
-      if (signin) { var a = document.createElement('a'); a.href = '/?signin=1'; a.textContent = 'Sign in'; e.appendChild(a); }
+      if (signin) { var a = document.createElement('a'); a.href = '/signin'; a.textContent = 'Sign in'; e.appendChild(a); }
       else if (retry) { var b = document.createElement('button'); b.type = 'button'; b.textContent = 'Try again'; b.addEventListener('click', retry); e.appendChild(b); }
       n.body.appendChild(e);
     }

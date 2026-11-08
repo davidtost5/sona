@@ -6,8 +6,8 @@
 // arrive are queued and replayed, so every Start free / Sign in works at once.
 window.SonaAuth = window.SonaAuth || {
   _queue: [],
-  openLogin: function () { this._queue.push(['openLogin']); window.loadAuthScripts && window.loadAuthScripts(); },
-  openSignup: function () { this._queue.push(['openSignup']); window.loadAuthScripts && window.loadAuthScripts(); },
+  openLogin: function () { window.location.href = '/signin'; },
+  openSignup: function () { window.location.href = '/signin?new=1'; },
   openWaitlist: function () { this._queue.push(['openWaitlist']); window.loadAuthScripts && window.loadAuthScripts(); },
   openSettings: function () { this._queue.push(['openSettings']); window.loadAuthScripts && window.loadAuthScripts(); },
   getUser: function () { return null; },
@@ -19,7 +19,7 @@ window.SonaAuth = window.SonaAuth || {
     window.__authScriptsLoaded = true;
     // Bump these strings whenever auth.js or clerk-auth.js changes.
     // async = false keeps insertion order, so the Clerk layer always runs second.
-    ['auth.js?v=20261002a', 'clerk-auth.js?v=20261002a'].forEach(function (src) {
+    ['auth.js?v=20261002a', 'clerk-auth.js?v=20261108a'].forEach(function (src) {
       var s = document.createElement('script');
       s.src = '/' + src; s.async = false;
       document.head.appendChild(s);
