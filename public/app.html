@@ -168,29 +168,9 @@
   @media (max-width: 760px)  { .disc-grid { columns: 1; } }
   .disc-card { break-inside: avoid; margin: 0 0 16px; }
   .filter-sep { width:1px; align-self:stretch; background:var(--border); margin:0 4px; flex-shrink:0; }
-  .disc-plat { width:13px; height:13px; opacity:.5; flex-shrink:0; }
-  /* The outlier multiple — the amber pill that says how far past baseline a post went.
-     This rule was missing its closing brace, which made everything below it parse as
-     CSS nesting (.disc-mult .disc-pct), so the New and Top-N% badges silently lost
-     all their styling and rendered as bare text. */
-  .disc-mult {
-    display:inline-flex; align-items:center;
-    font-family:'Geist Mono',monospace; font-size:10px; font-weight:500;
-    color:#d9a441; background:rgba(217,164,65,.13); border:1px solid rgba(217,164,65,.22);
-    border-radius:100px; padding:2px 8px; white-space:nowrap;
-  }
-  .disc-new { display:inline-flex; align-items:center; padding:2px 8px; border-radius:6px;
-    font-family:'Geist Mono', monospace; font-size:10.5px; font-weight:500;
-    background:color-mix(in srgb, var(--accent) 16%, transparent); color:var(--accent); }
-  .disc-pct { display:inline-flex; align-items:center; padding:2px 8px; border-radius:6px;
-    font-family:'Geist Mono', monospace; font-size:10.5px; font-weight:500; letter-spacing:.2px;
-    background:color-mix(in srgb, #8b5cf6 14%, transparent); color:#8b5cf6; }
-  html[data-theme="dark"] .disc-pct { background:rgba(167,139,250,.16); color:#a78bfa; }
-
-
   /* Media-rich cards. Everything here only renders when the row carries it —
      a text post is unchanged. */
-  .disc-media { position:relative; margin:-17px -17px 12px; border-radius:15px 15px 0 0; overflow:hidden; background:#0f0f10; }
+  .disc-media { position:relative; margin:-20px -20px 16px; border-radius:15px 15px 0 0; overflow:hidden; background:#0f0f10; }
   .disc-media img { display:block; width:100%; height:auto; }
   .disc-media.video::after {
     content:''; position:absolute; inset:0; background:rgba(0,0,0,.18);
@@ -207,9 +187,6 @@
     font-family:'Geist Mono',monospace; font-size:10px; color:#fff;
     background:rgba(0,0,0,.7); border-radius:5px; padding:2px 6px;
   }
-  .disc-engage { display:flex; align-items:center; gap:12px; margin-bottom:9px; font-size:11.5px; color:var(--text-dim); }
-  .disc-engage span { display:inline-flex; align-items:center; gap:5px; }
-  .disc-engage svg { width:12px; height:12px; opacity:.65; }
 
   /* ─── Focus ───
      There was no focus indicator anywhere: three outline:none declarations and
@@ -813,6 +790,41 @@
   .disc-tag { font-family:'Geist Mono',monospace; font-size:10.5px; color:var(--accent); background:var(--accent-soft); padding:3px 8px; border-radius:100px; font-weight:500; white-space:nowrap; }
   .disc-views { font-family:'Geist Mono',monospace; font-size:11px; color:var(--text-dim); white-space:nowrap; }
   .disc-actions { display:flex; gap:6px; flex-shrink:0; }
+  /* ─── Post cards (Discover, Saved, Digest) ─── */
+  .disc-card { display:flex; flex-direction:column; gap:14px; }
+  .dc-head { display:flex; align-items:center; gap:11px; min-width:0; }
+  .dc-who { min-width:0; flex:1; }
+  .dc-who .disc-name, .dc-who .disc-handle { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .dc-plat { flex:none; display:grid; place-items:center; width:32px; height:32px; margin:-4px -6px -4px 0; border-radius:8px; color:var(--text); }
+  a.dc-plat:hover { background:var(--accent-soft); }
+  .dc-plat svg { width:15px; height:15px; }
+  .dc-plat.in { color:#0A66C2; } .dc-plat.yt { color:#FF0000; } .dc-plat.sub { color:#FF6719; }
+  html[data-theme="dark"] .dc-plat.in { color:#4c9be8; }
+  .dc-text { font-size:15px; line-height:1.6; color:var(--text-mid); white-space:pre-wrap; overflow-wrap:anywhere; }
+  .dc-text b { font-weight:600; color:var(--text); }
+  .dc-text.clamp { display:-webkit-box; -webkit-line-clamp:10; -webkit-box-orient:vertical; overflow:hidden; }
+  .dc-more { align-self:flex-start; margin-top:-8px; padding:2px 0; border:0; background:none; font:inherit; font-size:13px; font-weight:500; color:var(--accent); cursor:pointer; }
+  .dc-stats { display:flex; flex-wrap:wrap; align-items:center; gap:6px 8px; }
+  .dc-mult { display:inline-flex; align-items:baseline; gap:5px; padding:4px 10px; border-radius:8px; background:var(--accent-soft); font-size:12px; color:var(--text-mid); white-space:nowrap; }
+  .dc-mult b { font-family:'Geist Mono',monospace; font-size:14px; font-weight:600; letter-spacing:-.03em; color:var(--accent); }
+  .dc-mult.mid { background:color-mix(in srgb, var(--accent) 18%, transparent); color:var(--text); }
+  .dc-mult.hi { background:var(--accent-2); color:rgba(255,255,255,.85); }
+  .dc-mult.hi b { color:#fff; }
+  .dc-chip { padding:4px 8px; border-radius:8px; border:1px solid var(--border); font-size:12px; color:var(--text-mid); white-space:nowrap; }
+  .dc-chip.new { color:var(--accent); border-color:color-mix(in srgb, var(--accent) 35%, transparent); }
+  .dc-nums { display:inline-flex; gap:12px; margin-left:auto; font-size:12.5px; font-variant-numeric:tabular-nums; color:var(--text-dim); }
+  .dc-nums span { display:inline-flex; align-items:center; gap:5px; white-space:nowrap; }
+  .dc-nums svg { width:13px; height:13px; }
+  .dc-reuse { display:grid; gap:5px; width:100%; padding:11px 13px; border:1px solid var(--border); border-radius:11px; background:var(--surface); text-align:left; font:inherit; color:inherit; cursor:pointer; transition:border-color .15s; }
+  .dc-reuse:hover { border-color:var(--border-strong); }
+  .dc-reuse span { font-size:12px; color:var(--text-dim); }
+  .dc-reuse code { font-family:'Geist Mono',monospace; font-size:12.5px; line-height:1.5; letter-spacing:-.02em; color:var(--text); display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; }
+  .dc-reuse .slot { color:var(--accent); }
+  .dc-actions { display:flex; gap:8px; }
+  .dc-actions .disc-action { flex:1; justify-content:center; min-height:36px; border-radius:9px; font-size:13px; font-weight:500; gap:7px; }
+  .dc-actions .disc-action svg { width:14px; height:14px; }
+  .dc-actions .disc-action:not(.saved) { background:var(--surface); border-color:var(--border-strong); color:var(--text); }
+  .dc-actions .disc-action:not(.saved):hover { border-color:var(--accent); color:var(--accent); }
   .disc-disclaimer { margin:18px 2px 0; font-size:11px; line-height:1.5; color:var(--text-dim); max-width:640px; }
   /* Hooks library */
   .hooks-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(300px,1fr)); gap:12px; }
@@ -2211,6 +2223,7 @@
           text: r.text,
           tag: r.outlier_tag || '',
           views: r.views || '',
+          url: r.source_url || '',
           mediaType: r.media_type || null,
           thumb: r.thumb_url || '',
           duration: r.duration || '',
@@ -3555,21 +3568,21 @@
       .sort((a, b) => multOf(b) - multOf(a));
     return list;
   }
-  const PLAT_ICON = {
-    x: '<svg class="disc-plat" viewBox="0 0 24 24" fill="currentColor"><path d="M18.9 2H22l-7 8 8.2 12h-6.4l-5-7-5.8 7H2.9l7.5-8.6L2.6 2H9l4.6 6.4z"/></svg>',
-    in: '<svg class="disc-plat" viewBox="0 0 24 24" fill="currentColor"><path d="M4.98 3.5A2.5 2.5 0 1 0 5 8.5a2.5 2.5 0 0 0 0-5zM3 9h4v12H3zM9 9h3.8v1.7h.05a4.2 4.2 0 0 1 3.75-2c4 0 4.75 2.6 4.75 6V21h-4v-5.3c0-1.3 0-2.9-1.8-2.9s-2 1.4-2 2.8V21H9z"/></svg>',
-    yt: '<svg class="disc-plat" viewBox="0 0 24 24" fill="currentColor"><path d="M23 12s0-3.5-.45-5.15a2.7 2.7 0 0 0-1.9-1.9C19 4.5 12 4.5 12 4.5s-7 0-8.65.45a2.7 2.7 0 0 0-1.9 1.9C1 8.5 1 12 1 12s0 3.5.45 5.15a2.7 2.7 0 0 0 1.9 1.9C5 19.5 12 19.5 12 19.5s7 0 8.65-.45a2.7 2.7 0 0 0 1.9-1.9C23 15.5 23 12 23 12zM9.75 15.25v-6.5L15.5 12z"/></svg>',
-    sub: '<svg class="disc-plat" viewBox="0 0 24 24" fill="currentColor"><path d="M4 3h16v2.5H4zM4 7.5h16V10H4zM4 12.5 12 17l8-4.5V21l-8-4.5L4 21z"/></svg>',
+  // Real platform marks, in each platform's own colour (X follows the text).
+  const PLATFORMS = {
+    x:   { name: 'X', cls: 'x', path: 'M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z' },
+    in:  { name: 'LinkedIn', cls: 'in', path: 'M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z' },
+    yt:  { name: 'YouTube', cls: 'yt', path: 'M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z' },
+    sub: { name: 'Substack', cls: 'sub', path: 'M22.539 8.242H1.46V5.406h21.08v2.836zM1.46 10.812V24L12 18.11 22.54 24V10.812H1.46zM22.54 0H1.46v2.836h21.08V0z' },
   };
-  function platIcon(handle) {
+  function platformOf(handle) {
     const tail = String(handle || '').split('·').pop().trim().toLowerCase();
-    if (tail === 'x') return PLAT_ICON.x;
-    if (tail === 'in') return PLAT_ICON.in;
-    if (tail === 'yt') return PLAT_ICON.yt;
-    if (tail.startsWith('sub')) return PLAT_ICON.sub;
-    return '';
+    if (tail === 'x' || tail === 'twitter') return PLATFORMS.x;
+    if (tail === 'in' || tail === 'linkedin') return PLATFORMS.in;
+    if (tail === 'yt' || tail === 'youtube') return PLATFORMS.yt;
+    if (tail.startsWith('sub')) return PLATFORMS.sub;
+    return null;
   }
-
 
   // Media block — only emitted when the row actually carries a thumbnail.
   const HEART = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.8 6.6a5 5 0 0 0-7.1 0L12 8.3l-1.7-1.7a5 5 0 1 0-7.1 7.1l8.8 8.8 8.8-8.8a5 5 0 0 0 0-7.1z"/></svg>';
@@ -3583,12 +3596,81 @@
       ${isVideo && i.duration ? `<span class="disc-dur">${escapeHtml(i.duration)}</span>` : ''}
     </div>`;
   }
-  function engageBlock(i) {
-    if (!i.likes && !i.reposts) return '';
-    return `<div class="disc-engage">
-      ${i.likes ? `<span>${HEART}${escapeHtml(i.likes)}</span>` : ''}
-      ${i.reposts ? `<span>${REPOST}${escapeHtml(i.reposts)}</span>` : ''}
-    </div>`;
+  const EYE = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>';
+  const DECODE_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 6h16M4 12h10M4 18h6"/></svg>';
+  const BOOKMARK = (on) => `<svg viewBox="0 0 24 24" fill="${on ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>`;
+
+  // The line someone could reuse. Built-in posts ship a decoded pattern; other
+  // posts get the template from the same engine Decode uses. A template with no
+  // [slots] is just the post again, so it isn't shown.
+  const _patternCache = new Map();
+  function reusableOf(i) {
+    if (_patternCache.has(i.id)) return _patternCache.get(i.id);
+    let p = (i.decoded && i.decoded.pattern) || '';
+    if (!p && window.SonaDecode) {
+      try { p = window.SonaDecode.structure(i.text).template || ''; } catch (_) { p = ''; }
+    }
+    if (!/\[[^\]]+\]/.test(p)) p = '';
+    _patternCache.set(i.id, p);
+    return p;
+  }
+
+  // The opening line carries the post, so it's set apart from the rest.
+  function splitHook(text) {
+    const s = String(text || '');
+    const m = /^[^\n]*?[.!?:](?=\s|$)|^[^\n]+/.exec(s);
+    const hook = m ? m[0] : s;
+    return hook.length > 180 ? ['', s] : [hook, s.slice(hook.length)];
+  }
+
+  function ideaCard(i, { search = false, removeLabel = false } = {}) {
+    const mark = (s) => search ? highlight(escapeHtml(s)) : escapeHtml(s);
+    const plat = platformOf(i.handle);
+    const handle = String(i.handle || '').split('·')[0].trim();
+    const url = /^https:\/\//.test(i.url || '') ? i.url : '';
+    const logo = plat ? `<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="${plat.path}"/></svg>` : '';
+    const source = !logo ? '' : url
+      ? `<a class="dc-plat ${plat.cls}" href="${escapeHtml(url)}" target="_blank" rel="noopener noreferrer" aria-label="Open the original on ${plat.name}" title="Open the original on ${plat.name}">${logo}</a>`
+      : `<span class="dc-plat ${plat.cls}" role="img" aria-label="${plat.name}" title="${plat.name}">${logo}</span>`;
+
+    const mult = multOf(i);
+    const tier = mult >= 10 ? 'hi' : mult >= 5 ? 'mid' : '';
+    const pct = pctRank(i);
+    const views = String(i.views || '').replace(/\s*views$/i, '');
+    const stats = [
+      views ? `<span title="Views">${EYE}${escapeHtml(views)}</span>` : '',
+      i.likes ? `<span title="Likes">${HEART}${escapeHtml(i.likes)}</span>` : '',
+      i.reposts ? `<span title="Reposts">${REPOST}${escapeHtml(i.reposts)}</span>` : '',
+    ].join('');
+
+    const [hook, rest] = splitHook(i.text);
+    const long = String(i.text || '').length > 460;
+    const reuse = reusableOf(i);
+    const isSaved = saved.has(i.id);
+    const safeId = escapeHtml(i.id);
+
+    return `
+      <article class="disc-card">
+        ${mediaBlock(i)}
+        <header class="dc-head">
+          <span class="disc-av" style="background:url('${escapeHtml(i.av)}') center/cover no-repeat, linear-gradient(135deg,var(--accent),var(--accent-soft))"></span>
+          <div class="dc-who"><div class="disc-name">${mark(i.name)}</div><div class="disc-handle">${mark(handle)}</div></div>
+          ${source}
+        </header>
+        <div class="dc-text${long ? ' clamp' : ''}">${hook ? `<b>${mark(hook)}</b>` : ''}${mark(rest)}</div>
+        ${long ? '<button type="button" class="dc-more" onclick="this.previousElementSibling.classList.toggle(\'clamp\');this.textContent=this.textContent===\'Show more\'?\'Show less\':\'Show more\'">Show more</button>' : ''}
+        ${(mult || stats) ? `<div class="dc-stats">
+          ${mult ? `<span class="dc-mult ${tier}" title="This post did ${mult} times what ${escapeHtml(i.name)} usually gets"><b>${mult}×</b> their average</span>` : ''}
+          ${isFresh(i) ? '<span class="dc-chip new">New</span>' : ''}
+          ${pct && pct <= 10 ? `<span class="dc-chip" title="Top ${pct}% of the posts in your feed, ranked by outlier multiple">Top ${pct}%</span>` : ''}
+          ${stats ? `<span class="dc-nums">${stats}</span>` : ''}
+        </div>` : ''}
+        ${reuse ? `<button type="button" class="dc-reuse" onclick="openDecoder('${safeId}')" title="See how this post is built"><span>Reusable line</span><code>${hookSlots(reuse)}</code></button>` : ''}
+        <footer class="dc-actions">
+          <button type="button" class="disc-action decode" onclick="openDecoder('${safeId}')" title="See why this post worked">${DECODE_ICON}Decode</button>
+          <button type="button" class="disc-action ${isSaved ? 'saved' : ''}" data-idea="${safeId}" onclick="toggleSave('${safeId}', this)" aria-pressed="${isSaved}">${BOOKMARK(isSaved)}${isSaved ? (removeLabel ? 'Remove' : 'Saved') : 'Save'}</button>
+        </footer>
+      </article>`;
   }
 
   function renderDiscover() {
@@ -3607,30 +3689,7 @@
         </div>`;
       return;
     }
-    grid.innerHTML = items.map(i => `
-      <div class="disc-card">
-        ${mediaBlock(i)}
-        <div class="disc-head"><span class="disc-av" style="background:url('${i.av}') center/cover no-repeat, linear-gradient(135deg,var(--accent),var(--accent-soft))"></span><div><div class="disc-name">${highlight(i.name)}</div><div class="disc-handle">${highlight(i.handle)}</div></div>${i.views ? `<span class="disc-views">${i.views}</span>` : ''}</div>
-        <div class="disc-text">${highlight(i.text)}</div>
-        ${engageBlock(i)}
-        <div class="disc-meta">
-          ${multOf(i) ? `<span class="disc-mult">${multOf(i)}×</span>` : ''}
-          ${isFresh(i) ? '<span class="disc-new">New</span>' : ''}
-          ${pctRank(i) && pctRank(i) <= 10 ? `<span class="disc-pct" title="Top ${pctRank(i)}% of the posts loaded in your feed, ranked by outlier multiple">Top ${pctRank(i)}%</span>` : ''}
-          <span class="disc-tag">${platIcon(i.handle)}${(i.views || '').replace(' views','')}</span>
-          <div class="disc-actions">
-            <button class="disc-action decode" onclick="openDecoder('${i.id}')" title="See why this post worked">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 1v6M12 17v6M4.22 4.22l4.24 4.24M15.54 15.54l4.24 4.24M1 12h6M17 12h6M4.22 19.78l4.24-4.24M15.54 8.46l4.24-4.24"/></svg>
-              Decode
-            </button>
-            <button class="disc-action ${saved.has(i.id) ? 'saved' : ''}" data-idea="${i.id}" onclick="toggleSave('${i.id}', this)">
-              <svg viewBox="0 0 24 24" fill="${saved.has(i.id) ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
-              ${saved.has(i.id) ? 'Saved' : 'Save'}
-            </button>
-          </div>
-        </div>
-      </div>
-    `).join('');
+    grid.innerHTML = items.map(i => ideaCard(i, { search: true })).join('');
   }
 
   function renderSaved() {
@@ -3648,25 +3707,7 @@
         </div>`;
       return;
     }
-    grid.innerHTML = items.map(i => `
-      <div class="disc-card">
-        <div class="disc-head"><span class="disc-av" style="background:url('${i.av}') center/cover no-repeat, linear-gradient(135deg,var(--accent),var(--accent-soft))"></span><div><div class="disc-name">${highlight(i.name)}</div><div class="disc-handle">${highlight(i.handle)}</div></div>${i.views ? `<span class="disc-views">${i.views}</span>` : ''}</div>
-        <div class="disc-text">${highlight(i.text)}</div>
-        <div class="disc-meta">
-          <span class="disc-tag">${i.tag}</span>
-          <div class="disc-actions">
-            <button class="disc-action decode" onclick="openDecoder('${i.id}')" title="See why this post worked">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 1v6M12 17v6M4.22 4.22l4.24 4.24M15.54 15.54l4.24 4.24M1 12h6M17 12h6M4.22 19.78l4.24-4.24M15.54 8.46l4.24-4.24"/></svg>
-              Decode
-            </button>
-            <button class="disc-action saved" onclick="toggleSave('${i.id}', this)">
-              <svg viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
-              Remove
-            </button>
-          </div>
-        </div>
-      </div>
-    `).join('');
+    grid.innerHTML = items.map(i => ideaCard(i, { search: true, removeLabel: true })).join('');
   }
 
   window.toggleSave = async function(ideaId, btn) {
@@ -3762,26 +3803,7 @@
     return hit ? hit.note : 'No single dominant pattern this week — mix formats rather than copying one shape.';
   }
 
-  function digestCard(i) {
-    return `
-      <div class="disc-card">
-        <div class="disc-head"><span class="disc-av" style="background:url('${i.av}') center/cover no-repeat, linear-gradient(135deg,var(--accent),var(--accent-soft))"></span><div><div class="disc-name">${escapeHtml(i.name)}</div><div class="disc-handle">${escapeHtml(i.handle)}</div></div>${i.views ? `<span class="disc-views">${escapeHtml(i.views)}</span>` : ''}</div>
-        <div class="disc-text">${escapeHtml(i.text)}</div>
-        <div class="disc-meta">
-          <span class="disc-tag">${escapeHtml(i.tag || '')}</span>
-          <div class="disc-actions">
-            <button class="disc-action decode" onclick="openDecoder('${i.id}')" title="See why this post worked">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 1v6M12 17v6M4.22 4.22l4.24 4.24M15.54 15.54l4.24 4.24M1 12h6M17 12h6M4.22 19.78l4.24-4.24M15.54 8.46l4.24-4.24"/></svg>
-              Decode
-            </button>
-            <button class="disc-action ${saved.has(i.id) ? 'saved' : ''}" onclick="toggleSave('${i.id}', this)">
-              <svg viewBox="0 0 24 24" fill="${saved.has(i.id) ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
-              ${saved.has(i.id) ? 'Saved' : 'Save'}
-            </button>
-          </div>
-        </div>
-      </div>`;
-  }
+  function digestCard(i) { return ideaCard(i); }
 
   function renderDigest() {
     const body = document.getElementById('digest-body');
