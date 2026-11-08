@@ -1024,8 +1024,8 @@
   // Lazy load Sona Auth & Supabase
   window.SonaAuth = window.SonaAuth || {
     _queue: [],
-    openLogin: function() { this._queue.push(['openLogin']); window.loadAuthScripts && window.loadAuthScripts(); },
-    openSignup: function() { this._queue.push(['openSignup']); window.loadAuthScripts && window.loadAuthScripts(); },
+    openLogin: function () { window.location.href = '/signin'; },
+    openSignup: function () { window.location.href = '/signin?new=1'; },
     openWaitlist: function() { this._queue.push(['openWaitlist']); window.loadAuthScripts && window.loadAuthScripts(); },
     openSettings: function() { this._queue.push(['openSettings']); window.loadAuthScripts && window.loadAuthScripts(); },
     getUser: function() { return null; },
@@ -1051,7 +1051,7 @@
       // Injected scripts run as soon as each downloads unless async is false;
       // async = false makes them run in insertion order, so this always runs second.
       const clerkScript = document.createElement('script');
-      clerkScript.src = "clerk-auth.js?v=20261002a";
+      clerkScript.src = "clerk-auth.js?v=20261108a";
       clerkScript.async = false;
       document.head.appendChild(clerkScript);
     };
