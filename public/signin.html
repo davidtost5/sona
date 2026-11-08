@@ -12,145 +12,180 @@
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <link rel="stylesheet" href="/fonts/fonts.css">
 <link rel="stylesheet" href="/site.css?v=20261106d">
-<title>Sign in to Sona</title>
+<title>Start free with Sona</title>
 <link rel="canonical" href="https://buildwithsona.com/signin">
 <style>
-  /* One screen: the homepage's painted sky with the cursor-lit dot grid,
-     and a single centred column. The email field is the page. */
+  /* Two halves. Left: the form, left-aligned on the site's ruled white with
+     the dot grid. Right: the product, an app window on the painted panel,
+     showing the posts you'll be looking at once you're in. */
   html, body { height: 100%; }
-  body { min-height: 100dvh; display: flex; flex-direction: column; overflow-x: hidden; }
-  .sky { position: fixed; inset: 0; z-index: -2; pointer-events: none;
-    background:
-      radial-gradient(60% 55% at 18% 12%, rgba(255,255,255,.8), transparent 70%),
-      radial-gradient(45% 40% at 84% 20%, rgba(219,234,254,.95), transparent 70%),
-      radial-gradient(70% 45% at 70% 100%, rgba(254,215,170,.85), transparent 72%),
-      radial-gradient(60% 40% at 15% 100%, rgba(253,186,116,.5), transparent 70%),
-      radial-gradient(90% 60% at 50% 60%, rgba(196,181,253,.3), transparent 75%),
-      linear-gradient(180deg, #dbe6fb 0%, #e9eefc 50%, #fbe7d6 100%); }
-  .sky::after { content: ''; position: absolute; inset: 0; opacity: .22; mix-blend-mode: soft-light;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
-  html[data-theme="dark"] .sky { background:
-      radial-gradient(55% 50% at 20% 10%, rgba(59,130,246,.28), transparent 70%),
-      radial-gradient(45% 40% at 85% 22%, rgba(129,140,248,.2), transparent 70%),
-      radial-gradient(70% 45% at 70% 100%, rgba(234,88,12,.28), transparent 72%),
-      linear-gradient(180deg, #0f1a33 0%, #131a33 55%, #2a1a1a 100%); }
-  .sky-dots { position: fixed; inset: 0; z-index: -1; width: 100%; height: 100%; pointer-events: none; }
+  body { min-height: 100dvh; }
+  .split { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr); min-height: 100dvh; }
 
-  .top { display: flex; align-items: center; justify-content: space-between; padding: 20px clamp(16px, 4vw, 32px); }
-  .back { display: inline-flex; align-items: center; gap: 8px; min-height: 40px; padding: 0 14px 0 10px; border-radius: 999px; font-size: 14px; color: var(--ink-2); text-decoration: none; background: color-mix(in srgb, var(--card) 70%, transparent); box-shadow: inset 0 0 0 1px var(--line); backdrop-filter: blur(8px); }
-  .back:hover { color: var(--ink); }
-  .back svg { width: 16px; height: 16px; }
+  .side { position: relative; isolation: isolate; display: flex; flex-direction: column; padding: 24px clamp(20px, 5vw, 64px) 28px; border-right: 1px solid var(--line); }
+  .side-dots { position: absolute; inset: 0; z-index: -1; width: 100%; height: 100%; pointer-events: none;
+    -webkit-mask-image: linear-gradient(180deg, #000 0%, transparent 70%); mask-image: linear-gradient(180deg, #000 0%, transparent 70%); }
+  .top { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+  .brand { display: inline-flex; align-items: center; gap: 9px; text-decoration: none; color: var(--ink); font-family: var(--word); font-weight: 600; font-size: 17px; letter-spacing: -.02em; }
+  .brand img { width: 26px; height: 26px; }
   .switch { font-size: 14px; color: var(--ink-3); }
   .switch a { color: var(--ink); font-weight: 500; }
 
-  main { flex: 1; display: grid; place-items: center; padding: 8px 16px 40px; }
-  .col { width: 100%; max-width: 560px; text-align: center; }
-  #auth, .age { max-width: 400px; margin-left: auto; margin-right: auto; }
-  .mark { display: block; width: 52px; height: 52px; margin: 0 auto 28px; border-radius: 14px; box-shadow: 0 10px 30px -12px rgba(15,23,42,.45); }
-  h1 { font-size: clamp(2.1rem, 6vw, 2.9rem); line-height: 1.05; letter-spacing: -.035em; }
-  .sub { margin-top: 14px; font-size: 16px; color: var(--ink-2); }
+  .form { width: 100%; max-width: 400px; margin: auto 0; padding: 48px 0; }
+  h1 { font-size: clamp(2rem, 3.4vw, 2.6rem); line-height: 1.06; letter-spacing: -.035em; }
+  .sub { margin-top: 12px; font-size: 15.5px; color: var(--ink-2); max-width: 36ch; }
 
-  /* The age line sits above the form and gates it. */
-  .age { display: flex; gap: 10px; align-items: flex-start; justify-content: center; margin: 34px auto 6px; text-align: left; font-size: 13.5px; line-height: 1.5; color: var(--ink-2); cursor: pointer; }
+  .age { display: flex; gap: 10px; align-items: flex-start; margin-top: 28px; padding: 12px 14px; border-radius: 12px; background: var(--card-2); box-shadow: inset 0 0 0 1px var(--line); font-size: 13.5px; line-height: 1.5; color: var(--ink-2); cursor: pointer; }
   .age input { flex: none; width: 18px; height: 18px; margin-top: 1px; accent-color: var(--accent); cursor: pointer; }
   .age a { color: var(--ink); }
   .age.done { display: none; }
 
-  #auth { position: relative; min-height: 220px; margin-top: 18px; text-align: left; transition: opacity .25s ease; }
-  #auth[inert] { opacity: .45; }
-  .loading { display: grid; place-items: center; height: 200px; color: var(--ink-3); font-size: 14px; }
-  .creed { margin-top: 36px; font-size: 13px; color: var(--ink-3); }
-  .legal { margin-top: 10px; font-size: 12.5px; color: var(--ink-3); }
-  .legal a { color: var(--ink-2); }
+  #auth { position: relative; min-height: 220px; margin-top: 22px; transition: opacity .25s ease; }
+  #auth[inert] { opacity: .4; }
+  .loading { padding: 40px 0; color: var(--ink-3); font-size: 14px; }
+  .foot { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 12.5px; color: var(--ink-3); }
+  .foot a { color: var(--ink-3); }
+  .foot span { margin-right: auto; }
 
-  /* ── Clerk, restyled to read as part of the page, not a widget on it ── */
+  /* ── Clerk, as a plain labelled form on this page ── */
   #auth .cl-rootBox, #auth .cl-cardBox, #auth .cl-card { width: 100% !important; max-width: none !important; }
   #auth .cl-cardBox, #auth .cl-card { background: transparent !important; border: 0 !important; box-shadow: none !important; padding: 0 !important; border-radius: 0 !important; }
   #auth .cl-header, #auth .cl-logoBox { display: none !important; }
   #auth .cl-main { display: flex !important; flex-direction: column !important; gap: 0 !important; }
-  /* Email first, Google under it. */
   #auth .cl-form { order: 1 !important; }
-  #auth .cl-dividerRow { order: 2 !important; margin: 26px 0 18px !important; }
+  #auth .cl-dividerRow { order: 2 !important; margin: 22px 0 16px !important; }
   #auth .cl-socialButtonsRoot { order: 3 !important; }
-  #auth .cl-formFieldLabelRow { justify-content: center !important; }
-  #auth .cl-formFieldLabel { color: var(--ink-2) !important; font-weight: 500 !important; }
+  #auth .cl-formFieldLabel { color: var(--ink) !important; font-size: 14px !important; font-weight: 500 !important; }
+  #auth .cl-formFieldInput {
+    min-height: 50px !important; padding: 0 14px !important; font-size: 16px !important;
+    color: var(--ink) !important; background: var(--card) !important; border: 0 !important; border-radius: 12px !important;
+    box-shadow: inset 0 0 0 1px var(--line-2), var(--shadow-card) !important; transition: box-shadow .2s ease !important; }
+  #auth .cl-formFieldInput:hover { box-shadow: inset 0 0 0 1px var(--ink-3), var(--shadow-card) !important; }
+  #auth .cl-formFieldInput:focus { box-shadow: inset 0 0 0 1.5px var(--accent), 0 0 0 4px var(--accent-wash) !important; outline: none !important; }
+  #auth .cl-formFieldInput::placeholder { color: var(--ink-3) !important; opacity: .8 !important; }
+  #auth .cl-otpCodeFieldInput { width: 46px !important; height: 54px !important; font-size: 22px !important; border-radius: 12px !important; background: var(--card) !important; color: var(--ink) !important; }
 
-  /* The big ghost field: type, a hairline, nothing else. */
-  #auth .cl-formField__identifier .cl-formFieldLabelRow,
-  #auth .cl-formField__emailAddress .cl-formFieldLabelRow { position: absolute !important; width: 1px !important; height: 1px !important; overflow: hidden !important; clip: rect(0 0 0 0) !important; }
-  #auth .cl-formField__identifier, #auth .cl-formField__emailAddress { position: relative !important; }
-  #auth .cl-formFieldInput__identifier, #auth .cl-formFieldInput__emailAddress {
-    height: auto !important; padding: 8px 0 12px !important; text-align: center !important;
-    font-size: clamp(26px, 6.4vw, 34px) !important; font-weight: 500 !important; letter-spacing: -.03em !important;
-    color: var(--ink) !important; background: transparent !important; border: 0 !important; border-radius: 0 !important;
-    box-shadow: inset 0 -1px 0 var(--line-2) !important; outline: none !important; transition: box-shadow .3s ease !important; }
-  #auth .cl-formFieldInput__identifier::placeholder, #auth .cl-formFieldInput__emailAddress::placeholder { color: color-mix(in srgb, var(--ink) 28%, transparent) !important; }
-  #auth .cl-formFieldInput__identifier:focus, #auth .cl-formFieldInput__emailAddress:focus { box-shadow: inset 0 -2px 0 var(--accent) !important; }
-
-  /* Every other field (password, names) stays a calm boxed input. */
-  #auth .cl-formFieldInput:not(.cl-formFieldInput__identifier):not(.cl-formFieldInput__emailAddress) { min-height: 48px !important; font-size: 16px !important; border-radius: 12px !important; background: var(--card) !important; color: var(--ink) !important; }
-  #auth .cl-otpCodeFieldInput { width: 46px !important; height: 56px !important; font-size: 22px !important; border-radius: 12px !important; background: var(--card) !important; color: var(--ink) !important; }
-
+  /* Continue is the site's dark key, the same button as Start free. */
   #auth .cl-formButtonPrimary {
-    min-height: 52px !important; margin-top: 26px !important; border-radius: 999px !important;
-    background: var(--accent) !important; color: #fff !important; border: 0 !important;
-    font-size: 16px !important; font-weight: 600 !important; text-transform: none !important; letter-spacing: 0 !important;
-    box-shadow: 0 1px 0 rgba(255,255,255,.25) inset, 0 10px 24px -12px rgba(37,99,235,.7) !important;
-    transition: background .2s ease, transform .2s ease !important; }
-  #auth .cl-formButtonPrimary:hover { background: var(--accent-hover) !important; transform: translateY(-1px); }
-  #auth .cl-formButtonPrimary:active { transform: translateY(0) scale(.99); }
-  #auth .cl-formButtonPrimary .cl-buttonArrowIcon { display: none !important; }
+    min-height: 50px !important; margin-top: 18px !important; border-radius: 12px !important;
+    background: linear-gradient(180deg, var(--key-top), var(--key-bot)) !important; color: var(--key-ink) !important; border: 0 !important;
+    font-size: 15.5px !important; font-weight: 600 !important; text-transform: none !important; letter-spacing: 0 !important;
+    box-shadow: inset 0 1px 0 var(--key-edge), 0 1px 2px rgba(15,23,42,.2), 0 8px 18px -10px rgba(15,23,42,.6) !important;
+    transition: transform .2s ease, box-shadow .2s ease !important; }
+  #auth .cl-formButtonPrimary:hover { transform: translateY(-1px); box-shadow: inset 0 1px 0 var(--key-edge-hover), 0 2px 4px rgba(15,23,42,.2), 0 12px 24px -10px rgba(15,23,42,.6) !important; }
+  #auth .cl-formButtonPrimary:active { transform: translateY(0); }
   #auth .cl-socialButtonsBlockButton {
-    min-height: 50px !important; border-radius: 999px !important; background: var(--card) !important;
-    border: 0 !important; box-shadow: inset 0 0 0 1px var(--line-2) !important; color: var(--ink) !important; font-weight: 500 !important; }
+    min-height: 50px !important; border-radius: 12px !important; background: var(--card) !important; border: 0 !important;
+    box-shadow: inset 0 0 0 1px var(--line-2) !important; color: var(--ink) !important; }
   #auth .cl-socialButtonsBlockButton:hover { background: var(--card-2) !important; }
-  #auth .cl-socialButtonsBlockButtonText { font-size: 15px !important; color: var(--ink) !important; }
-  #auth .cl-dividerLine { background: var(--line-2) !important; }
+  #auth .cl-socialButtonsBlockButtonText { font-size: 15px !important; font-weight: 500 !important; color: var(--ink) !important; }
+  #auth .cl-dividerLine { background: var(--line) !important; }
   #auth .cl-dividerText { color: var(--ink-3) !important; font-size: 13px !important; }
-  #auth .cl-footer { background: transparent !important; border: 0 !important; margin-top: 18px !important; }
-  #auth .cl-footerItem { opacity: .75; }
-  #auth .cl-footerAction { justify-content: center !important; }
+  #auth .cl-footer { background: transparent !important; border: 0 !important; margin-top: 16px !important; }
+  #auth .cl-footerAction { justify-content: flex-start !important; }
   #auth .cl-footerActionText { color: var(--ink-3) !important; }
   #auth .cl-footerActionLink { color: var(--ink) !important; font-weight: 500 !important; }
+  #auth .cl-footerItem { opacity: .7; }
   #auth .cl-headerTitle, #auth .cl-identityPreviewText { color: var(--ink) !important; }
-  #auth .cl-formResendCodeLink, #auth .cl-alternativeMethodsBlockButton, #auth .cl-backLink { color: var(--accent-ink) !important; }
-  #auth .cl-formFieldErrorText, #auth .cl-formFieldErrorText * { justify-content: center !important; }
+  #auth .cl-formResendCodeLink, #auth .cl-alternativeMethodsBlockButton, #auth .cl-backLink, #auth .cl-formFieldAction { color: var(--accent-ink) !important; }
 
-  @media (prefers-reduced-motion: reduce) {
-    #auth .cl-formButtonPrimary { transition: none !important; }
+  /* ── The product side ── */
+  .show { position: relative; isolation: isolate; overflow: hidden; margin: 12px; border-radius: 22px; display: flex; flex-direction: column; justify-content: center; padding: clamp(32px, 5vw, 64px);
+    background:
+      radial-gradient(60% 50% at 20% 10%, rgba(255,255,255,.8), transparent 70%),
+      radial-gradient(50% 45% at 85% 20%, rgba(219,234,254,.95), transparent 70%),
+      radial-gradient(70% 50% at 70% 100%, rgba(254,215,170,.85), transparent 72%),
+      radial-gradient(80% 60% at 40% 60%, rgba(196,181,253,.3), transparent 75%),
+      linear-gradient(180deg, #dbe6fb 0%, #e9eefc 50%, #fbe7d6 100%); }
+  .show::after { content: ''; position: absolute; inset: 0; z-index: -1; opacity: .22; mix-blend-mode: soft-light; pointer-events: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
+  html[data-theme="dark"] .show { background:
+      radial-gradient(55% 50% at 20% 10%, rgba(59,130,246,.28), transparent 70%),
+      radial-gradient(45% 40% at 85% 25%, rgba(129,140,248,.2), transparent 70%),
+      radial-gradient(70% 45% at 70% 100%, rgba(234,88,12,.28), transparent 72%),
+      linear-gradient(180deg, #0f1a33 0%, #131a33 55%, #2a1a1a 100%); }
+
+  .win { width: 100%; max-width: 520px; margin: 0 auto; border-radius: 14px; overflow: hidden; background: var(--card); color: var(--ink);
+    box-shadow: 0 0 0 1px rgba(15,23,42,.1), 0 24px 60px -20px rgba(15,23,42,.4), 0 60px 120px -40px rgba(30,41,90,.3); font-size: 13px; }
+  html[data-theme="dark"] .win { box-shadow: 0 0 0 1px rgba(148,163,184,.16), 0 24px 60px -18px rgba(0,0,0,.7); }
+  .win-bar { position: relative; display: flex; align-items: center; justify-content: center; height: 34px; border-bottom: 1px solid var(--line); background: var(--card-2); font-size: 12px; font-weight: 600; color: var(--ink-2); }
+  .win-bar i { position: absolute; top: 12px; width: 10px; height: 10px; border-radius: 50%; background: var(--raise-2); box-shadow: inset 0 0 0 1px var(--line-2); }
+  .win-bar i:nth-child(1) { left: 12px; } .win-bar i:nth-child(2) { left: 28px; } .win-bar i:nth-child(3) { left: 44px; }
+  .win-body { display: grid; gap: 8px; padding: 16px; }
+  .win-head { display: flex; align-items: baseline; gap: 10px; margin-bottom: 4px; }
+  .win-head b { font-size: 15px; letter-spacing: -.02em; }
+  .win-head span { font-size: 12px; color: var(--ink-3); }
+  .row { display: grid; grid-template-columns: 28px minmax(0, 1fr) auto; gap: 11px; padding: 12px; border-radius: 10px; box-shadow: inset 0 0 0 1px var(--line); }
+  .row.on { background: var(--accent-wash); box-shadow: inset 0 0 0 1.5px var(--accent); }
+  .av { display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; color: #fff; font-size: 10.5px; font-weight: 600; }
+  .row b { font-size: 12.5px; }
+  .row em { font-style: normal; font-size: 11.5px; color: var(--ink-3); margin-left: 6px; }
+  .row p { margin-top: 2px; font-size: 12.5px; line-height: 1.45; color: var(--ink-2); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .mult { text-align: right; font-size: 10.5px; color: var(--ink-3); white-space: nowrap; }
+  .mult b { display: block; font-family: var(--mono); font-size: 16px; color: var(--accent); letter-spacing: -.03em; }
+  .read { margin-top: 6px; padding: 12px 14px; border-radius: 10px; background: var(--card-2); box-shadow: inset 0 0 0 1px var(--line); display: grid; gap: 7px; }
+  .read div { display: grid; grid-template-columns: 74px 1fr; gap: 10px; font-size: 12.5px; }
+  .read dt { color: var(--ink-3); }
+  .read dd { margin: 0; }
+  .read code { font-family: var(--mono); font-size: 12px; color: var(--accent-ink); letter-spacing: -.02em; }
+  .caption { max-width: 520px; margin: 22px auto 0; width: 100%; font-size: 15px; line-height: 1.55; color: var(--ink-2); }
+  .caption b { color: var(--ink); font-weight: 600; }
+
+  @media (prefers-reduced-motion: reduce) { #auth .cl-formButtonPrimary, #auth .cl-formFieldInput { transition: none !important; } }
+  @media (max-width: 960px) {
+    .split { grid-template-columns: minmax(0, 1fr); }
+    .side { border-right: 0; min-height: 100dvh; }
+    .show { display: none; }
+    .form { margin: 0; padding-top: 40px; }
   }
-  @media (max-width: 520px) {
-    .switch { display: none; }
-    .mark { margin-bottom: 22px; }
-  }
+  @media (max-width: 480px) { .switch { font-size: 13px; } .foot span { flex-basis: 100%; } }
 </style>
 </head>
 <body>
-<div class="sky" aria-hidden="true"></div>
-<canvas class="sky-dots" data-dots aria-hidden="true"></canvas>
+<div class="split">
+  <section class="side">
+    <canvas class="side-dots" data-dots aria-hidden="true"></canvas>
+    <header class="top">
+      <a class="brand" href="/"><img src="/logo.svg" alt="" width="26" height="26">Sona</a>
+      <p class="switch" id="switch"></p>
+    </header>
 
-<header class="top">
-  <a class="back" href="/"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>Sona</a>
-  <p class="switch" id="switch"></p>
-</header>
+    <main class="form">
+      <h1 id="title">Create your account.<br><span class="tone">It’s free to start.</span></h1>
+      <p class="sub" id="sub">Find the posts beating the average in your niche, and write your own version.</p>
 
-<main>
-  <div class="col">
-    <img class="mark" src="/logo.svg" alt="" width="52" height="52">
-    <h1 id="title">Start with what’s working.<br><span class="tone">Write it your way.</span></h1>
-    <p class="sub" id="sub">Create your free account with your email.</p>
+      <label class="age" id="age">
+        <input type="checkbox" id="age-box">
+        <span>I’m 16 or older and I agree to the <a href="/terms.html" target="_blank" rel="noopener">Terms</a> and <a href="/privacy.html" target="_blank" rel="noopener">Privacy Policy</a>.</span>
+      </label>
 
-    <label class="age" id="age">
-      <input type="checkbox" id="age-box">
-      <span>I’m 16 or older and I agree to the <a href="/terms.html" target="_blank" rel="noopener">Terms</a> and <a href="/privacy.html" target="_blank" rel="noopener">Privacy Policy</a>.</span>
-    </label>
+      <div id="auth" inert><p class="loading">Loading…</p></div>
+    </main>
 
-    <div id="auth" inert><p class="loading">Loading…</p></div>
+    <footer class="foot">
+      <span>Nothing in Sona writes for you. You write.</span>
+      <a href="/terms.html">Terms</a><a href="/privacy.html">Privacy</a><a href="/contact.html">Help</a>
+    </footer>
+  </section>
 
-    <p class="creed">Nothing here writes for you. You write.</p>
-    <p class="legal"><a href="/terms.html">Terms</a> &nbsp; <a href="/privacy.html">Privacy</a> &nbsp; <a href="/contact.html">Help</a></p>
-  </div>
-</main>
+  <aside class="show" aria-label="What Sona shows you">
+    <div class="win" aria-hidden="true">
+      <div class="win-bar"><i></i><i></i><i></i>Discover</div>
+      <div class="win-body">
+        <div class="win-head"><b>Outliers in your niche</b><span>Sorted by how far they beat their creator’s average</span></div>
+        <div class="row"><span class="av" style="background:#ea580c">TD</span><div><b>Tyler Denk</b><em>X</em><p>Today was the biggest day in @beehiiv history. We launched Community: newsletter, podcast, website, products, ads…</p></div><span class="mult"><b>5×</b>his average</span></div>
+        <div class="row"><span class="av" style="background:#7c3aed">GI</span><div><b>Greg Isenberg</b><em>X</em><p>Agents are about to outnumber humans on the internet. Most traffic, transactions, and conversations online will soon be…</p></div><span class="mult"><b>4×</b>his average</span></div>
+        <div class="row on"><span class="av" style="background:#475569">JW</span><div><b>Justin Welsh</b><em>LinkedIn</em><p>The older I get, the more I realize your calendar is a list of your priorities. It tells the truth about…</p></div><span class="mult"><b>3×</b>his average</span></div>
+        <dl class="read">
+          <div><dt>Hook</dt><dd>A personal realization, 15 words</dd></div>
+          <div><dt>Lands on</dt><dd>What you actually care about</dd></div>
+          <div><dt>Reusable</dt><dd><code>The older I get, the more I realize [truth].</code></dd></div>
+        </dl>
+      </div>
+    </div>
+    <p class="caption"><b>Discover, inside Sona.</b> Real posts that did several times better than their creator usually does, and the line you can reuse from each.</p>
+  </aside>
+</div>
 
 <script>
 (function () {
@@ -175,12 +210,11 @@
   if (isNew) {
     sw.innerHTML = 'Have an account? <a href="/signin">Sign in</a>';
   } else {
-    title.innerHTML = 'Welcome back.<br><span class="tone">Pick up where you left off.</span>';
-    sub.textContent = 'Sign in with your email. New here? The same box creates your account.';
+    title.innerHTML = 'Sign in to Sona.<br><span class="tone">Your research is waiting.</span>';
+    sub.textContent = 'Use the email you signed up with. New here? The same form creates your account.';
     sw.innerHTML = 'New to Sona? <a href="/signin?new=1">Start free</a>';
     document.title = 'Sign in to Sona';
   }
-  if (isNew) document.title = 'Start free with Sona';
 
   // The age line gates the form. Once ticked on this device, it stays ticked.
   var KEY = 'sona_age_16_confirmed';
@@ -211,7 +245,7 @@
   mount();
 })();
 </script>
-<script src="/clerk-auth.js?v=20261108a" defer></script>
+<script src="/clerk-auth.js?v=20261108b" defer></script>
 <script src="/site.js?v=20261108a" defer></script>
 </body>
 </html>
