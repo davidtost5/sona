@@ -167,7 +167,6 @@
   @media (max-width: 1180px) { .disc-grid { columns: 2; } }
   @media (max-width: 760px)  { .disc-grid { columns: 1; } }
   .disc-card { break-inside: avoid; margin: 0 0 16px; }
-  .filter-sep { width:1px; align-self:stretch; background:var(--border); margin:0 4px; flex-shrink:0; }
   /* Media-rich cards. Everything here only renders when the row carries it —
      a text post is unchanged. */
   .disc-media { position:relative; margin:-20px -20px 16px; border-radius:15px 15px 0 0; overflow:hidden; background:#0f0f10; }
@@ -790,6 +789,51 @@
   .disc-tag { font-family:'Geist Mono',monospace; font-size:10.5px; color:var(--accent); background:var(--accent-soft); padding:3px 8px; border-radius:100px; font-weight:500; white-space:nowrap; }
   .disc-views { font-family:'Geist Mono',monospace; font-size:11px; color:var(--text-dim); white-space:nowrap; }
   .disc-actions { display:flex; gap:6px; flex-shrink:0; }
+  /* ─── Discover: search, order, filters ─── */
+  .dx { margin-bottom:18px; }
+  .dx-search { display:flex; align-items:center; gap:12px; height:54px; padding:0 16px; border-radius:14px; background:var(--surface); box-shadow:inset 0 0 0 1px var(--border-strong); transition:box-shadow .15s; }
+  .dx-search:focus-within { box-shadow:inset 0 0 0 1.5px var(--accent), 0 0 0 4px var(--accent-soft); }
+  .dx-search > svg { width:18px; height:18px; flex:none; color:var(--text-dim); }
+  .dx-search input { flex:1; min-width:0; height:100%; border:0; outline:0; background:transparent; font:inherit; font-size:16px; letter-spacing:-.01em; color:var(--text); }
+  .dx-search input::placeholder { color:var(--text-dim); }
+  .dx-search input::-webkit-search-cancel-button { display:none; }
+  .dx-search kbd { flex:none; display:grid; place-items:center; width:24px; height:24px; border-radius:6px; font-family:'Geist Mono',monospace; font-size:12px; color:var(--text-dim); box-shadow:inset 0 0 0 1px var(--border-strong); }
+  .dx-search:focus-within kbd { display:none; }
+  .dx-clear { flex:none; display:grid; place-items:center; width:32px; height:32px; margin-right:-6px; border:0; border-radius:8px; background:none; color:var(--text-mid); cursor:pointer; }
+  .dx-clear:hover { background:var(--accent-soft); color:var(--text); }
+  .dx-clear[hidden] { display:none; }
+  .dx-clear svg { width:15px; height:15px; }
+
+  .dx-bar { display:flex; align-items:flex-end; justify-content:space-between; flex-wrap:wrap; gap:10px 24px; margin-top:14px; border-bottom:1px solid var(--border); }
+  .dx-lenses { display:flex; gap:22px; margin-bottom:-1px; overflow-x:auto; scrollbar-width:none; }
+  .dx-lenses::-webkit-scrollbar { display:none; }
+  .dx .dx-lenses .filter { flex:none; min-height:42px; padding:0 1px; border:0; border-bottom:2px solid transparent; border-radius:0; background:none; font-size:14px; font-weight:500; color:var(--text-mid); }
+  .dx .dx-lenses .filter:hover { color:var(--text); border-color:var(--border-strong); }
+  .dx .dx-lenses .filter.active { color:var(--text); border-color:var(--accent); background:none; }
+  .dx-filters { display:flex; flex-wrap:wrap; gap:8px; padding-bottom:8px; }
+  .dx-seg { display:inline-flex; gap:2px; padding:3px; border-radius:10px; background:var(--bg-soft); box-shadow:inset 0 0 0 1px var(--border); }
+  .dx-seg[hidden] { display:none; }
+  .dx .dx-seg .filter { display:inline-flex; align-items:center; gap:6px; flex:none; min-height:30px; padding:0 10px; border:0; border-radius:7px; background:none; font-size:13px; font-weight:500; color:var(--text-mid); white-space:nowrap; }
+  .dx .dx-seg .filter:hover { color:var(--text); }
+  .dx .dx-seg .filter.active { background:var(--surface); color:var(--text); box-shadow:0 0 0 1px var(--border-strong), 0 1px 2px rgba(15,23,42,.08); }
+  .dx-n { font-family:'Geist Mono',monospace; font-size:11px; font-weight:400; color:var(--text-dim); }
+  .dx-logo { width:13px; height:13px; flex:none; }
+  .dx-logo.in { color:#0A66C2; } .dx-logo.yt { color:#FF0000; } .dx-logo.sub { color:#FF6719; }
+  html[data-theme="dark"] .dx-logo.in { color:#4c9be8; }
+  .dx-result { margin:12px 0 0; font-size:13.5px; line-height:1.5; color:var(--text-mid); }
+  .dx-result b { font-weight:600; color:var(--text); }
+  .dx-reset { margin-left:6px; padding:0; border:0; background:none; font:inherit; font-weight:500; color:var(--accent); cursor:pointer; }
+  .dx-reset:hover { text-decoration:underline; }
+  @media (pointer: coarse) {
+    .dx .dx-seg .filter { min-height:38px; }
+    .dx-search kbd { display:none; }
+  }
+  @media (max-width: 760px) {
+    .dx-bar { display:block; }
+    .dx-filters { flex-wrap:nowrap; overflow-x:auto; padding:10px 0; scrollbar-width:none; }
+    .dx-filters::-webkit-scrollbar { display:none; }
+    .dx-seg { flex:none; }
+  }
   /* ─── Post cards (Discover, Saved, Digest) ─── */
   .disc-card { display:flex; flex-direction:column; gap:14px; }
   .dc-head { display:flex; align-items:center; gap:11px; min-width:0; }
@@ -1370,7 +1414,7 @@
     <header class="topbar">
       <div class="topbar-left">
         <h1 id="view-title">Discover</h1>
-        <span class="topbar-sub" id="view-sub">Founders · last 7 days · sorted by outlier</span>
+        <span class="topbar-sub" id="view-sub">Posts that beat their creator’s average</span>
       </div>
       <span class="chip" id="view-chip">Refreshed just now</span>
     </header>
@@ -1457,16 +1501,31 @@
       </div>
 
       <div class="view" data-view="discover">
-        <div class="filters">
-          <button class="filter active" data-filter="all">All</button>
-          <button class="filter" data-filter="founders">Founders</button>
-          <button class="filter" data-filter="writers">Writers</button>
-          <button class="filter" data-filter="creators">Creators</button>
-          <span class="filter-sep" aria-hidden="true"></span>
-          <button class="filter" data-sort="breakouts" title="Highest multiple against the creator's own baseline">Breakouts</button>
-          <button class="filter" data-sort="gems" title="Beat their baseline hard without going mega-viral">Hidden gems</button>
-          <button class="filter" data-sort="viral" title="Most views in absolute terms">Viral now</button>
-          <button class="filter" data-sort="greats" title="Biggest absolute reach — 500K views and up">All-time greats</button>
+        <div class="dx">
+          <div class="dx-search" id="dx-search">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+            <input type="search" id="disc-search" placeholder="Search posts, creators or topics" aria-label="Search posts, creators or topics" autocomplete="off" spellcheck="false">
+            <button type="button" class="dx-clear" id="disc-search-clear" aria-label="Clear search" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+            <kbd aria-hidden="true">/</kbd>
+          </div>
+          <div class="dx-bar">
+            <div class="dx-lenses" role="group" aria-label="Order the feed">
+              <button type="button" class="filter active" data-sort="" aria-pressed="true">Today</button>
+              <button type="button" class="filter" data-sort="breakouts" aria-pressed="false">Breakouts</button>
+              <button type="button" class="filter" data-sort="gems" aria-pressed="false">Hidden gems</button>
+              <button type="button" class="filter" data-sort="viral" aria-pressed="false">Most viewed</button>
+            </div>
+            <div class="dx-filters">
+              <div class="dx-seg" role="group" aria-label="Filter by niche">
+                <button type="button" class="filter active" data-filter="all" aria-pressed="true">All<span class="dx-n"></span></button>
+                <button type="button" class="filter" data-filter="founders" aria-pressed="false">Founders<span class="dx-n"></span></button>
+                <button type="button" class="filter" data-filter="writers" aria-pressed="false">Writers<span class="dx-n"></span></button>
+                <button type="button" class="filter" data-filter="creators" aria-pressed="false">Creators<span class="dx-n"></span></button>
+              </div>
+              <div class="dx-seg" id="dx-plats" role="group" aria-label="Filter by platform"></div>
+            </div>
+          </div>
+          <p class="dx-result" id="disc-result" aria-live="polite"></p>
         </div>
         <!-- First-run nudge. A new feed gives no instruction on what to do
              first; this names one concrete action and shows progress toward it.
@@ -2296,10 +2355,14 @@
 
   // ─── Hooks library ─── curated, proven hook patterns. Free, static. You write the post.
 
+  // Every word has to appear somewhere, so "pricing hormozi" finds his post on
+  // pricing, in any order.
+  function searchWords() { return searchTerm.split(/\s+/).filter(Boolean); }
   function matchesSearch(i) {
-    if (!searchTerm) return true;
-    const hay = (i.name + ' ' + i.handle + ' ' + i.text + ' ' + i.tag).toLowerCase();
-    return hay.includes(searchTerm);
+    const words = searchWords();
+    if (!words.length) return true;
+    const hay = (i.name + ' ' + i.handle + ' ' + i.text + ' ' + i.tag + ' ' + i.cat).toLowerCase();
+    return words.every(w => hay.includes(w));
   }
   let saved = new Set();
   let canvasState = { nodes: [], edges: [] }; // [{id,type:'note'|'idea',x,y,text?,ideaId?}], [{a,b}]
@@ -3355,12 +3418,6 @@
     syncOnboard();
   }
 
-  function highlight(text) {
-    if (!searchTerm) return text;
-    const escaped = searchTerm.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    return text.replace(new RegExp(`(${escaped})`, 'gi'), '<mark>$1</mark>');
-  }
-
   function hookSlots(pattern) {
     return escapeHtml(pattern).replace(/\[([^\]]+)\]/g, '<span class="slot">[$1]</span>');
   }
@@ -3552,15 +3609,6 @@
   function applyDiscSort(list) {
     if (discSort === 'breakouts') return [...list].sort((a, b) => multOf(b) - multOf(a));
     if (discSort === 'viral')     return [...list].sort((a, b) => viewsOf(b) - viewsOf(a));
-    // Greats are judged on reach actually achieved, whether or not it beat the
-    // creator's own baseline — the opposite question to Breakouts.
-    // Top fifth by reach rather than a fixed view cutoff: an absolute threshold
-    // is a no-op on a feed of famous creators and excludes everything on a feed
-    // of small ones. Relative stays selective on either.
-    if (discSort === 'greats') {
-      const ranked = [...list].sort((a, b) => viewsOf(b) - viewsOf(a));
-      return ranked.slice(0, Math.max(3, Math.ceil(ranked.length * 0.2)));
-    }
     // A hidden gem beat its own baseline hard without being a monster in raw
     // reach — high multiple, comparatively modest views.
     if (discSort === 'gems')      return [...list]
@@ -3624,7 +3672,12 @@
   }
 
   function ideaCard(i, { search = false, removeLabel = false } = {}) {
-    const mark = (s) => search ? highlight(escapeHtml(s)) : escapeHtml(s);
+    // Split on the raw text and escape each piece. Highlighting after escaping
+    // would match inside entities: searching "39" would break every apostrophe.
+    const words = search ? searchWords() : [];
+    const pattern = words.length ? new RegExp('(' + words.map(w => w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|') + ')', 'gi') : null;
+    const mark = (s) => !pattern ? escapeHtml(s) : String(s).split(pattern)
+      .map((part, n) => n % 2 ? `<mark>${escapeHtml(part)}</mark>` : escapeHtml(part)).join('');
     const plat = platformOf(i.handle);
     const handle = String(i.handle || '').split('·')[0].trim();
     const url = /^https:\/\//.test(i.url || '') ? i.url : '';
@@ -3673,19 +3726,67 @@
       </article>`;
   }
 
+  const DISC_LENS_NOTE = {
+    today: 'A new order every day, with fresh posts first.',
+    breakouts: 'The highest multiples against each creator’s own average.',
+    gems: '5× or more, from posts under a million views.',
+    viral: 'The most views overall.',
+  };
+  let discPlat = 'all';
+
+  // Platform filter: only the platforms the feed actually has.
+  function renderDiscControls() {
+    const box = document.getElementById('dx-plats');
+    const present = Object.values(PLATFORMS).filter(p => SEED_IDEAS.some(i => platformOf(i.handle) === p));
+    if (present.length < 2) { box.hidden = true; discPlat = 'all'; return; }
+    box.hidden = false;
+    const btn = (id, label) => `<button type="button" class="filter${discPlat === id ? ' active' : ''}" data-plat="${id}" aria-pressed="${discPlat === id}">${label}</button>`;
+    box.innerHTML = btn('all', 'All') + present.map(p =>
+      btn(p.cls, `<svg class="dx-logo ${p.cls}" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="${p.path}"/></svg>${p.name}`)).join('');
+  }
+
+  function setPressed(selector, match) {
+    document.querySelectorAll(selector).forEach(b => {
+      const on = match(b);
+      b.classList.toggle('active', on);
+      b.setAttribute('aria-pressed', String(on));
+    });
+  }
+
+  window.resetDiscover = function () {
+    currentFilter = 'all'; discPlat = 'all'; discSort = null;
+    setPressed('.filter[data-filter]', b => b.dataset.filter === 'all');
+    setPressed('.filter[data-sort]', b => !b.dataset.sort);
+    window.clearSearch();
+    document.getElementById('disc-search').focus();
+  };
+
   function renderDiscover() {
   _pctCache = null;   // the feed may have changed since the last render
     const grid = document.getElementById('disc-grid');
     const countEl = document.getElementById('discover-count');
     if (countEl) countEl.textContent = SEED_IDEAS.length;
+    renderDiscControls();
+    const inPlat = (i) => discPlat === 'all' || (platformOf(i.handle) || {}).cls === discPlat;
     const items = applyDiscSort(SEED_IDEAS
       .filter(i => currentFilter === 'all' || i.cat === currentFilter)
+      .filter(inPlat)
       .filter(matchesSearch));
+    // Each niche counts what clicking it would show under the current lens.
+    document.querySelectorAll('.dx-seg .filter[data-filter]').forEach(b => {
+      const cat = b.dataset.filter;
+      const n = applyDiscSort(SEED_IDEAS.filter(i => (cat === 'all' || i.cat === cat) && inPlat(i) && matchesSearch(i))).length;
+      b.querySelector('.dx-n').textContent = n;
+    });
+    const filtered = Boolean(searchTerm || currentFilter !== 'all' || discPlat !== 'all' || discSort);
+    const result = document.getElementById('disc-result');
+    result.innerHTML = `<b>${items.length} post${items.length === 1 ? '' : 's'}.</b> ${DISC_LENS_NOTE[discSort || 'today']}`
+      + (filtered ? ' <button type="button" class="dx-reset" onclick="resetDiscover()">Clear filters</button>' : '');
     if (items.length === 0) {
       grid.innerHTML = `
-        <div class="empty-search" style="grid-column:1/-1">
-          ${searchTerm ? `No ideas match <b>"${searchTerm}"</b>.` : 'No ideas in this filter.'}
-          <br><button type="button" class="reset" onclick="clearSearch()">${searchTerm ? 'Clear search' : 'Show all'}</button>
+        <div class="empty-search" style="grid-column:1/-1;column-span:all">
+          ${searchTerm ? `No posts match <b>“${escapeHtml(searchTerm)}”</b>.` : 'No posts match these filters.'}
+          <br><button type="button" class="reset" onclick="resetDiscover()">Clear filters</button>
         </div>`;
       return;
     }
@@ -3702,7 +3803,7 @@
     if (items.length === 0) {
       grid.innerHTML = `
         <div class="empty-search" style="grid-column:1/-1">
-          No saved ideas match <b>"${searchTerm}"</b>.
+          No saved ideas match <b>“${escapeHtml(searchTerm)}”</b>.
           <br><button type="button" class="reset" onclick="clearSearch()">Clear search</button>
         </div>`;
       return;
@@ -4026,12 +4127,13 @@
   }
 
   window.switchView = function(v) {
+    if (v !== 'discover' && searchTerm && window.clearSearch) window.clearSearch();
     syncNavCounts();
     document.querySelectorAll('.nav-item[data-view]').forEach(b => b.classList.toggle('active', b.dataset.view === v));
     document.querySelectorAll('.view').forEach(view => view.classList.toggle('active', view.dataset.view === v));
     const titles = {
       library:['Library', 'Everything you\'ve kept, in one place'],
-      discover:['Discover','Founders · last 7 days · sorted by outlier'],
+      discover:['Discover','Posts that beat their creator’s average'],
       digest:['Digest', 'This week’s breakout posts, by niche'],
       studio:['Drafts', drafts.length ? `${drafts.length} draft${drafts.length===1?'':'s'}` : 'Start a draft'],
       lists:['My lists', lists.length ? `${lists.length} list${lists.length===1?'':'s'}` : 'No lists'],
@@ -4110,8 +4212,7 @@
 
   function applyNiche(niche) {
     currentFilter = niche;
-    document.querySelectorAll('.filter[data-filter]').forEach(b =>
-      b.classList.toggle('active', b.dataset.filter === niche));
+    setPressed('.filter[data-filter]', b => b.dataset.filter === niche);
     renderDiscover();
   }
 
@@ -5111,18 +5212,21 @@
 
   document.querySelectorAll('.nav-item[data-view]').forEach(btn => btn.addEventListener('click', () => switchView(btn.dataset.view)));
   document.querySelectorAll('.filter[data-filter]').forEach(btn => btn.addEventListener('click', () => {
-    document.querySelectorAll('.filter[data-filter]').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
+    setPressed('.filter[data-filter]', b => b === btn);
     currentFilter = btn.dataset.filter;
     renderDiscover();
   }));
   document.querySelectorAll('.filter[data-sort]').forEach(btn => btn.addEventListener('click', () => {
-    const on = btn.classList.contains('active');
-    document.querySelectorAll('.filter[data-sort]').forEach(b => b.classList.remove('active'));
-    discSort = on ? null : btn.dataset.sort;      // click again to clear
-    if (!on) btn.classList.add('active');
+    setPressed('.filter[data-sort]', b => b === btn);
+    discSort = btn.dataset.sort || null;
     renderDiscover();
   }));
+  document.getElementById('dx-plats').addEventListener('click', (e) => {
+    const btn = e.target.closest('[data-plat]');
+    if (!btn) return;
+    discPlat = btn.dataset.plat;
+    renderDiscover();
+  });
   document.querySelectorAll('.filter[data-hookcat]').forEach(btn => btn.addEventListener('click', () => {
     document.querySelectorAll('.filter[data-hookcat]').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
@@ -5230,7 +5334,29 @@
   }
   searchInput.addEventListener('input', (e) => applySearch(e.target.value));
   searchClear.addEventListener('click', () => { searchInput.value = ''; applySearch(''); searchInput.focus(); });
-  window.clearSearch = () => { searchInput.value = ''; applySearch(''); };
+  window.clearSearch = () => { searchInput.value = ''; discSearch.value = ''; discSearchClear.hidden = true; applySearch(''); };
+
+  // Discover's own search box.
+  const discSearch = document.getElementById('disc-search');
+  const discSearchClear = document.getElementById('disc-search-clear');
+  discSearch.addEventListener('input', () => {
+    discSearchClear.hidden = !discSearch.value;
+    applySearch(discSearch.value);
+  });
+  discSearchClear.addEventListener('click', () => { window.clearSearch(); discSearch.focus(); });
+  discSearch.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') { window.clearSearch(); discSearch.blur(); }
+  });
+  // "/" jumps to it from anywhere in Discover.
+  document.addEventListener('keydown', (e) => {
+    if (e.key !== '/' || e.metaKey || e.ctrlKey || e.altKey) return;
+    const el = document.activeElement;
+    if (el && (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA' || el.tagName === 'SELECT' || el.isContentEditable)) return;
+    const view = document.querySelector('.view[data-view="discover"]');
+    if (!view || !view.classList.contains('active')) return;
+    e.preventDefault();
+    discSearch.focus();
+  });
   // ⌘K / Ctrl+K to focus, Esc to clear
   document.addEventListener('keydown', (e) => {
     if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
