@@ -270,9 +270,8 @@
 
   // ─── Public API ───
 
-  // Sign in and Start free both go to the sign-in page (signin.html), which
-  // asks the age question and mounts Clerk's form inline. One form handles
-  // both: an address without an account becomes a new one.
+  // Sign in and Start free both go to the sign-in page (signin.html). One form
+  // handles both: an address without an account becomes a new one.
   function signinUrl(isNew, afterUrl) {
     var q = [];
     if (isNew) q.push('new=1');
@@ -286,36 +285,6 @@
 
   async function openSignUp(afterUrl) {
     window.location.href = signinUrl(true, afterUrl);
-  }
-
-  // Used by signin.html. Resolves 'signed-in' when there is already a session,
-  // otherwise mounts the form and resolves 'mounted'.
-  async function mountAuth(el, opts) {
-    opts = opts || {};
-    var next = '/app';
-    try {
-      var u = new URL(opts.next || '/app', window.location.origin);
-      if (u.origin === window.location.origin) next = u.pathname + u.search + u.hash;
-    } catch (e) {}
-    var clerk = await ensureClerk();
-    if (clerk.user) return 'signed-in';
-    // Clerk takes over the node it mounts into (its classes replace the
-    // node's own), so it gets a child of its own.
-    el.innerHTML = '';
-    var slot = document.createElement('div');
-    el.appendChild(slot);
-    clerk.mountSignIn(slot, {
-      withSignUp: true,
-      appearance: {
-        variables: Object.assign(appearance().variables, { colorBackground: 'transparent', colorInputBackground: 'transparent' }),
-      },
-      forceRedirectUrl: next,
-      signUpForceRedirectUrl: next,
-    });
-    clerk.addListener(function (state) {
-      if (state && state.user) window.location.replace(next);
-    });
-    return 'mounted';
   }
 
   async function signOut() {
@@ -487,7 +456,7 @@
     getUser:    route('getUser',    getUser),
     requireUser: requireUser,
     getSupabase: getSupabase,
-    mountAuth: mountAuth,
+    getClerk: ensureClerk, // signin.html draws its own form on Clerk's API
   };
 
   // ─── Boot ───

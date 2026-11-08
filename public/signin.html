@@ -15,182 +15,100 @@
 <title>Start free with Sona</title>
 <link rel="canonical" href="https://buildwithsona.com/signin">
 <style>
-  /* Two halves. Left: the form, left-aligned on the site's ruled white with
-     the dot grid. Right: the product, an app window on the painted panel,
-     showing the posts you'll be looking at once you're in. */
-  html, body { height: 100%; }
-  body { min-height: 100dvh; }
-  .split { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr); min-height: 100dvh; }
-
-  .side { position: relative; isolation: isolate; display: flex; flex-direction: column; padding: 24px clamp(20px, 5vw, 64px) 28px; border-right: 1px solid var(--line); }
-  .side-dots { position: absolute; inset: 0; z-index: -1; width: 100%; height: 100%; pointer-events: none;
-    -webkit-mask-image: linear-gradient(180deg, #000 0%, transparent 70%); mask-image: linear-gradient(180deg, #000 0%, transparent 70%); }
-  .top { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
-  .brand { display: inline-flex; align-items: center; gap: 9px; text-decoration: none; color: var(--ink); font-family: var(--word); font-weight: 600; font-size: 17px; letter-spacing: -.02em; }
+  /* Two steps, one field each: email, then the code. Everything hangs off one
+     left edge, from the logo to the fine print, over the cursor-lit grid. */
+  body { min-height: 100dvh; display: flex; flex-direction: column; padding: 24px clamp(20px, 7vw, 96px) 24px; }
+  .grid { position: fixed; inset: 0; z-index: -1; width: 100%; height: 100%; pointer-events: none; }
+  .brand { align-self: flex-start; display: inline-flex; align-items: center; gap: 9px; min-height: 40px; text-decoration: none; color: var(--ink); font-family: var(--word); font-weight: 600; font-size: 17px; letter-spacing: -.02em; }
   .brand img { width: 26px; height: 26px; }
-  .switch { font-size: 14px; color: var(--ink-3); }
-  .switch a { color: var(--ink); font-weight: 500; }
 
-  .form { width: 100%; max-width: 400px; margin: auto 0; padding: 48px 0; }
-  h1 { font-size: clamp(2rem, 3.4vw, 2.6rem); line-height: 1.06; letter-spacing: -.035em; }
-  .sub { margin-top: 12px; font-size: 15.5px; color: var(--ink-2); max-width: 36ch; }
+  main { flex: 1; display: flex; flex-direction: column; justify-content: center; width: 100%; max-width: 520px; padding: 40px 0; }
+  h1 { font-size: clamp(2.5rem, 6vw, 3.75rem); line-height: 1.02; letter-spacing: -.04em; }
+  .step[hidden] { display: none; }
+  .step { animation: step-in .32s var(--ease-out, ease-out); }
+  @keyframes step-in { from { opacity: 0; transform: translateY(6px); } }
 
-  .age { display: flex; gap: 10px; align-items: flex-start; margin-top: 28px; padding: 12px 14px; border-radius: 12px; background: var(--card-2); box-shadow: inset 0 0 0 1px var(--line); font-size: 13.5px; line-height: 1.5; color: var(--ink-2); cursor: pointer; }
-  .age input { flex: none; width: 18px; height: 18px; margin-top: 1px; accent-color: var(--accent); cursor: pointer; }
-  .age a { color: var(--ink); }
-  .age.done { display: none; }
+  label.field { display: block; margin: 36px 0 8px; font-size: 14px; font-weight: 500; color: var(--ink-2); }
 
-  #auth { position: relative; min-height: 220px; margin-top: 22px; transition: opacity .25s ease; }
-  #auth[inert] { opacity: .4; }
-  .loading { padding: 40px 0; color: var(--ink-3); font-size: 14px; }
-  .foot { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 12.5px; color: var(--ink-3); }
+  /* The email and its button are one object. */
+  .bar { display: flex; align-items: center; gap: 6px; padding: 6px; border-radius: 16px; background: var(--card); box-shadow: inset 0 0 0 1px var(--line-2), var(--shadow-float); transition: box-shadow .2s ease; }
+  .bar:focus-within { box-shadow: inset 0 0 0 1.5px var(--accent), 0 0 0 4px var(--accent-wash); }
+  .bar.bad { box-shadow: inset 0 0 0 1.5px #dc2626, 0 0 0 4px rgba(220,38,38,.1); }
+  .bar input { flex: 1; min-width: 0; height: 48px; padding: 0 12px; border: 0; outline: 0; background: transparent; font: inherit; font-size: 17px; letter-spacing: -.01em; color: var(--ink); }
+  .bar input::placeholder { color: var(--ink-3); }
+  .bar .btn { flex: none; min-height: 48px; border-radius: 11px; }
+
+  /* The code: one real input (so paste and phone autofill work), drawn as six cells. */
+  .code { position: relative; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 8px; max-width: 420px; }
+  .cell { display: grid; place-items: center; height: 64px; border-radius: 12px; background: var(--card); box-shadow: inset 0 0 0 1px var(--line-2); font-family: var(--mono); font-size: 26px; font-weight: 500; color: var(--ink); transition: box-shadow .15s ease; }
+  .cell.on { box-shadow: inset 0 0 0 1.5px var(--accent), 0 0 0 4px var(--accent-wash); }
+  .code.bad .cell { box-shadow: inset 0 0 0 1.5px #dc2626; }
+  .code.busy .cell { opacity: .55; }
+  .code input { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; border: 0; font-size: 16px; caret-color: transparent; cursor: text; }
+
+  .msg { min-height: 22px; margin-top: 10px; font-size: 14px; line-height: 1.5; color: #b91c1c; }
+  html[data-theme="dark"] .msg { color: #fca5a5; }
+  .fine { margin-top: 6px; max-width: 46ch; font-size: 13.5px; line-height: 1.6; color: var(--ink-3); }
+  .fine a { color: var(--ink-2); }
+  .acts { display: flex; flex-wrap: wrap; gap: 4px 18px; margin-top: 8px; font-size: 14px; }
+  .acts button { min-height: 32px; padding: 0; border: 0; background: none; font: inherit; color: var(--ink); font-weight: 500; text-decoration: underline; text-decoration-color: var(--line-2); text-underline-offset: 4px; cursor: pointer; }
+  .acts button[disabled] { color: var(--ink-3); text-decoration: none; cursor: default; }
+  .sent { margin-top: 36px; font-size: 16px; color: var(--ink-2); overflow-wrap: anywhere; }
+  .sent b { color: var(--ink); font-weight: 600; }
+  #clerk-captcha:not(:empty) { margin-top: 14px; }
+
+  .foot { display: flex; gap: 18px; font-size: 13px; }
   .foot a { color: var(--ink-3); }
-  .foot span { margin-right: auto; }
 
-  /* ── Clerk, as a plain labelled form on this page ── */
-  #auth .cl-rootBox, #auth .cl-cardBox, #auth .cl-card { width: 100% !important; max-width: none !important; }
-  #auth .cl-cardBox, #auth .cl-card { background: transparent !important; border: 0 !important; box-shadow: none !important; padding: 0 !important; border-radius: 0 !important; }
-  #auth .cl-header, #auth .cl-logoBox { display: none !important; }
-  #auth .cl-main { display: flex !important; flex-direction: column !important; gap: 0 !important; }
-  #auth .cl-form { order: 1 !important; }
-  #auth .cl-dividerRow { order: 2 !important; margin: 22px 0 16px !important; }
-  #auth .cl-socialButtonsRoot { order: 3 !important; }
-  #auth .cl-formFieldLabel { color: var(--ink) !important; font-size: 14px !important; font-weight: 500 !important; }
-  #auth .cl-formFieldInput {
-    min-height: 50px !important; padding: 0 14px !important; font-size: 16px !important;
-    color: var(--ink) !important; background: var(--card) !important; border: 0 !important; border-radius: 12px !important;
-    box-shadow: inset 0 0 0 1px var(--line-2), var(--shadow-card) !important; transition: box-shadow .2s ease !important; }
-  #auth .cl-formFieldInput:hover { box-shadow: inset 0 0 0 1px var(--ink-3), var(--shadow-card) !important; }
-  #auth .cl-formFieldInput:focus { box-shadow: inset 0 0 0 1.5px var(--accent), 0 0 0 4px var(--accent-wash) !important; outline: none !important; }
-  #auth .cl-formFieldInput::placeholder { color: var(--ink-3) !important; opacity: .8 !important; }
-  #auth .cl-otpCodeFieldInput { width: 46px !important; height: 54px !important; font-size: 22px !important; border-radius: 12px !important; background: var(--card) !important; color: var(--ink) !important; }
-
-  /* Continue is the site's dark key, the same button as Start free. */
-  #auth .cl-formButtonPrimary {
-    min-height: 50px !important; margin-top: 18px !important; border-radius: 12px !important;
-    background: linear-gradient(180deg, var(--key-top), var(--key-bot)) !important; color: var(--key-ink) !important; border: 0 !important;
-    font-size: 15.5px !important; font-weight: 600 !important; text-transform: none !important; letter-spacing: 0 !important;
-    box-shadow: inset 0 1px 0 var(--key-edge), 0 1px 2px rgba(15,23,42,.2), 0 8px 18px -10px rgba(15,23,42,.6) !important;
-    transition: transform .2s ease, box-shadow .2s ease !important; }
-  #auth .cl-formButtonPrimary:hover { transform: translateY(-1px); box-shadow: inset 0 1px 0 var(--key-edge-hover), 0 2px 4px rgba(15,23,42,.2), 0 12px 24px -10px rgba(15,23,42,.6) !important; }
-  #auth .cl-formButtonPrimary:active { transform: translateY(0); }
-  #auth .cl-socialButtonsBlockButton {
-    min-height: 50px !important; border-radius: 12px !important; background: var(--card) !important; border: 0 !important;
-    box-shadow: inset 0 0 0 1px var(--line-2) !important; color: var(--ink) !important; }
-  #auth .cl-socialButtonsBlockButton:hover { background: var(--card-2) !important; }
-  #auth .cl-socialButtonsBlockButtonText { font-size: 15px !important; font-weight: 500 !important; color: var(--ink) !important; }
-  #auth .cl-dividerLine { background: var(--line) !important; }
-  #auth .cl-dividerText { color: var(--ink-3) !important; font-size: 13px !important; }
-  #auth .cl-footer { background: transparent !important; border: 0 !important; margin-top: 16px !important; }
-  #auth .cl-footerAction { justify-content: flex-start !important; }
-  #auth .cl-footerActionText { color: var(--ink-3) !important; }
-  #auth .cl-footerActionLink { color: var(--ink) !important; font-weight: 500 !important; }
-  #auth .cl-footerItem { opacity: .7; }
-  #auth .cl-headerTitle, #auth .cl-identityPreviewText { color: var(--ink) !important; }
-  #auth .cl-formResendCodeLink, #auth .cl-alternativeMethodsBlockButton, #auth .cl-backLink, #auth .cl-formFieldAction { color: var(--accent-ink) !important; }
-
-  /* ── The product side ── */
-  .show { position: relative; isolation: isolate; overflow: hidden; margin: 12px; border-radius: 22px; display: flex; flex-direction: column; justify-content: center; padding: clamp(32px, 5vw, 64px);
-    background:
-      radial-gradient(60% 50% at 20% 10%, rgba(255,255,255,.8), transparent 70%),
-      radial-gradient(50% 45% at 85% 20%, rgba(219,234,254,.95), transparent 70%),
-      radial-gradient(70% 50% at 70% 100%, rgba(254,215,170,.85), transparent 72%),
-      radial-gradient(80% 60% at 40% 60%, rgba(196,181,253,.3), transparent 75%),
-      linear-gradient(180deg, #dbe6fb 0%, #e9eefc 50%, #fbe7d6 100%); }
-  .show::after { content: ''; position: absolute; inset: 0; z-index: -1; opacity: .22; mix-blend-mode: soft-light; pointer-events: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
-  html[data-theme="dark"] .show { background:
-      radial-gradient(55% 50% at 20% 10%, rgba(59,130,246,.28), transparent 70%),
-      radial-gradient(45% 40% at 85% 25%, rgba(129,140,248,.2), transparent 70%),
-      radial-gradient(70% 45% at 70% 100%, rgba(234,88,12,.28), transparent 72%),
-      linear-gradient(180deg, #0f1a33 0%, #131a33 55%, #2a1a1a 100%); }
-
-  .win { width: 100%; max-width: 520px; margin: 0 auto; border-radius: 14px; overflow: hidden; background: var(--card); color: var(--ink);
-    box-shadow: 0 0 0 1px rgba(15,23,42,.1), 0 24px 60px -20px rgba(15,23,42,.4), 0 60px 120px -40px rgba(30,41,90,.3); font-size: 13px; }
-  html[data-theme="dark"] .win { box-shadow: 0 0 0 1px rgba(148,163,184,.16), 0 24px 60px -18px rgba(0,0,0,.7); }
-  .win-bar { position: relative; display: flex; align-items: center; justify-content: center; height: 34px; border-bottom: 1px solid var(--line); background: var(--card-2); font-size: 12px; font-weight: 600; color: var(--ink-2); }
-  .win-bar i { position: absolute; top: 12px; width: 10px; height: 10px; border-radius: 50%; background: var(--raise-2); box-shadow: inset 0 0 0 1px var(--line-2); }
-  .win-bar i:nth-child(1) { left: 12px; } .win-bar i:nth-child(2) { left: 28px; } .win-bar i:nth-child(3) { left: 44px; }
-  .win-body { display: grid; gap: 8px; padding: 16px; }
-  .win-head { display: flex; align-items: baseline; gap: 10px; margin-bottom: 4px; }
-  .win-head b { font-size: 15px; letter-spacing: -.02em; }
-  .win-head span { font-size: 12px; color: var(--ink-3); }
-  .row { display: grid; grid-template-columns: 28px minmax(0, 1fr) auto; gap: 11px; padding: 12px; border-radius: 10px; box-shadow: inset 0 0 0 1px var(--line); }
-  .row.on { background: var(--accent-wash); box-shadow: inset 0 0 0 1.5px var(--accent); }
-  .av { display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; color: #fff; font-size: 10.5px; font-weight: 600; }
-  .row b { font-size: 12.5px; }
-  .row em { font-style: normal; font-size: 11.5px; color: var(--ink-3); margin-left: 6px; }
-  .row p { margin-top: 2px; font-size: 12.5px; line-height: 1.45; color: var(--ink-2); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-  .mult { text-align: right; font-size: 10.5px; color: var(--ink-3); white-space: nowrap; }
-  .mult b { display: block; font-family: var(--mono); font-size: 16px; color: var(--accent); letter-spacing: -.03em; }
-  .read { margin-top: 6px; padding: 12px 14px; border-radius: 10px; background: var(--card-2); box-shadow: inset 0 0 0 1px var(--line); display: grid; gap: 7px; }
-  .read div { display: grid; grid-template-columns: 74px 1fr; gap: 10px; font-size: 12.5px; }
-  .read dt { color: var(--ink-3); }
-  .read dd { margin: 0; }
-  .read code { font-family: var(--mono); font-size: 12px; color: var(--accent-ink); letter-spacing: -.02em; }
-  .caption { max-width: 520px; margin: 22px auto 0; width: 100%; font-size: 15px; line-height: 1.55; color: var(--ink-2); }
-  .caption b { color: var(--ink); font-weight: 600; }
-
-  @media (prefers-reduced-motion: reduce) { #auth .cl-formButtonPrimary, #auth .cl-formFieldInput { transition: none !important; } }
-  @media (max-width: 960px) {
-    .split { grid-template-columns: minmax(0, 1fr); }
-    .side { border-right: 0; min-height: 100dvh; }
-    .show { display: none; }
-    .form { margin: 0; padding-top: 40px; }
+  @media (prefers-reduced-motion: reduce) { .step { animation: none; } }
+  @media (max-width: 480px) {
+    .bar { flex-direction: column; align-items: stretch; }
+    .bar .btn { width: 100%; }
+    .cell { height: 54px; font-size: 22px; }
+    .code { gap: 6px; }
   }
-  @media (max-width: 480px) { .switch { font-size: 13px; } .foot span { flex-basis: 100%; } }
 </style>
 </head>
 <body>
-<div class="split">
-  <section class="side">
-    <canvas class="side-dots" data-dots aria-hidden="true"></canvas>
-    <header class="top">
-      <a class="brand" href="/"><img src="/logo.svg" alt="" width="26" height="26">Sona</a>
-      <p class="switch" id="switch"></p>
-    </header>
+<canvas class="grid" data-dots aria-hidden="true"></canvas>
+<a class="brand" href="/"><img src="/logo.svg" alt="" width="26" height="26">Sona</a>
 
-    <main class="form">
-      <h1 id="title">Create your account.<br><span class="tone">It’s free to start.</span></h1>
-      <p class="sub" id="sub">Find the posts beating the average in your niche, and write your own version.</p>
-
-      <label class="age" id="age">
-        <input type="checkbox" id="age-box">
-        <span>I’m 16 or older and I agree to the <a href="/terms.html" target="_blank" rel="noopener">Terms</a> and <a href="/privacy.html" target="_blank" rel="noopener">Privacy Policy</a>.</span>
-      </label>
-
-      <div id="auth" inert><p class="loading">Loading…</p></div>
-    </main>
-
-    <footer class="foot">
-      <span>Nothing in Sona writes for you. You write.</span>
-      <a href="/terms.html">Terms</a><a href="/privacy.html">Privacy</a><a href="/contact.html">Help</a>
-    </footer>
-  </section>
-
-  <aside class="show" aria-label="What Sona shows you">
-    <div class="win" aria-hidden="true">
-      <div class="win-bar"><i></i><i></i><i></i>Discover</div>
-      <div class="win-body">
-        <div class="win-head"><b>Outliers in your niche</b><span>Sorted by how far they beat their creator’s average</span></div>
-        <div class="row"><span class="av" style="background:#ea580c">TD</span><div><b>Tyler Denk</b><em>X</em><p>Today was the biggest day in @beehiiv history. We launched Community: newsletter, podcast, website, products, ads…</p></div><span class="mult"><b>5×</b>his average</span></div>
-        <div class="row"><span class="av" style="background:#7c3aed">GI</span><div><b>Greg Isenberg</b><em>X</em><p>Agents are about to outnumber humans on the internet. Most traffic, transactions, and conversations online will soon be…</p></div><span class="mult"><b>4×</b>his average</span></div>
-        <div class="row on"><span class="av" style="background:#475569">JW</span><div><b>Justin Welsh</b><em>LinkedIn</em><p>The older I get, the more I realize your calendar is a list of your priorities. It tells the truth about…</p></div><span class="mult"><b>3×</b>his average</span></div>
-        <dl class="read">
-          <div><dt>Hook</dt><dd>A personal realization, 15 words</dd></div>
-          <div><dt>Lands on</dt><dd>What you actually care about</dd></div>
-          <div><dt>Reusable</dt><dd><code>The older I get, the more I realize [truth].</code></dd></div>
-        </dl>
-      </div>
+<main>
+  <form class="step" id="s-email" novalidate>
+    <h1 id="title">Start free.<br><span class="tone">Just your email.</span></h1>
+    <label class="field" for="email">Email</label>
+    <div class="bar" id="bar">
+      <input id="email" type="email" name="email" placeholder="you@email.com" autocomplete="email" inputmode="email" autocapitalize="off" spellcheck="false" autofocus aria-describedby="email-msg">
+      <button class="btn btn-go" type="submit" id="go">Continue</button>
     </div>
-    <p class="caption"><b>Discover, inside Sona.</b> Real posts that did several times better than their creator usually does, and the line you can reuse from each.</p>
-  </aside>
-</div>
+    <div id="clerk-captcha"></div>
+    <p class="msg" id="email-msg" role="alert"></p>
+    <p class="fine">We’ll email you a 6-digit code. No password. By continuing you confirm you’re 16 or older and agree to the <a href="/terms.html">Terms</a> and <a href="/privacy.html">Privacy Policy</a>.</p>
+  </form>
+
+  <form class="step" id="s-code" novalidate hidden>
+    <h1>Check your email.<br><span class="tone">Enter the code.</span></h1>
+    <p class="sent">Sent to <b id="sent-to"></b></p>
+    <label class="field" for="code" style="margin-top:16px">6-digit code</label>
+    <div class="code" id="code-wrap">
+      <span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span><span class="cell" aria-hidden="true"></span>
+      <input id="code" name="code" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="6" aria-describedby="code-msg">
+    </div>
+    <p class="msg" id="code-msg" role="alert"></p>
+    <div class="acts">
+      <button type="button" id="resend">Send a new code</button>
+      <button type="button" id="change">Use a different email</button>
+    </div>
+  </form>
+</main>
+
+<footer class="foot"><a href="/terms.html">Terms</a><a href="/privacy.html">Privacy</a><a href="/contact.html">Help</a></footer>
 
 <script>
 (function () {
+  var $ = function (id) { return document.getElementById(id); };
   var params = new URLSearchParams(location.search);
-  var isNew = params.get('new') === '1';
+
   // Only same-site paths are followed after signing in. The browser resolves
   // the value first, so tricks like "/\evil.com" (which browsers read as
   // "//evil.com") end up on another origin and are refused.
@@ -204,48 +122,154 @@
   }
   var next = samePath(params.get('next'));
 
-  var title = document.getElementById('title');
-  var sub = document.getElementById('sub');
-  var sw = document.getElementById('switch');
-  if (isNew) {
-    sw.innerHTML = 'Have an account? <a href="/signin">Sign in</a>';
-  } else {
-    title.innerHTML = 'Sign in to Sona.<br><span class="tone">Your research is waiting.</span>';
-    sub.textContent = 'Use the email you signed up with. New here? The same form creates your account.';
-    sw.innerHTML = 'New to Sona? <a href="/signin?new=1">Start free</a>';
+  if (params.get('new') !== '1') {
+    $('title').innerHTML = 'Welcome back.<br><span class="tone">Just your email.</span>';
     document.title = 'Sign in to Sona';
   }
 
-  // The age line gates the form. Once ticked on this device, it stays ticked.
-  var KEY = 'sona_age_16_confirmed';
-  var auth = document.getElementById('auth');
-  var age = document.getElementById('age');
-  var box = document.getElementById('age-box');
-  function unlock() { auth.removeAttribute('inert'); age.classList.add('done'); }
-  var confirmed = false;
-  try { confirmed = localStorage.getItem(KEY) === '1'; } catch (e) {}
-  if (confirmed) unlock();
-  box.addEventListener('change', function () {
-    if (!box.checked) return;
-    try { localStorage.setItem(KEY, '1'); } catch (e) {}
-    unlock();
-    var field = auth.querySelector('input');
-    if (field) field.focus();
-  });
-
-  function mount() {
-    if (!window.SonaAuth || !window.SonaAuth.mountAuth) return setTimeout(mount, 60);
-    window.SonaAuth.mountAuth(auth, { next: next, isNew: isNew }).then(function (state) {
-      if (state === 'signed-in') location.replace(next);
-    }).catch(function (e) {
-      console.warn('[signin]', e);
-      auth.innerHTML = '<p class="loading">Sign-in is unavailable right now. Please try again in a minute.</p>';
+  var flow = null;
+  function clerkReady() {
+    return new Promise(function (resolve) {
+      (function wait() {
+        if (window.SonaAuth && window.SonaAuth.getClerk) return resolve(window.SonaAuth.getClerk());
+        setTimeout(wait, 40);
+      })();
     });
   }
-  mount();
+  // Someone already signed in has nothing to do here.
+  var ready = clerkReady().then(function (clerk) {
+    if (clerk.user) { location.replace(next); return new Promise(function () {}); }
+    flow = window.SonaSignin.createFlow(clerk);
+  });
+
+  function show(step) {
+    $('s-email').hidden = step !== 'email';
+    $('s-code').hidden = step !== 'code';
+    (step === 'email' ? $('email') : $('code')).focus();
+  }
+
+  // ── Step 1: email ──
+  var form = $('s-email'), input = $('email'), go = $('go'), bar = $('bar'), emailMsg = $('email-msg');
+  function emailError(text) {
+    emailMsg.textContent = text;
+    bar.classList.toggle('bad', Boolean(text));
+    input.setAttribute('aria-invalid', text ? 'true' : 'false');
+  }
+  input.addEventListener('input', function () { emailError(''); });
+
+  form.addEventListener('submit', async function (e) {
+    e.preventDefault();
+    if (go.disabled) return;
+    var email = input.value.trim();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      emailError('Enter your email, like you@email.com.');
+      input.focus();
+      return;
+    }
+    emailError('');
+    go.disabled = true; go.textContent = 'Sending…';
+    try {
+      await ready;
+      await flow.start(email);
+      // Continuing is the agreement to the age line and the terms.
+      try { localStorage.setItem('sona_age_16_confirmed', '1'); } catch (_) {}
+      $('sent-to').textContent = email;
+      setCode('');
+      codeError('');
+      show('code');
+      cooldown();
+    } catch (err) {
+      console.warn('[signin]', window.SonaSignin.codeOf(err) || err);
+      emailError(window.SonaSignin.messageFor(err));
+    } finally {
+      go.disabled = false; go.textContent = 'Continue';
+    }
+  });
+
+  // ── Step 2: code ──
+  var code = $('code'), wrap = $('code-wrap'), codeMsg = $('code-msg'), resend = $('resend');
+  var cells = wrap.querySelectorAll('.cell');
+  var checking = false;
+
+  function paint() {
+    var v = code.value, focused = document.activeElement === code;
+    cells.forEach(function (c, i) {
+      c.textContent = v[i] || '';
+      c.classList.toggle('on', focused && i === Math.min(v.length, 5));
+    });
+  }
+  function setCode(v) { code.value = v; paint(); }
+  function codeError(text) {
+    codeMsg.textContent = text;
+    wrap.classList.toggle('bad', Boolean(text));
+    code.setAttribute('aria-invalid', text ? 'true' : 'false');
+  }
+  code.addEventListener('focus', paint);
+  code.addEventListener('blur', paint);
+  code.addEventListener('input', function () {
+    var v = code.value.replace(/\D/g, '').slice(0, 6);
+    setCode(v);
+    if (v.length) codeError('');
+    if (v.length === 6) check();
+  });
+
+  async function check() {
+    if (checking) return;
+    checking = true;
+    wrap.classList.add('busy');
+    try {
+      await flow.verify(code.value);
+      location.replace(next);
+    } catch (err) {
+      console.warn('[signin]', window.SonaSignin.codeOf(err) || err);
+      codeError(window.SonaSignin.messageFor(err));
+      setCode('');
+      code.focus();
+      wrap.classList.remove('busy');
+      checking = false;
+    }
+  }
+  $('s-code').addEventListener('submit', function (e) {
+    e.preventDefault();
+    if (code.value.length === 6) check();
+  });
+
+  var timer = 0;
+  function cooldown() {
+    var left = 30;
+    clearInterval(timer);
+    resend.disabled = true;
+    resend.textContent = 'Send a new code in ' + left + 's';
+    timer = setInterval(function () {
+      left -= 1;
+      if (left > 0) { resend.textContent = 'Send a new code in ' + left + 's'; return; }
+      clearInterval(timer);
+      resend.disabled = false;
+      resend.textContent = 'Send a new code';
+    }, 1000);
+  }
+  resend.addEventListener('click', async function () {
+    resend.disabled = true;
+    try {
+      await flow.resend();
+      codeError('');
+      setCode('');
+      code.focus();
+      cooldown();
+    } catch (err) {
+      codeError(window.SonaSignin.messageFor(err));
+      resend.disabled = false;
+    }
+  });
+  $('change').addEventListener('click', function () {
+    clearInterval(timer);
+    show('email');
+    input.select();
+  });
 })();
 </script>
-<script src="/clerk-auth.js?v=20261108b" defer></script>
+<script src="/signin-flow.js?v=20261108a" defer></script>
+<script src="/clerk-auth.js?v=20261108c" defer></script>
 <script src="/site.js?v=20261108a" defer></script>
 </body>
 </html>
