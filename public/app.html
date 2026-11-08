@@ -10,24 +10,24 @@
 <link rel="icon" type="image/svg+xml" href="/logo.svg">
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
-<title>Sona — Studio</title>
+<title>Sona</title>
 <link rel="stylesheet" href="/fonts/fonts.css">
 <style>
   * { margin:0; padding:0; box-sizing:border-box; }
   :root {
-    --bg:#fff; --bg-soft:#f7f7f4; --surface:#fff;
-    --border:rgba(20,20,28,0.08); --border-strong:rgba(20,20,28,0.16);
-    --text:#15151a; --text-mid:#5a5a62; --text-dim:#6f6f78;
+    --bg:#fff; --bg-soft:#f8fafc; --surface:#fff;
+    --border:#e2e8f0; --border-strong:#cbd5e1;
+    --text:#0f172a; --text-mid:#475569; --text-dim:#64748b;
     --accent:#2563eb; --accent-2:#1d4ed8; --accent-soft:rgba(37,99,235,0.09);
-    --key-top:#383838; --key-bot:#111; --key-ink:#fff; --hx-box:#f4f4f2;
+    --key-top:#383838; --key-bot:#111; --key-ink:#fff; --hx-box:#f1f5f9;
     --shadow-sm:0 1px 2px rgba(20,20,30,.04);
   }
   html[data-theme="dark"] {
-    --bg:#0a0a0b; --bg-soft:#121213; --surface:#151517;
-    --border:rgba(255,255,255,.07); --border-strong:rgba(255,255,255,.13);
-    --text:#f4f4f6; --text-mid:#a0a0aa; --text-dim:#8a8a94;
+    --bg:#0b1120; --bg-soft:#111a2e; --surface:#16213a;
+    --border:#1e293b; --border-strong:#334155;
+    --text:#f1f5f9; --text-mid:#cbd5e1; --text-dim:#94a3b8;
     --accent:#60a5fa; --accent-2:#3b82f6; --accent-soft:rgba(96,165,250,.13);
-    --key-top:#fff; --key-bot:#e5e7eb; --key-ink:#0b1120; --hx-box:#1c1c1f;
+    --key-top:#fff; --key-bot:#e5e7eb; --key-ink:#0b1120; --hx-box:#16213a;
     --shadow-sm:0 1px 2px rgba(0,0,0,.4);
   }
   body { font-family:'Geist',-apple-system,sans-serif; background:var(--bg); color:var(--text); -webkit-font-smoothing:antialiased; line-height:1.5; overflow:hidden; height:100vh; }
@@ -121,27 +121,24 @@
     transition: border-color .15s, transform .15s;
   }
   .lib-card:hover { border-color: var(--border-strong); transform: translateY(-1px); }
-  .lib-kind {
-    font-family: 'Geist Mono', monospace; font-size: 9.5px; letter-spacing: .8px;
-    text-transform: uppercase; color: var(--accent);
+  .lib-kind { font-size: 12px; color: var(--accent);
   }
   .lib-title { font-size: 14px; font-weight: 600; color: var(--text); line-height: 1.4; }
   .lib-body { font-size: 13px; color: var(--text-mid); line-height: 1.5; }
-  .lib-meta { font-family: 'Geist Mono', monospace; font-size: 10px; color: var(--text-dim); }
+  .lib-meta { font-family: 'Geist Mono', monospace; font-size: 12px; color: var(--text-dim); }
   .lib-empty { color: var(--text-mid); font-size: 13.5px; line-height: 1.6; max-width: 440px; }
   .lib-empty strong { color: var(--text); }
   @media (prefers-reduced-motion: reduce) { .lib-card { transition: none !important; } }
 
-  .upsell-note { font-size: 11.5px; color: var(--text-mid); line-height: 1.45; margin: 8px 0 12px; }
+  .upsell-note { font-size: 12px; color: var(--text-mid); line-height: 1.45; margin: 8px 0 12px; }
 
 
   /* Playbook */
   .pb-head { display:flex; align-items:flex-start; justify-content:space-between; gap:16px; margin-bottom:18px; flex-wrap:wrap; }
   .pb-title { font-size:22px; font-weight:600; letter-spacing:-.5px; }
-  .pb-kicker { font-family:'Geist Mono',monospace; font-size:10.5px; letter-spacing:.9px; text-transform:uppercase; color:var(--text-dim); margin-top:5px; }
+  .pb-kicker { font-size:12px; color:var(--text-dim); margin-top:5px; }
   .pb-head-right { display:flex; align-items:center; gap:9px; }
-  .pb-never {
-    font-family:'Geist Mono',monospace; font-size:10px; letter-spacing:.8px; text-transform:uppercase;
+  .pb-never { font-size:12px;
     color:var(--accent); background:var(--accent-soft); border:1px solid var(--accent-soft);
     padding:5px 11px; border-radius:100px; display:inline-flex; align-items:center; gap:6px;
   }
@@ -152,7 +149,7 @@
   .pb-card-name { display:flex; align-items:center; gap:9px; font-size:15px; font-weight:600; color:var(--text); }
   .pb-dot { width:7px; height:7px; border-radius:50%; background:var(--accent); flex-shrink:0; }
   .pb-dot.warn { background:#d9a441; }
-  .pb-count { font-family:'Geist Mono',monospace; font-size:10px; color:var(--text-dim); border:1px solid var(--border); border-radius:100px; padding:3px 10px; white-space:nowrap; }
+  .pb-count { font-family:'Geist Mono',monospace; font-size:12px; color:var(--text-dim); border:1px solid var(--border); border-radius:100px; padding:3px 10px; white-space:nowrap; }
   .pb-lines { display:flex; flex-direction:column; gap:5px; }
   .pb-line { font-size:14px; line-height:1.55; color:var(--text-mid); }
   .pb-line:first-child { color:var(--text); font-weight:500; }
@@ -183,7 +180,7 @@
   .disc-play svg { width:14px; height:14px; fill:#fff; margin-left:2px; }
   .disc-dur {
     position:absolute; right:8px; bottom:8px; z-index:1;
-    font-family:'Geist Mono',monospace; font-size:10px; color:#fff;
+    font-family:'Geist Mono',monospace; font-size:12px; color:#fff;
     background:rgba(0,0,0,.7); border-radius:5px; padding:2px 6px;
   }
 
@@ -264,9 +261,7 @@
   .set-none { font-size:12px; color:var(--text-dim); padding:4px 10px; }
   .set-group { display:flex; flex-direction:column; gap:2px; margin-bottom:14px; }
   .set-group[hidden] { display:none; }
-  .set-group-label {
-    font-family:'Geist Mono',monospace; font-size:9px; letter-spacing:.8px;
-    text-transform:uppercase; color:var(--text-dim); padding:8px 10px 4px;
+  .set-group-label { font-size:12px; color:var(--text-dim); padding:8px 10px 4px;
   }
   .set-link {
     display:flex; align-items:center; gap:9px; width:100%; text-align:left;
@@ -319,8 +314,7 @@
   .dec-recent { margin-top:30px; }
   .dec-recent[hidden] { display:none; }
   .dec-recent-label {
-    display:block; font-family:'Geist Mono',monospace; font-size:9px; letter-spacing:.8px;
-    text-transform:uppercase; color:var(--text-dim); margin-bottom:10px;
+    display:block; font-size:12px; color:var(--text-dim); margin-bottom:10px;
   }
   .dec-item {
     display:flex; align-items:center; gap:11px; width:100%; text-align:left;
@@ -331,7 +325,7 @@
   .dec-item:hover { border-color:var(--border-strong); }
   .dec-item span { font-size:13px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
   .dec-item b {
-    margin-left:auto; flex-shrink:0; font-family:'Geist Mono',monospace; font-size:10px;
+    margin-left:auto; flex-shrink:0; font-family:'Geist Mono',monospace; font-size:12px;
     color:var(--accent); background:var(--accent-soft); border-radius:100px; padding:3px 9px;
   }
   @media (max-width:600px) { .dec-row .btn { margin-left:0; width:100%; } }
@@ -344,30 +338,28 @@
   .ir[hidden] { display:none; }
   .ir-head { display:flex; align-items:baseline; gap:10px; margin-bottom:14px; flex-wrap:wrap; }
   .ir-head b { font-size:14px; }
-  .ir-head span { font-family:'Geist Mono',monospace; font-size:9.5px; letter-spacing:.4px; color:var(--accent); }
+  .ir-head span { font-family:'Geist Mono',monospace; font-size:12px; letter-spacing:.4px; color:var(--accent); }
   .ir-stats { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:16px; }
   .ir-stat {
     display:flex; flex-direction:column; gap:2px; padding:8px 12px;
     border-radius:10px; background:var(--bg); border:1px solid var(--border);
   }
-  .ir-stat span { font-size:10px; color:var(--text-dim); }
+  .ir-stat span { font-size:12px; color:var(--text-dim); }
   .ir-stat b { font-size:13px; }
-  .ir-sub {
-    font-family:'Geist Mono',monospace; font-size:9px; letter-spacing:.8px;
-    text-transform:uppercase; color:var(--text-dim); margin:14px 0 8px;
+  .ir-sub { font-size:12px; color:var(--text-dim); margin:14px 0 8px;
   }
   .ir-hook { margin-bottom:9px; }
   .ir-hook-top { display:flex; align-items:center; gap:10px; margin-bottom:4px; }
-  .ir-cat { font-size:11.5px; font-weight:600; color:var(--text); text-transform:capitalize; }
+  .ir-cat { font-size:12px; font-weight:600; color:var(--text); text-transform:capitalize; }
   .ir-bar { flex:1; height:3px; border-radius:3px; background:var(--border); overflow:hidden; }
   .ir-bar u { display:block; height:100%; background:var(--accent); text-decoration:none; }
   .ir-hook p { font-size:12px; color:var(--text-mid); line-height:1.5; }
   .ir-tpl {
-    font-family:'Geist Mono',monospace; font-size:11.5px; line-height:1.65; color:var(--accent);
+    font-family:'Geist Mono',monospace; font-size:12px; line-height:1.65; color:var(--accent);
     background:var(--accent-soft); border-left:2px solid var(--accent);
     border-radius:0 8px 8px 0; padding:9px 12px;
   }
-  .ir-foot { margin-top:14px; font-size:11.5px; color:var(--text-dim); line-height:1.55; }
+  .ir-foot { margin-top:14px; font-size:12px; color:var(--text-dim); line-height:1.55; }
   .ir-foot b { color:var(--text-mid); }
 
   /* ─── Create-or-search pill + command palette ─── */
@@ -407,9 +399,7 @@
   }
   .cmd-field input::placeholder { color:var(--text-dim); }
   .cmd-list { max-height:min(52vh,440px); overflow-y:auto; padding:8px; }
-  .cmd-group {
-    font-family:'Geist Mono',monospace; font-size:9px; letter-spacing:.8px;
-    text-transform:uppercase; color:var(--text-dim); padding:10px 10px 5px;
+  .cmd-group { font-size:12px; color:var(--text-dim); padding:10px 10px 5px;
   }
   .cmd-item {
     display:flex; align-items:center; gap:10px; width:100%; text-align:left;
@@ -417,7 +407,7 @@
     background:none; font-family:inherit; font-size:13.5px; color:var(--text);
   }
   .cmd-item svg { width:15px; height:15px; flex-shrink:0; color:var(--text-dim); }
-  .cmd-item small { margin-left:auto; font-size:11px; color:var(--text-dim); flex-shrink:0; }
+  .cmd-item small { margin-left:auto; font-size:12px; color:var(--text-dim); flex-shrink:0; }
   /* Active row is driven by the keyboard, so hover must not fight it. */
   .cmd-item.on { background:var(--surface); }
   .cmd-item.on svg { color:var(--accent); }
@@ -425,7 +415,7 @@
   /* Recent items: relative age, like the reference's 1m / 21h / Jul 17. */
   .recent-item { display:flex; align-items:center; gap:8px; }
   .recent-item .dot { width:5px; height:5px; border-radius:50%; background:var(--border-strong); flex-shrink:0; }
-  .recent-item .age { margin-left:auto; font-size:10.5px; color:var(--text-dim); flex-shrink:0; }
+  .recent-item .age { margin-left:auto; font-size:12px; color:var(--text-dim); flex-shrink:0; }
 
   @media (max-width:768px) { .cmd-back { padding:8vh 14px 14px; } }
 
@@ -461,7 +451,7 @@
   .draft-foot {
     display:flex; align-items:center; gap:12px; flex-wrap:wrap;
     margin-top:14px; padding-top:13px; border-top:1px solid var(--border);
-    font-size:11.5px; color:var(--text-dim);
+    font-size:12px; color:var(--text-dim);
   }
   .draft-foot .counts { margin-left:auto; font-family:'Geist Mono',monospace; }
   .draft-foot .counts b { color:var(--text-mid); font-weight:500; }
@@ -473,15 +463,13 @@
   .pb-pin-head .btn { margin-left:auto; padding:7px 13px; font-size:12px; min-height:32px; }
   @media (max-width:768px) { .pb-pin-head .btn { min-height:40px; padding:9px 16px; } }
   .pb-sec { margin-top:14px; }
-  .pb-sec-label {
-    font-family:'Geist Mono',monospace; font-size:9px; letter-spacing:.8px;
-    text-transform:uppercase; color:var(--text-dim); margin-bottom:6px;
+  .pb-sec-label { font-size:12px; color:var(--text-dim); margin-bottom:6px;
   }
   .pb-sec li { font-size:12.5px; color:var(--text-mid); line-height:1.55; margin-bottom:4px; list-style:none; padding-left:12px; position:relative; }
   .pb-sec li::before { content:'·'; position:absolute; left:2px; color:var(--accent); }
   .pb-ban { display:flex; flex-wrap:wrap; gap:5px; }
   .pb-ban span {
-    font-size:11px; padding:3px 8px; border-radius:100px;
+    font-size:12px; padding:3px 8px; border-radius:100px;
     color:#e08a8a; background:rgba(224,138,138,.10); border:1px solid rgba(224,138,138,.25);
   }
   .pb-empty { font-size:12.5px; color:var(--text-dim); line-height:1.55; }
@@ -495,12 +483,12 @@
   .pb-flag b { font-weight:600; }
   .pb-clean { font-size:12px; color:var(--accent); }
 
-  .ir-pct { font-family:'Geist Mono',monospace; font-size:10px; color:var(--text-dim); flex-shrink:0; }
-  .ir-eg { font-size:11.5px; color:var(--text-dim); font-style:italic; margin-top:4px; line-height:1.5; }
+  .ir-pct { font-family:'Geist Mono',monospace; font-size:12px; color:var(--text-dim); flex-shrink:0; }
+  .ir-eg { font-size:12px; color:var(--text-dim); font-style:italic; margin-top:4px; line-height:1.5; }
   .ir-use {
     margin-top:7px; padding:5px 11px; border-radius:100px; cursor:pointer;
     background:none; border:1px solid var(--border); font-family:inherit;
-    font-size:11.5px; color:var(--text-mid); transition:border-color .18s, color .18s;
+    font-size:12px; color:var(--text-mid); transition:border-color .18s, color .18s;
   }
   .ir-use:hover { border-color:var(--accent); color:var(--accent); }
 
@@ -675,7 +663,7 @@
   }
   .hm-item .ic svg { width:14px; height:14px; }
   .hm-item .t { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-  .hm-item .age { margin-left:auto; font-size:11.5px; color:var(--text-dim); flex-shrink:0; }
+  .hm-item .age { margin-left:auto; font-size:12px; color:var(--text-dim); flex-shrink:0; }
   .hm-none { padding:34px 20px; text-align:center; font-size:13px; color:var(--text-dim); line-height:1.6; }
   @media (max-width:900px) {
     .hm-recents { grid-template-columns:1fr; }
@@ -705,7 +693,7 @@
     width: 16px; height: 16px; border-radius: 50%;
     color: var(--text-dim); cursor: pointer;
     align-items: center; justify-content: center;
-    font-size: 11px; line-height: 1;
+    font-size: 12px; line-height: 1;
   }
   .search.has-text .clear { display: inline-flex; }
   .search.has-text .kbd { display: none; }
@@ -714,14 +702,14 @@
   .empty-search b { color: var(--text); font-weight: 600; }
   .empty-search .reset { display: inline-block; margin-top: 8px; color: var(--accent); font-size: 13px; cursor: pointer; background: none; border: 0; padding: 4px 0; font-family: inherit; }
   .empty-search .reset:hover { text-decoration: underline; }
-  .kbd { margin-left:auto; font-family:'Geist Mono',monospace; font-size:9.5px; padding:1px 6px; background:var(--bg-soft); border:1px solid var(--border); border-radius:4px; color:var(--text-mid); }
+  .kbd { margin-left:auto; font-family:'Geist Mono',monospace; font-size:12px; padding:1px 6px; background:var(--bg-soft); border:1px solid var(--border); border-radius:4px; color:var(--text-mid); }
 
   .nav { display:flex; flex-direction:column; gap:2px; }
   .nav-item { display:flex; align-items:center; gap:10px; padding:8px 10px; border-radius:7px; cursor:pointer; font-size:13px; color:var(--text-mid); transition:background .15s, color .15s; user-select:none; border:0; background:transparent; font-family:inherit; text-align:left; width:100%; }
   .nav-item:hover { color:var(--text); background:var(--surface); }
   .nav-item.active { background:var(--surface); color:var(--text); font-weight:500; box-shadow:var(--shadow-sm); }
   .nav-item svg { width:15px; height:15px; flex-shrink:0; opacity:.85; }
-  .nav-item .pill-n { margin-left:auto; font-family:'Geist Mono',monospace; font-size:9.5px; color:var(--text-dim); }
+  .nav-item .pill-n { margin-left:auto; font-family:'Geist Mono',monospace; font-size:12px; color:var(--text-dim); }
   .nav-item .pill-n:empty, .nav-item .pill-n[data-zero='1'] { display:none; }
 
   /* Groups stack on desktop; on mobile they flatten into one scroller so the
@@ -735,16 +723,16 @@
   .recent-item:hover { background:var(--surface); color:var(--text); }
   .nav-group { margin-top:14px; }
   .nav-group:first-of-type { margin-top:0; }
-  .section-label { font-family:'Geist Mono',monospace; font-size:9.5px; color:var(--text-dim); letter-spacing:.6px; text-transform:uppercase; padding:0 10px; margin-bottom:6px; }
+  .section-label { font-size:12px; color:var(--text-dim); padding:0 10px; margin-bottom:6px; }
   .side-bottom { margin-top:auto; padding-top:10px; border-top:1px solid var(--border); }
 
   .user-row { display:flex; align-items:center; gap:9px; padding:8px; border-radius:8px; cursor:pointer; transition:background .15s; }
   .user-row:hover { background:var(--surface); }
-  .user-av { width:26px; height:26px; border-radius:50%; background:linear-gradient(135deg,var(--accent),var(--accent-soft)); flex-shrink:0; display:flex; align-items:center; justify-content:center; color:#fff; font-size:11px; font-weight:600; }
+  .user-av { width:26px; height:26px; border-radius:50%; background:linear-gradient(135deg,var(--accent),var(--accent-soft)); flex-shrink:0; display:flex; align-items:center; justify-content:center; color:#fff; font-size:12px; font-weight:600; }
   .user-text { display:flex; flex-direction:column; line-height:1.2; flex:1; min-width:0; }
   .user-name { font-size:12.5px; font-weight:500; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-  .user-email { font-size:11px; color:var(--text-dim); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-  .preview-note { display:none; margin:0 8px; padding:10px 11px; border:1px solid var(--border); border-radius:10px; background:var(--surface); color:var(--text-mid); font-size:11.5px; line-height:1.45; }
+  .user-email { font-size:12px; color:var(--text-dim); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .preview-note { display:none; margin:0 8px; padding:10px 11px; border:1px solid var(--border); border-radius:10px; background:var(--surface); color:var(--text-mid); font-size:12px; line-height:1.45; }
   .preview-note.show { display:block; }
   .preview-note b { color:var(--text); font-weight:600; }
 
@@ -753,8 +741,8 @@
   .topbar { display:flex; align-items:center; justify-content:space-between; padding:14px 28px; border-bottom:1px solid var(--border); gap:12px; flex-shrink:0; }
   .topbar-left { display:flex; align-items:baseline; gap:14px; }
   .topbar h1 { font-size:18px; font-weight:600; letter-spacing:-.4px; }
-  .topbar-sub { font-size:11.5px; color:var(--text-dim); font-family:'Geist Mono',monospace; letter-spacing:.4px; text-transform:uppercase; }
-  .chip { display:inline-flex; align-items:center; gap:6px; font-family:'Geist Mono',monospace; font-size:10.5px; color:var(--accent); background:var(--accent-soft); padding:5px 10px; border-radius:100px; letter-spacing:.4px; text-transform:uppercase; }
+  .topbar-sub { font-size:12px; color:var(--text-dim); }
+  .chip { display:inline-flex; align-items:center; gap:6px; font-size:12px; color:var(--accent); background:var(--accent-soft); padding:5px 10px; border-radius:100px; }
   .chip::before { content:''; width:5px; height:5px; border-radius:50%; background:var(--accent); }
 
   .content { flex:1; overflow-y:auto; padding:24px 28px; }
@@ -785,8 +773,8 @@
   .disc-card mark { background: var(--accent-soft); color: var(--accent); padding: 1px 3px; border-radius: 3px; font-weight: 600; }
   .disc-meta { display:flex; align-items:center; justify-content:space-between; gap:10px; }
   .disc-meta-left { display:flex; align-items:center; gap:9px; min-width:0; }
-  .disc-tag { font-family:'Geist Mono',monospace; font-size:10.5px; color:var(--accent); background:var(--accent-soft); padding:3px 8px; border-radius:100px; font-weight:500; white-space:nowrap; }
-  .disc-views { font-family:'Geist Mono',monospace; font-size:11px; color:var(--text-dim); white-space:nowrap; }
+  .disc-tag { font-family:'Geist Mono',monospace; font-size:12px; color:var(--accent); background:var(--accent-soft); padding:3px 8px; border-radius:100px; font-weight:500; white-space:nowrap; }
+  .disc-views { font-family:'Geist Mono',monospace; font-size:12px; color:var(--text-dim); white-space:nowrap; }
   .disc-actions { display:flex; gap:6px; flex-shrink:0; }
   /* ─── Discover: search, order, filters ─── */
   .dx { margin-bottom:18px; }
@@ -815,7 +803,7 @@
   .dx .dx-seg .filter { display:inline-flex; align-items:center; gap:6px; flex:none; min-height:30px; padding:0 10px; border:0; border-radius:7px; background:none; font-size:13px; font-weight:500; color:var(--text-mid); white-space:nowrap; }
   .dx .dx-seg .filter:hover { color:var(--text); }
   .dx .dx-seg .filter.active { background:var(--surface); color:var(--text); box-shadow:0 0 0 1px var(--border-strong), 0 1px 2px rgba(15,23,42,.08); }
-  .dx-n { font-family:'Geist Mono',monospace; font-size:11px; font-weight:400; color:var(--text-dim); }
+  .dx-n { font-family:'Geist Mono',monospace; font-size:12px; font-weight:400; color:var(--text-dim); }
   .dx-logo { width:13px; height:13px; flex:none; }
   .dx-logo.in { color:#0A66C2; } .dx-logo.yt { color:#FF0000; } .dx-logo.sub { color:#FF6719; }
   html[data-theme="dark"] .dx-logo.in { color:#4c9be8; }
@@ -868,12 +856,12 @@
   .dc-actions .disc-action svg { width:14px; height:14px; }
   .dc-actions .disc-action:not(.saved) { background:var(--surface); border-color:var(--border-strong); color:var(--text); }
   .dc-actions .disc-action:not(.saved):hover { border-color:var(--accent); color:var(--accent); }
-  .disc-disclaimer { margin:18px 2px 0; font-size:11px; line-height:1.5; color:var(--text-dim); max-width:640px; }
+  .disc-disclaimer { margin:18px 2px 0; font-size:12px; line-height:1.5; color:var(--text-dim); max-width:640px; }
   /* Hooks library */
   .hooks-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(300px,1fr)); gap:12px; }
   .hook-card { background:var(--bg-soft); border:1px solid var(--border); border-radius:12px; padding:16px; display:flex; flex-direction:column; gap:11px; transition:border-color .2s, transform .2s; }
   .hook-card:hover { border-color:var(--border-strong); transform:translateY(-1px); }
-  .hook-cat { font-family:'Geist Mono',monospace; font-size:10px; letter-spacing:1px; text-transform:uppercase; color:var(--accent); }
+  .hook-cat { font-size:12px; color:var(--accent); }
   .hook-pattern { font-size:14px; line-height:1.55; color:var(--text); font-weight:500; }
   .hook-pattern .slot { color:var(--accent); background:var(--accent-soft); padding:0 4px; border-radius:4px; font-weight:600; }
   .hook-eg { font-size:12px; line-height:1.5; color:var(--text-mid); border-left:2px solid var(--border-strong); padding-left:10px; }
@@ -885,20 +873,20 @@
   /* Pattern library — reuses .hooks-grid / .hook-card, adds the aggregate bits */
   .pat-intro { font-size:13px; color:var(--text-mid); margin-bottom:14px; }
   .pat-head { display:flex; align-items:baseline; justify-content:space-between; gap:10px; }
-  .pat-count { font-family:'Geist Mono',monospace; font-size:10px; color:var(--text-dim); white-space:nowrap; }
+  .pat-count { font-family:'Geist Mono',monospace; font-size:12px; color:var(--text-dim); white-space:nowrap; }
   .pat-why { font-size:12.5px; line-height:1.5; color:var(--text-mid); }
   .pat-templates { display:flex; flex-direction:column; gap:7px; }
   .pat-tpl { font-size:13px; line-height:1.5; color:var(--text); background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:8px 10px; }
   /* hookSlots() emits .slot spans; the base rule is scoped to .hook-pattern, so repeat it here */
   .pat-tpl .slot { color:var(--accent); background:var(--accent-soft); padding:0 4px; border-radius:4px; font-weight:600; }
   .pat-egs { display:flex; flex-direction:column; gap:6px; border-top:1px solid var(--border); padding-top:10px; }
-  .pat-eg { font-size:11.5px; color:var(--text-mid); display:flex; align-items:center; gap:6px; }
+  .pat-eg { font-size:12px; color:var(--text-mid); display:flex; align-items:center; gap:6px; }
   .pat-eg a { color:var(--text-mid); text-decoration:none; }
   .pat-eg a:hover { color:var(--accent); text-decoration:underline; }
-  .pat-eg .tag { font-family:'Geist Mono',monospace; font-size:9.5px; color:var(--accent); background:var(--accent-soft); padding:1px 6px; border-radius:100px; flex-shrink:0; }
+  .pat-eg .tag { font-family:'Geist Mono',monospace; font-size:12px; color:var(--accent); background:var(--accent-soft); padding:1px 6px; border-radius:100px; flex-shrink:0; }
   .pat-empty { color:var(--text-mid); font-size:13.5px; line-height:1.6; max-width:460px; }
   .pat-empty strong { color:var(--text); font-weight:600; }
-  .disc-action { background:transparent; border:1px solid var(--border); border-radius:7px; padding:4px 8px; color:var(--text-mid); cursor:pointer; font-size:11px; font-family:inherit; display:inline-flex; align-items:center; gap:4px; transition:border-color .15s, color .15s; }
+  .disc-action { background:transparent; border:1px solid var(--border); border-radius:7px; padding:4px 8px; color:var(--text-mid); cursor:pointer; font-size:12px; font-family:inherit; display:inline-flex; align-items:center; gap:4px; transition:border-color .15s, color .15s; }
   .disc-action:hover { color:var(--accent); border-color:var(--accent); }
   .disc-action.saved { color:var(--accent); border-color:var(--accent); background:var(--accent-soft); }
   .disc-action svg { width:11px; height:11px; }
@@ -927,9 +915,9 @@
   .creator-meta { flex:1; min-width:0; }
   .creator-name { font-weight:600; font-size:14px; color:var(--text); }
   .creator-handle { font-size:12px; color:var(--text-mid); font-family:'Geist Mono',monospace; margin-top:2px; }
-  .creator-stats { font-size:11px; color:var(--text-mid); margin-top:6px; display:flex; gap:10px; flex-wrap:wrap; }
+  .creator-stats { font-size:12px; color:var(--text-mid); margin-top:6px; display:flex; gap:10px; flex-wrap:wrap; }
   .creator-stats b { color:var(--text); }
-  .creator-remove { background:transparent; border:1px solid var(--border); color:var(--text-mid); border-radius:7px; padding:4px 8px; font-size:11px; cursor:pointer; font-family:inherit; }
+  .creator-remove { background:transparent; border:1px solid var(--border); color:var(--text-mid); border-radius:7px; padding:4px 8px; font-size:12px; cursor:pointer; font-family:inherit; }
   .creator-remove:hover { color:#ef4444; border-color:#ef4444; }
   /* Add creators modal */
   .ac-back { position:fixed; inset:0; background:rgba(8,8,12,.55); backdrop-filter:blur(6px); display:none; align-items:center; justify-content:center; z-index:200; padding:20px; }
@@ -943,39 +931,39 @@
   .ac-search { padding:14px 22px; border-bottom:1px solid var(--border); }
   .ac-search input { width:100%; background:var(--bg-soft); border:1px solid var(--border); border-radius:10px; padding:10px 14px 10px 38px; font:inherit; font-size:13px; color:var(--text); background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><circle cx='11' cy='11' r='8'/><path d='M21 21l-4.35-4.35'/></svg>"); background-repeat:no-repeat; background-position:12px center; background-size:14px; }
   .ac-list { overflow-y:auto; padding:8px 14px; flex:1; min-height:200px; }
-  .ac-section-label { font-family:'Geist Mono',monospace; font-size:10px; letter-spacing:1px; color:var(--text-mid); text-transform:uppercase; padding:10px 8px 4px; }
+  .ac-section-label { font-size:12px; color:var(--text-mid); padding:10px 8px 4px; }
   .ac-row { display:flex; align-items:center; gap:12px; padding:10px 8px; border-radius:10px; }
   .ac-row:hover { background:var(--bg-soft); }
   .ac-av { width:36px; height:36px; border-radius:50%; background-size:cover; background-position:center; background-color:var(--accent-soft); flex-shrink:0; }
   .ac-row-meta { flex:1; min-width:0; }
   .ac-row-name { font-size:13px; font-weight:600; color:var(--text); }
-  .ac-row-handle { font-size:11px; color:var(--text-mid); font-family:'Geist Mono',monospace; }
+  .ac-row-handle { font-size:12px; color:var(--text-mid); font-family:'Geist Mono',monospace; }
   .ac-row-add { background:var(--bg-soft); border:1px solid var(--border); color:var(--text); padding:5px 12px; border-radius:100px; font:inherit; font-size:12px; cursor:pointer; }
   .ac-row-add:hover { border-color:var(--accent); color:var(--accent); }
   .ac-row-add.added { background:var(--accent-soft); border-color:var(--accent); color:var(--accent); cursor:default; }
   .ac-empty { padding:30px 16px; color:var(--text-mid); font-size:13px; text-align:center; }
   .ac-foot { padding:14px 22px; border-top:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; gap:12px; }
-  .ac-foot small { font-size:11px; color:var(--text-mid); }
+  .ac-foot small { font-size:12px; color:var(--text-mid); }
    /* Outlier decoder */
    .decoder-back { position:fixed; inset:0; background:color-mix(in srgb, var(--bg) 82%, transparent); backdrop-filter:blur(12px); display:none; align-items:center; justify-content:center; z-index:200; padding:20px; }
    .decoder-back.show { display:flex; }
    .decoder { width:min(720px,100%); max-height:90vh; overflow:auto; background:var(--bg); border:1px solid var(--border); border-radius:16px; padding:28px; box-shadow:var(--shadow-lg); }
    .decoder-head { display:flex; align-items:flex-start; justify-content:space-between; gap:16px; margin-bottom:8px; }
-   .decoder-eye { font-family:'Geist Mono',monospace; font-size:11px; letter-spacing:1px; text-transform:uppercase; color:var(--accent); margin-bottom:6px; }
+   .decoder-eye { font-size:12px; color:var(--accent); margin-bottom:6px; }
    .decoder h2 { margin:0; font-size:22px; letter-spacing:-.01em; }
    .decoder-close { background:transparent; border:1px solid var(--border); width:32px; height:32px; border-radius:50%; cursor:pointer; color:var(--text-mid); font-size:18px; line-height:1; flex-shrink:0; transition:border-color .15s, color .15s; }
    .decoder-close:hover { color:var(--text); border-color:var(--border-strong); }
    .decoder-quote { margin:18px 0 22px; padding:14px 16px; border-left:3px solid var(--accent); background:var(--bg-soft); border-radius:0 8px 8px 0; font-size:15px; color:var(--text); }
-   .decoder-quote small { display:block; color:var(--text-mid); font-size:11px; margin-top:6px; font-family:'Geist Mono',monospace; }
+   .decoder-quote small { display:block; color:var(--text-mid); font-size:12px; margin-top:6px; font-family:'Geist Mono',monospace; }
    .decoder-row { display:grid; grid-template-columns:120px 1fr; gap:14px; padding:14px 0; border-top:1px solid var(--border); }
    .decoder-row:last-of-type { border-bottom:1px solid var(--border); }
-   .decoder-label { font-family:'Geist Mono',monospace; font-size:11px; letter-spacing:1px; text-transform:uppercase; color:var(--text-mid); padding-top:2px; }
+   .decoder-label { font-size:12px; color:var(--text-mid); padding-top:2px; }
    .decoder-val { font-size:14px; color:var(--text); line-height:1.55; }
    .decoder-pattern { font-family:'Geist Mono',monospace; font-size:13px; background:var(--bg-soft); padding:10px 12px; border-radius:6px; border:1px solid var(--border); display:inline-block; }
    .decoder-foot { display:flex; gap:10px; margin-top:22px; flex-wrap:wrap; }
    @media (max-width:560px) { .decoder { padding:20px; } .decoder-row { grid-template-columns:1fr; gap:4px; } }
   .disc-action.decode:hover { color:var(--accent); border-color:var(--accent); }
-  .coming-soon { display:inline-flex; align-items:center; gap:6px; font-family:'Geist Mono',monospace; font-size:11px; padding:5px 10px; background:var(--bg-soft); border:1px solid var(--border-strong); border-radius:100px; color:var(--text-mid); letter-spacing:.5px; text-transform:uppercase; }
+  .coming-soon { display:inline-flex; align-items:center; gap:6px; font-size:12px; padding:5px 10px; background:var(--bg-soft); border:1px solid var(--border-strong); border-radius:100px; color:var(--text-mid); }
 
   /* SCRIPTS */
   .script-form { max-width:460px; margin-bottom:26px; }
@@ -992,10 +980,10 @@
   .cal-actions select { font:inherit; font-size:12.5px; padding:7px 10px; border:1px solid var(--border); border-radius:8px; background:var(--bg-soft); color:var(--text); }
   .cal-group { margin-bottom:22px; border:1px solid var(--border); border-radius:12px; overflow:hidden; }
   .cal-ghead { display:flex; align-items:center; gap:9px; padding:11px 14px; background:var(--bg-soft); border-bottom:1px solid var(--border); }
-  .cal-chip { padding:2px 9px; border-radius:6px; font-size:11.5px; font-weight:600; }
-  .cal-n { font-size:11.5px; color:var(--text-dim); }
+  .cal-chip { padding:2px 9px; border-radius:6px; font-size:12px; font-weight:600; }
+  .cal-n { font-size:12px; color:var(--text-dim); }
   .cal-table { width:100%; border-collapse:collapse; font-size:13px; }
-  .cal-table th { text-align:left; padding:9px 14px; font-family:'Geist Mono',monospace; font-size:10px; letter-spacing:.9px; text-transform:uppercase; color:var(--text-dim); font-weight:500; border-bottom:1px solid var(--border); }
+  .cal-table th { text-align:left; padding:9px 14px; font-size:12px; color:var(--text-dim); font-weight:500; border-bottom:1px solid var(--border); }
   .cal-table td { padding:10px 14px; border-bottom:1px solid var(--border); vertical-align:middle; color:var(--text-mid); }
   .cal-table tr:last-child td { border-bottom:none; }
   .cal-table tr:hover td { background:var(--bg-soft); }
@@ -1007,7 +995,7 @@
   .cal-table select:hover { border-color:var(--border); background:var(--bg-soft); }
   .cal-table input[type="date"] { font:inherit; font-size:12px; padding:3px 6px; border:1px solid transparent; border-radius:6px; background:transparent; color:var(--text-mid); cursor:pointer; }
   .cal-table input[type="date"]:hover { border-color:var(--border); background:var(--bg-soft); }
-  .cal-week { font-family:'Geist Mono',monospace; font-size:11.5px; color:var(--text-dim); }
+  .cal-week { font-family:'Geist Mono',monospace; font-size:12px; color:var(--text-dim); }
   .cal-del { opacity:0; border:none; background:none; color:var(--text-dim); cursor:pointer; font-size:15px; line-height:1; padding:2px 6px; border-radius:5px; }
   .cal-table tr:hover .cal-del { opacity:1; }
   .cal-del:hover { color:#c85050; background:var(--bg-soft); }
@@ -1024,7 +1012,7 @@
   .digest-section { margin-bottom:30px; }
   .digest-section-head { display:flex; align-items:baseline; gap:10px; margin-bottom:4px; }
   .digest-section-head h3 { font-size:16px; letter-spacing:-.2px; text-transform:capitalize; }
-  .digest-section-head span { font-family:'Geist Mono',monospace; font-size:11px; color:var(--text-dim); }
+  .digest-section-head span { font-family:'Geist Mono',monospace; font-size:12px; color:var(--text-dim); }
   .digest-throughline { font-size:13px; color:var(--text-mid); line-height:1.55; margin:6px 0 14px; padding:10px 12px; background:var(--bg-soft); border:1px solid var(--border); border-left:3px solid var(--accent); border-radius:0 8px 8px 0; }
   .digest-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:14px; }
   .digest-empty { color:var(--text-dim); font-size:13px; padding:16px 2px; }
@@ -1044,22 +1032,22 @@
   .canvas-node.is-note:focus-within { transform:rotate(0deg) !important; z-index:2; }
   .canvas-node.is-note .canvas-node-body textarea { font-family:'Caveat',cursive; font-size:21px; line-height:1.35; color:var(--text); }
   .canvas-node.is-note .canvas-node-body textarea::placeholder { font-family:'Geist',-apple-system,sans-serif; font-size:13px; }
-  .canvas-node-head { display:flex; align-items:center; justify-content:space-between; gap:6px; padding:8px 10px; border-bottom:1px solid var(--border); cursor:grab; font-family:'Geist Mono',monospace; font-size:10.5px; letter-spacing:.4px; text-transform:uppercase; color:var(--text-dim); }
+  .canvas-node-head { display:flex; align-items:center; justify-content:space-between; gap:6px; padding:8px 10px; border-bottom:1px solid var(--border); cursor:grab; font-size:12px; color:var(--text-dim); }
   .canvas-node-head:active { cursor:grabbing; }
   .canvas-node-x { background:transparent; border:none; color:var(--text-dim); cursor:pointer; font-size:15px; line-height:1; padding:2px 4px; }
   .canvas-node-x:hover { color:var(--text); }
   .canvas-node-body { padding:10px 12px; font-size:13px; line-height:1.5; color:var(--text); }
   .canvas-node-body textarea { width:100%; min-height:70px; border:none; background:transparent; resize:vertical; font:inherit; color:inherit; outline:none; }
-  .canvas-node-idea-meta { font-size:11px; color:var(--text-dim); margin-top:6px; }
+  .canvas-node-idea-meta { font-size:12px; color:var(--text-dim); margin-top:6px; }
   .canvas-node-foot { display:flex; gap:6px; padding:0 12px 10px; }
-  .canvas-node-foot button { font-family:'Geist Mono',monospace; font-size:10.5px; letter-spacing:.3px; text-transform:uppercase; background:transparent; border:1px solid var(--border); border-radius:6px; padding:4px 8px; color:var(--text-mid); cursor:pointer; }
+  .canvas-node-foot button { font-size:12px; background:transparent; border:1px solid var(--border); border-radius:6px; padding:4px 8px; color:var(--text-mid); cursor:pointer; }
   .canvas-node-foot button:hover { color:var(--accent); border-color:var(--accent); }
   .canvas-empty { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; gap:4px; color:var(--text-dim); font-size:13px; pointer-events:none; }
   .canvas-empty p.dim { max-width:320px; font-size:12px; }
   .canvas-idea-list { max-height:50vh; overflow-y:auto; display:flex; flex-direction:column; gap:8px; margin:16px 0; }
   .canvas-idea-row { display:flex; align-items:center; justify-content:space-between; gap:10px; padding:10px 12px; border:1px solid var(--border); border-radius:8px; font-size:13px; }
   .canvas-idea-row .txt { color:var(--text-mid); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-  .canvas-idea-row button { flex-shrink:0; font-family:'Geist Mono',monospace; font-size:11px; background:transparent; border:1px solid var(--border-strong); border-radius:6px; padding:5px 9px; color:var(--text); cursor:pointer; }
+  .canvas-idea-row button { flex-shrink:0; font-family:'Geist Mono',monospace; font-size:12px; background:transparent; border:1px solid var(--border-strong); border-radius:6px; padding:5px 9px; color:var(--text); cursor:pointer; }
   .canvas-idea-row button:hover { color:var(--accent); border-color:var(--accent); }
   .canvas-idea-row button:disabled { opacity:.5; cursor:default; }
   .filters { display:flex; gap:6px; margin-bottom:18px; flex-wrap:wrap; }
@@ -1076,7 +1064,7 @@
   .form-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
   .field { display:flex; flex-direction:column; gap:7px; }
   .field.full { grid-column:1/-1; }
-  .field label, .toggle-row span:first-child { font-family:'Geist Mono',monospace; font-size:10px; letter-spacing:.55px; text-transform:uppercase; color:var(--text-dim); }
+  .field label, .toggle-row span:first-child { font-size:12px; color:var(--text-dim); }
   .field input, .field textarea, .field select {
     width:100%; border:1px solid var(--border); border-radius:9px; background:var(--surface);
     color:var(--text); font:inherit; font-size:13px; padding:10px 11px; outline:none;
@@ -1141,12 +1129,12 @@
   .upsell-inner { background:var(--bg-soft); border-radius:13px; padding:14px; }
   .upsell-x { position:absolute; top:8px; right:8px; width:18px; height:18px; border:0; background:transparent; cursor:pointer; color:var(--text-dim); font-size:14px; line-height:1; display:flex; align-items:center; justify-content:center; padding:0; z-index:2; }
   .upsell-x:hover { color:var(--text); }
-  .upsell-eye { display:inline-flex; align-items:center; gap:5px; font-family:'Geist Mono',monospace; font-size:9px; letter-spacing:.8px; text-transform:uppercase; color:var(--accent); margin-bottom:8px; }
+  .upsell-eye { display:inline-flex; align-items:center; gap:5px; font-size:12px; color:var(--accent); margin-bottom:8px; }
   .upsell h4 { font-size:13px; font-weight:600; letter-spacing:-.3px; line-height:1.3; margin-bottom:10px; padding-right:16px; }
   .upsell h4 .acc { color:var(--accent); }
   .upsell-seats-row { display:flex; justify-content:space-between; align-items:baseline; margin-bottom:5px; }
-  .upsell-seats-row .lbl { font-family:'Geist Mono',monospace; font-size:9px; color:var(--text-dim); text-transform:uppercase; letter-spacing:.4px; }
-  .upsell-seats-row .num { font-family:'Geist Mono',monospace; font-size:10.5px; font-weight:500; }
+  .upsell-seats-row .lbl { font-size:12px; color:var(--text-dim); }
+  .upsell-seats-row .num { font-family:'Geist Mono',monospace; font-size:12px; font-weight:500; }
   .upsell-seats-row .num b { color:var(--accent); }
   .upsell-bar { height:4px; background:var(--border); border-radius:999px; overflow:hidden; margin-bottom:11px; }
   .upsell-bar i { display:block; height:100%; background:linear-gradient(90deg,var(--accent),var(--accent-2)); border-radius:999px; transition:width .9s cubic-bezier(.16,1,.3,1); }
@@ -1185,13 +1173,13 @@
     .upsell-inner { padding: 12px; }
     .side-bottom { padding-top: 8px; }
     .user-row { padding: 6px; }
-    .user-av { width: 24px; height: 24px; font-size: 10.5px; }
-    .user-name, .user-email { font-size: 11.5px; }
+    .user-av { width: 24px; height: 24px; font-size: 12px; }
+    .user-name, .user-email { font-size: 12px; }
 
     /* Main content */
     .topbar { padding: 14px 18px; gap: 10px; flex-wrap: wrap; }
     .topbar h1 { font-size: 17px; }
-    .topbar-sub { font-size: 10.5px; }
+    .topbar-sub { font-size: 12px; }
     .content { padding: 18px; padding-bottom: max(20px, env(safe-area-inset-bottom)); }
     .filters { gap: 5px; overflow-x: auto; padding-bottom: 4px; flex-wrap: nowrap; }
     .filters::-webkit-scrollbar { display: none; }
@@ -1253,8 +1241,13 @@
     }
     .side-bottom { flex: 0 0 auto; border: 0; padding: 0 0 0 6px; margin: 0; }
     .side-bottom .user-row { padding: 0; }
+    .cmd-trigger { flex: 0 0 auto; width: 36px; height: 36px; min-height: 36px; padding: 0; justify-content: center; border-radius: 999px; }
+    .cmd-trigger span { display: none; }
   }
-
+  .pat-empty .btn { margin-top:14px; }
+  .pb-sub { font-size:14px; color:var(--text-mid); }
+  .chip[hidden] { display:none; }
+  .pb-clean svg, .creator-stats svg { width:13px; height:13px; vertical-align:-2px; margin-right:3px; }
 </style>
 <script src="local-decode.js?v=20260830a"></script>
 <style>/* New mark (logo.svg) carries its own tile, so the old frames are switched off. */.mark-img{display:block;width:100%;height:100%}:is(.logo-mark,.lm,.hm-mark,.lc-mark,.mark):has(>.mark-img){background:none!important;border:0!important;box-shadow:none!important;padding:0!important;border-radius:0!important}.logo>.mark-img{width:24px;height:24px}</style>
@@ -1282,7 +1275,7 @@
     <!-- One entry point for creating and finding, rather than a search field
          that only filters the feed. Opens the command palette; the old inline
          feed filter still runs, reachable as a "Search the feed" action. -->
-    <button type="button" class="cmd-trigger" id="cmd-trigger">
+    <button type="button" class="cmd-trigger" id="cmd-trigger" aria-label="Create or search">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
       <span>Create or search</span>
       <span class="kbd">⌘K</span>
@@ -1385,9 +1378,9 @@
     <div class="upsell" id="upsell">
       <button class="upsell-x" onclick="dismissUpsell()" aria-label="Dismiss">×</button>
       <div class="upsell-inner">
-        <div class="upsell-eye">✦ Creator</div>
+        <div class="upsell-eye">Creator</div>
         <h4>Decode any post for <span class="acc">€19/mo</span>. Unlimited ideas and drafts.</h4>
-        <p class="upsell-note">Or €190/year — two months free. Renews automatically until you cancel. Cancel anytime in Settings → Billing.</p>
+        <p class="upsell-note">Or €190/year, two months free. Renews automatically until you cancel. Cancel anytime in Settings → Billing.</p>
         <button class="upsell-btn" onclick="claimSeat(this)">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12 L19 12 M13 6 L19 12 L13 18"/></svg>
           Start creating
@@ -1414,7 +1407,7 @@
         <h1 id="view-title">Discover</h1>
         <span class="topbar-sub" id="view-sub">Posts that beat their creator’s average</span>
       </div>
-      <span class="chip" id="view-chip">Refreshed just now</span>
+      <span class="chip" id="view-chip" hidden>Preview mode</span>
     </header>
 
     <div class="content">
@@ -1463,7 +1456,7 @@
 
           <form class="zd-ask" id="hx-form" autocomplete="off">
             <label class="visually-hidden" for="hx-input">Ask Zeno</label>
-            <textarea id="hx-input" rows="1" placeholder="Ask about a topic or a creator, or paste a post" spellcheck="false"></textarea>
+            <textarea id="hx-input" rows="1" placeholder="Ask about a topic or a post" spellcheck="false"></textarea>
             <button type="submit" class="zd-send" id="hx-send" disabled><span class="zd-send-t">Ask</span><kbd aria-hidden="true">↵</kbd></button>
           </form>
           <p class="zd-foot" id="hx-foot">Zeno is an AI and can get things wrong.<span class="zd-foot-more"> Check its sources against the originals.</span></p>
@@ -1491,7 +1484,7 @@
           <div class="hm-promo">
             <span class="hm-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>
             <b>Pick up where you left off</b>
-            <p>Jump back into a recent draft — everything you've touched lately, in one list.</p>
+            <p>Jump back into a recent draft. Everything you've touched lately is in one list.</p>
             <button type="button" class="hm-cta" onclick="switchView('studio')">View all drafts <span>&rarr;</span></button>
           </div>
           <div class="hm-list" id="hm-recent-list"></div>
@@ -1585,7 +1578,7 @@
                 <div class="field">
                   <label for="draft-insert">Insert saved idea</label>
                   <select id="draft-insert" style="width:100%;padding:10px;border:1px solid var(--line);border-radius:8px;background:transparent;color:inherit;font:inherit;">
-                    <option value="">— pick a saved idea —</option>
+                    <option value="">Pick a saved idea</option>
                   </select>
                 </div>
               </div>
@@ -1629,8 +1622,7 @@
       <div class="view" data-view="voice">
         <div class="pb-head">
           <div>
-            <h2 class="pb-title">Your playbook</h2>
-            <p class="pb-kicker">Yours · pinned beside every draft</p>
+            <p class="pb-sub">Pinned beside every draft.</p>
           </div>
           <div class="pb-head-right">
             <span class="pb-never">Never AI</span>
@@ -1649,13 +1641,13 @@
                 <h2>Your playbook</h2>
                 <p>The hooks, rules, and lines that make a post sound like you. Pinned beside every draft.</p>
               </div>
-              <span class="coming-soon">Yours — never AI</span>
+              <span class="coming-soon">Written by you</span>
             </div>
             <form id="style-form">
               <div class="form-grid">
                 <div class="field full">
                   <label for="style-hooks">Winning hooks</label>
-                  <textarea id="style-hooks" name="hookPatterns" rows="5" placeholder="Hooks that work for you — one per line. e.g. &quot;Most people [X]. The 1% [Y].&quot;"></textarea>
+                  <textarea id="style-hooks" name="hookPatterns" rows="5" placeholder="Hooks that work for you, one per line. e.g. &quot;Most people [X]. The 1% [Y].&quot;"></textarea>
                 </div>
                 <div class="field full">
                   <label for="style-voice">How you sound</label>
@@ -1667,7 +1659,7 @@
                 </div>
                 <div class="field full">
                   <label for="style-banned">Never say</label>
-                  <textarea id="style-banned" name="bannedPhrases" rows="3" placeholder="Phrases to avoid — comma separated. e.g. game-changer, leverage, unlock, in today's world"></textarea>
+                  <textarea id="style-banned" name="bannedPhrases" rows="3" placeholder="Phrases to avoid, separated by commas. e.g. game-changer, leverage, unlock, in today's world"></textarea>
                 </div>
               </div>
               <div class="actions-row">
@@ -1684,7 +1676,7 @@
               <div class="stat-row"><span>Signature lines</span><b id="stat-signature">0</b></div>
               <div class="stat-row"><span>Never say</span><b id="stat-banned">0</b></div>
             </div>
-            <div class="tone-preview" id="style-preview">Fill your playbook — it surfaces next to every draft so each post sounds unmistakably you.</div>
+            <div class="tone-preview" id="style-preview">Fill in your playbook. It sits next to every draft, so each post sounds like you.</div>
           </aside>
         </div>
       </div>
@@ -1694,8 +1686,7 @@
       <div class="view" data-view="calendar">
         <div class="panel-head">
           <div>
-            <h2>Content calendar</h2>
-            <p class="sub">Every draft with a date on it. Grouped by platform.</p>
+            <p class="sub">Every draft with a date on it, grouped by platform.</p>
           </div>
           <div class="cal-actions">
             <select id="cal-group" aria-label="Group by">
@@ -1754,7 +1745,7 @@
       <div class="view" data-view="decode">
         <div class="dec-wrap">
           <h2 class="dec-h">What worked?</h2>
-          <p class="dec-sub">Paste a post that outperformed — yours or anyone's. Sona names the mechanism underneath it. It won't write it for you.</p>
+          <p class="dec-sub">Paste a post that outperformed, yours or anyone's. Sona names the mechanism underneath it. It won't write it for you.</p>
 
           <form class="dec-form" id="dec-form">
             <textarea id="dec-text" rows="5" placeholder="Paste the post here…" spellcheck="false" aria-label="Post text"></textarea>
@@ -1796,7 +1787,6 @@
       <div class="view" data-view="lists">
         <div class="lists-head">
           <div>
-            <h3 style="margin:0 0 4px 0;font-size:15px;letter-spacing:-.01em">My lists</h3>
             <div class="lists-chips" id="lists-chips"></div>
           </div>
           <div class="lists-actions">
@@ -1927,7 +1917,7 @@
               <div class="brand-ring" id="brand-ring" style="--pct:0">
                 <div class="brand-ring-inner"><b id="brand-ring-pct">0%</b></div>
               </div>
-              <div class="brand-strength-note" id="brand-strength-note">Fill these in so Sona's drafts sound like you — not like everyone else.</div>
+              <div class="brand-strength-note" id="brand-strength-note">Fill these in so Sona's drafts sound like you, not like everyone else.</div>
             </div>
             <div class="brand-checklist" id="brand-checklist"><!-- rendered by JS --></div>
           </aside>
@@ -1953,7 +1943,6 @@
              adding a pane is one <button> plus one <section>. -->
         <div class="set-shell">
           <aside class="set-nav">
-            <h2 class="set-nav-title">Settings</h2>
             <div class="set-search">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
               <input type="text" id="set-search" placeholder="Search settings" aria-label="Search settings" autocomplete="off">
@@ -2066,7 +2055,7 @@
                 <button class="btn btn-ghost" type="button" id="export-data">Export data</button>
                 <button class="btn btn-ghost" type="button" id="clear-local">Clear local data</button>
               </div>
-              <p class="status-note" style="margin-top:12px">Export downloads a JSON file. Clearing removes local previews only — saved rows stay in your account.</p>
+              <p class="status-note" style="margin-top:12px">Export downloads a JSON file. Clearing removes local previews only. Saved rows stay in your account.</p>
             </section>
 
             <!-- MCP -->
@@ -2117,7 +2106,7 @@
     </div>
     <div class="ac-list" id="ac-list"></div>
     <div class="ac-foot">
-      <small>Stays open — add as many as you like</small>
+      <small>Stays open, so add as many as you like</small>
       <button class="btn" type="button" onclick="closeAddCreators()">Done</button>
     </div>
   </div>
@@ -2161,7 +2150,7 @@
         <b>A startup</b><span>Build in public, turn what you learn into posts</span>
       </button>
       <button type="button" class="niche-opt" data-niche="writers">
-        <b>A writing habit</b><span>Essays, threads, newsletters — publish consistently</span>
+        <b>A writing habit</b><span>Essays, threads, newsletters, published consistently</span>
       </button>
       <button type="button" class="niche-opt" data-niche="creators">
         <b>An audience</b><span>Grow a personal brand across platforms</span>
@@ -2436,7 +2425,7 @@
         if (error) throw error;
       } catch (e) {
         console.warn('saveWorkspaceSettings failed', e);
-        if (status) status.textContent = 'Save failed — check connection.';
+        if (status) status.textContent = 'Couldn’t save. Check your connection and try again.';
         hydrateForms(); updateWorkspaceUI();
         return;
       }
@@ -2516,7 +2505,7 @@
     const note = document.getElementById('brand-strength-note');
     if (note) {
       note.textContent = pct === 100
-        ? 'Your brand is fully set — every draft has your voice to lean on.'
+        ? 'Your brand is set. Every draft has your voice to lean on.'
         : `${checks.length - doneCount} ${checks.length - doneCount === 1 ? 'thing' : 'things'} left. The fuller this is, the less generic your drafts feel.`;
     }
     const list = document.getElementById('brand-checklist');
@@ -2724,7 +2713,7 @@
     if (window.__sonaBg) window.__sonaBg.stop();
     document.getElementById('shell').style.display = 'grid';
     document.getElementById('preview-note').classList.toggle('show', demoMode);
-    document.getElementById('view-chip').textContent = demoMode ? 'Preview mode' : 'Refreshed just now';
+    document.getElementById('view-chip').hidden = !demoMode;
     const meta = user.user_metadata || {};
     const name = meta.full_name || user.email.split('@')[0];
     document.getElementById('user-name').textContent = name;
@@ -2829,7 +2818,7 @@
     const sel = document.getElementById('draft-insert');
     if (sel) {
       const savedIdeas = SEED_IDEAS.filter(i => saved.has(i.id));
-      sel.innerHTML = '<option value="">— pick a saved idea —</option>' +
+      sel.innerHTML = '<option value="">Pick a saved idea</option>' +
         savedIdeas.map(i => `<option value="${i.id}">${escapeHtml(i.name)} — ${escapeHtml(i.text.slice(0,60))}…</option>`).join('');
     }
   }
@@ -2918,7 +2907,7 @@
         document.getElementById('drafts-count').textContent = drafts.length;
       } catch (e) {
         console.warn('saveDraft failed', e);
-        document.getElementById('draft-status').textContent = 'Save failed — check connection.';
+        document.getElementById('draft-status').textContent = 'Couldn’t save. Check your connection and try again.';
         return;
       }
     }
@@ -3038,9 +3027,9 @@
       : `<p class="pb-empty-line">${escapeHtml(empty)}</p>`;
 
     host.innerHTML = [
-      card('Winning hooks', `${hooks.length} saved`, asLines(hooks, 'No hooks yet — add the openers that work for you.')),
-      card('Voice rules', `${rules.length} rules`, asLines(rules, 'No rules yet — how should a post of yours sound?')),
-      card('Signature lines', `${sigs.length} saved`, asInline(sigs, 'No signature lines yet — your go-to opener or sign-off.')),
+      card('Winning hooks', `${hooks.length} saved`, asLines(hooks, 'No hooks yet. Add the openers that work for you.')),
+      card('Voice rules', `${rules.length} rules`, asLines(rules, 'No rules yet. How should a post of yours sound?')),
+      card('Signature lines', `${sigs.length} saved`, asInline(sigs, 'No signature lines yet. Add your go-to opener or sign-off.')),
       card('Never say', avoid.length ? 'avoid' : 'none', asInline(avoid, 'Nothing on the avoid list yet.'), true),
     ].join('');
   }
@@ -3072,7 +3061,7 @@
     const preview = document.getElementById('style-preview');
     if (preview) {
       const firstHook = (styleGuide.hookPatterns || '').split('\n').find(x => x.trim());
-      preview.textContent = firstHook ? `Try this hook: ${firstHook.trim()}` : 'Fill your playbook — it surfaces next to every draft so each post sounds unmistakably you.';
+      preview.textContent = firstHook ? `Try this hook: ${firstHook.trim()}` : 'Fill in your playbook. It sits next to every draft, so each post sounds like you.';
     }
   }
   async function saveStyleGuide() {
@@ -3090,7 +3079,7 @@
         if (error) throw error;
       } catch (e) {
         console.warn('saveStyleGuide failed', e);
-        status.textContent = 'Save failed — check connection.';
+        status.textContent = 'Couldn’t save. Check your connection and try again.';
         return;
       }
     } else {
@@ -3235,8 +3224,8 @@
           <div class="creator-name">${escapeHtml(c.name)}</div>
           <div class="creator-handle">${escapeHtml(c.handle)} · ${escapeHtml(c.platform)} · ${fmt(c.followers)}</div>
           <div class="creator-stats">
-            <span>♥ <b>${fmt(c.liked)}</b></span>
-            <span>👁 <b>${fmt(c.viewed)}</b></span>
+            <span>${HEART}<b>${fmt(c.liked)}</b></span>
+            <span>${EYE}<b>${fmt(c.viewed)}</b></span>
             <span>${c.outlier||0}× outlier</span>
           </div>
         </div>
@@ -3491,9 +3480,9 @@
       grid.innerHTML = `
         <div class="pat-empty">
           <p><strong>No patterns yet.</strong></p>
-          <p>Hit <em>Decode</em> on any post in Discover. Each decode identifies the
-          mechanism behind that post — hook type, tension, and a reusable template.
-          Once a mechanism shows up more than once, it appears here.</p>
+          <p>Decode a post in Discover to see its hook type, tension and reusable line.
+          When the same move shows up more than once, it appears here.</p>
+          <button type="button" class="btn" onclick="switchView('discover')">Go to Discover</button>
         </div>`;
       return;
     }
@@ -3873,7 +3862,7 @@
     const text = decodeURIComponent(btn.dataset.text);
     const orig = btn.innerHTML;
     const flash = (label) => { btn.innerHTML = label; setTimeout(() => { btn.innerHTML = orig; }, 1500); };
-    navigator.clipboard.writeText(text).then(() => flash('Copied')).catch(() => flash('Copy failed — select manually'));
+    navigator.clipboard.writeText(text).then(() => flash('Copied')).catch(() => flash('Couldn’t copy. Select the text manually.'));
   };
 
   // ─── DIGEST — Eden-style weekly "strategist sweep" of the top posts in your niche.
@@ -3956,7 +3945,7 @@
           const already = canvasState.nodes.some(n => n.type === 'idea' && n.ideaId === i.id);
           return `<div class="canvas-idea-row"><span class="txt">${escapeHtml(i.name)} — ${escapeHtml(i.text)}</span><button ${already ? 'disabled' : ''} onclick="addCanvasIdea('${i.id}')">${already ? 'Added' : 'Add'}</button></div>`;
         }).join('')
-      : `<p style="font-size:13px;color:var(--text-dim)">You haven't saved any ideas yet — save one from Discover or Digest first.</p>`;
+      : `<p style="font-size:13px;color:var(--text-dim)">You haven't saved any ideas yet. Save one from Discover or Digest first.</p>`;
     document.getElementById('canvas-idea-back').classList.add('show');
   };
   window.closeCanvasIdeaPicker = function() {
@@ -4134,8 +4123,8 @@
       digest:['Digest', 'This week’s breakout posts, by niche'],
       studio:['Drafts', drafts.length ? `${drafts.length} draft${drafts.length===1?'':'s'}` : 'Start a draft'],
       lists:['My lists', lists.length ? `${lists.length} list${lists.length===1?'':'s'}` : 'No lists'],
-      scripts:['Scripts','3 free formats, no obligation'],
-      voice:['Playbook','Yours — never AI'],
+      scripts:['Scripts','Three formats from your product and audience'],
+      voice:['Playbook','How you sound'],
       hooks:['Hooks library', `${HOOKS_LIBRARY.length} proven patterns`],
       patterns:['Patterns', PATTERNS.length ? `${PATTERNS.length} mechanism${PATTERNS.length===1?'':'s'} across your decodes` : 'Decode a post to start'],
       canvas:['Canvas', canvasState.nodes.length ? `${canvasState.nodes.length} card${canvasState.nodes.length===1?'':'s'}` : 'Connect your ideas visually'],
@@ -4155,6 +4144,7 @@
     const [t, s] = title;
     document.getElementById('view-title').textContent = t;
     document.getElementById('view-sub').textContent = s;
+    document.title = t + ' | Sona';
     if (location.hash !== `#${v}`) history.replaceState(null, '', `#${v}`);
     // Hidden views report zero-size rects, so edges drawn while off-screen land at (0,0). Redraw on entry.
     if (v === 'canvas') requestAnimationFrame(drawCanvasEdges);
@@ -4241,7 +4231,7 @@
       if (!btn) return;
       const cue = document.createElement('div');
       cue.className = 'coach';
-      cue.innerHTML = '<span>Start here — see why this one worked</span>';
+      cue.innerHTML = '<span>Start here: see why this one worked</span>';
       const close = document.createElement('button');
       close.type = 'button'; close.textContent = '×';
       close.setAttribute('aria-label', 'Dismiss');
@@ -4313,7 +4303,7 @@
 
     if (!items.length) {
       grid.innerHTML = total === 0
-        ? `<div class="lib-empty"><p><strong>Nothing kept yet.</strong></p><p>Save an idea from Discover, decode a post, or start a draft — whatever you keep shows up here, searchable together.</p></div>`
+        ? `<div class="lib-empty"><p><strong>Nothing kept yet.</strong></p><p>Save an idea from Discover, decode a post or start a draft. Whatever you keep shows up here, searchable together.</p></div>`
         : `<div class="lib-empty"><p>Nothing matches that.</p></div>`;
       return;
     }
@@ -4420,7 +4410,7 @@
           // text instead so the user can copy it by hand.
           const f = document.getElementById('mcp-url');
           f.removeAttribute('readonly'); f.select(); f.setAttribute('readonly', '');
-          note.textContent = 'Selected — press Cmd/Ctrl+C.';
+          note.textContent = 'Selected. Press Cmd/Ctrl+C.';
         }
         setTimeout(() => { note.textContent = ''; }, 2600);
       });
@@ -4475,7 +4465,7 @@
       // Matches the endpoint's own floor, so a too-short post fails here with a
       // useful message instead of a 400 from the server.
       if (text.length < 10) {
-        note.textContent = 'Paste a bit more — at least 10 characters.';
+        note.textContent = 'Paste a bit more, at least 10 characters.';
         note.classList.add('err');
         return;
       }
@@ -4806,8 +4796,8 @@
     const hits = ban.filter(p => new RegExp('\\b' + esc(p) + '\\b', 'i').test(text));
 
     flags.innerHTML = hits.length
-      ? hits.map(h => '<div class="pb-flag">⚠ You said <b>' + escapeHtml(h) + '</b> — it\'s on your never-say list.</div>').join('')
-      : '<p class="pb-clean">✓ Nothing from your never-say list.</p>';
+      ? hits.map(h => '<div class="pb-flag">You said <b>' + escapeHtml(h) + '</b>, which is on your never-say list.</div>').join('')
+      : '<p class="pb-clean">Nothing from your never-say list.</p>';
   }
 
 
@@ -5611,7 +5601,7 @@ var mode = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dar
     if (!body) return;
 
     if (!drafts.length) {
-      body.innerHTML = '<div class="empty"><h3>Nothing planned yet</h3><p>Add an item, or start a draft — every draft shows up here.</p></div>';
+      body.innerHTML = '<div class="empty"><h3>Nothing planned yet</h3><p>Add an item or start a draft. Every draft shows up here.</p></div>';
       return;
     }
 

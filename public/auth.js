@@ -231,7 +231,6 @@
       .auth-logo-icon {
         width: 32px; height: 32px;
         border-radius: 8px;
-        background: linear-gradient(150deg, #34343c, #131316); border: 1px solid rgba(255,255,255,0.09);
         display: inline-flex;
         align-items: center;
         justify-content: center;
@@ -290,7 +289,7 @@
          changing colour. Cheap, and it makes the field feel responsive. */
       .auth-field::after {
         content: ''; position: absolute; left: 50%; bottom: 0; height: 1.5px; width: 0;
-        background: linear-gradient(90deg, transparent, #5fb896, transparent);
+        background: linear-gradient(90deg, transparent, #60a5fa, transparent);
         transform: translateX(-50%);
         transition: width .42s cubic-bezier(.2, .8, .2, 1);
       }
@@ -302,7 +301,7 @@
         font-size: 15px;
         font-weight: 500;
         padding: 14px;
-        background: #5fb896;
+        background: #60a5fa;
         color: #0a0a0b;
         font-weight: 600;
         border: none;
@@ -352,7 +351,7 @@
         }
         .auth-field::after, .auth-submit::after, .auth-toggle a::after { transition: none !important; }
         .auth-field:focus-within::after { width: 100%; }
-        .auth-field input:focus { border-bottom-color: #5fb896; }
+        .auth-field input:focus { border-bottom-color: #60a5fa; }
       }
       .auth-submit:active { transform: translateY(0); filter: brightness(0.96); }
       .auth-submit:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
@@ -444,7 +443,7 @@
         color: #5a5a56;
       }
       .auth-toggle a {
-        color: #5fb896;
+        color: #60a5fa;
         font-weight: 600;
         text-decoration: none;
         cursor: pointer;
@@ -492,7 +491,7 @@
         width: 32px;
         height: 32px;
         border-radius: 50%;
-        background: #28775c;
+        background: #2563eb;
         color: #f5f4f0;
         display: flex;
         align-items: center;
@@ -568,7 +567,7 @@
         <!-- LOGIN VIEW -->
         <div id="auth-login-view">
           <div class="auth-logo">
-            <span class="auth-logo-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M5 15 Q8 9 12 12 Q16 15 19 9" stroke="#5fb896" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M19 3.6 C19.15 5.1 20.3 6.25 21.8 6.4 C20.3 6.55 19.15 7.7 19 9.2 C18.85 7.7 17.7 6.55 16.2 6.4 C17.7 6.25 18.85 5.1 19 3.6 Z" fill="#5fb896"/></svg></span>
+            <span class="auth-logo-icon"><img src="/logo.svg" alt="" width="26" height="26"></span>
             <span class="auth-logo-text">Sona</span>
           </div>
           <div class="auth-modal-title">Welcome back</div>
@@ -593,7 +592,7 @@
         <!-- WAITLIST VIEW (mock mode — no Supabase configured) -->
         <div id="auth-waitlist-view" style="display:none">
           <div class="auth-logo">
-            <span class="auth-logo-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M5 15 Q8 9 12 12 Q16 15 19 9" stroke="#5fb896" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M19 3.6 C19.15 5.1 20.3 6.25 21.8 6.4 C20.3 6.55 19.15 7.7 19 9.2 C18.85 7.7 17.7 6.55 16.2 6.4 C17.7 6.25 18.85 5.1 19 3.6 Z" fill="#5fb896"/></svg></span>
+            <span class="auth-logo-icon"><img src="/logo.svg" alt="" width="26" height="26"></span>
             <span class="auth-logo-text">Sona</span>
           </div>
           <div class="auth-modal-title">Request early access</div>
@@ -633,7 +632,7 @@
         <!-- MAGIC LINK VIEW — one entry point for signup and sign-in -->
         <div id="auth-magic-view" style="display:none">
           <div class="auth-logo">
-            <span class="auth-logo-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M5 15 Q8 9 12 12 Q16 15 19 9" stroke="#5fb896" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M19 3.6 C19.15 5.1 20.3 6.25 21.8 6.4 C20.3 6.55 19.15 7.7 19 9.2 C18.85 7.7 17.7 6.55 16.2 6.4 C17.7 6.25 18.85 5.1 19 3.6 Z" fill="#5fb896"/></svg></span>
+            <span class="auth-logo-icon"><img src="/logo.svg" alt="" width="26" height="26"></span>
             <span class="auth-logo-text">Sona</span>
           </div>
           <div class="auth-modal-title">Start with what's working.</div>
@@ -654,7 +653,7 @@
         <!-- SENT STATE -->
         <div id="auth-magic-sent" style="display:none">
           <div class="auth-logo">
-            <span class="auth-logo-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M5 15 Q8 9 12 12 Q16 15 19 9" stroke="#5fb896" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M19 3.6 C19.15 5.1 20.3 6.25 21.8 6.4 C20.3 6.55 19.15 7.7 19 9.2 C18.85 7.7 17.7 6.55 16.2 6.4 C17.7 6.25 18.85 5.1 19 3.6 Z" fill="#5fb896"/></svg></span>
+            <span class="auth-logo-icon"><img src="/logo.svg" alt="" width="26" height="26"></span>
             <span class="auth-logo-text">Sona</span>
           </div>
           <div class="auth-modal-title">Check your email.</div>
@@ -676,7 +675,7 @@
         <!-- SETTINGS VIEW -->
         <div id="auth-settings-view" style="display:none">
           <div class="auth-logo">
-            <span class="auth-logo-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M5 15 Q8 9 12 12 Q16 15 19 9" stroke="#5fb896" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M19 3.6 C19.15 5.1 20.3 6.25 21.8 6.4 C20.3 6.55 19.15 7.7 19 9.2 C18.85 7.7 17.7 6.55 16.2 6.4 C17.7 6.25 18.85 5.1 19 3.6 Z" fill="#5fb896"/></svg></span>
+            <span class="auth-logo-icon"><img src="/logo.svg" alt="" width="26" height="26"></span>
             <span class="auth-logo-text">Sona</span>
           </div>
           <div class="auth-modal-title">Account settings</div>
