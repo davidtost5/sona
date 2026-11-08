@@ -156,9 +156,18 @@
 (function () {
   var params = new URLSearchParams(location.search);
   var isNew = params.get('new') === '1';
-  // Only same-site paths are followed after signing in.
-  var next = params.get('next') || '';
-  if (!/^\/(?!\/)/.test(next)) next = '/app';
+  // Only same-site paths are followed after signing in. The browser resolves
+  // the value first, so tricks like "/\evil.com" (which browsers read as
+  // "//evil.com") end up on another origin and are refused.
+  function samePath(raw) {
+    if (!raw) return '/app';
+    try {
+      var u = new URL(raw, location.origin);
+      if (u.origin !== location.origin || u.protocol !== location.protocol) return '/app';
+      return u.pathname + u.search + u.hash;
+    } catch (e) { return '/app'; }
+  }
+  var next = samePath(params.get('next'));
 
   var title = document.getElementById('title');
   var sub = document.getElementById('sub');

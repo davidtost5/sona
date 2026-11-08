@@ -292,7 +292,11 @@
   // otherwise mounts the form and resolves 'mounted'.
   async function mountAuth(el, opts) {
     opts = opts || {};
-    var next = opts.next || '/app';
+    var next = '/app';
+    try {
+      var u = new URL(opts.next || '/app', window.location.origin);
+      if (u.origin === window.location.origin) next = u.pathname + u.search + u.hash;
+    } catch (e) {}
     var clerk = await ensureClerk();
     if (clerk.user) return 'signed-in';
     // Clerk takes over the node it mounts into (its classes replace the
