@@ -245,7 +245,11 @@ export function brandEmail(opts = {}) {
 </body>
 </html>`;
 
-  const strip = (h) => String(h).replace(/<br\s*\/?>/g, '\n').replace(/<[^>]+>/g, '').replace(/&nbsp;/g, ' ')
+  // For the text/plain part only; this output is never rendered as HTML.
+  // Tags are removed until none are left, so a nested fragment such as
+  // "<scr<b>ipt>" can't survive one pass.
+  const untag = (s) => { let prev; do { prev = s; s = s.replace(/<[^<>]*>/g, ''); } while (s !== prev); return s.replace(/[<>]/g, ''); };
+  const strip = (h) => untag(String(h).replace(/<br\s*\/?>/g, '\n')).replace(/&nbsp;/g, ' ')
     .replace(/&rarr;/g, '→').replace(/&rsquo;/g, '’').replace(/&mdash;/g, '—').replace(/&#39;/g, "'").replace(/&quot;/g, '"').replace(/&amp;/g, '&');
   const text = [
     [head, tone].filter(Boolean).join(' '),

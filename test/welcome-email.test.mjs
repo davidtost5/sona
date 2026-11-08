@@ -20,7 +20,7 @@ check('missing data -> null', welcomeTarget(undefined) === null);
 
 const mail = accountWelcomeEmail({ firstName: 'David', email: 'david@example.com' });
 check('subject greets by name', mail.subject === 'Welcome to Sona, David');
-check('has a plain-text part', mail.text.length > 400 && mail.text.includes('https://buildwithsona.com/app'));
+check('has a plain-text part', mail.text.length > 400 && mail.text.split('\n').includes('Open Sona: https://buildwithsona.com/app'));
 check('one blue Open Sona button', (mail.html.match(/Open Sona &rarr;/g) || []).length === 1);
 check('no flexbox or grid', !/display:\s*(flex|grid)/.test(mail.html));
 check('no svg', !/<svg|\.svg"/.test(mail.html));
