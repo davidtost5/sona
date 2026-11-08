@@ -3282,7 +3282,10 @@
       try {
         const u = new URL(urlMatch[0]);
         const parts = u.pathname.split('/').filter(Boolean);
-        s = parts[parts.length - 1] || s;
+        const host = u.hostname.replace(/^www\./, '');
+        // A Substack's name is its subdomain, whatever page was pasted.
+        const sub = /^([^.]+)\.substack\.com$/.exec(host);
+        s = sub ? sub[1] : (parts[parts.length - 1] || host.split('.')[0]);
       } catch (_) {}
     }
     s = s.replace(/^@+/, '').split('?')[0].trim();
