@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script>(function(){try{var t=null;try{t=localStorage.getItem('sona-theme');}catch(e){}if(t!=='light'&&t!=='dark'){t='light';}document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
+<meta name="color-scheme" content="light dark">
+<meta name="robots" content="noindex">
+<link rel="icon" type="image/svg+xml" href="/logo.svg">
+<link rel="stylesheet" href="/fonts/fonts.css">
+<link rel="stylesheet" href="/site.css?v=20261106d">
+<title>Page not found | Sona</title>
+<style>
+  body { min-height: 100dvh; display: flex; flex-direction: column; padding: 24px clamp(20px, 7vw, 96px); }
+  .grid { position: fixed; inset: 0; z-index: -1; width: 100%; height: 100%; pointer-events: none; }
+  .brand { align-self: flex-start; display: inline-flex; align-items: center; gap: 9px; min-height: 40px; text-decoration: none; color: var(--ink); font-family: var(--word); font-weight: 600; font-size: 17px; letter-spacing: -.02em; }
+  main { flex: 1; display: flex; flex-direction: column; justify-content: center; max-width: 560px; padding: 40px 0; }
+  h1 { font-size: clamp(2.5rem, 6vw, 3.75rem); line-height: 1.02; letter-spacing: -.04em; }
+  p { margin-top: 18px; font-size: 17px; color: var(--ink-2); }
+  .acts { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 28px; }
+</style>
+</head>
+<body>
+<canvas class="grid" data-dots aria-hidden="true"></canvas>
+<a class="brand" href="/"><img src="/logo.svg" alt="" width="26" height="26">Sona</a>
+<main>
+  <h1>This page isn't here.<br><span class="tone">The link may be old.</span></h1>
+  <p>Check the address, or go back to somewhere that exists.</p>
+  <div class="acts">
+    <a class="btn btn-go btn-lg" href="/app">Open Sona</a>
+    <a class="btn btn-line btn-lg" href="/">Go to the homepage</a>
+  </div>
+</main>
+<script>window.__authScriptsLoaded = true;</script>
+<script src="/site.js?v=20261108a" defer></script>
+</body>
+</html>
