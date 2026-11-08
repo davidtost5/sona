@@ -15,8 +15,7 @@ const templates = {
   'verification-code': brandEmail({
     subject: 'Your Sona sign-in code',
     preheader: 'Enter this code to finish signing in.',
-    tags: ['Sign-in', 'Code'],
-    title: ['Your Sona', 'sign-in code'],
+    title: ['Your sign-in code.', 'Enter it in Sona to continue.'],
     greeting: 'Hi,',
     paragraphs: ['Enter this code in Sona to finish signing in. It works once and expires soon.'],
     code: CODE,
@@ -26,8 +25,7 @@ const templates = {
   'reset-password-code': brandEmail({
     subject: 'Reset your Sona password',
     preheader: 'Enter this code to choose a new password.',
-    tags: ['Password', 'Reset'],
-    title: ['Reset your', 'password'],
+    title: ['Reset your password.', 'Enter this code in Sona.'],
     greeting: 'Hi,',
     paragraphs: ['Enter this code in Sona to choose a new password.'],
     code: CODE,

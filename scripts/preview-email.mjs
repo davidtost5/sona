@@ -2,11 +2,11 @@
  * sent. Email HTML has no dev server and no console — the only way to know what
  * a template does is to look at it.
  *
- *   node scripts/preview-email.mjs            → writes both templates
+ *   node scripts/preview-email.mjs            → writes every template
  *   open /tmp/sona-email-broadcast.html
  */
 import { writeFileSync } from 'node:fs';
-import { welcomeEmail, broadcastEmail, B } from '../api/_email-templates.js';
+import { welcomeEmail, accountWelcomeEmail, broadcastEmail, B } from '../api/_email-templates.js';
 
 const issue = broadcastEmail({
   subject: 'Stop guessing. Copy what already works.',
@@ -34,8 +34,9 @@ const issue = broadcastEmail({
 });
 
 const welcome = welcomeEmail({ email: 'you@example.com' });
+const signup = accountWelcomeEmail({ firstName: 'David', email: 'you@example.com' });
 
-for (const [name, mail] of [['broadcast', issue], ['welcome', welcome]]) {
+for (const [name, mail] of [['broadcast', issue], ['welcome', welcome], ['signup', signup]]) {
   const path = `/tmp/sona-email-${name}.html`;
   writeFileSync(path, mail.html);
   console.log(`  ${name.padEnd(10)} ${mail.html.length.toString().padStart(6)} bytes html, ${mail.text.length.toString().padStart(5)} bytes text → ${path}`);
@@ -43,7 +44,7 @@ for (const [name, mail] of [['broadcast', issue], ['welcome', welcome]]) {
 
 // Cheap correctness checks that catch the things that actually break a send.
 // Every template is checked; only marketing email needs an unsubscribe.
-const all = [['broadcast', issue, true], ['welcome', welcome, true]];
+const all = [['broadcast', issue, true], ['welcome', welcome, true], ['signup', signup, false]];
 console.log('');
 let bad = 0;
 for (const [name, mail, marketing] of all) {

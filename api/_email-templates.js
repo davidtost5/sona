@@ -62,84 +62,118 @@ function p(content, extra = '') {
 /* ──────────────────────────────────────────────────────────────────────────
  * Brand layout
  *
- * The designed frame for product email, after Osmo's: a slim header, a dark
- * hero card with small tags, one big headline and the wordmark cropped along
- * its bottom edge, a short body, social icons, two buttons and a small footer.
- *
- * Everything that has to look exact is a PNG in public/email/ (the wordmark
- * strip, the logo mark, the icons): Gmail drops SVG and most CSS, and Outlook
- * ignores border-radius, so those degrade to square corners, never breakage.
+ * Sona's product email, in the site's own look: a white sheet on a pale
+ * slate page, the logo, a painted panel (the homepage hero's sky) holding a
+ * two-tone headline, a short body and one blue button.
  *
  *   brandEmail({
  *     subject, preheader,
- *     tags: ['Password', 'Reset'],
- *     title: ['Password cannot', 'be reset'],
+ *     title: ['Welcome to Sona, David.', "Here's where to start."],  // second line is the soft tone
+ *     panel: outlierCard(),            // optional trusted HTML under the headline
  *     greeting: 'Hi David,',
- *     paragraphs: ['…'],             // trusted HTML, written in code
- *     code: '{{otp_code}}',          // optional one-time code box
+ *     paragraphs: ['…'],               // trusted HTML, written in code
+ *     steps: [{ title, body, link }],  // optional numbered steps
+ *     code: '{{otp_code}}',            // optional one-time code box
  *     note: 'Questions? Reply to this email.',
  *     primary: { label: 'Open Sona', href: SITE + '/app' },
- *     footer: { reason, unsubscribeUrl },   // marketing email only
+ *     signoff: 'David',
+ *     footer: { reason, unsubscribeUrl, postal },   // postal + unsubscribe: marketing only
  *   })
  *
+ * Email clients drop most CSS, so the panel's gradient sits on top of a solid
+ * colour: Apple Mail and iOS show the sky, Gmail and Outlook show the flat
+ * blue. Corners square off in Outlook. Nothing breaks either way.
+ *
  * Strings are inserted as given, so a Clerk template can pass Handlebars
- * placeholders such as {{app.name}} straight through.
+ * placeholders such as {{otp_code}} straight through. Anything that comes
+ * from a user (a first name) must go through esc() before it gets here.
  * ────────────────────────────────────────────────────────────────────────── */
 
 const ASSETS = `${SITE}/email`;
 const BRAND = {
-  paper: '#ecebe6',     // behind the email
-  sheet: '#f6f6f3',     // the email itself
-  ink: '#1a1a1a',
-  mid: '#55554f',
-  soft: '#6b6b64',
-  rule: '#e2e1dc',
-  hero: '#1a1a1a',
-  heroTag: '#2c2c2b',
-  heroTagInk: '#cfcfc9',
-  green: '#28775c',
-  tile: '#e6e5e0',
+  page: '#eef2f7',
+  sheet: '#ffffff',
+  ink: '#0f172a',
+  body: '#334155',
+  soft: '#64748b',
+  faint: '#94a3b8',
+  rule: '#e2e8f0',
+  wash: '#f8fafc',
+  blue: '#2563eb',
+  blueInk: '#1d4ed8',
+  violet: '#7c3aed',
+  orange: '#ea580c',
+  sky: '#dfe7fb',
+  skyImage: 'linear-gradient(180deg, #dbe6fb 0%, #e9eefc 52%, #fbe7d6 100%)',
 };
 const BRAND_FONT = "'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif";
 const BRAND_MONO = "'Geist Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace";
-const SOCIAL = [
-  { name: 'X', href: 'https://x.com/davidtostscale', img: 'x.png' },
-  { name: 'LinkedIn', href: 'https://www.linkedin.com/in/davidtost/', img: 'linkedin.png' },
-  { name: 'GitHub', href: 'https://github.com/davidtost5/sona', img: 'github.png' },
-];
+const STEP_TONES = [BRAND.blue, BRAND.violet, BRAND.orange];
 
-function bulletproofButton({ label, href, bg, color, radius }) {
-  return `<td align="center" bgcolor="${bg}" style="border-radius:${radius};background:${bg};">
-            <a href="${esc(href)}" style="display:inline-block;padding:15px 26px;font-family:${BRAND_FONT};font-size:17px;font-weight:500;line-height:1;color:${color};text-decoration:none;border-radius:${radius};">${esc(label)}</a>
-          </td>`;
+function blueButton({ label, href }) {
+  return `<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:6px 0 0 0;"><tr>
+                <td align="center" bgcolor="${BRAND.blue}" style="border-radius:10px;background:${BRAND.blue};">
+                  <a href="${esc(href)}" style="display:inline-block;padding:15px 28px;font-family:${BRAND_FONT};font-size:16px;font-weight:600;line-height:1;color:#ffffff;text-decoration:none;border-radius:10px;">${esc(label)} &rarr;</a>
+                </td>
+              </tr></table>`;
+}
+
+function stepsTable(steps) {
+  const rows = steps.map((s, n) => {
+    const tone = STEP_TONES[n % STEP_TONES.length];
+    const last = n === steps.length - 1;
+    const link = s.link ? `<br><a href="${esc(s.link.href)}" style="font-family:${BRAND_FONT};font-size:14px;font-weight:600;color:${BRAND.blueInk};text-decoration:none;">${esc(s.link.label)} &rarr;</a>` : '';
+    return `<tr>
+                  <td valign="top" width="44" style="padding:0 0 ${last ? 0 : 22}px 0;">
+                    <div style="width:30px;height:30px;border-radius:15px;background:${tone};font-family:${BRAND_FONT};font-size:14px;font-weight:700;line-height:30px;color:#ffffff;text-align:center;">${n + 1}</div>
+                  </td>
+                  <td valign="top" style="padding:3px 0 ${last ? 0 : 22}px 0;font-family:${BRAND_FONT};font-size:15px;line-height:1.6;color:${BRAND.body};">
+                    <b style="display:block;margin:0 0 2px 0;font-size:16px;color:${BRAND.ink};">${esc(s.title)}</b>${s.body}${link}
+                  </td>
+                </tr>`;
+  }).join('');
+  return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:6px 0 30px 0;background:${BRAND.wash};border:1px solid ${BRAND.rule};border-radius:14px;">
+                <tr><td class="steps-pad" style="padding:22px;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">${rows}</table></td></tr>
+              </table>`;
+}
+
+/**
+ * A post card for the panel: what an outlier looks like in Sona, with the
+ * hook underlined. The default is the real Justin Welsh post from the tour.
+ */
+export function outlierCard({
+  initials = 'JW', name = 'Justin Welsh', where = 'on LinkedIn', mult = '3×', usual = 'his average',
+  hook = 'The older I get, the more I realize your calendar is a list of your priorities.',
+  rest = 'It tells the truth about what you actually care about.',
+} = {}) {
+  return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#ffffff;border:1px solid ${BRAND.rule};border-radius:14px;">
+                  <tr><td style="padding:18px 20px 16px 20px;">
+                    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr>
+                      <td width="42" valign="middle"><div style="width:32px;height:32px;border-radius:16px;background:#475569;font-family:${BRAND_FONT};font-size:12px;font-weight:700;line-height:32px;color:#ffffff;text-align:center;">${esc(initials)}</div></td>
+                      <td valign="middle" style="font-family:${BRAND_FONT};font-size:14px;line-height:1.3;color:${BRAND.ink};"><b>${esc(name)}</b><br><span style="font-size:12.5px;color:${BRAND.soft};">${esc(where)}</span></td>
+                      <td align="right" valign="middle" style="font-family:${BRAND_MONO};font-size:22px;font-weight:600;line-height:1;color:${BRAND.blue};white-space:nowrap;">${esc(mult)}<br><span style="font-family:${BRAND_FONT};font-size:11.5px;font-weight:400;color:${BRAND.soft};">${esc(usual)}</span></td>
+                    </tr></table>
+                    <p style="margin:14px 0 0 0;font-family:${BRAND_FONT};font-size:16px;line-height:1.6;color:${BRAND.ink};"><span style="background:#e8efff;border-bottom:2px solid ${BRAND.blue};">${esc(hook)}</span> ${esc(rest)}</p>
+                  </td></tr>
+                </table>`;
 }
 
 export function brandEmail(opts = {}) {
   const {
-    subject = '', preheader = '', tags = [], title = [], greeting = '',
-    paragraphs = [], code = '', note = '', primary = null,
-    secondary = { label: 'Website', href: SITE }, footer = null,
+    subject = '', preheader = '', title = [], panel = '', panelText = '', greeting = '',
+    paragraphs = [], steps = [], code = '', note = '', primary = null,
+    signoff = '', footer = null,
   } = opts;
-  const lines = (Array.isArray(title) ? title : [title]).map(esc).join('<br>');
-  const tagHtml = tags.map((t) => `<span style="display:inline-block;margin:0 2px;padding:5px 10px;border-radius:6px;background:${BRAND.heroTag};font-family:${BRAND_MONO};font-size:12px;line-height:1;color:${BRAND.heroTagInk};">${esc(t)}</span>`).join('');
+  const [head, tone] = Array.isArray(title) ? title : [title];
+  const headline = esc(head) + (tone ? `<br><span style="color:${BRAND.soft};">${esc(tone)}</span>` : '');
   const body = (greeting ? [greeting] : []).concat(paragraphs)
-    .map((h) => `<p style="margin:0 0 22px 0;font-family:${BRAND_FONT};font-size:18px;line-height:1.6;color:${BRAND.ink};">${h}</p>`).join('\n              ');
-  const icons = SOCIAL.map((x) => `<td style="padding:0 5px;">
-                  <a href="${esc(x.href)}" style="display:block;width:48px;height:48px;border-radius:24px;background:${BRAND.tile};text-align:center;line-height:0;">
-                    <img src="${ASSETS}/${x.img}" width="20" height="20" alt="${esc(x.name)}" style="display:inline-block;margin-top:14px;border:0;">
-                  </a>
-                </td>`).join('');
-  const buttons = [
-    secondary && bulletproofButton({ ...secondary, bg: BRAND.ink, color: '#ffffff', radius: '6px' }),
-    primary && bulletproofButton({ ...primary, bg: BRAND.green, color: '#ffffff', radius: '999px' }),
-  ].filter(Boolean).join('<td style="width:10px;font-size:0;">&nbsp;</td>');
-  const legal = footer ? `
-          <tr>
-            <td style="padding:0 40px 30px 40px;font-family:${BRAND_FONT};font-size:12px;line-height:1.6;color:${BRAND.soft};text-align:center;">
-              ${esc(footer.reason || '')}<br>${esc(LEGAL_NAME)}, ${esc(POSTAL_ADDRESS)}<br>
-              <a href="${esc(footer.unsubscribeUrl || unsubscribeMailto())}" style="color:${BRAND.soft};text-decoration:underline;">Unsubscribe</a>
-            </td>
-          </tr>` : '';
+    .map((h) => `<p style="margin:0 0 20px 0;font-family:${BRAND_FONT};font-size:17px;line-height:1.65;color:${BRAND.body};">${h}</p>`).join('\n              ');
+  const codeBox = code ? `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:4px 0 26px 0;"><tr><td align="center" style="padding:22px 12px;border-radius:14px;background:${BRAND.wash};border:1px solid ${BRAND.rule};font-family:${BRAND_MONO};font-size:34px;font-weight:600;letter-spacing:10px;color:${BRAND.ink};">${code}</td></tr></table>` : '';
+  const legalLines = footer ? [
+    esc(footer.reason || ''),
+    footer.postal ? `${esc(LEGAL_NAME)}, ${esc(POSTAL_ADDRESS)}` : '',
+    footer.unsubscribeUrl ? `<a href="${esc(footer.unsubscribeUrl)}" style="color:${BRAND.soft};text-decoration:underline;">Unsubscribe</a>` : '',
+  ].filter(Boolean).join('<br>') : '';
 
   const html = `<!doctype html>
 <html lang="en">
@@ -152,74 +186,58 @@ export function brandEmail(opts = {}) {
 <style>
   @media (max-width: 600px) {
     .px { padding-left: 24px !important; padding-right: 24px !important; }
-    .hero-h { font-size: 34px !important; }
+    .panel-pad { padding: 30px 20px 20px 20px !important; }
+    .panel-card { padding: 0 14px 14px 14px !important; }
+    .steps-pad { padding: 18px 16px !important; }
+    .h1 { font-size: 30px !important; }
   }
 </style>
 </head>
-<body style="margin:0;padding:0;background:${BRAND.paper};">
-  <div style="display:none;max-height:0;overflow:hidden;opacity:0;color:transparent;height:0;width:0;">${esc(preheader)}</div>
-  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:${BRAND.paper};">
+<body style="margin:0;padding:0;background:${BRAND.page};">
+  <div style="display:none;max-height:0;overflow:hidden;opacity:0;color:transparent;height:0;width:0;">${esc(preheader)}&#847; &#847; &#847; &#847; &#847; &#847; &#847; &#847;</div>
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:${BRAND.page};">
     <tr>
-      <td align="center" style="padding:24px 10px;">
-        <table role="presentation" width="560" cellpadding="0" cellspacing="0" border="0" style="width:100%;max-width:560px;background:${BRAND.sheet};border-radius:14px;">
+      <td align="center" style="padding:28px 10px 40px 10px;">
+        <table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" style="width:100%;max-width:600px;background:${BRAND.sheet};border:1px solid ${BRAND.rule};border-radius:18px;">
 
-          <!-- header -->
           <tr>
-            <td class="px" style="padding:26px 40px;border-bottom:1px solid ${BRAND.rule};">
-              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr>
-                <td style="font-family:${BRAND_FONT};font-size:22px;font-weight:700;letter-spacing:-0.6px;color:${BRAND.ink};">
-                  <img src="${ASSETS}/mark.png" width="26" height="26" alt="" style="display:inline-block;vertical-align:-6px;margin-right:6px;border:0;">Sona
-                </td>
-                <td align="right" style="font-family:${BRAND_MONO};font-size:13px;color:${BRAND.soft};">buildwithsona.com</td>
-              </tr></table>
+            <td class="px" style="padding:24px 36px 20px 36px;">
+              <a href="${SITE}" style="font-family:${BRAND_FONT};font-size:19px;font-weight:600;letter-spacing:-0.4px;color:${BRAND.ink};text-decoration:none;"><img src="${ASSETS}/mark.png" width="28" height="28" alt="" style="display:inline-block;vertical-align:-8px;margin-right:8px;border:0;border-radius:7px;">Sona</a>
             </td>
           </tr>
 
-          <!-- hero -->
           <tr>
-            <td style="padding:22px 22px 0 22px;">
-              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:${BRAND.hero};border-radius:14px;">
-                <tr><td align="center" style="padding:30px 24px 0 24px;">${tagHtml}</td></tr>
-                <tr><td class="hero-h" align="center" style="padding:20px 24px 24px 24px;font-family:${BRAND_FONT};font-size:42px;line-height:1.05;font-weight:600;letter-spacing:-1.6px;color:#ffffff;">${lines}</td></tr>
-                <tr><td style="line-height:0;font-size:0;"><img src="${ASSETS}/wordmark.png" width="516" alt="" style="display:block;width:100%;height:auto;border:0;border-radius:0 0 14px 14px;"></td></tr>
+            <td style="padding:0 12px;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="${BRAND.sky}" style="background-color:${BRAND.sky};background-image:${BRAND.skyImage};border-radius:16px;">
+                <tr><td class="panel-pad" style="padding:40px 34px ${panel ? 24 : 40}px 34px;">
+                  <h1 class="h1" style="margin:0;font-family:${BRAND_FONT};font-size:36px;line-height:1.1;font-weight:600;letter-spacing:-1.2px;color:${BRAND.ink};">${headline}</h1>
+                </td></tr>
+                ${panel ? `<tr><td class="panel-card" style="padding:0 34px 34px 34px;">${panel}</td></tr>` : ''}
               </table>
             </td>
           </tr>
 
-          <!-- body -->
           <tr>
-            <td class="px" style="padding:36px 52px 14px 52px;">
+            <td class="px" style="padding:36px 44px 12px 44px;">
               ${body}
-              ${code ? `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 26px 0;"><tr><td align="center" style="padding:22px 12px;border-radius:12px;background:#ffffff;border:1px solid ${BRAND.rule};font-family:${BRAND_MONO};font-size:34px;font-weight:600;letter-spacing:8px;color:${BRAND.ink};">${code}</td></tr></table>` : ''}
-              ${note ? `<p style="margin:6px 0 22px 0;font-family:${BRAND_FONT};font-size:16px;line-height:1.6;color:${BRAND.soft};">${note}</p>` : ''}
+              ${steps.length ? stepsTable(steps) : ''}
+              ${codeBox}
+              ${primary ? blueButton(primary) : ''}
+              ${note ? `<p style="margin:26px 0 0 0;font-family:${BRAND_FONT};font-size:15px;line-height:1.6;color:${BRAND.soft};">${note}</p>` : ''}
+              ${signoff ? `<p style="margin:26px 0 0 0;font-family:${BRAND_FONT};font-size:17px;line-height:1.6;color:${BRAND.body};">${signoff}</p>` : ''}
             </td>
           </tr>
 
-          <!-- social -->
           <tr>
-            <td align="center" style="padding:26px 20px;border-top:1px solid ${BRAND.rule};border-bottom:1px solid ${BRAND.rule};">
-              <table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr>${icons}</tr></table>
+            <td class="px" style="padding:30px 44px 32px 44px;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td style="border-top:1px solid ${BRAND.rule};font-size:0;line-height:0;">&nbsp;</td></tr></table>
+              <p style="margin:20px 0 0 0;font-family:${BRAND_FONT};font-size:13px;line-height:1.7;color:${BRAND.soft};">
+                <a href="${SITE}" style="color:${BRAND.ink};font-weight:600;text-decoration:none;">Sona</a> finds the posts that beat the average in your niche.<br>
+                <a href="https://x.com/davidtostscale" style="color:${BRAND.soft};text-decoration:underline;">X</a>&nbsp;&nbsp;&nbsp;<a href="https://www.linkedin.com/in/davidtost/" style="color:${BRAND.soft};text-decoration:underline;">LinkedIn</a>&nbsp;&nbsp;&nbsp;<a href="${SITE}/docs.html" style="color:${BRAND.soft};text-decoration:underline;">Docs</a>
+              </p>
+              ${legalLines ? `<p style="margin:14px 0 0 0;font-family:${BRAND_FONT};font-size:12px;line-height:1.7;color:${BRAND.faint};">${legalLines}</p>` : ''}
             </td>
           </tr>
-
-          <!-- buttons -->
-          <tr>
-            <td align="center" style="padding:34px 20px 40px 20px;">
-              <table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr>${buttons}</tr></table>
-            </td>
-          </tr>
-
-          <!-- sign-off line -->
-          <tr>
-            <td class="px" style="padding:0 40px 30px 40px;">
-              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr>
-                <td style="font-family:${BRAND_MONO};font-size:12px;color:${BRAND.soft};">Find what works</td>
-                <td align="center" width="40"><img src="${ASSETS}/spark.png" width="16" height="16" alt="" style="display:inline-block;border:0;"></td>
-                <td align="right" style="font-family:${BRAND_MONO};font-size:12px;color:${BRAND.soft};">Write your own</td>
-              </tr></table>
-            </td>
-          </tr>
-          ${legal}
         </table>
       </td>
     </tr>
@@ -227,42 +245,85 @@ export function brandEmail(opts = {}) {
 </body>
 </html>`;
 
-  const strip = (h) => String(h).replace(/<br\s*\/?>/g, '\n').replace(/<[^>]+>/g, '').replace(/&nbsp;/g, ' ').replace(/&amp;/g, '&').replace(/&rsquo;/g, '’').replace(/&mdash;/g, '—');
+  const strip = (h) => String(h).replace(/<br\s*\/?>/g, '\n').replace(/<[^>]+>/g, '').replace(/&nbsp;/g, ' ')
+    .replace(/&rarr;/g, '→').replace(/&rsquo;/g, '’').replace(/&mdash;/g, '—').replace(/&#39;/g, "'").replace(/&quot;/g, '"').replace(/&amp;/g, '&');
   const text = [
-    (Array.isArray(title) ? title.join(' ') : title),
+    [head, tone].filter(Boolean).join(' '),
     '',
-    ...(greeting ? [greeting, ''] : []),
+    ...(panelText ? [panelText, ''] : []),
+    ...(greeting ? [strip(greeting), ''] : []),
     ...paragraphs.flatMap((h) => [strip(h), '']),
+    ...steps.flatMap((s, n) => [`${n + 1}. ${s.title}`, strip(s.body), ...(s.link ? [`${s.link.label}: ${s.link.href}`] : []), '']),
     ...(code ? [code, ''] : []),
+    ...(primary ? [`${primary.label}: ${primary.href}`, ''] : []),
     ...(note ? [strip(note), ''] : []),
-    ...(primary ? [`${primary.label}: ${primary.href}`] : []),
-    `${SITE}`,
-    ...(footer ? ['', '—', footer.reason || '', `${LEGAL_NAME}, ${POSTAL_ADDRESS}`, `Unsubscribe: ${footer.unsubscribeUrl || unsubscribeMailto()}`] : []),
+    ...(signoff ? [strip(signoff), ''] : []),
+    '—',
+    `Sona: ${SITE}`,
+    ...(footer ? [strip(footer.reason || ''),
+      ...(footer.postal ? [`${LEGAL_NAME}, ${POSTAL_ADDRESS}`] : []),
+      ...(footer.unsubscribeUrl ? [`Unsubscribe: ${footer.unsubscribeUrl}`] : [])] : []),
   ].join('\n');
 
   return { subject, html, text };
 }
 
+// Clerk names are free text the user typed. Keep them to one short line.
+function cleanName(name) {
+  const s = String(name || '').replace(/[\r\n\t<>]/g, ' ').replace(/\s+/g, ' ').trim();
+  return s.length > 40 ? '' : s;
+}
+
 /**
- * Welcome email for someone who signs up for product updates.
+ * The email someone gets right after creating a Sona account.
+ * Transactional (it's about the account they just made), so no unsubscribe.
+ * @param {{ firstName?: string, email?: string }} opts
+ */
+export function accountWelcomeEmail({ firstName, email } = {}) {
+  const name = cleanName(firstName);
+  const app = `${SITE}/app`;
+  return brandEmail({
+    subject: name ? `Welcome to Sona, ${name}` : 'Welcome to Sona',
+    preheader: 'Three steps from a post that worked to one in your own words.',
+    title: [name ? `Welcome to Sona, ${name}.` : 'Welcome to Sona.', 'Here’s where to start.'],
+    panel: outlierCard(),
+    panelText: 'Justin Welsh on LinkedIn, 3× his average:\n“The older I get, the more I realize your calendar is a list of your priorities. It tells the truth about what you actually care about.”',
+    greeting: name ? `Hi ${esc(name)},` : 'Hi,',
+    paragraphs: [
+      'Your account is ready. That post did three times what Justin Welsh usually gets. Sona finds posts like it in your niche, shows you why they worked, and helps you write your own version.',
+    ],
+    steps: [
+      { title: 'Find it.', body: 'Open Discover and pick your niche. Posts are sorted by how far they beat their creator’s own average.', link: { label: 'Open Discover', href: `${app}#discover` } },
+      { title: 'Decode it.', body: 'Open any post to see its hook, the turn and where it lands. Save the lines you want to reuse.', link: { label: 'Decode a post', href: `${app}#decode` } },
+      { title: 'Write it.', body: 'Fill in your playbook once: what you post about, how you sound, what you’d never say. It sits beside every draft.', link: { label: 'Set up your playbook', href: `${app}#voice` } },
+    ],
+    primary: { label: 'Open Sona', href: app },
+    note: 'Your free plan holds 10 saved ideas. No card needed.',
+    signoff: 'If anything is confusing or broken, reply to this email. I read every reply.<br><br>David<br><span style="color:#64748b;">Maker of Sona</span>',
+    footer: { reason: `You’re getting this because you created a Sona account${email ? ` with ${email}` : ''}.` },
+  });
+}
+
+/**
+ * Welcome email for someone who signs up for product updates (the waitlist).
+ * Marketing email: it carries the postal address and an unsubscribe link.
  * @param {{ email: string, unsubscribeUrl?: string }} opts
  */
 export function welcomeEmail({ email, unsubscribeUrl } = {}) {
   return brandEmail({
     subject: "You're on the list",
     preheader: 'What Sona does, and what you will hear from us.',
-    tags: ['Product', 'Updates'],
-    title: ["You're on", 'the list'],
+    title: ["You're on the list.", 'Here’s what to expect.'],
     greeting: 'Hi,',
     paragraphs: [
       "Thanks for signing up. You'll get an email when something new ships in Sona, and nothing else.",
       "Here's what it does today. Sona finds posts that did far better than their creator usually does, not just the ones with the most views, and shows how each one is built: the hook, the turn and the pattern you can reuse.",
       'Then you write the post, in your own words. Nothing in Sona writes it for you, and that’s on purpose.',
-      '— David',
     ],
-    note: 'Questions or ideas? Reply to this email. I read every one.',
     primary: { label: 'Open Sona', href: `${SITE}/app` },
-    footer: { reason: 'You get this email because you signed up for Sona product updates.', unsubscribeUrl: unsubscribeUrl || unsubscribeMailto(email) },
+    note: 'Questions or ideas? Reply to this email. I read every one.',
+    signoff: 'David',
+    footer: { reason: 'You get this email because you signed up for Sona product updates.', postal: true, unsubscribeUrl: unsubscribeUrl || unsubscribeMailto(email) },
   });
 }
 

@@ -1,4 +1,6 @@
-// Clerk webhook — deletes a user's rows when their Clerk account is deleted.
+// Clerk webhook. Two jobs:
+//   user.created → send the welcome email (api/_email-templates.js accountWelcomeEmail)
+//   user.deleted → delete the user's rows
 //
 // WHY THIS IS NOT OPTIONAL
 // Under Supabase Auth, every user table carried
@@ -11,7 +13,7 @@
 // SETUP
 //   1. Clerk Dashboard → Webhooks → Add Endpoint
 //        URL:    https://buildwithsona.com/api/clerk-webhook
-//        Events: user.deleted
+//        Events: user.created, user.deleted
 //   2. Copy the signing secret Clerk shows (starts `whsec_`)
 //   3. Add it to Vercel as CLERK_WEBHOOK_SECRET
 //
@@ -22,6 +24,8 @@
 
 import { createHmac, timingSafeEqual } from 'node:crypto';
 import { supabase } from './_supabase.js';
+import { sendEmail } from './_email.js';
+import { accountWelcomeEmail } from './_email-templates.js';
 
 // Svix signs the raw bytes. Vercel's JSON parser would re-serialise them and
 // change the signature, so it is turned off here.
@@ -34,6 +38,17 @@ function readRawBody(req) {
     req.on('end', () => resolve(data));
     req.on('error', reject);
   });
+}
+
+// Who to welcome, from a user.created payload: the primary address (or the
+// first one) and the first name, if Clerk has one.
+export function welcomeTarget(data) {
+  if (!data || !Array.isArray(data.email_addresses)) return null;
+  const list = data.email_addresses;
+  const primary = list.find((e) => e && e.id === data.primary_email_address_id) || list[0];
+  const email = primary && typeof primary.email_address === 'string' ? primary.email_address.trim() : '';
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return null;
+  return { email, firstName: typeof data.first_name === 'string' ? data.first_name : '' };
 }
 
 // Svix scheme: HMAC-SHA256 over `${id}.${timestamp}.${body}`, keyed with the
@@ -77,11 +92,6 @@ export default async function handler(req, res) {
     console.error('[clerk-webhook] CLERK_WEBHOOK_SECRET is not set');
     return res.status(503).json({ error: 'Webhook not configured' });
   }
-  if (!supabase) {
-    console.error('[clerk-webhook] Supabase service client unavailable');
-    return res.status(503).json({ error: 'Database not configured' });
-  }
-
   const rawBody = await readRawBody(req);
 
   if (!verifySvix(rawBody, req.headers, secret)) {
@@ -97,9 +107,29 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: 'Malformed payload' });
   }
 
+  if (event.type === 'user.created') {
+    // Always 200: a failed welcome email must not make Clerk retry the event
+    // (a retry that did get through would send the email twice).
+    const target = welcomeTarget(event.data);
+    if (!target) return res.status(200).json({ ok: true, welcomed: false, reason: 'no email address' });
+    const mail = accountWelcomeEmail(target);
+    const sent = await sendEmail({
+      to: target.email,
+      subject: mail.subject, html: mail.html, text: mail.text,
+      replyTo: process.env.EMAIL_REPLY_TO || undefined,
+    });
+    if (!sent.ok) console.error('[clerk-webhook] welcome email not sent:', sent.error);
+    return res.status(200).json({ ok: true, welcomed: Boolean(sent.ok) });
+  }
+
   if (event.type !== 'user.deleted') {
     // Acknowledge everything else so Clerk stops retrying it.
     return res.status(200).json({ ok: true, ignored: event.type });
+  }
+
+  if (!supabase) {
+    console.error('[clerk-webhook] Supabase service client unavailable');
+    return res.status(503).json({ error: 'Database not configured' });
   }
 
   const userId = event.data && event.data.id;
