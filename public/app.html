@@ -3289,11 +3289,13 @@
     return s;
   }
   function detectPlatformFromInput(input) {
-    const s = input.toLowerCase();
-    if (s.includes('linkedin.com')) return 'LinkedIn';
-    if (s.includes('substack.com')) return 'Substack';
-    if (s.includes('youtube.com') || s.includes('youtu.be')) return 'YouTube';
-    if (s.includes('twitter.com') || s.includes('x.com')) return 'X';
+    // Match the host itself, so "netflix.com" isn't read as x.com.
+    const m = /^(?:[a-z]+:\/\/)?([^\/?#\s]+)/.exec(String(input).trim().toLowerCase());
+    const host = m ? m[1].split('@').pop().split(':')[0] : '';
+    const on = (domain) => host === domain || host.endsWith('.' + domain);
+    if (on('linkedin.com')) return 'LinkedIn';
+    if (on('substack.com')) return 'Substack';
+    if (on('youtube.com') || on('youtu.be')) return 'YouTube';
     return 'X';
   }
   window.openAddCreators = function() {
@@ -3325,12 +3327,12 @@
     else html += `<div class="ac-section-label">${matches.length} match${matches.length===1?'':'es'}</div>`;
     html += matches.slice(0, 50).map(c => `
       <div class="ac-row">
-        <div class="ac-av" style="background-image:url('${c.av}')"></div>
+        <div class="ac-av" style="background-image:url('${escapeHtml(c.av)}')"></div>
         <div class="ac-row-meta">
           <div class="ac-row-name">${escapeHtml(c.name)}</div>
           <div class="ac-row-handle">${escapeHtml(c.handle)} · ${escapeHtml(c.platform)} · ${c.followers >= 1000 ? Math.round(c.followers/1000)+'K' : c.followers}</div>
         </div>
-        <button class="ac-row-add ${inList.has(c.id)?'added':''}" data-add="${c.id}" ${inList.has(c.id)?'disabled':''}>${inList.has(c.id)?'Added':'Add'}</button>
+        <button class="ac-row-add ${inList.has(c.id)?'added':''}" data-add="${escapeHtml(c.id)}" ${inList.has(c.id)?'disabled':''}>${inList.has(c.id)?'Added':'Add'}</button>
       </div>`).join('');
     if (looksLikeUrl && term) {
       const handle = parseHandle(acSearchTerm);
@@ -3338,7 +3340,7 @@
       html += `
         <div class="ac-section-label">Custom</div>
         <div class="ac-row">
-          <div class="ac-av" style="background-image:url('${AV(handle)}')"></div>
+          <div class="ac-av" style="background-image:url('${escapeHtml(AV(encodeURIComponent(handle)))}')"></div>
           <div class="ac-row-meta">
             <div class="ac-row-name">${escapeHtml(handle)}</div>
             <div class="ac-row-handle">@${escapeHtml(handle)} · ${escapeHtml(platform)} · custom</div>
@@ -3847,9 +3849,9 @@
     const results = document.getElementById('script-results');
     results.innerHTML = scripts.map((s, i) => `
       <div class="script-card">
-        <h4>${i + 1}. ${s.name}</h4>
-        <div class="fmt-note">${s.note}</div>
-        <pre>${s.text}</pre>
+        <h4>${i + 1}. ${escapeHtml(s.name)}</h4>
+        <div class="fmt-note">${escapeHtml(s.note)}</div>
+        <pre>${escapeHtml(s.text)}</pre>
         <button class="disc-action" onclick="copyScript(this)" data-text="${encodeURIComponent(s.text)}">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
           Copy
