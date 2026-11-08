@@ -1,0 +1,294 @@
+/* Voice Assistant Card — adapted from the transitions.dev Community component
+ * (studio.html?id=c85AR0dBjUE) for Sona's static stack. The motion is kept
+ * as published: durations, easings and the prefers-reduced-motion fallback.
+ * The voice glow is a dependency-free port of voice-glow's VoiceBeam
+ * (MIT, Jakub Antalik), drawn with CSS layers driven by one --vb-level.
+ *
+ * Theme: the component's --stage-* tokens map onto Sona's. Marketing pages
+ * use site.css names (--ink, --card, --line…); the app uses app.html names
+ * (--text, --surface, --border…). Either set works.
+ */
+
+/* @motion
+[Streaming transcript] spoken words under the message
+--stream-fade: Duration
+--stream-ease: Easing
+--stream-blur: Blur
+[Status swap] caption above the button
+--text-swap-dur: Duration
+--text-swap-ease: Easing
+--text-swap-translate-y: Distance
+more --text-swap-blur: Blur
+[Bubble float] assistant message
+--float-dur: Duration
+--float-distance: Distance
+more [Button press] voice button
+--press-scale: Scale
+--press-dur: Duration
+--ease-smooth-out: Easing
+*/
+.va-card {
+  --stage-bg: var(--bg, #fff);
+  --stage-fg: var(--ink, var(--text, #0f172a));
+  --stage-muted: var(--ink-3, var(--text-dim, #64748b));
+  --stage-border: var(--line, var(--border, #e2e8f0));
+  --stage-surface: var(--card, var(--surface, #fff));
+  --stage-accent: var(--accent, #2563eb);
+  --stage-on-accent: var(--on-accent, #fff);
+
+  --stream-fade: 350ms;
+  --stream-blur: 1px;
+  --stream-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --text-swap-dur: 150ms;
+  --text-swap-translate-y: 4px;
+  --text-swap-blur: 2px;
+  --text-swap-ease: ease-in-out;
+  --float-dur: 4000ms;
+  --float-distance: 3px;
+  --press-scale: 0.99;
+  --press-dur: 150ms;
+  --ease-smooth-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --va-btn-bg: rgba(255, 255, 255, 0.4);
+  --va-btn-shadow: 0 1px 3px 0 rgba(0,0,0,.04), inset 0 0 0 1px rgba(0,0,0,.08), inset 0 -1px 0 0 rgba(0,0,0,.08);
+  --va-hover: rgba(0, 0, 0, 0.02);
+  --va-card-shadow: 0 0 0 1px rgba(0,0,0,.04), 0 8px 32px -4px rgba(0,0,0,.06), 0 1px 3px 0 rgba(0,0,0,.04);
+  --divider: color-mix(in srgb, var(--stage-border) 49%, transparent);
+  --bubble: color-mix(in srgb, var(--stage-fg) 6%, var(--stage-surface));
+  /* Glow palette: warm, to match Zeno's orange orbit */
+  --vb-core: 253, 186, 116;
+  --vb-above: 251, 113, 133;
+  --vb-mid: 249, 115, 22;
+  --vb-below: 251, 146, 60;
+  --vb-blend: multiply;
+}
+html[data-theme="dark"] .va-card {
+  --va-btn-bg: rgba(255, 255, 255, 0.1);
+  --va-btn-shadow: 0 1px 1px 0 rgba(0,0,0,.24), inset 0 0 0 1px rgba(255,255,255,.04), inset 0 1px 0 0 rgba(255,255,255,.06);
+  --va-hover: rgba(255, 255, 255, 0.02);
+  --va-card-shadow: 0 0 0 1px rgba(255,255,255,.06), 0 8px 32px -4px rgba(0,0,0,.5), 0 1px 3px 0 rgba(0,0,0,.4);
+  --bubble: color-mix(in srgb, var(--stage-fg) 9%, var(--stage-surface));
+  --vb-core: 255, 237, 213;
+  --vb-above: 251, 113, 133;
+  --vb-mid: 249, 115, 22;
+  --vb-below: 234, 88, 12;
+  --vb-blend: screen;
+}
+
+.va-card {
+  position: relative;
+  display: grid;
+  width: 360px;
+  max-width: 100%;
+  height: 384px;
+  border-radius: 24px;
+  background: var(--stage-surface);
+  box-shadow: var(--va-card-shadow);
+  color: var(--stage-fg);
+  -webkit-font-smoothing: antialiased;
+  isolation: isolate;
+}
+.va-beam {
+  position: relative;
+  margin: -1px;
+  border-radius: 25px;
+  overflow: hidden;
+}
+.va-inner {
+  position: relative;
+  height: 100%;
+  border-radius: 25px;
+  background: transparent;
+}
+.va-content {
+  position: relative;
+  z-index: 5;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+:where(.va-card) button { font: inherit; padding: 0; border: 0; background: none; color: inherit; cursor: pointer; }
+
+.va-top {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+}
+.va-top-text { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.va-name { font-size: 16px; line-height: 22px; font-weight: 500; }
+.va-meta { font-size: 12px; line-height: 16px; color: var(--stage-muted); }
+.va-av { width: 32px; height: 32px; flex: none; display: grid; place-items: center; border-radius: 9px;
+  background: linear-gradient(#2a2a2a, #121212); box-shadow: inset 0 1px 0 rgba(255,255,255,.12), 0 1px 2px rgba(0,0,0,.18); }
+.va-av-orbit { display: block; width: 26px; height: 26px; --orbit-hue-from: 14; --orbit-hue-to: 40; --orbit-on-dark: 1; }
+.va-divider {
+  height: 1px;
+  flex: none;
+  background: linear-gradient(90deg, transparent, var(--divider) 20%, var(--divider) 80%, transparent);
+}
+
+.va-body { padding: 24px 24px 0; display: flex; flex-direction: column; gap: 16px; }
+.va-bubble-row { padding-left: 8px; animation: va-float var(--float-dur) ease-in-out infinite; }
+@keyframes va-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(calc(var(--float-distance) * -1)); }
+}
+.va-bubble {
+  position: relative;
+  display: inline-block;
+  max-width: 240px;
+  margin: 0;
+  padding: 8px 12px;
+  border-radius: 18px;
+  background: var(--bubble);
+  font-size: 14px;
+  line-height: 20px;
+}
+.va-bubble span { position: relative; z-index: 1; }
+.va-bubble::before {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: -7px;
+  width: 20px;
+  height: 20px;
+  background: var(--bubble);
+  border-bottom-right-radius: 16px 14px;
+}
+.va-bubble::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: -26px;
+  width: 26px;
+  height: 20px;
+  background: var(--stage-surface);
+  border-bottom-right-radius: 10px;
+}
+
+.va-transcript {
+  margin: 0;
+  font-size: 14px;
+  line-height: 20px;
+  color: var(--stage-fg);
+  text-align: right;
+  text-wrap: pretty;
+  padding-left: 32px;
+}
+.t-stream-w {
+  opacity: 0;
+  filter: blur(var(--stream-blur));
+  transition:
+    opacity var(--stream-fade) var(--stream-ease),
+    filter var(--stream-fade) var(--stream-ease);
+}
+.t-stream-w.is-in { opacity: 1; filter: blur(0); }
+
+.va-bottom {
+  margin-top: auto;
+  padding: 0 24px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+.va-caption { font-size: 12px; line-height: 16px; color: var(--stage-muted); }
+
+.t-text-swap {
+  display: inline-block;
+  transform: translateY(0);
+  filter: blur(0);
+  opacity: 1;
+  transition:
+    transform var(--text-swap-dur) var(--text-swap-ease),
+    filter    var(--text-swap-dur) var(--text-swap-ease),
+    opacity   var(--text-swap-dur) var(--text-swap-ease);
+  will-change: transform, filter, opacity;
+}
+.t-text-swap.is-exit {
+  transform: translateY(calc(var(--text-swap-translate-y) * -1));
+  filter: blur(var(--text-swap-blur));
+  opacity: 0;
+}
+.t-text-swap.is-enter-start {
+  transform: translateY(var(--text-swap-translate-y));
+  filter: blur(var(--text-swap-blur));
+  opacity: 0;
+  transition: none;
+}
+
+/* The voice button is Zeno's orbit. Same press motion as the original. */
+.va-mic {
+  --press-scale: 0.95;
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: var(--va-btn-bg);
+  box-shadow: var(--va-btn-shadow);
+  color: var(--stage-fg);
+  transition: transform var(--press-dur) var(--ease-smooth-out);
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  -webkit-user-select: none;
+  user-select: none;
+}
+:where(.va-card) .va-mic { background: var(--va-btn-bg); }
+@media (hover: hover) and (pointer: fine) { .va-mic:hover { background-image: linear-gradient(var(--va-hover), var(--va-hover)); } }
+.va-mic:is(:active, .is-pressed) { transform: scale(var(--press-scale)); }
+.va-mic:focus-visible {
+  outline: none;
+  box-shadow: var(--va-btn-shadow), 0 0 0 2px var(--stage-surface), 0 0 0 4px var(--stage-accent);
+}
+.va-orbit { display: block; width: 84px; height: 84px; --orbit-hue-from: 14; --orbit-hue-to: 40; }
+
+/* ─── Voice glow ───
+ * Four soft lobes anchored to the bottom edge. --vb-level (0–1, smoothed in
+ * JS) lifts and widens them; only transform and opacity change per frame.
+ * While thinking, the lobes breathe and drift in hue instead. */
+.vb {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  --vb-level: 0;
+}
+.vb i {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  width: var(--w);
+  height: var(--h);
+  margin-left: calc(var(--w) / -2);
+  border-radius: 50%;
+  background: radial-gradient(closest-side, rgba(var(--c), .95), rgba(var(--c), .45) 45%, rgba(var(--c), 0));
+  mix-blend-mode: var(--vb-blend);
+  filter: blur(var(--b));
+  transform-origin: 50% 100%;
+  transform:
+    translate(var(--x), calc(55% - var(--vb-level) * var(--rise)))
+    scale(calc(var(--s0) + var(--vb-level) * var(--sg)), calc(var(--s0) + var(--vb-level) * var(--sg) * 1.25));
+  opacity: calc(var(--o0) + var(--vb-level) * var(--og));
+  will-change: transform, opacity;
+}
+.vb .l1 { --c: var(--vb-below); --w: 120%; --h: 46%; --b: 26px; --x: 0%;   --rise: 34%; --s0: .55; --sg: .7; --o0: .18; --og: .75; }
+.vb .l2 { --c: var(--vb-mid);   --w: 78%;  --h: 40%; --b: 22px; --x: -18%; --rise: 44%; --s0: .5;  --sg: .8; --o0: .12; --og: .8; }
+.vb .l3 { --c: var(--vb-above); --w: 70%;  --h: 36%; --b: 22px; --x: 20%;  --rise: 40%; --s0: .45; --sg: .85; --o0: .1;  --og: .8; }
+.vb .l4 { --c: var(--vb-core);  --w: 46%;  --h: 22%; --b: 14px; --x: 0%;   --rise: 26%; --s0: .4;  --sg: .9; --o0: .14; --og: .7; }
+.vb.is-processing i { animation: vb-breathe 1.6s ease-in-out infinite; }
+.vb.is-processing .l2 { animation-delay: -.4s; }
+.vb.is-processing .l3 { animation-delay: -.8s; }
+.vb.is-processing .l4 { animation-delay: -1.2s; }
+@keyframes vb-breathe {
+  0%, 100% { opacity: calc(var(--o0) + .28); filter: blur(var(--b)) hue-rotate(0deg); }
+  50% { opacity: calc(var(--o0) + .5); filter: blur(var(--b)) hue-rotate(28deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .va-bubble-row { animation: none !important; }
+  .t-text-swap { transition: none !important; }
+  .t-stream-w { transition: none !important; filter: none !important; }
+  .va-mic { transition: none; }
+  .va-mic:is(:active, .is-pressed) { transform: none; }
+  .vb.is-processing i { animation: none !important; }
+}
