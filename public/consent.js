@@ -1,32 +1,23 @@
 /* Analytics consent for the public pages.
  *
- * Google Tag Manager (GTM-PTX2S9C5) is not loaded at all until a visitor
- * clicks Accept. Decline, or no answer, means no Google request and no Google
- * cookie. The choice is kept in localStorage as "sona-consent" and can be
- * changed from the "Cookie settings" link in the footer or on the privacy page.
+ * Google Tag Manager (GTM-PTX2S9C5) loads on every public page in Consent
+ * Mode, from the snippet in each page's <head>, with storage denied by
+ * default. Before a choice Google receives only cookieless signals; nothing is
+ * stored. Accept grants analytics storage; Decline keeps it denied. Both are
+ * remembered in localStorage as "sona-consent" and read back by the head
+ * snippet on the next page. "Cookie settings" links reopen the banner.
  *
- * Accepting grants analytics only. Advertising signals stay denied, which
- * matches what the banner says: "No ads". Change both if that ever changes.
+ * Advertising storage stays denied either way, which is what the banner
+ * promises ("No ads").
  *
- * Not loaded on the sign-in page or inside the app, so nothing in GTM can
- * read an email address or a user's private work.
+ * Neither the snippet nor this file is on the sign-in page or in the app.
  */
 (function () {
   'use strict';
 
-  var GTM_ID = 'GTM-PTX2S9C5';
   var KEY = 'sona-consent';
-
   window.dataLayer = window.dataLayer || [];
   function gtag() { window.dataLayer.push(arguments); }
-  window.gtag = window.gtag || gtag;
-
-  gtag('consent', 'default', {
-    analytics_storage: 'denied',
-    ad_storage: 'denied',
-    ad_user_data: 'denied',
-    ad_personalization: 'denied',
-  });
 
   function read() {
     try { return localStorage.getItem(KEY); } catch (_) { return null; }
@@ -34,19 +25,9 @@
   function write(v) {
     try { localStorage.setItem(KEY, v); } catch (_) {}
   }
-
-  var loaded = false;
-  function loadGtm() {
-    if (loaded) return;
-    loaded = true;
-    gtag('consent', 'update', { analytics_storage: 'granted' });
-    // Google's standard container loader: the gtm.js event is what starts
-    // the container's page-view triggers.
-    window.dataLayer.push({ 'gtm.start': new Date().getTime(), event: 'gtm.js' });
-    var s = document.createElement('script');
-    s.async = true;
-    s.src = 'https://www.googletagmanager.com/gtm.js?id=' + GTM_ID;
-    document.head.appendChild(s);
+  function apply(v) {
+    gtag('consent', 'update', { analytics_storage: v === 'granted' ? 'granted' : 'denied' });
+    window.dataLayer.push({ event: 'sona_consent', sona_consent: v });
   }
 
   // ── Banner ──
@@ -83,7 +64,7 @@
     box.setAttribute('aria-label', 'Cookie choice');
     // Static markup; nothing user-supplied goes in here.
     box.innerHTML =
-      '<p><b>Can we count your visit?</b> With your OK, Google Analytics shows us which pages help. No ads. ' +
+      '<p><b>Can we count your visit?</b> With your OK, Google Analytics sets cookies that show us which pages help. No ads. ' +
       '<a href="/privacy.html#cookies">Privacy</a></p>' +
       '<div class="consent-acts"><button type="button" data-v="denied">Decline</button>' +
       '<button type="button" data-v="granted">Accept</button></div>';
@@ -91,13 +72,9 @@
       var b = e.target.closest('button[data-v]');
       if (!b) return;
       var v = b.getAttribute('data-v');
-      var was = read();
       write(v);
       close();
-      if (v === 'granted') loadGtm();
-      // Google's tags can't be unloaded from a running page, so a change from
-      // Accept to Decline takes effect on the next page.
-      else if (was === 'granted' && loaded) location.reload();
+      apply(v);
     });
     document.body.appendChild(box);
   }
@@ -113,8 +90,7 @@
   window.sonaConsent = { open: open };
 
   var choice = read();
-  if (choice === 'granted') loadGtm();
-  else if (choice !== 'denied') {
+  if (choice !== 'granted' && choice !== 'denied') {
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', open);
     else open();
   }
