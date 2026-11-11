@@ -16,6 +16,7 @@
 <script src="/vendor/lenis-1.2.3.min.js" defer></script>
 <script src="/smooth-scroll.js?v=20261012a" defer></script>
 <script src="/site.js?v=20261106d" defer></script>
+<script src="/consent.js?v=20261111a" defer></script>
 <title>Privacy policy | Sona</title>
 <meta name="description" content="What Sona collects, why, which providers process it, and how to get a copy of your data or have it deleted.">
 <link rel="canonical" href="https://buildwithsona.com/privacy.html">
@@ -77,7 +78,7 @@
 <div class="wrap">
   <div class="page-head">
     <h1>Privacy Policy</h1>
-    <p class="updated">Last updated: 1 November 2026</p>
+    <p class="updated">Last updated: 11 November 2026</p>
   </div>
   <article class="prose">
 <div class="note">This is a summary of our current practice, published so nothing on this site links nowhere. It is not yet a complete legal document — the full privacy policy is being finalised. For anything not covered here, email <a class="inline" href="mailto:david@buildwithsona.com">david@buildwithsona.com</a> and we will answer directly.</div>
@@ -91,7 +92,7 @@
   <p>To reply to you, to give you access to your account, and to keep your work available to you across sessions. We do not sell your data, and we do not use it to train models.</p>
 
   <h2>Who processes it</h2>
-  <p>We use third-party providers to run the product. Today those are Clerk (accounts and sign-in), Supabase (your stored content), Vercel (hosting), Polar (payments, tax and invoices, as merchant of record), and Spacemail or Resend (email delivery). Each processes data on our behalf under its own terms.</p>
+  <p>We use third-party providers to run the product. Today those are Clerk (accounts and sign-in), Supabase (your stored content), Vercel (hosting), Polar (payments, tax and invoices, as merchant of record), and Spacemail or Resend (email delivery). If you accept analytics, Google (through Google Tag Manager and Google Analytics) also receives information about your visit to our public pages. Each processes data on our behalf under its own terms.</p>
 
   <h2>Your choices</h2>
   <ul>
@@ -104,8 +105,10 @@
   <h2>Children</h2>
   <p>Sona is not for anyone under 16, and we do not knowingly collect data from children under 16. If you believe a child under 16 has given us their data, email us and we will delete it.</p>
 
-  <h2>Cookies</h2>
-  <p>We use a session token to keep you signed in. We do not run third-party advertising or cross-site tracking.</p>
+  <h2 id="cookies">Cookies</h2>
+  <p>We use a session token to keep you signed in.</p>
+  <p>On our public pages we ask before using analytics. Only if you click Accept do we load Google Tag Manager, which runs Google Analytics. It sets cookies to count visits and see which pages are useful. If you decline, or don't answer, nothing from Google loads. Analytics never runs on the sign-in page or inside the app, and we do not run third-party advertising.</p>
+  <p><button type="button" class="btn btn-line" data-consent-open>Change your cookie choice</button></p>
   </article>
 </div>
 </main>
@@ -144,6 +147,7 @@
         <a href="/privacy.html">Privacy</a>
         <a href="/terms.html">Terms</a>
         <a href="/security.html">Security</a>
+        <a href="#" data-consent-open>Cookie settings</a>
       </div>
       <div class="theme-toggle" role="group" aria-label="Colour theme">
   <button type="button" data-theme-set="light" aria-pressed="false" aria-label="Light mode" title="Light mode"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2M12 19.5v2M4.6 4.6l1.4 1.4M18 18l1.4 1.4M2.5 12h2M19.5 12h2M4.6 19.4 6 18M18 6l1.4-1.4"/></svg></button>
