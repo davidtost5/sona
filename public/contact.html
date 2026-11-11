@@ -60,6 +60,15 @@
   .form-msg.error { display: block; background: rgba(220,80,80,.12); color: #e58b8b; }
   html[data-theme="light"] .form-msg.error { color: #a33a3a; }
   @media (max-width: 860px) { .contact { grid-template-columns: 1fr; } .row2 { grid-template-columns: 1fr; } }
+  .help { max-width: 1040px; margin: clamp(56px, 9vw, 104px) auto 0; padding-top: clamp(40px, 6vw, 64px); border-top: 1px solid var(--line); }
+  .help h2 { font-size: clamp(1.7rem, 3vw, 2.3rem); line-height: 1.12; letter-spacing: -.03em; max-width: 22ch; }
+  .help-lede { margin-top: 12px; max-width: 52ch; color: var(--ink-2); }
+  .help-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin-top: 32px; }
+  .help-grid article { padding: 22px 24px; border-radius: 14px; background: var(--card); border: 1px solid var(--line); }
+  .help-grid h3 { font-size: 17px; letter-spacing: -.01em; }
+  .help-grid p { margin-top: 8px; font-size: 15.5px; line-height: 1.65; color: var(--ink-2); }
+  .help-grid a { color: var(--ink); }
+  @media (max-width: 760px) { .help-grid { grid-template-columns: minmax(0, 1fr); } }
 </style>
 </head>
 <body>
@@ -126,6 +135,37 @@
     </div>
   </div>
 </div>
+
+<section class="wrap help" aria-labelledby="help-h">
+  <h2 id="help-h">Answers to what people usually ask.</h2>
+  <p class="help-lede">Most questions are answered here. If yours isn't, the form above reaches me directly.</p>
+  <div class="help-grid">
+    <article>
+      <h3>Signing in</h3>
+      <p>Sona doesn't use passwords. Enter your email on the <a href="/signin">sign-in page</a> and type the 6-digit code we email you. If the code doesn't arrive within a minute, check your spam folder, then send a new one. The same two steps create an account if you don't have one yet.</p>
+    </article>
+    <article>
+      <h3>Billing and cancelling</h3>
+      <p>Paid plans are sold through Polar, which handles payment, VAT and invoices. You can change or cancel your plan any time from Settings, then Billing, inside the app. Cancelling stops the next renewal; the <a href="/terms.html">terms</a> explain refunds and the EU and UK right of withdrawal.</p>
+    </article>
+    <article>
+      <h3>Your data</h3>
+      <p>You can export what you've saved from Settings, then Data. To delete your account and everything in it, write to me from the email you signed up with and I'll do it. The <a href="/privacy.html">privacy policy</a> lists who processes your data and why.</p>
+    </article>
+    <article>
+      <h3>Reporting a bug</h3>
+      <p>Tell me which page you were on, what you clicked, what you expected and what happened instead. A screenshot and your browser (Chrome, Safari, Firefox) help a lot. If something stopped working after a change, the <a href="/changelog.html">changelog</a> shows what shipped and when.</p>
+    </article>
+    <article>
+      <h3>Using Sona in Claude</h3>
+      <p>Creator Pro connects Sona to Claude, so you can ask about the posts, hooks and drafts you've saved without leaving the chat. <a href="/docs.html">Sona in Claude</a> walks through the setup step by step.</p>
+    </article>
+    <article>
+      <h3>Ideas, press and partnerships</h3>
+      <p>Feature ideas are welcome, and the best ones usually start with a post you wanted to study and couldn't. For press or partnerships, say who you are and what you have in mind, and I'll reply from <a href="mailto:david@buildwithsona.com">david@buildwithsona.com</a>.</p>
+    </article>
+  </div>
+</section>
 </main>
 
 <footer class="site-foot">
