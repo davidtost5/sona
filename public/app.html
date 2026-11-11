@@ -501,7 +501,11 @@
      quoted, then Zeno's note with numbered sources from the feed. */
   .zd { max-width: 720px; margin: 0 auto; padding: 8px 0 0; }
   .zd-head { display: flex; align-items: center; gap: 12px; padding-bottom: 16px; border-bottom: 1px solid var(--border); }
-  .zd-mark { width: 30px; height: 30px; flex: none; }
+  .zd-mark { position: relative; width: 30px; height: 30px; flex: none; }
+  /* Zeno's mark turns. The still SVG sits underneath in case the canvas
+     never starts, and the canvas covers it once it does. */
+  .zd-orbit { --orbit-on-dark: 1; position: absolute; inset: 0; width: 100%; height: 100%; border-radius: 7px; background: #120d0a; opacity: 0; transition: opacity .3s ease; }
+  .zd-orbit.is-live { opacity: 1; }
   .zd-id b { display: block; font-size: 15px; font-weight: 600; letter-spacing: -.01em; }
   .zd-id span { display: block; font-size: 13px; color: var(--text-dim); }
   .zd-new { margin-left: auto; min-height: 34px; padding: 0 12px; border: 0; border-radius: 8px; background: transparent; color: var(--text-mid); font: inherit; font-size: 13.5px; cursor: pointer; box-shadow: inset 0 0 0 1px var(--border-strong); }
@@ -1251,6 +1255,7 @@
   .pb-clean svg, .creator-stats svg { width:13px; height:13px; vertical-align:-2px; margin-right:3px; }
 </style>
 <script src="local-decode.js?v=20260830a"></script>
+<script src="/components/zeno-orbit.js?v=20261111a" defer></script>
 <style>/* New mark (logo.svg) carries its own tile, so the old frames are switched off. */.mark-img{display:block;width:100%;height:100%}:is(.logo-mark,.lm,.hm-mark,.lc-mark,.mark):has(>.mark-img){background:none!important;border:0!important;box-shadow:none!important;padding:0!important;border-radius:0!important}.logo>.mark-img{width:24px;height:24px}</style>
 </head>
 <body>
@@ -1441,7 +1446,7 @@
              setup step. Answers come back as notes with numbered sources. -->
         <div class="zd" id="zd">
           <header class="zd-head">
-            <span class="zd-mark"><img class="mark-img" src="/zeno.svg" alt="" width="30" height="30"></span>
+            <span class="zd-mark"><img class="mark-img" src="/zeno.svg" alt="" width="30" height="30"><canvas class="zd-orbit" data-zeno-orbit data-dots="90" data-idle="0.0013" aria-hidden="true"></canvas></span>
             <div class="zd-id"><b>Zeno</b><span>Research partner. Answers from Sona's outlier feed.</span></div>
             <button type="button" class="zd-new" id="hx-new" hidden>New question</button>
           </header>
@@ -5009,6 +5014,8 @@
       setChatting(convo.length > 0);
     }
     function setBusy(on) {
+      const orbit = document.querySelector('.zd-orbit');
+      if (orbit && orbit.sonaOrbit) orbit.sonaOrbit.setMode(on ? 'thinking' : 'idle');
       busy = on;
       zd.classList.toggle('thinking', on);
       send.classList.toggle('stop', on);
