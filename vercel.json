@@ -42,10 +42,6 @@
       "destination": "/api/ingest.js"
     },
     {
-      "source": "/api/agent",
-      "destination": "/api/agent.js"
-    },
-    {
       "source": "/api/health",
       "destination": "/api/health.js"
     },
@@ -128,10 +124,5 @@
       "destination": "/",
       "permanent": true
     }
-  ],
-  "functions": {
-    "api/agent.js": {
-      "maxDuration": 60
-    }
-  }
+  ]
 }
