@@ -253,9 +253,15 @@ export default async function handler(req, res) {
     send({ t: 'done' });
   } catch (err) {
     console.error('agent', err && err.status, err && err.message);
+    // A rejected key is a setup problem on our side, not something trying
+    // again will fix, so say so and log it plainly for whoever reads the logs.
+    const badKey = err instanceof Anthropic.AuthenticationError || err instanceof Anthropic.PermissionDeniedError;
+    if (badKey) console.error('[agent] ANTHROPIC_API_KEY was rejected. Replace it in Vercel and redeploy.');
     const msg = err instanceof Anthropic.RateLimitError
       ? `${AGENT_NAME} is busy right now. Try again in a minute.`
-      : `${AGENT_NAME} couldn't answer that. Try again.`;
+      : badKey
+        ? `${AGENT_NAME} is unavailable right now. This is a problem on our side, not with your question.`
+        : `${AGENT_NAME} couldn't answer that. Try again.`;
     send({ t: 'error', message: msg });
   }
   res.end();
