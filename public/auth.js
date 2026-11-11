@@ -567,7 +567,7 @@
         <!-- LOGIN VIEW -->
         <div id="auth-login-view">
           <div class="auth-logo">
-            <span class="auth-logo-icon"><img src="/logo.svg" alt="" width="26" height="26"></span>
+            <span class="auth-logo-icon"><img src="/logo.svg?v=2" alt="" width="26" height="26"></span>
             <span class="auth-logo-text">Sona</span>
           </div>
           <div class="auth-modal-title">Welcome back</div>
@@ -592,7 +592,7 @@
         <!-- WAITLIST VIEW (mock mode — no Supabase configured) -->
         <div id="auth-waitlist-view" style="display:none">
           <div class="auth-logo">
-            <span class="auth-logo-icon"><img src="/logo.svg" alt="" width="26" height="26"></span>
+            <span class="auth-logo-icon"><img src="/logo.svg?v=2" alt="" width="26" height="26"></span>
             <span class="auth-logo-text">Sona</span>
           </div>
           <div class="auth-modal-title">Request early access</div>
@@ -632,7 +632,7 @@
         <!-- MAGIC LINK VIEW — one entry point for signup and sign-in -->
         <div id="auth-magic-view" style="display:none">
           <div class="auth-logo">
-            <span class="auth-logo-icon"><img src="/logo.svg" alt="" width="26" height="26"></span>
+            <span class="auth-logo-icon"><img src="/logo.svg?v=2" alt="" width="26" height="26"></span>
             <span class="auth-logo-text">Sona</span>
           </div>
           <div class="auth-modal-title">Start with what's working.</div>
@@ -653,7 +653,7 @@
         <!-- SENT STATE -->
         <div id="auth-magic-sent" style="display:none">
           <div class="auth-logo">
-            <span class="auth-logo-icon"><img src="/logo.svg" alt="" width="26" height="26"></span>
+            <span class="auth-logo-icon"><img src="/logo.svg?v=2" alt="" width="26" height="26"></span>
             <span class="auth-logo-text">Sona</span>
           </div>
           <div class="auth-modal-title">Check your email.</div>
@@ -675,7 +675,7 @@
         <!-- SETTINGS VIEW -->
         <div id="auth-settings-view" style="display:none">
           <div class="auth-logo">
-            <span class="auth-logo-icon"><img src="/logo.svg" alt="" width="26" height="26"></span>
+            <span class="auth-logo-icon"><img src="/logo.svg?v=2" alt="" width="26" height="26"></span>
             <span class="auth-logo-text">Sona</span>
           </div>
           <div class="auth-modal-title">Account settings</div>

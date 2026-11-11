@@ -202,7 +202,7 @@ export function brandEmail(opts = {}) {
 
           <tr>
             <td class="px" style="padding:24px 36px 20px 36px;">
-              <a href="${SITE}" style="font-family:${BRAND_FONT};font-size:19px;font-weight:600;letter-spacing:-0.4px;color:${BRAND.ink};text-decoration:none;"><img src="${ASSETS}/mark.png" width="28" height="28" alt="" style="display:inline-block;vertical-align:-8px;margin-right:8px;border:0;border-radius:7px;">Sona</a>
+              <a href="${SITE}" style="font-family:${BRAND_FONT};font-size:19px;font-weight:600;letter-spacing:-0.4px;color:${BRAND.ink};text-decoration:none;"><img src="${ASSETS}/mark.png?v=2" width="28" height="28" alt="" style="display:inline-block;vertical-align:-8px;margin-right:8px;border:0;border-radius:7px;">Sona</a>
             </td>
           </tr>
 
