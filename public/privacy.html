@@ -4,6 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script>(function(){try{var t=null;try{t=localStorage.getItem('sona-theme');}catch(e){}if(t==='light'||t==='dark'){window.__sonaThemeChosen=true;}else{t='light';}document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
+<!-- Google Tag Manager, in Consent Mode: storage stays denied until the
+     visitor accepts on the banner (consent.js). Defaults must run first. -->
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}var sonaC=null;try{sonaC=localStorage.getItem('sona-consent');}catch(e){}gtag('consent','default',{analytics_storage:sonaC==='granted'?'granted':'denied',ad_storage:'denied',ad_user_data:'denied',ad_personalization:'denied',wait_for_update:500});</script>
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','GTM-PTX2S9C5');</script>
+<!-- End Google Tag Manager -->
 <meta name="color-scheme" content="light dark">
 <meta name="theme-color" content="#ffffff">
 <link rel="icon" type="image/svg+xml" href="/logo.svg?v=2">
@@ -16,7 +21,7 @@
 <script src="/vendor/lenis-1.2.3.min.js" defer></script>
 <script src="/smooth-scroll.js?v=20261012a" defer></script>
 <script src="/site.js?v=20261106d" defer></script>
-<script src="/consent.js?v=20261111a" defer></script>
+<script src="/consent.js?v=20261111b" defer></script>
 <title>Privacy policy | Sona</title>
 <meta name="description" content="What Sona collects, why, which providers process it, and how to get a copy of your data or have it deleted.">
 <link rel="canonical" href="https://buildwithsona.com/privacy.html">
@@ -92,7 +97,7 @@
   <p>To reply to you, to give you access to your account, and to keep your work available to you across sessions. We do not sell your data, and we do not use it to train models.</p>
 
   <h2>Who processes it</h2>
-  <p>We use third-party providers to run the product. Today those are Clerk (accounts and sign-in), Supabase (your stored content), Vercel (hosting), Polar (payments, tax and invoices, as merchant of record), and Spacemail or Resend (email delivery). If you accept analytics, Google (through Google Tag Manager and Google Analytics) also receives information about your visit to our public pages. Each processes data on our behalf under its own terms.</p>
+  <p>We use third-party providers to run the product. Today those are Clerk (accounts and sign-in), Supabase (your stored content), Vercel (hosting), Polar (payments, tax and invoices, as merchant of record), and Spacemail or Resend (email delivery). Google (through Google Tag Manager and Google Analytics) receives information about visits to our public pages, as described under Cookies. Each processes data on our behalf under its own terms.</p>
 
   <h2>Your choices</h2>
   <ul>
@@ -107,7 +112,7 @@
 
   <h2 id="cookies">Cookies</h2>
   <p>We use a session token to keep you signed in.</p>
-  <p>On our public pages we ask before using analytics. Only if you click Accept do we load Google Tag Manager, which runs Google Analytics. It sets cookies to count visits and see which pages are useful. If you decline, or don't answer, nothing from Google loads. Analytics never runs on the sign-in page or inside the app, and we do not run third-party advertising.</p>
+  <p>Our public pages load Google Tag Manager, which runs Google Analytics in Google's consent mode. Until you choose, and if you decline, Google gets only basic signals about the visit, such as the page and the time, and no cookies are set. If you click Accept, Google Analytics also sets cookies so we can count visits and see which pages are useful. Analytics never runs on the sign-in page or inside the app, and we do not run third-party advertising.</p>
   <p><button type="button" class="btn btn-line" data-consent-open>Change your cookie choice</button></p>
   </article>
 </div>
