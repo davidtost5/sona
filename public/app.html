@@ -825,6 +825,43 @@
     .dx-filters::-webkit-scrollbar { display:none; }
     .dx-seg { flex:none; }
   }
+  /* ─── Discover: posts or creators, topics, hiding ─── */
+  .dx-top { display:flex; gap:10px; align-items:center; }
+  .dx-top .dx-search { flex:1; min-width:0; }
+  .dx-mode { flex:none; }
+  .dx .dx-mode .filter { min-height:44px; padding:0 14px; font-size:14px; }
+  .dx-creators .dx-lenses { visibility:hidden; }
+  .dx-topics { position:relative; display:flex; align-items:center; gap:6px; margin-top:12px; }
+  .dx-topic-track { display:flex; gap:8px; overflow-x:auto; scroll-behavior:smooth; scrollbar-width:none; flex:1; min-width:0; padding:2px; }
+  .dx-topic-track::-webkit-scrollbar { display:none; }
+  .dx-topic { flex:none; display:inline-flex; align-items:center; gap:7px; min-height:36px; padding:0 14px; border-radius:999px; border:1px solid var(--border-strong); background:var(--surface); font:inherit; font-size:13.5px; font-weight:500; color:var(--text-mid); cursor:pointer; transition:border-color .15s, color .15s, background .15s; }
+  .dx-topic:hover { color:var(--text); border-color:var(--text-dim); }
+  .dx-topic.active { background:var(--text); border-color:var(--text); color:var(--bg); }
+  .dx-topic.active .dx-n { color:color-mix(in srgb, var(--bg) 70%, transparent); }
+  .dx-arrow { flex:none; display:grid; place-items:center; width:32px; height:32px; border-radius:999px; border:1px solid var(--border-strong); background:var(--surface); color:var(--text-mid); cursor:pointer; }
+  .dx-arrow[hidden] { display:none; }
+  .dx-arrow:hover { color:var(--text); }
+  .dx-arrow svg { width:16px; height:16px; }
+  .dx-toast { display:flex; align-items:center; gap:10px; width:max-content; max-width:100%; margin-top:10px; padding:9px 14px; border-radius:10px; background:var(--text); color:var(--bg); font-size:13.5px; }
+  .dx-toast[hidden] { display:none; }
+  .dx-toast button { padding:0; border:0; background:none; font:inherit; font-weight:600; color:inherit; text-decoration:underline; cursor:pointer; }
+  .dc-hide { flex:none; display:grid; place-items:center; width:32px; height:32px; margin:-4px -6px -4px -2px; border:0; border-radius:8px; background:none; color:var(--text-dim); cursor:pointer; opacity:0; transition:opacity .15s, background .15s; }
+  .disc-card:hover .dc-hide, .dc-hide:focus-visible { opacity:1; }
+  @media (hover: none) { .dc-hide { opacity:1; } }
+  .dc-hide:hover { background:var(--accent-soft); color:var(--text); }
+  .dc-hide svg { width:15px; height:15px; }
+  .dc-chip.topic { background:none; font:inherit; font-size:12px; cursor:pointer; }
+  .dc-chip.topic:hover { color:var(--text); border-color:var(--border-strong); }
+  .cr-top { display:grid; gap:5px; width:100%; padding:11px 13px; border:1px solid var(--border); border-radius:11px; background:var(--surface); text-align:left; font:inherit; font-size:14.5px; line-height:1.5; font-weight:500; color:var(--text); cursor:pointer; }
+  .cr-top span { font-size:12px; font-weight:400; color:var(--text-dim); }
+  .cr-top:hover { border-color:var(--border-strong); }
+  .cr-topics { display:flex; flex-wrap:wrap; gap:6px; }
+  @media (max-width: 760px) {
+    .dx-top { flex-direction:column; align-items:stretch; }
+    .dx-top .dx-search { flex:none; }
+    .dx-mode { align-self:flex-start; }
+    .dx-creators .dx-lenses { display:none; }
+  }
   /* ─── Post cards (Discover, Saved, Digest) ─── */
   .disc-card { display:flex; flex-direction:column; gap:14px; }
   .dc-head { display:flex; align-items:center; gap:11px; min-width:0; }
@@ -1500,11 +1537,17 @@
 
       <div class="view" data-view="discover">
         <div class="dx">
+          <div class="dx-top">
           <div class="dx-search" id="dx-search">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
             <input type="search" id="disc-search" placeholder="Search posts, creators or topics" aria-label="Search posts, creators or topics" autocomplete="off" spellcheck="false">
             <button type="button" class="dx-clear" id="disc-search-clear" aria-label="Clear search" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
             <kbd aria-hidden="true">/</kbd>
+          </div>
+          <div class="dx-seg dx-mode" role="group" aria-label="Show posts or creators">
+            <button type="button" class="filter active" data-mode="posts" aria-pressed="true">Posts</button>
+            <button type="button" class="filter" data-mode="creators" aria-pressed="false">Creators</button>
+          </div>
           </div>
           <div class="dx-bar">
             <div class="dx-lenses" role="group" aria-label="Order the feed">
@@ -1523,7 +1566,13 @@
               <div class="dx-seg" id="dx-plats" role="group" aria-label="Filter by platform"></div>
             </div>
           </div>
+          <div class="dx-topics" id="dx-topics" role="group" aria-label="Filter by topic">
+            <button type="button" class="dx-arrow" data-dir="-1" aria-label="Scroll topics left" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg></button>
+            <div class="dx-topic-track" id="dx-topic-track"></div>
+            <button type="button" class="dx-arrow" data-dir="1" aria-label="Scroll topics right" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg></button>
+          </div>
           <p class="dx-result" id="disc-result" aria-live="polite"></p>
+          <div class="dx-toast" id="dx-toast" role="status" aria-live="polite" hidden></div>
         </div>
         <!-- First-run nudge. A new feed gives no instruction on what to do
              first; this names one concrete action and shows progress toward it.
@@ -3669,7 +3718,9 @@
     return hook.length > 180 ? ['', s] : [hook, s.slice(hook.length)];
   }
 
-  function ideaCard(i, { search = false, removeLabel = false } = {}) {
+  function ideaCard(i, opts = {}) {
+    const { search = false, removeLabel = false } = opts;
+    const topic = opts.hide ? topicsOf(i)[0] : null;
     // Split on the raw text and escape each piece. Highlighting after escaping
     // would match inside entities: searching "39" would break every apostrophe.
     const words = search ? searchWords() : [];
@@ -3707,13 +3758,15 @@
           <span class="disc-av" style="background:url('${escapeHtml(i.av)}') center/cover no-repeat, linear-gradient(135deg,var(--accent),var(--accent-soft))"></span>
           <div class="dc-who"><div class="disc-name">${mark(i.name)}</div><div class="disc-handle">${mark(handle)}</div></div>
           ${source}
+          ${opts.hide ? `<button type="button" class="dc-hide" onclick="hidePost('${safeId}')" aria-label="Hide this post" title="Hide this post">${HIDE_ICON}</button>` : ''}
         </header>
         <div class="dc-text${long ? ' clamp' : ''}">${hook ? `<b>${mark(hook)}</b>` : ''}${mark(rest)}</div>
         ${long ? '<button type="button" class="dc-more" onclick="this.previousElementSibling.classList.toggle(\'clamp\');this.textContent=this.textContent===\'Show more\'?\'Show less\':\'Show more\'">Show more</button>' : ''}
-        ${(mult || stats) ? `<div class="dc-stats">
+        ${(mult || stats || topic) ? `<div class="dc-stats">
           ${mult ? `<span class="dc-mult ${tier}" title="This post did ${mult} times what ${escapeHtml(i.name)} usually gets"><b>${mult}×</b> their average</span>` : ''}
           ${isFresh(i) ? '<span class="dc-chip new">New</span>' : ''}
           ${pct && pct <= 10 ? `<span class="dc-chip" title="Top ${pct}% of the posts in your feed, ranked by outlier multiple">Top ${pct}%</span>` : ''}
+          ${topic ? `<button type="button" class="dc-chip topic" onclick="setDiscTopic('${topic.id}')" title="More posts about ${topic.name.toLowerCase()}">${topic.name}</button>` : ''}
           ${stats ? `<span class="dc-nums">${stats}</span>` : ''}
         </div>` : ''}
         ${reuse ? `<button type="button" class="dc-reuse" onclick="openDecoder('${safeId}')" title="See how this post is built"><span>Reusable line</span><code>${hookSlots(reuse)}</code></button>` : ''}
@@ -3722,6 +3775,122 @@
           <button type="button" class="disc-action ${isSaved ? 'saved' : ''}" data-idea="${safeId}" onclick="toggleSave('${safeId}', this)" aria-pressed="${isSaved}">${BOOKMARK(isSaved)}${isSaved ? (removeLabel ? 'Remove' : 'Saved') : 'Save'}</button>
         </footer>
       </article>`;
+  }
+
+  // Topics come from the post text itself, so they always describe what's
+  // actually in the feed. A post can sit under more than one.
+  const TOPICS = [
+    { id: 'writing', name: 'Writing', re: /\b(writ\w*|draft\w*|essay\w*|newsletter\w*|hooks?|copy|storytell\w*|publish\w*|words)\b/i },
+    { id: 'audience', name: 'Audience', re: /\b(audience|followers?|views|reach|viral|grow(th|ing)?|brand|creators?|consisten\w*)\b/i },
+    { id: 'productivity', name: 'Productivity', re: /\b(productiv\w*|focus\w*|habits?|routines?|morning|hours?|todo|to-do|calendar|time|output|deep work|priorit\w*)\b/i },
+    { id: 'money', name: 'Money', re: /(\$\d|\b(money|income|revenue|pric\w*|sell\w*|sales|profit\w*|wealth\w*|invest\w*|paid|charge\w*|clients?|customers?|offer)\b)/i },
+    { id: 'startups', name: 'Startups', re: /\b(startups?|founders?|compan(y|ies)|launch\w*|products?|ship\w*|business\w*|build\w*|saas|market)\b/i },
+    { id: 'mindset', name: 'Mindset', re: /\b(life|lives|fear\w*|happ\w*|truth|reali[sz]\w*|lessons?|mind\w*|seasons?|believ\w*|curio\w*|meaning|purpose)\b/i },
+    { id: 'career', name: 'Career', re: /\b(jobs?|careers?|boss|hir\w*|promot\w*|quit|team\w*|manag\w*|leader\w*|work(ing|ers?)?)\b/i },
+    { id: 'tech', name: 'AI and tech', re: /\b(ai|agents?|internet|tech\w*|software|code|coding|apps?|online|machines?)\b/i },
+  ];
+  const _topicCache = new Map();
+  function topicsOf(i) {
+    if (_topicCache.has(i.id)) return _topicCache.get(i.id);
+    const hits = TOPICS.map(tp => ({ tp, n: (String(i.text || '').match(new RegExp(tp.re.source, 'gi')) || []).length }))
+      .filter(x => x.n > 0).sort((a, b) => b.n - a.n).map(x => x.tp);
+    _topicCache.set(i.id, hits);
+    return hits;
+  }
+  let discTopic = null;
+  let discMode = 'posts';
+  const HIDDEN_KEY = 'sona-hidden-posts';
+  let hiddenPosts = new Set();
+  try { hiddenPosts = new Set(JSON.parse(localStorage.getItem(HIDDEN_KEY) || '[]')); } catch (_) {}
+  function saveHidden() { try { localStorage.setItem(HIDDEN_KEY, JSON.stringify([...hiddenPosts])); } catch (_) {} }
+  const HIDE_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3l18 18"/><path d="M10.6 5.1A10.4 10.4 0 0 1 12 5c6.4 0 10 7 10 7a17.6 17.6 0 0 1-3.2 4.1M6.6 6.6A17.4 17.4 0 0 0 2 12s3.6 7 10 7a9.6 9.6 0 0 0 5.4-1.6"/><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"/></svg>';
+
+  let toastTimer = 0;
+  function discToast(html) {
+    const el = document.getElementById('dx-toast');
+    if (!el) return;
+    clearTimeout(toastTimer);
+    el.innerHTML = html;
+    el.hidden = false;
+    toastTimer = setTimeout(() => { el.hidden = true; }, 6000);
+  }
+  window.hidePost = function (id) {
+    hiddenPosts.add(id); saveHidden(); renderDiscover();
+    discToast(`Hidden from your feed. <button type="button" onclick="unhidePost('${escapeHtml(id)}')">Undo</button>`);
+  };
+  window.unhidePost = function (id) {
+    hiddenPosts.delete(id); saveHidden(); renderDiscover();
+    document.getElementById('dx-toast').hidden = true;
+  };
+  window.showHiddenPosts = function () { hiddenPosts.clear(); saveHidden(); renderDiscover(); };
+  window.setDiscTopic = function (id) {
+    discTopic = discTopic === id ? null : id;
+    renderDiscover();
+    const view = document.querySelector('.view[data-view="discover"]');
+    if (view) view.scrollIntoView({ block: 'start', behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+  };
+  window.showCreatorPosts = function (name) {
+    discMode = 'posts';
+    setPressed('.filter[data-mode]', b => b.dataset.mode === 'posts');
+    const box = document.getElementById('disc-search');
+    box.value = name;
+    box.dispatchEvent(new Event('input', { bubbles: true }));
+  };
+
+  function renderTopics(pool) {
+    const track = document.getElementById('dx-topic-track');
+    if (!track) return;
+    const counts = TOPICS.map(tp => ({ tp, n: pool.filter(i => topicsOf(i).includes(tp)).length }))
+      .filter(x => x.n >= 2 || x.tp.id === discTopic)
+      .sort((a, b) => b.n - a.n);
+    const btn = (id, label, n) => `<button type="button" class="dx-topic${(discTopic || '') === id ? ' active' : ''}" data-topic="${id}" aria-pressed="${(discTopic || '') === id}">${label}${n != null ? `<span class="dx-n">${n}</span>` : ''}</button>`;
+    track.innerHTML = btn('', 'All topics') + counts.map(x => btn(x.tp.id, x.tp.name, x.n)).join('');
+    syncTopicArrows();
+  }
+  function syncTopicArrows() {
+    const track = document.getElementById('dx-topic-track');
+    if (!track) return;
+    const [prev, next] = document.querySelectorAll('#dx-topics .dx-arrow');
+    prev.hidden = track.scrollLeft <= 2;
+    next.hidden = track.scrollLeft + track.clientWidth >= track.scrollWidth - 2;
+  }
+
+  // The creators in the current selection, strongest post first.
+  function creatorCards(pool) {
+    const by = new Map();
+    pool.forEach(i => {
+      const key = String(i.name || '').toLowerCase();
+      if (!by.has(key)) by.set(key, []);
+      by.get(key).push(i);
+    });
+    const rows = [...by.values()].map(posts => {
+      posts.sort((a, b) => multOf(b) - multOf(a));
+      return { top: posts[0], posts, best: multOf(posts[0]) };
+    }).sort((a, b) => b.best - a.best);
+    const html = rows.map(({ top, posts, best }) => {
+      const plat = platformOf(top.handle);
+      const logo = plat ? `<span class="dc-plat ${plat.cls}" role="img" aria-label="${plat.name}" title="${plat.name}"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="${plat.path}"/></svg></span>` : '';
+      const tps = [...new Set(posts.flatMap(p => topicsOf(p)))].slice(0, 3);
+      const first = splitHook(top.text)[0] || String(top.text || '').slice(0, 140);
+      return `
+      <article class="disc-card cr-card">
+        <header class="dc-head">
+          <span class="disc-av" style="background:url('${escapeHtml(top.av)}') center/cover no-repeat, linear-gradient(135deg,var(--accent),var(--accent-soft))"></span>
+          <div class="dc-who"><div class="disc-name">${escapeHtml(top.name)}</div><div class="disc-handle">${escapeHtml(String(top.handle || '').split('·')[0].trim())}</div></div>
+          ${logo}
+        </header>
+        <div class="dc-stats">
+          ${best ? `<span class="dc-mult ${best >= 10 ? 'hi' : best >= 5 ? 'mid' : ''}"><b>${best}×</b> their average, at best</span>` : ''}
+          <span class="dc-chip">${posts.length} post${posts.length === 1 ? '' : 's'} in the feed</span>
+        </div>
+        <button type="button" class="cr-top" onclick="openDecoder('${escapeHtml(top.id)}')" title="See how this post is built"><span>Strongest post</span>${escapeHtml(first)}</button>
+        ${tps.length ? `<div class="cr-topics">${tps.map(tp => `<button type="button" class="dc-chip topic" onclick="setDiscTopic('${tp.id}')">${tp.name}</button>`).join('')}</div>` : ''}
+        <footer class="dc-actions">
+          <button type="button" class="disc-action" onclick="showCreatorPosts('${escapeHtml(top.name).replace(/'/g, '&#39;')}')">See their posts</button>
+        </footer>
+      </article>`;
+    }).join('');
+    return { html, count: rows.length };
   }
 
   const DISC_LENS_NOTE = {
@@ -3752,7 +3921,7 @@
   }
 
   window.resetDiscover = function () {
-    currentFilter = 'all'; discPlat = 'all'; discSort = null;
+    currentFilter = 'all'; discPlat = 'all'; discSort = null; discTopic = null;
     setPressed('.filter[data-filter]', b => b.dataset.filter === 'all');
     setPressed('.filter[data-sort]', b => !b.dataset.sort);
     window.clearSearch();
@@ -3766,20 +3935,33 @@
     if (countEl) countEl.textContent = SEED_IDEAS.length;
     renderDiscControls();
     const inPlat = (i) => discPlat === 'all' || (platformOf(i.handle) || {}).cls === discPlat;
-    const items = applyDiscSort(SEED_IDEAS
+    const inTopic = (i) => !discTopic || topicsOf(i).some(tp => tp.id === discTopic);
+    const visible = SEED_IDEAS.filter(i => !hiddenPosts.has(i.id));
+    const pool = visible
       .filter(i => currentFilter === 'all' || i.cat === currentFilter)
       .filter(inPlat)
-      .filter(matchesSearch));
+      .filter(matchesSearch);
+    renderTopics(pool);
+    const items = applyDiscSort(pool.filter(inTopic));
+    document.querySelector('.view[data-view="discover"]').classList.toggle('dx-creators', discMode === 'creators');
     // Each niche counts what clicking it would show under the current lens.
     document.querySelectorAll('.dx-seg .filter[data-filter]').forEach(b => {
       const cat = b.dataset.filter;
-      const n = applyDiscSort(SEED_IDEAS.filter(i => (cat === 'all' || i.cat === cat) && inPlat(i) && matchesSearch(i))).length;
+      const n = applyDiscSort(visible.filter(i => (cat === 'all' || i.cat === cat) && inPlat(i) && inTopic(i) && matchesSearch(i))).length;
       b.querySelector('.dx-n').textContent = n;
     });
-    const filtered = Boolean(searchTerm || currentFilter !== 'all' || discPlat !== 'all' || discSort);
+    const filtered = Boolean(searchTerm || currentFilter !== 'all' || discPlat !== 'all' || discSort || discTopic);
     const result = document.getElementById('disc-result');
-    result.innerHTML = `<b>${items.length} post${items.length === 1 ? '' : 's'}.</b> ${DISC_LENS_NOTE[discSort || 'today']}`
-      + (filtered ? ' <button type="button" class="dx-reset" onclick="resetDiscover()">Clear filters</button>' : '');
+    const topicName = discTopic ? (TOPICS.find(tp => tp.id === discTopic) || {}).name : '';
+    const tail = (filtered ? ' <button type="button" class="dx-reset" onclick="resetDiscover()">Clear filters</button>' : '')
+      + (hiddenPosts.size ? ` <button type="button" class="dx-reset" onclick="showHiddenPosts()">Show ${hiddenPosts.size} hidden</button>` : '');
+    if (discMode === 'creators') {
+      const cr = creatorCards(items);
+      result.innerHTML = `<b>${cr.count} creator${cr.count === 1 ? '' : 's'}${topicName ? ' writing about ' + topicName.toLowerCase() : ''}.</b> Ranked by their strongest post in the feed.` + tail;
+      grid.innerHTML = cr.count ? cr.html : `<div class="empty-search" style="grid-column:1/-1;column-span:all">No creators match these filters.<br><button type="button" class="reset" onclick="resetDiscover()">Clear filters</button></div>`;
+      return;
+    }
+    result.innerHTML = `<b>${items.length} post${items.length === 1 ? '' : 's'}${topicName ? ' about ' + topicName.toLowerCase() : ''}.</b> ${DISC_LENS_NOTE[discSort || 'today']}` + tail;
     if (items.length === 0) {
       grid.innerHTML = `
         <div class="empty-search" style="grid-column:1/-1;column-span:all">
@@ -3788,7 +3970,7 @@
         </div>`;
       return;
     }
-    grid.innerHTML = items.map(i => ideaCard(i, { search: true })).join('');
+    grid.innerHTML = items.map(i => ideaCard(i, { search: true, hide: true })).join('');
   }
 
   function renderSaved() {
@@ -5196,6 +5378,23 @@
     setPressed('.filter[data-sort]', b => b === btn);
     discSort = btn.dataset.sort || null;
     renderDiscover();
+  }));
+  document.querySelectorAll('.filter[data-mode]').forEach(btn => btn.addEventListener('click', () => {
+    setPressed('.filter[data-mode]', b => b === btn);
+    discMode = btn.dataset.mode;
+    renderDiscover();
+  }));
+  document.getElementById('dx-topic-track').addEventListener('click', (e) => {
+    const b = e.target.closest('[data-topic]');
+    if (!b) return;
+    discTopic = b.dataset.topic || null;
+    renderDiscover();
+  });
+  document.getElementById('dx-topic-track').addEventListener('scroll', syncTopicArrows, { passive: true });
+  window.addEventListener('resize', syncTopicArrows);
+  document.querySelectorAll('#dx-topics .dx-arrow').forEach(b => b.addEventListener('click', () => {
+    const track = document.getElementById('dx-topic-track');
+    track.scrollBy({ left: Number(b.dataset.dir) * track.clientWidth * 0.7, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
   }));
   document.getElementById('dx-plats').addEventListener('click', (e) => {
     const btn = e.target.closest('[data-plat]');
