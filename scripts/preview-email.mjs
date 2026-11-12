@@ -27,10 +27,10 @@ const issue = broadcastEmail({
     B.para('Skeleton = status reversal + insider promise.'),
     B.label('Yours:', '&ldquo;I turned down the promotion to build this newsletter. Here&rsquo;s what nobody tells you about betting on yourself.&rdquo;'),
     B.para("Same engine, different fuel. That's not stealing — that's refusing to reinvent physics every morning."),
-    B.lead('Do this today: find 1 outlier post, decode the skeleton, write 1 draft using it.'),
+    B.action('Find one outlier post, decode the skeleton, and write one draft using it.'),
     B.para("Do that 5 times this week and you'll have more proven hooks than 95% of people posting on vibes."),
   ],
-  cta: { label: 'Check Sona', href: 'https://buildwithsona.com' },
+  cta: { label: 'Open Sona', href: 'https://buildwithsona.com/app' },
 });
 
 const welcome = welcomeEmail({ email: 'you@example.com' });

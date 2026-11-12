@@ -5,20 +5,12 @@
 // a system font stack, which is what actually renders in Gmail/Outlook/Apple Mail.
 // Keep it that way when editing.
 //
-// Format follows the "letter from the founder" pattern rather than a designed
-// marketing template: light background, no hero headline, no CTA button, inline
-// underlined links, signed off by a person. Plain and personal outperforms
-// designed-and-branded for this kind of list, and it renders identically everywhere.
+// Every template uses one shell, brandEmail(): the logo, a painted panel with
+// the headline, the body and one button. Broadcasts fill the body with blocks (B).
 //
 // Every template returns { subject, html, text }. The text part isn't optional —
 // sending HTML-only is a strong spam signal and some clients show nothing else.
 
-const PAGE = '#e9e9e9';      // light grey page behind the card
-const CARD = '#ffffff';
-const INK = '#1a1a1a';       // body text
-const SOFT = '#6b6b6b';      // footer / secondary
-const RULE = '#e2e2e2';
-const FONT = "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif";
 
 const SITE = 'https://buildwithsona.com';
 
@@ -52,10 +44,6 @@ function esc(s) {
   return String(s || '')
     .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
-}
-
-function p(content, extra = '') {
-  return `<p style="margin:0 0 20px 0;font-family:${FONT};font-size:16px;line-height:1.65;color:${INK};${extra}">${content}</p>`;
 }
 
 
@@ -161,7 +149,7 @@ export function outlierCard({
 export function brandEmail(opts = {}) {
   const {
     subject = '', preheader = '', title = [], panel = '', panelText = '', greeting = '',
-    paragraphs = [], steps = [], code = '', note = '', primary = null,
+    paragraphs = [], blocks = [], steps = [], code = '', note = '', primary = null,
     signoff = '', footer = null,
   } = opts;
   const [head, tone] = Array.isArray(title) ? title : [title];
@@ -220,6 +208,7 @@ export function brandEmail(opts = {}) {
           <tr>
             <td class="px" style="padding:36px 44px 12px 44px;">
               ${body}
+              ${blocks.join('\n              ')}
               ${steps.length ? stepsTable(steps) : ''}
               ${codeBox}
               ${primary ? blueButton(primary) : ''}
@@ -257,6 +246,7 @@ export function brandEmail(opts = {}) {
     ...(panelText ? [panelText, ''] : []),
     ...(greeting ? [strip(greeting), ''] : []),
     ...paragraphs.flatMap((h) => [strip(h), '']),
+    ...blocks.map((h) => strip(h).replace(/[ \t]+/g, ' ').replace(/\n\s*\n+/g, '\n').trim()).filter(Boolean).flatMap((t) => [t, '']),
     ...steps.flatMap((s, n) => [`${n + 1}. ${s.title}`, strip(s.body), ...(s.link ? [`${s.link.label}: ${s.link.href}`] : []), '']),
     ...(code ? [code, ''] : []),
     ...(primary ? [`${primary.label}: ${primary.href}`, ''] : []),
@@ -354,132 +344,74 @@ export function welcomeEmail({ email, unsubscribeUrl } = {}) {
  *   })
  * ────────────────────────────────────────────────────────────────────────── */
 
-const DARK = '#111111';        // footer panel
-const DARK_INK = '#f2f2f2';
-const DARK_SOFT = '#9a9a9a';
+// Body text inside brandEmail: same size and colour as its paragraphs.
+const bp = (html, extra = '') => `<p style="margin:0 0 20px 0;font-family:${BRAND_FONT};font-size:17px;line-height:1.65;color:${BRAND.body};${extra}">${html}</p>`;
 
-/** Content blocks. Each returns a table-row-safe HTML string. */
+/** Content blocks for a broadcast. Each returns email-safe HTML. */
 export const B = {
-  para: (html) => p(html),
-  /** A bolded line that carries the turn in the argument. */
-  lead: (html) => p(`<strong>${html}</strong>`),
-  /** Ordered list. Uses a table, not <ol> — Outlook's list indentation is unreliable. */
-  list: (items) => `
-    <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 20px 0;">
-      ${items.map((it, i) => `
-      <tr>
-        <td valign="top" style="padding:0 10px 12px 4px;font-family:${FONT};font-size:16px;line-height:1.65;color:${INK};">${i + 1}.</td>
-        <td valign="top" style="padding:0 0 12px 0;font-family:${FONT};font-size:16px;line-height:1.65;color:${INK};">${it}</td>
-      </tr>`).join('')}
-    </table>`,
-  /** "Theirs: …" — a bold label followed by an example. */
-  label: (label, html) => p(`<strong>${esc(label)}</strong> ${html}`),
-  rule: () => `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 24px 0;"><tr><td style="border-top:1px solid ${RULE};font-size:0;line-height:0;">&nbsp;</td></tr></table>`,
+  para: (html) => bp(html),
+  /** The line that carries the turn in the argument. */
+  lead: (html) => bp(html, `font-size:19px;line-height:1.5;font-weight:600;letter-spacing:-0.2px;color:${BRAND.ink};`),
+  /** Numbered list: coloured dots like the welcome email's steps. A table, not <ol>. */
+  list: (items) => `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:2px 0 24px 0;">${items.map((it, n) => `
+                <tr>
+                  <td valign="top" width="40" style="padding:0 0 14px 0;"><div style="width:26px;height:26px;border-radius:13px;background:${STEP_TONES[n % STEP_TONES.length]};font-family:${BRAND_FONT};font-size:13px;font-weight:700;line-height:26px;color:#ffffff;text-align:center;">${n + 1}</div></td>
+                  <td valign="top" style="padding:2px 0 14px 0;font-family:${BRAND_FONT};font-size:17px;line-height:1.55;color:${BRAND.ink};">${it}</td>
+                </tr>`).join('')}
+              </table>`,
+  /** A labelled example, drawn as a small card. "Yours" gets the blue edge. */
+  label: (label, html) => {
+    const mine = /^your/i.test(String(label));
+    return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 14px 0;background:${mine ? '#f0f5ff' : BRAND.wash};border:1px solid ${mine ? '#c7d7fe' : BRAND.rule};border-left:4px solid ${mine ? BRAND.blue : BRAND.faint};border-radius:12px;">
+                <tr><td style="padding:16px 18px;">
+                  <div style="font-family:${BRAND_FONT};font-size:13px;font-weight:700;color:${mine ? BRAND.blueInk : BRAND.soft};margin:0 0 6px 0;">${esc(label).replace(/:$/, '')}</div>
+                  <div style="font-family:${BRAND_FONT};font-size:17px;line-height:1.55;color:${BRAND.ink};">${html}</div>
+                </td></tr>
+              </table>`;
+  },
+  /** One action to take today, in a warm box so it reads as the takeaway. */
+  action: (html, title = 'Try this today') => `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:8px 0 24px 0;background:#fff7ed;border:1px solid #fed7aa;border-radius:14px;">
+                <tr><td style="padding:20px 22px;">
+                  <div style="font-family:${BRAND_FONT};font-size:15px;font-weight:700;color:#c2410c;margin:0 0 6px 0;">${esc(title)}</div>
+                  <div style="font-family:${BRAND_FONT};font-size:17px;line-height:1.55;color:${BRAND.ink};">${html}</div>
+                </td></tr>
+              </table>`,
+  rule: () => `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:6px 0 26px 0;"><tr><td style="border-top:1px solid ${BRAND.rule};font-size:0;line-height:0;">&nbsp;</td></tr></table>`,
   space: (px = 12) => `<div style="height:${px}px;line-height:${px}px;font-size:0;">&nbsp;</div>`,
 };
 
 /**
- * @param {{subject:string, preheader?:string, title:string[]|string,
+ * A newsletter issue in Sona's own look (the same shell as the welcome
+ * email): logo, painted panel with a two-tone headline, the blocks, one
+ * button, a signed note, then the postal address and unsubscribe.
+ *
+ *   broadcastEmail({
+ *     subject, preheader,
+ *     title: ['Stop guessing.', 'Copy what already works.'],
+ *     panel: outlierCard({...}),          // optional, under the headline
+ *     blocks: [B.para('…'), B.list([...]), B.label('Theirs:', '…'), B.action('…')],
+ *     cta: { label: 'Open Sona', href: SITE + '/app' },
+ *   })
+ *
+ * @param {{subject:string, preheader?:string, title:string[]|string, panel?:string,
  *          blocks:string[], cta?:{label:string,href:string},
  *          signoff?:string, unsubscribeUrl?:string, text?:string}} opts
  */
 export function broadcastEmail(opts = {}) {
   const {
-    subject = '', preheader = '', title = [], blocks = [],
-    cta = null, signoff = 'Talk soon,\nDavid from Sona', unsubscribeUrl,
+    subject = '', preheader = '', title = [], panel = '', blocks = [],
+    cta = null, signoff = 'Talk soon,\nDavid', unsubscribeUrl,
   } = opts;
-
-  const unsub = unsubscribeUrl || unsubscribeMailto();
-
-  const lines = Array.isArray(title) ? title : [title];
-  const heading = lines.map(esc).join('<br>');
-
-  const button = cta ? `
-      <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:34px auto 8px auto;">
-        <tr>
-          <td align="center" bgcolor="${INK}" style="border-radius:6px;">
-            <a href="${esc(cta.href)}" style="display:inline-block;padding:13px 26px;font-family:${FONT};font-size:14px;font-weight:600;color:#ffffff;text-decoration:none;border-radius:6px;">${esc(cta.label)}</a>
-          </td>
-        </tr>
-      </table>` : '';
-
-  const html = `<!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="color-scheme" content="light">
-<meta name="supported-color-schemes" content="light">
-<title>${esc(subject)}</title>
-</head>
-<body style="margin:0;padding:0;background:${CARD};">
-  <div style="display:none;max-height:0;overflow:hidden;opacity:0;color:transparent;height:0;width:0;">${esc(preheader)}</div>
-
-  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:${CARD};margin:0;padding:0;">
-    <tr>
-      <td align="center" style="padding:0;">
-        <table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" style="width:100%;max-width:600px;">
-
-          <tr><td style="padding:28px 32px 0 32px;">
-            <span style="font-family:${FONT};font-size:15px;font-weight:700;color:${INK};letter-spacing:-0.3px;">Sona</span>
-          </td></tr>
-
-          <tr><td style="padding:22px 32px 0 32px;">
-            <h1 style="margin:0 0 22px 0;font-family:${FONT};font-size:30px;line-height:1.22;font-weight:800;color:${INK};letter-spacing:-0.9px;">${heading}</h1>
-            ${blocks.join('\n            ')}
-            ${button}
-          </td></tr>
-
-          <tr><td style="padding:26px 32px 34px 32px;font-family:${FONT};font-size:16px;line-height:1.65;color:${INK};white-space:pre-line;">${esc(signoff)}</td></tr>
-
-          <!-- Dark footer. Colours are hardcoded rather than inherited: a client
-               in dark mode will happily invert a light panel and leave the text
-               unreadable, so this panel states both sides explicitly. -->
-          <tr><td style="padding:0;">
-            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="${DARK}" style="background:${DARK};">
-              <tr><td style="padding:30px 32px 34px 32px;">
-                <div style="font-family:${FONT};font-size:15px;font-weight:700;color:${DARK_INK};margin:0 0 20px 0;">Sona</div>
-                <div style="font-family:${FONT};font-size:13px;line-height:1.7;color:${DARK_SOFT};margin:0 0 6px 0;">Questions?</div>
-                <div style="font-family:${FONT};font-size:13px;line-height:1.7;color:${DARK_SOFT};margin:0 0 22px 0;">I read every reply and comment.</div>
-                <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 18px 0;">
-                  <tr><td style="border-top:1px solid #333333;font-size:0;line-height:0;">&nbsp;</td></tr>
-                </table>
-                <div style="font-family:${FONT};font-size:12px;line-height:1.7;color:${DARK_SOFT};">
-                  ${esc(LEGAL_NAME)}<br>
-                  <a href="${SITE}" style="color:${DARK_SOFT};text-decoration:none;">buildwithsona.com</a><br>
-                  ${esc(POSTAL_ADDRESS)}
-                </div>
-                <div style="font-family:${FONT};font-size:12px;line-height:1.7;color:${DARK_SOFT};margin:14px 0 0 0;">
-                  No longer want to receive these emails?
-                  <a href="${esc(unsub)}" style="color:${DARK_INK};text-decoration:underline;font-weight:600;">Unsubscribe</a>.
-                </div>
-              </td></tr>
-            </table>
-          </td></tr>
-
-        </table>
-      </td>
-    </tr>
-  </table>
-</body>
-</html>`;
-
-  // Every send needs a plain-text part. Without one, spam filters score the
-  // message worse and text-only clients show nothing at all.
-  const text = opts.text || [
-    lines.join('\n'),
-    '',
-    blocks.map((b) => b.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim()).filter(Boolean).join('\n\n'),
-    '',
-    cta ? `${cta.label}: ${cta.href}` : '',
-    '',
-    signoff,
-    '',
-    '—',
-    `${LEGAL_NAME} · ${SITE}`,
-    POSTAL_ADDRESS,
-    `Unsubscribe: ${unsub}`,
-  ].filter((x) => x !== null).join('\n');
-
-  return { subject, html, text };
+  const mail = brandEmail({
+    subject, preheader, title, panel, blocks,
+    primary: cta,
+    signoff: esc(signoff).replace(/\n/g, '<br>') + `<br><span style="color:${BRAND.soft};">Maker of Sona</span>`,
+    note: 'Questions or ideas? Reply to this email. I read every one.',
+    footer: {
+      reason: 'You get this email because you signed up for Sona product updates.',
+      postal: true,
+      unsubscribeUrl: unsubscribeUrl || unsubscribeMailto(),
+    },
+  });
+  return opts.text ? { ...mail, text: opts.text } : mail;
 }
