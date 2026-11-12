@@ -1255,6 +1255,7 @@
   .pb-clean svg, .creator-stats svg { width:13px; height:13px; vertical-align:-2px; margin-right:3px; }
 </style>
 <script src="local-decode.js?v=20260830a"></script>
+<script src="/zeno-local.js?v=20261111a"></script>
 <script src="/components/zeno-orbit.js?v=20261111a" defer></script>
 <style>/* New mark (logo.svg?v=2) carries its own tile, so the old frames are switched off. */.mark-img{display:block;width:100%;height:100%}:is(.logo-mark,.lm,.hm-mark,.lc-mark,.mark):has(>.mark-img){background:none!important;border:0!important;box-shadow:none!important;padding:0!important;border-radius:0!important}.logo>.mark-img{width:24px;height:24px}</style>
 </head>
@@ -1465,7 +1466,7 @@
             <textarea id="hx-input" rows="1" placeholder="Ask about a topic or a post" spellcheck="false"></textarea>
             <button type="submit" class="zd-send" id="hx-send" disabled><span class="zd-send-t">Ask</span><kbd aria-hidden="true">↵</kbd></button>
           </form>
-          <p class="zd-foot" id="hx-foot">Zeno is an AI and can get things wrong.<span class="zd-foot-more"> Check its sources against the originals.</span></p>
+          <p class="zd-foot" id="hx-foot">Zeno answers from Sona’s feed, hooks and your playbook.<span class="zd-foot-more"> It never writes your posts.</span></p>
 
           <section class="zd-start" id="hx-starters" aria-labelledby="zd-start-h">
             <h3 id="zd-start-h">Start with a question</h3>
@@ -4915,6 +4916,11 @@
     }
 
     // Numbered sources from the feed, like footnotes under the note.
+    var zeno = window.SonaZeno.create({
+      feed: function () { return (typeof SEED_IDEAS !== 'undefined' && SEED_IDEAS) || []; },
+      decoder: window.SonaDecode,
+      playbook: function () { return (typeof styleGuide !== 'undefined' && styleGuide) || {}; },
+    });
     function sources(items) {
       var box = document.createElement('div'); box.className = 'zd-src';
       var h = document.createElement('h4'); h.textContent = items.length === 1 ? 'Source from the feed' : items.length + ' sources from the feed';
@@ -5030,15 +5036,6 @@
       input.style.height = 'auto';
       input.style.height = Math.min(input.scrollHeight, 220) + 'px';
     }
-    async function sessionToken() {
-      for (var i = 0; i < 30; i++) {           // Clerk may still be loading
-        try { if (window.Clerk && window.Clerk.loaded) return window.Clerk.session ? await window.Clerk.session.getToken() : null; } catch (e) { return null; }
-        await new Promise(function (r) { setTimeout(r, 100); });
-      }
-      return null;
-    }
-
-    // Sends the conversation as it stands (it must end on a question).
     async function respond() {
       setBusy(true);
       renderAll();
@@ -5052,46 +5049,25 @@
       function paint() { follow = nearBottom(); if (reply.content) paintNote(n, reply); if (follow) toBottom(false); }
       function retry() { n.note.remove(); respond(); }
       controller = new AbortController();
+      var signal = controller.signal;
+      var pause = function (ms) { return new Promise(function (r) { setTimeout(r, reduce ? 0 : ms); }); };
       try {
-        var token = await sessionToken();
-        if (!token) { failure(n, 'Sign in to ask Zeno.', null, true); return; }
-        var sg = (typeof styleGuide !== 'undefined' && styleGuide) || {};
-        var r = await fetch('/api/agent', {
-          method: 'POST', signal: controller.signal,
-          headers: { 'content-type': 'application/json', authorization: 'Bearer ' + token },
-          body: JSON.stringify({
-            messages: convo.map(function (m) { return { role: m.role, content: m.content }; }),
-            context: {
-              name: (typeof workspaceSettings !== 'undefined' && workspaceSettings.fullName) || '',
-              playbook: { hookPatterns: sg.hookPatterns, voiceRules: sg.voiceRules, bannedPhrases: sg.bannedPhrases, signatureLines: sg.signatureLines }
-            }
-          })
-        });
-        if (!r.ok || !r.body) {
-          var j = await r.json().catch(function () { return {}; });
-          failure(n, j.error || 'Zeno couldn’t answer that.', r.status === 401 ? null : retry, r.status === 401);
-          return;
+        // Zeno runs here in the browser (zeno-local.js): no model, no API.
+        var question = convo[convo.length - 1].content;
+        var out = zeno.answer(question);
+        var st = n.body.querySelector('.zd-status');
+        if (st && out.search) st.textContent = 'Reading ' + (out.search === 'the feed' ? 'the feed' : 'the feed for ' + out.search);
+        await pause(380);
+        // Written out a few words at a time, so it reads like an answer arriving
+        // rather than a block appearing.
+        var chunks = String(out.text).match(/\S+\s*/g) || [];
+        for (var i = 0; i < chunks.length; i += 4) {
+          if (signal.aborted) throw Object.assign(new Error('stopped'), { name: 'AbortError' });
+          reply.content += chunks.slice(i, i + 4).join('');
+          paint();
+          await pause(16);
         }
-        var reader = r.body.getReader(), dec = new TextDecoder(), buf = '', errMsg = '';
-        while (true) {
-          var chunk = await reader.read();
-          if (chunk.done) break;
-          buf += dec.decode(chunk.value, { stream: true });
-          var lines = buf.split('\n'); buf = lines.pop();
-          lines.forEach(function (line) {
-            if (!line.trim()) return;
-            var ev; try { ev = JSON.parse(line); } catch (e) { return; }
-            if (ev.t === 'text') { reply.content += ev.d; paint(); }
-            else if (ev.t === 'search' && !reply.content) {
-              var st = n.body.querySelector('.zd-status');
-              if (st) st.textContent = ev.q ? 'Reading the feed for “' + ev.q + '”' : 'Reading the feed';
-            }
-            else if (ev.t === 'posts' && Array.isArray(ev.items)) { ev.items.forEach(function (p) { if (!reply.posts.some(function (x) { return x.id === p.id; })) reply.posts.push(p); }); if (reply.content) paint(); }
-            else if (ev.t === 'error') errMsg = ev.message || 'Zeno couldn’t answer that.';
-          });
-        }
-        if (errMsg || !reply.content.trim()) { failure(n, errMsg || 'Zeno couldn’t answer that.', retry); return; }
-        reply.posts = reply.posts.slice(0, 4);
+        reply.posts = (out.posts || []).slice(0, 4);
         convo.push(reply); save();
         renderAll();
         if (follow) toBottom(false);
@@ -5099,7 +5075,7 @@
         if (e && e.name === 'AbortError') {
           if (reply.content.trim()) { reply.stopped = true; reply.posts = reply.posts.slice(0, 4); convo.push(reply); save(); renderAll(); }
           else n.note.remove();
-        } else failure(n, 'Zeno couldn’t be reached. Check your connection.', retry);
+        } else { console.warn('[zeno]', e); failure(n, 'Zeno couldn’t answer that. Try asking it another way.', retry); }
       } finally {
         controller = null;
         setBusy(false);
