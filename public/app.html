@@ -862,6 +862,41 @@
     .dx-mode { align-self:flex-start; }
     .dx-creators .dx-lenses { display:none; }
   }
+  /* ─── Discover: lessons ─── */
+  .lx-today { margin-bottom:22px; }
+  .lx-today:empty { display:none; }
+  .lx-today-h { font-size:15px; font-weight:600; margin:0 0 10px; color:var(--text-mid); }
+  .lx-bar .dx-search { margin-bottom:12px; }
+  .lx-filters { display:grid; gap:10px; }
+  .lx-who { flex-wrap:wrap; justify-self:start; max-width:100%; }
+  .lx-topics { display:flex; flex-wrap:wrap; gap:8px; }
+  .lx-grid { columns:2; column-gap:16px; }
+  @media (min-width: 1400px) { .lx-grid { columns:3; } }
+  @media (max-width: 860px) { .lx-grid { columns:1; } }
+  .lx-card { break-inside:avoid; margin:0 0 16px; display:flex; flex-direction:column; gap:14px; padding:24px; border:1px solid var(--border); border-radius:16px; background:var(--bg-soft); }
+  .lx-card.featured { margin:0; padding:clamp(24px, 4vw, 40px); background:var(--surface); box-shadow:0 0 0 1px var(--border-strong); }
+  .lx-q { margin:0; font-family:'Iowan Old Style','Palatino Linotype',Palatino,'Book Antiqua',Georgia,serif; font-size:21px; line-height:1.45; color:var(--text); letter-spacing:-.005em; }
+  .lx-card.featured .lx-q { font-size:clamp(24px, 3vw, 32px); line-height:1.35; max-width:36ch; }
+  .lx-by { display:flex; align-items:center; gap:11px; }
+  .lx-by b { display:block; font-size:14px; font-weight:600; }
+  .lx-by span:not(.lx-mono) { display:block; font-size:12.5px; color:var(--text-dim); }
+  .lx-mono { flex:none; display:grid; place-items:center; width:34px; height:34px; border-radius:50%; font-family:'Iowan Old Style',Palatino,Georgia,serif; font-size:14px; font-weight:600; color:#fff; background:#475569; }
+  .lx-epictetus { background:#7c5a3a; } .lx-marcus { background:#6b21a8; } .lx-seneca { background:#1d4ed8; }
+  .lx-socrates { background:#0f766e; } .lx-aristotle { background:#9a3412; } .lx-heraclitus { background:#b45309; }
+  .lx-meaning { font-size:15px; line-height:1.65; color:var(--text-mid); max-width:62ch; }
+  .lx-practise { border-top:1px solid var(--border); padding-top:12px; }
+  .lx-practise summary { cursor:pointer; font-size:14px; font-weight:600; color:var(--text); list-style:none; display:flex; align-items:center; gap:8px; min-height:28px; }
+  .lx-practise summary::-webkit-details-marker { display:none; }
+  .lx-practise summary::before { content:''; width:7px; height:7px; border-right:1.8px solid currentColor; border-bottom:1.8px solid currentColor; transform:rotate(-45deg); transition:transform .15s; margin-right:2px; }
+  .lx-practise[open] summary::before { transform:rotate(45deg); }
+  .lx-practise dl { display:grid; gap:10px; margin:10px 0 0; }
+  .lx-practise dt { font-size:12.5px; color:var(--text-dim); }
+  .lx-practise dd { margin:2px 0 0; font-size:15px; line-height:1.6; color:var(--text); }
+  .lx-foot { display:flex; align-items:center; justify-content:space-between; gap:10px; }
+  .lx-foot .disc-action { min-height:36px; border-radius:9px; font-size:13px; font-weight:500; gap:7px; background:var(--surface); border-color:var(--border-strong); color:var(--text); }
+  .lx-foot .disc-action.saved { color:var(--accent); border-color:var(--accent); background:var(--accent-soft); }
+  .lx-foot .disc-action svg { width:14px; height:14px; }
+  #saved-grid .lx-card { margin-bottom:16px; }
   /* ─── Post cards (Discover, Saved, Digest) ─── */
   .disc-card { display:flex; flex-direction:column; gap:14px; }
   .dc-head { display:flex; align-items:center; gap:11px; min-width:0; }
@@ -1291,6 +1326,7 @@
   .chip[hidden] { display:none; }
   .pb-clean svg, .creator-stats svg { width:13px; height:13px; vertical-align:-2px; margin-right:3px; }
 </style>
+<script src="/lessons.js?v=20261112a"></script>
 <script src="local-decode.js?v=20260830a"></script>
 <script src="/zeno-local.js?v=20261111a"></script>
 <script src="/components/zeno-orbit.js?v=20261111a" defer></script>
@@ -1449,7 +1485,7 @@
     <header class="topbar">
       <div class="topbar-left">
         <h1 id="view-title">Discover</h1>
-        <span class="topbar-sub" id="view-sub">Posts that beat their creator’s average</span>
+        <span class="topbar-sub" id="view-sub">Lessons from Greek and Roman philosophers</span>
       </div>
       <span class="chip" id="view-chip" hidden>Preview mode</span>
     </header>
@@ -1536,58 +1572,23 @@
       </div>
 
       <div class="view" data-view="discover">
-        <div class="dx">
-          <div class="dx-top">
+        <!-- Discover: lessons from Greek and Roman philosophers (lessons.js). -->
+        <section class="lx-today" id="lx-today" aria-label="Today's lesson"></section>
+        <div class="dx lx-bar">
           <div class="dx-search" id="dx-search">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
-            <input type="search" id="disc-search" placeholder="Search posts, creators or topics" aria-label="Search posts, creators or topics" autocomplete="off" spellcheck="false">
+            <input type="search" id="disc-search" placeholder="Search lessons, thinkers or ideas" aria-label="Search lessons, thinkers or ideas" autocomplete="off" spellcheck="false">
             <button type="button" class="dx-clear" id="disc-search-clear" aria-label="Clear search" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
             <kbd aria-hidden="true">/</kbd>
           </div>
-          <div class="dx-seg dx-mode" role="group" aria-label="Show posts or creators">
-            <button type="button" class="filter active" data-mode="posts" aria-pressed="true">Posts</button>
-            <button type="button" class="filter" data-mode="creators" aria-pressed="false">Creators</button>
-          </div>
-          </div>
-          <div class="dx-bar">
-            <div class="dx-lenses" role="group" aria-label="Order the feed">
-              <button type="button" class="filter active" data-sort="" aria-pressed="true">Today</button>
-              <button type="button" class="filter" data-sort="breakouts" aria-pressed="false">Breakouts</button>
-              <button type="button" class="filter" data-sort="gems" aria-pressed="false">Hidden gems</button>
-              <button type="button" class="filter" data-sort="viral" aria-pressed="false">Most viewed</button>
-            </div>
-            <div class="dx-filters">
-              <div class="dx-seg" role="group" aria-label="Filter by niche">
-                <button type="button" class="filter active" data-filter="all" aria-pressed="true">All<span class="dx-n"></span></button>
-                <button type="button" class="filter" data-filter="founders" aria-pressed="false">Founders<span class="dx-n"></span></button>
-                <button type="button" class="filter" data-filter="writers" aria-pressed="false">Writers<span class="dx-n"></span></button>
-                <button type="button" class="filter" data-filter="creators" aria-pressed="false">Creators<span class="dx-n"></span></button>
-              </div>
-              <div class="dx-seg" id="dx-plats" role="group" aria-label="Filter by platform"></div>
-            </div>
-          </div>
-          <div class="dx-topics" id="dx-topics" role="group" aria-label="Filter by topic">
-            <button type="button" class="dx-arrow" data-dir="-1" aria-label="Scroll topics left" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg></button>
-            <div class="dx-topic-track" id="dx-topic-track"></div>
-            <button type="button" class="dx-arrow" data-dir="1" aria-label="Scroll topics right" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg></button>
+          <div class="lx-filters">
+            <div class="dx-seg lx-who" id="lx-who" role="group" aria-label="Filter by thinker"></div>
+            <div class="lx-topics" id="lx-topics" role="group" aria-label="Filter by theme"></div>
           </div>
           <p class="dx-result" id="disc-result" aria-live="polite"></p>
-          <div class="dx-toast" id="dx-toast" role="status" aria-live="polite" hidden></div>
         </div>
-        <!-- First-run nudge. A new feed gives no instruction on what to do
-             first; this names one concrete action and shows progress toward it.
-             Hidden once three ideas are saved, or on dismiss. -->
-        <div class="disc-onboard" id="disc-onboard" hidden>
-          <span class="do-plus" aria-hidden="true">+</span>
-          <div class="do-body">
-            <b>Save 3 posts you wish you'd made.</b>
-            <span>Hit <b>Save</b> on a post to keep it, or <b>Decode</b> to see the pattern underneath. Your feed sharpens with everything you save.</span>
-          </div>
-          <div class="do-progress" id="do-progress" aria-live="polite"><i></i><i></i><i></i></div>
-          <button class="do-x" id="do-dismiss" type="button" aria-label="Dismiss">×</button>
-        </div>
-        <div class="disc-grid" id="disc-grid"><!-- rendered by JS --></div>
-        <p class="disc-disclaimer">Posts are public examples shown for educational pattern analysis. Creators are not affiliated with or endorsing Sona.</p>
+        <div class="lx-grid" id="disc-grid"><!-- rendered by JS --></div>
+        <p class="disc-disclaimer">Passages are quoted from public-domain English translations, credited on each card. The explanations and exercises are Sona's own.</p>
       </div>
 
       <!-- DIGEST — Eden-style weekly "strategist sweep" of the breakout posts in your niche -->
@@ -3928,7 +3929,81 @@
     document.getElementById('disc-search').focus();
   };
 
+  // ─── Discover: lessons ───
+  const LX = window.SonaLessons || { lessons: [], thinkers: {}, topics: {} };
+  let lxWho = 'all', lxTopic = null;
+  const SERIF_Q = (s) => '\u201c' + s + '\u201d';
+  function lxDayIndex() { const d = new Date(); return Math.floor((Date.UTC(d.getFullYear(), d.getMonth(), d.getDate())) / 864e5); }
+  function lxToday() { return LX.lessons.length ? LX.lessons[lxDayIndex() % LX.lessons.length] : null; }
+  function lxMatches(l) {
+    const words = searchWords();
+    if (!words.length) return true;
+    const th = LX.thinkers[l.who] || {};
+    const hay = [l.text, th.name, l.source, l.meaning, l.ask, l.try, LX.topics[l.topic]].join(' ').toLowerCase();
+    return words.every(w => hay.includes(w));
+  }
+  function lxMono(who) { return ((LX.thinkers[who] || {}).name || '?').split(' ').map(w => w[0]).join('').slice(0, 2); }
+  function lessonCard(l, opts = {}) {
+    const th = LX.thinkers[l.who] || {};
+    const isSaved = saved.has(l.id);
+    const id = escapeHtml(l.id);
+    return `
+      <article class="lx-card${opts.featured ? ' featured' : ''}">
+        <blockquote class="lx-q">${escapeHtml(SERIF_Q(l.text))}</blockquote>
+        <div class="lx-by">
+          <span class="lx-mono lx-${escapeHtml(l.who)}" aria-hidden="true">${escapeHtml(lxMono(l.who))}</span>
+          <div><b>${escapeHtml(th.name || '')}</b><span>${escapeHtml(l.source)}, translated by ${escapeHtml(l.tr)}</span></div>
+        </div>
+        <p class="lx-meaning">${escapeHtml(l.meaning)}</p>
+        <details class="lx-practise"${opts.featured ? ' open' : ''}>
+          <summary>Practise it</summary>
+          <dl>
+            <div><dt>Think about it</dt><dd>${escapeHtml(l.ask)}</dd></div>
+            <div><dt>Try today</dt><dd>${escapeHtml(l.try)}</dd></div>
+          </dl>
+        </details>
+        <footer class="lx-foot">
+          <button type="button" class="dc-chip topic" onclick="setLessonTopic('${escapeHtml(l.topic)}')">${escapeHtml(LX.topics[l.topic] || l.topic)}</button>
+          <button type="button" class="disc-action ${isSaved ? 'saved' : ''}" data-idea="${id}" onclick="toggleSave('${id}', this)" aria-pressed="${isSaved}">${BOOKMARK(isSaved)}${isSaved ? (opts.removeLabel ? 'Remove' : 'Saved') : 'Save'}</button>
+        </footer>
+      </article>`;
+  }
+  window.setLessonTopic = function (topic) {
+    lxTopic = lxTopic === topic ? null : topic;
+    renderDiscover();
+  };
+  window.resetLessons = function () { lxWho = 'all'; lxTopic = null; window.clearSearch(); };
   function renderDiscover() {
+    const grid = document.getElementById('disc-grid');
+    if (!grid) return;
+    const countEl = document.getElementById('discover-count');
+    if (countEl) countEl.textContent = LX.lessons.length;
+    const today = lxToday();
+    const todayEl = document.getElementById('lx-today');
+    if (todayEl) todayEl.innerHTML = today && !searchWords().length && lxWho === 'all' && !lxTopic
+      ? `<h2 class="lx-today-h">Today\u2019s lesson</h2>${lessonCard(today, { featured: true })}` : '';
+    // Thinkers and themes, counted against everything else that's set.
+    const base = LX.lessons.filter(lxMatches);
+    const who = document.getElementById('lx-who');
+    const whoIds = Object.keys(LX.thinkers).filter(k => LX.lessons.some(l => l.who === k));
+    const wbtn = (id, label, n) => `<button type="button" class="filter${lxWho === id ? ' active' : ''}" data-who="${id}" aria-pressed="${lxWho === id}">${label}<span class="dx-n">${n}</span></button>`;
+    who.innerHTML = wbtn('all', 'All', base.filter(l => !lxTopic || l.topic === lxTopic).length)
+      + whoIds.map(k => wbtn(k, escapeHtml(LX.thinkers[k].name), base.filter(l => l.who === k && (!lxTopic || l.topic === lxTopic)).length)).join('');
+    const tps = Object.keys(LX.topics);
+    document.getElementById('lx-topics').innerHTML = tps.map(k => {
+      const n = base.filter(l => l.topic === k && (lxWho === 'all' || l.who === lxWho)).length;
+      return `<button type="button" class="dx-topic${lxTopic === k ? ' active' : ''}" data-ltopic="${k}" aria-pressed="${lxTopic === k}">${escapeHtml(LX.topics[k])}<span class="dx-n">${n}</span></button>`;
+    }).join('');
+    const items = base.filter(l => (lxWho === 'all' || l.who === lxWho) && (!lxTopic || l.topic === lxTopic));
+    const filtered = Boolean(searchWords().length || lxWho !== 'all' || lxTopic);
+    document.getElementById('disc-result').innerHTML = `<b>${items.length} lesson${items.length === 1 ? '' : 's'}.</b> `
+      + (lxWho !== 'all' ? `From ${escapeHtml(LX.thinkers[lxWho].name)}, ${escapeHtml(LX.thinkers[lxWho].life)}. ${escapeHtml(LX.thinkers[lxWho].note)}.` : 'Short passages from Greek and Roman philosophers, each with something to try.')
+      + (filtered ? ' <button type="button" class="dx-reset" onclick="resetLessons()">Clear filters</button>' : '');
+    grid.innerHTML = items.length ? items.map(l => lessonCard(l)).join('')
+      : `<div class="empty-search">No lessons match these filters.<br><button type="button" class="reset" onclick="resetLessons()">Clear filters</button></div>`;
+  }
+
+  function renderPostFeed() {
   _pctCache = null;   // the feed may have changed since the last render
     const grid = document.getElementById('disc-grid');
     const countEl = document.getElementById('discover-count');
@@ -3978,9 +4053,10 @@
     const empty = document.getElementById('saved-empty');
     const savedItems = SEED_IDEAS.filter(i => saved.has(i.id));
     const items = savedItems.filter(matchesSearch);
-    if (savedItems.length === 0) { empty.style.display = 'flex'; grid.innerHTML = ''; return; }
+    const savedLessons = LX.lessons.filter(l => saved.has(l.id) && lxMatches(l));
+    if (savedItems.length === 0 && !LX.lessons.some(l => saved.has(l.id))) { empty.style.display = 'flex'; grid.innerHTML = ''; return; }
     empty.style.display = 'none';
-    if (items.length === 0) {
+    if (items.length === 0 && savedLessons.length === 0) {
       grid.innerHTML = `
         <div class="empty-search" style="grid-column:1/-1">
           No saved ideas match <b>“${escapeHtml(searchTerm)}”</b>.
@@ -3988,7 +4064,7 @@
         </div>`;
       return;
     }
-    grid.innerHTML = items.map(i => ideaCard(i, { search: true, removeLabel: true })).join('');
+    grid.innerHTML = savedLessons.map(l => lessonCard(l, { removeLabel: true })).join('') + items.map(i => ideaCard(i, { search: true, removeLabel: true })).join('');
   }
 
   window.toggleSave = async function(ideaId, btn) {
@@ -4313,7 +4389,7 @@
     document.querySelectorAll('.view').forEach(view => view.classList.toggle('active', view.dataset.view === v));
     const titles = {
       library:['Library', 'Everything you\'ve kept, in one place'],
-      discover:['Discover','Posts that beat their creator’s average'],
+      discover:['Discover','Lessons from Greek and Roman philosophers'],
       digest:['Digest', 'This week’s breakout posts, by niche'],
       studio:['Drafts', drafts.length ? `${drafts.length} draft${drafts.length===1?'':'s'}` : 'Start a draft'],
       lists:['My lists', lists.length ? `${lists.length} list${lists.length===1?'':'s'}` : 'No lists'],
@@ -5379,24 +5455,32 @@
     discSort = btn.dataset.sort || null;
     renderDiscover();
   }));
+  document.getElementById('lx-who').addEventListener('click', (e) => {
+    const b = e.target.closest('[data-who]'); if (!b) return;
+    lxWho = b.dataset.who; renderDiscover();
+  });
+  document.getElementById('lx-topics').addEventListener('click', (e) => {
+    const b = e.target.closest('[data-ltopic]'); if (!b) return;
+    setLessonTopic(b.dataset.ltopic);
+  });
   document.querySelectorAll('.filter[data-mode]').forEach(btn => btn.addEventListener('click', () => {
     setPressed('.filter[data-mode]', b => b === btn);
     discMode = btn.dataset.mode;
     renderDiscover();
   }));
-  document.getElementById('dx-topic-track').addEventListener('click', (e) => {
+  document.getElementById('dx-topic-track')?.addEventListener('click', (e) => {
     const b = e.target.closest('[data-topic]');
     if (!b) return;
     discTopic = b.dataset.topic || null;
     renderDiscover();
   });
-  document.getElementById('dx-topic-track').addEventListener('scroll', syncTopicArrows, { passive: true });
+  document.getElementById('dx-topic-track')?.addEventListener('scroll', syncTopicArrows, { passive: true });
   window.addEventListener('resize', syncTopicArrows);
   document.querySelectorAll('#dx-topics .dx-arrow').forEach(b => b.addEventListener('click', () => {
     const track = document.getElementById('dx-topic-track');
     track.scrollBy({ left: Number(b.dataset.dir) * track.clientWidth * 0.7, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
   }));
-  document.getElementById('dx-plats').addEventListener('click', (e) => {
+  document.getElementById('dx-plats')?.addEventListener('click', (e) => {
     const btn = e.target.closest('[data-plat]');
     if (!btn) return;
     discPlat = btn.dataset.plat;
