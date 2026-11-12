@@ -87,7 +87,9 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const secret = process.env.CLERK_WEBHOOK_SECRET;
+  // Trimmed: a secret pasted into Vercel with a trailing space or newline
+  // would otherwise fail every signature.
+  const secret = (process.env.CLERK_WEBHOOK_SECRET || '').trim();
   if (!secret) {
     console.error('[clerk-webhook] CLERK_WEBHOOK_SECRET is not set');
     return res.status(503).json({ error: 'Webhook not configured' });
@@ -95,6 +97,9 @@ export default async function handler(req, res) {
   const rawBody = await readRawBody(req);
 
   if (!verifySvix(rawBody, req.headers, secret)) {
+    // Says why without logging the secret: missing headers means the request
+    // isn't from Clerk; present headers mean the secret doesn't match.
+    console.error('[clerk-webhook] signature check failed:', req.headers['svix-id'] ? 'secret does not match this endpoint' : 'no Svix headers');
     // Deliberately vague to the caller; the detail goes to the logs.
     console.warn('[clerk-webhook] signature verification failed');
     return res.status(401).json({ error: 'Invalid signature' });
