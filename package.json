@@ -8,7 +8,7 @@
     "test": "node test/clerk-webhook.test.mjs && node test/daily-order.test.mjs && node test/polar-webhook.test.mjs && node test/welcome-email.test.mjs && node test/signin-flow.test.mjs && node test/zeno-local.test.mjs"
   },
   "dependencies": {
-    "@supabase/supabase-js": "^2.45.0",
+    "@supabase/supabase-js": "^2.119.0",
     "nodemailer": "^6.9.14"
   }
 }
