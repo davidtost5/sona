@@ -1,6 +1,9 @@
 // Clerk webhook. Two jobs:
 //   user.created → send the welcome email (api/_email-templates.js accountWelcomeEmail)
 //   user.deleted → delete the user's rows
+//   email.created → send the sign-in code in Sona's own design, but only for
+//                   emails Clerk did not deliver itself ("Delivered by Clerk"
+//                   switched off on the Verification code template)
 //
 // WHY THIS IS NOT OPTIONAL
 // Under Supabase Auth, every user table carried
@@ -13,7 +16,7 @@
 // SETUP
 //   1. Clerk Dashboard → Webhooks → Add Endpoint
 //        URL:    https://buildwithsona.com/api/clerk-webhook
-//        Events: user.created, user.deleted
+//        Events: user.created, user.deleted, email.created
 //   2. Copy the signing secret Clerk shows (starts `whsec_`)
 //   3. Add it to Vercel as CLERK_WEBHOOK_SECRET
 //
@@ -25,7 +28,7 @@
 import { createHmac, timingSafeEqual } from 'node:crypto';
 import { supabase } from './_supabase.js';
 import { sendEmail } from './_email.js';
-import { accountWelcomeEmail } from './_email-templates.js';
+import { accountWelcomeEmail, signinCodeEmail } from './_email-templates.js';
 
 // Svix signs the raw bytes. Vercel's JSON parser would re-serialise them and
 // change the signature, so it is turned off here.
@@ -120,6 +123,20 @@ export default async function handler(req, res) {
     });
     if (!sent.ok) console.error('[clerk-webhook] welcome email not sent:', sent.error);
     return res.status(200).json({ ok: true, welcomed: Boolean(sent.ok) });
+  }
+
+  if (event.type === 'email.created') {
+    // Always 200, like the welcome email: a retry could send a second code.
+    const d = event.data || {};
+    const otp = d.data && d.data.otp_code;
+    const to = typeof d.to_email_address === 'string' ? d.to_email_address.trim() : '';
+    if (d.delivered_by_clerk !== false || !otp || !to) {
+      return res.status(200).json({ ok: true, sent: false });
+    }
+    const mail = signinCodeEmail({ code: otp, email: to });
+    const sent = await sendEmail({ to, subject: mail.subject, html: mail.html, text: mail.text });
+    if (!sent.ok) console.error('[clerk-webhook] code email not sent:', sent.error);
+    return res.status(200).json({ ok: true, sent: Boolean(sent.ok) });
   }
 
   if (event.type !== 'user.deleted') {

@@ -483,3 +483,63 @@ export function broadcastEmail(opts = {}) {
 
   return { subject, html, text };
 }
+
+/**
+ * The sign-in code email. Plain on purpose: the code is the whole message, so
+ * it sits large in a grey box and nothing competes with it. Sent by
+ * api/clerk-webhook.js on Clerk's email.created event, once "Delivered by
+ * Clerk" is switched off for the Verification code template.
+ * @param {{ code: string, email?: string }} opts
+ */
+export function signinCodeEmail({ code, email } = {}) {
+  const c = String(code || '').replace(/[^A-Za-z0-9]/g, '').slice(0, 12);
+  const to = String(email || '').replace(/[\r\n<>]/g, '').trim();
+  const subject = `${c} is your Sona code`;
+  const html = `<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<meta name="supported-color-schemes" content="light">
+<title>${esc(subject)}</title>
+</head>
+<body style="margin:0;padding:0;background:#ffffff;">
+  <div style="display:none;max-height:0;overflow:hidden;opacity:0;color:transparent;height:0;width:0;">Your code is ${esc(c)}. It works for 10 minutes.&#847; &#847; &#847; &#847; &#847; &#847;</div>
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#ffffff;">
+    <tr>
+      <td align="center" style="padding:40px 20px;">
+        <table role="presentation" width="520" cellpadding="0" cellspacing="0" border="0" style="width:100%;max-width:520px;">
+          <tr>
+            <td style="padding:0 0 36px 0;">
+              <a href="${SITE}" style="font-family:${FONT};font-size:24px;font-weight:600;letter-spacing:-0.6px;color:#111827;text-decoration:none;"><img src="${ASSETS}/mark.png?v=2" width="34" height="34" alt="" style="display:inline-block;vertical-align:-9px;margin-right:10px;border:0;border-radius:8px;">Sona</a>
+            </td>
+          </tr>
+          <tr>
+            <td style="font-family:${FONT};font-size:17px;line-height:1.6;color:#1f2937;padding:0 0 28px 0;">
+              Here is your code to sign in to <b>Sona</b>${to ? ` as <b>${esc(to)}</b>` : ''}. <b>It works for the next 10 minutes.</b>
+            </td>
+          </tr>
+          <tr>
+            <td align="center" style="padding:30px 12px;border-radius:12px;background:#f3f4f6;font-family:${FONT};font-size:44px;line-height:1;font-weight:700;letter-spacing:12px;color:#111827;">${esc(c)}</td>
+          </tr>
+          <tr>
+            <td style="font-family:${FONT};font-size:15px;line-height:1.6;color:#6b7280;padding:28px 0 32px 0;">
+              Type it into the sign-in page, or paste it. If you didn’t ask for this code, you can ignore this email. Questions: <a href="mailto:david@buildwithsona.com" style="color:#2563eb;">david@buildwithsona.com</a>.
+            </td>
+          </tr>
+          <tr><td style="border-top:1px solid #e5e7eb;font-size:0;line-height:0;">&nbsp;</td></tr>
+          <tr>
+            <td align="center" style="font-family:${FONT};font-size:14px;line-height:1.7;color:#6b7280;padding:24px 0 0 0;">
+              ${to ? `This email was sent to <b style="color:#111827;">${esc(to)}</b>.<br>` : ''}<a href="${SITE}" style="color:#111827;font-weight:600;text-decoration:none;">Sona</a>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>`;
+  const text = `Your Sona sign-in code: ${c}\n\nIt works for the next 10 minutes. If you didn't ask for it, ignore this email.\n\nSona: ${SITE}`;
+  return { subject, html, text };
+}
