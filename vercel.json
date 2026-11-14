@@ -115,6 +115,11 @@
   ],
   "redirects": [
     {
+      "source": "/index.html",
+      "destination": "/",
+      "permanent": true
+    },
+    {
       "source": "/resources.html",
       "destination": "/",
       "permanent": true
