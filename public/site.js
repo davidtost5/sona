@@ -2,6 +2,16 @@
  * that uses site.css. The theme itself is set by the inline bootstrap in each
  * page's <head> (before paint): a saved choice wins, otherwise dark. */
 
+// Load the one shared PostHog initializer without duplicating it on marketing pages.
+(function () {
+  if (window.__sonaPostHogLoaded) return;
+  window.__sonaPostHogLoaded = true;
+  var script = document.createElement('script');
+  script.src = '/posthog.js';
+  script.defer = true;
+  document.head.appendChild(script);
+})();
+
 // Sign-in: Sona Auth and Clerk are fetched lazily. Calls made before they
 // arrive are queued and replayed, so every Start free / Sign in works at once.
 window.SonaAuth = window.SonaAuth || {

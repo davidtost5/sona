@@ -6,6 +6,7 @@
 <meta name="robots" content="noindex">
 <!-- Theme — fully automatic, follows the wall clock (7am–7pm light, else dark) -->
 <script>(function(){try{var t=null;try{t=localStorage.getItem('sona-theme');}catch(e){}if(t==='light'||t==='dark'){window.__sonaThemeChosen=true;}else{var h=new Date().getHours();t=(h<7||h>=19)?'dark':'light';}document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
+<script src="/posthog.js" defer></script>
 <meta name="color-scheme" content="light dark">
 <link rel="icon" type="image/svg+xml" href="/logo.svg?v=2">
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png?v=2">
@@ -2236,6 +2237,37 @@
   let sb = null;
   let user = null;
   let demoMode = false;
+  function capturePostHog(event, properties) {
+    try {
+      if (window.SonaPostHog && typeof window.SonaPostHog.capture === 'function') {
+        window.SonaPostHog.capture(event, properties);
+      }
+    } catch (_) {}
+  }
+  function logPostHog(message, properties) {
+    try {
+      if (window.SonaPostHog && typeof window.SonaPostHog.log === 'function') {
+        window.SonaPostHog.log('info', message, properties);
+      }
+    } catch (_) {}
+  }
+  function identifyPostHogUser(account) {
+    if (!account || !account.id) return;
+    const identity = {
+      id: account.id,
+      properties: {
+        email: account.email || undefined,
+        name: (account.user_metadata && account.user_metadata.full_name) || undefined,
+      },
+    };
+    if (window.SonaPostHog) {
+      window.SonaPostHog.identify(identity);
+      return;
+    }
+    window.addEventListener('sona_posthog_ready', function () {
+      window.SonaPostHog.identify(identity);
+    }, { once: true });
+  }
   const AV = (h) => `https://unavatar.io/x/${h}`;
   const SEED_IDEAS = [
     { id:'i1', cat:'founders', name:'Alex Hormozi',     av:AV('AlexHormozi'),  handle:'@AlexHormozi · X',   text:'Most founders post too much — not too little. The ones who break out pick one contrarian take and stick to it.', tag:'12× outlier', views:'1.2M views',
@@ -2734,6 +2766,7 @@
         }
         user = session.user;
       }
+      identifyPostHogUser(user);
       await showApp();
     } catch (e) {
       // A stalled session check means the stored token is unusable. Clearing it
@@ -2921,6 +2954,7 @@
   }
   async function saveDraft() {
     const d = currentDraft();
+    const isNewDraft = !d.id;
     if (!d.title && !d.body) {
       document.getElementById('draft-status').textContent = 'Add a title or body first.';
       return;
@@ -2976,6 +3010,8 @@
     }
     document.getElementById('draft-status').textContent = 'Saved.';
     renderDrafts();
+    capturePostHog('draft_saved', { is_new: isNewDraft, platform: d.platform });
+    logPostHog('draft saved', { is_new: isNewDraft, platform: d.platform });
   }
   async function deleteDraft() {
     if (!activeDraftId) { newDraft(); return; }
@@ -3492,6 +3528,7 @@
   window.useHook = function(id) {
     const h = HOOKS_LIBRARY.find(x => x.id === id);
     if (!h) return;
+    capturePostHog('hook_added_to_draft', { hook_category: h.cat });
     usedHookIds.add(id);
     try { localStorage.setItem('sona_used_hooks', JSON.stringify([...usedHookIds])); } catch (_) {}
     activeDraftId = null;
@@ -3585,6 +3622,7 @@
   window.usePattern = function(i) {
     const p = PATTERNS[i];
     if (!p) return;
+    capturePostHog('pattern_added_to_draft', { pattern_source: 'library' });
     activeDraftId = null;
     document.getElementById('draft-title').value = '';
     const body = document.getElementById('draft-body');
@@ -4069,7 +4107,9 @@
 
   window.toggleSave = async function(ideaId, btn) {
     if (!user) return;
-    if (saved.has(ideaId)) {
+    const idea = SEED_IDEAS.find(item => item.id === ideaId);
+    const wasSaved = saved.has(ideaId);
+    if (wasSaved) {
       saved.delete(ideaId);
       if (!demoMode && sb) await sb.from('saved_ideas').delete().eq('user_id', user.id).eq('idea_id', ideaId);
     } else {
@@ -4084,6 +4124,7 @@
     renderSaved();
     renderSwipe();
     renderDrafts();
+    if (!wasSaved) capturePostHog('saved_idea_added', { idea_category: idea ? idea.cat : 'unknown' });
   };
 
   // ─── SCRIPTS — 3 free formats, template-based (no AI, zero cost) ───
@@ -4126,6 +4167,8 @@
       </div>
     `).join('');
     results.classList.add('show');
+    capturePostHog('scripts_generated', { product_provided: Boolean(product), audience_provided: Boolean(audience) });
+    logPostHog('scripts generated', { product_provided: Boolean(product), audience_provided: Boolean(audience) });
   };
 
   window.copyScript = function(btn) {
@@ -4481,6 +4524,7 @@
 
   function chooseNiche(niche) {
     try { localStorage.setItem(NICHE_KEY, niche); } catch (_) {}
+    capturePostHog('niche_selected', { niche: niche });
     applyNiche(niche);
     document.getElementById('niche-back').classList.remove('show');
     showDecodeCue();
@@ -5647,6 +5691,7 @@
         // Prefill the buyer's email and tag the checkout with their user id (Polar's link parameters).
         if (user?.email && !demoMode) u.searchParams.set('customer_email', user.email);
         if (user?.id && !demoMode) u.searchParams.set('reference_id', user.id);
+        capturePostHog('checkout_started', { plan: 'creator_monthly' });
         location.href = u.toString();
         return;
       }
@@ -5661,7 +5706,12 @@
       return;
     }
     if (confirm('Sign out of Sona?')) {
+      if (window.SonaAuth && window.SonaAuth.getClerk) {
+        await window.SonaAuth.signOut();
+        return;
+      }
       await sb.auth.signOut();
+      if (window.SonaPostHog) window.SonaPostHog.reset();
       window.location.href = '/';
     }
   });
@@ -5680,6 +5730,7 @@
   window.openDecoder = async function(id) {
     const i = SEED_IDEAS.find(x => x.id === id);
     if (!i) return;
+    capturePostHog('outlier_decoded', { idea_category: i.cat });
     document.getElementById('decoder-back').dataset.idea = id;
     document.getElementById('decoder-tag').textContent = `${i.tag} · ${i.cat}`;
     document.getElementById('decoder-name').textContent = i.name;
@@ -5758,6 +5809,7 @@
     if (_cr) _cr.textContent = 'Not saved yet';
     if (window.syncDraftCounts) window.syncDraftCounts();
      document.getElementById('draft-status').textContent = 'Pattern loaded. Rewrite in your voice.';
+     capturePostHog('pattern_applied_to_draft', { idea_category: i.cat });
      closeDecoder();
      switchView('studio');
      setTimeout(() => document.getElementById('draft-body').focus(), 50);

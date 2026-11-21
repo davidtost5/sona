@@ -16,6 +16,7 @@
 // rather than silently sending the customer to the wrong price.
 
 import { billingPortal } from './_billing-portal.js';
+import { posthogLog } from './posthog-logs.js';
 
 const PLANS = {
   'creator-monthly': { env: 'POLAR_LINK_CREATOR_MONTHLY', label: 'Creator · monthly', price: '€19/mo' },
@@ -79,6 +80,7 @@ export default function handler(req, res) {
     });
   }
 
+  posthogLog.info('checkout link served', { plan: requested, mode: test ? 'test' : 'live' });
   return res.status(200).json({
     ok: true,
     url,

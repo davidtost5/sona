@@ -287,9 +287,25 @@
     window.location.href = signinUrl(true, afterUrl);
   }
 
+  function identifyPostHog(user) {
+    if (!user || !user.id) return;
+    var identity = {
+      id: user.id,
+      properties: { email: user.email || undefined, name: user.name || undefined },
+    };
+    if (window.SonaPostHog) {
+      window.SonaPostHog.identify(identity);
+      return;
+    }
+    window.addEventListener('sona_posthog_ready', function () {
+      window.SonaPostHog.identify(identity);
+    }, { once: true });
+  }
+
   async function signOut() {
     var clerk = await ensureClerk();
     await clerk.signOut();
+    if (window.SonaPostHog) window.SonaPostHog.reset();
     window.location.href = '/';
   }
 
@@ -466,7 +482,11 @@
     if (!cfg.clerkPublishableKey) return; // not configured yet — leave the page alone
 
     var clerk = await ensureClerk();
-    var repaint = async function () { paint(await getUser()); };
+    var repaint = async function () {
+      var user = await getUser();
+      identifyPostHog(user);
+      paint(user);
+    };
     clerk.addListener(repaint);
     await repaint();
 
