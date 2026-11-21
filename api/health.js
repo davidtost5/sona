@@ -22,6 +22,7 @@
 
 import { supabase } from './_supabase.js';
 import { rateLimit, tooMany } from './_rate-limit.js';
+import { posthogLog } from './posthog-logs.js';
 
 // Rows written by the daily ingest are prefixed by source; anything else was
 // curated by hand. Freshness of the ingested set is the real signal that the
@@ -76,6 +77,7 @@ export default async function handler(req, res) {
     // The daily run should never leave the ingested set older than a day or so.
     // Two days of slack absorbs a single missed or slow run before complaining.
     const ingestStale = ageHours === null || ageHours > 48;
+    posthogLog.info('health check completed', { ingest_stale: ingestStale, database_reachable: true });
 
     return res.status(200).json({
       ok: true,

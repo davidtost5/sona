@@ -21,6 +21,24 @@
     return initPromise;
   }
 
+  function identifyPostHog(user) {
+    if (!user || !user.id) return;
+    const identity = {
+      id: user.id,
+      properties: {
+        email: user.email || undefined,
+        name: (user.user_metadata && user.user_metadata.full_name) || undefined,
+      },
+    };
+    if (window.SonaPostHog) {
+      window.SonaPostHog.identify(identity);
+      return;
+    }
+    window.addEventListener('sona_posthog_ready', function () {
+      window.SonaPostHog.identify(identity);
+    }, { once: true });
+  }
+
   // ═══ INIT SUPABASE ═══
   async function initSupabase() {
     try {
@@ -50,11 +68,13 @@
         // Listen for auth state changes
         supabase.auth.onAuthStateChange((event, session) => {
           currentUser = session?.user || null;
+          identifyPostHog(currentUser);
           updateUI(currentUser);
         });
         // Check existing session
         const { data: { session } } = await supabase.auth.getSession();
         currentUser = session?.user || null;
+        identifyPostHog(currentUser);
         updateUI(currentUser);
         return true;
       }
@@ -99,6 +119,7 @@
   async function signOut() {
     if (!supabase) return;
     await supabase.auth.signOut();
+    if (window.SonaPostHog) window.SonaPostHog.reset();
     currentUser = null;
     updateUI(null);
     if (window.location.pathname.endsWith('/app.html')) window.location.href = '/';
