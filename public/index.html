@@ -1163,6 +1163,9 @@
         if (window.SonaData && window.SonaData.submitWaitlist) {
           await window.SonaData.submitWaitlist({ email: input.value, source: 'footer-newsletter' });
         }
+        if (window.posthog && typeof window.posthog.capture === 'function') {
+          window.posthog.capture('newsletter_subscribed', { source: 'footer_newsletter' });
+        }
         btn.textContent = 'You\'re on the list'; input.value = '';
       } catch (_) { btn.textContent = 'Try again'; }
       setTimeout(() => { btn.textContent = orig; btn.disabled = false; }, 2400);
@@ -1177,7 +1180,13 @@
     try {
       const r = await fetch('/api/checkout?plan=' + encodeURIComponent(plan));
       const j = await r.json();
-      if (j && j.ok && j.url) { location.href = j.url; return; }
+      if (j && j.ok && j.url) {
+        if (window.posthog && typeof window.posthog.capture === 'function') {
+          window.posthog.capture('checkout_started', { plan: plan, entry_point: 'pricing' });
+        }
+        location.href = j.url;
+        return;
+      }
     } catch (_) { /* fall through to signup */ }
     if (btn) { btn.disabled = false; btn.innerHTML = orig; }
     if (window.SonaAuth) window.SonaAuth.openSignup();

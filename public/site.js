@@ -2,6 +2,16 @@
  * that uses site.css. The theme itself is set by the inline bootstrap in each
  * page's <head> (before paint): a saved choice wins, otherwise dark. */
 
+// Load the one shared browser analytics client for every page using this shell.
+(function () {
+  if (document.querySelector('script[data-sona-posthog]')) return;
+  var script = document.createElement('script');
+  script.src = '/posthog.js';
+  script.defer = true;
+  script.dataset.sonaPosthog = 'true';
+  document.head.appendChild(script);
+})();
+
 // Sign-in: Sona Auth and Clerk are fetched lazily. Calls made before they
 // arrive are queued and replayed, so every Start free / Sign in works at once.
 window.SonaAuth = window.SonaAuth || {

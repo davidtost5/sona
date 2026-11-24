@@ -1326,6 +1326,7 @@
   .chip[hidden] { display:none; }
   .pb-clean svg, .creator-stats svg { width:13px; height:13px; vertical-align:-2px; margin-right:3px; }
 </style>
+<script src="/posthog.js" defer></script>
 <script src="/lessons.js?v=20261112a"></script>
 <script src="local-decode.js?v=20260830a"></script>
 <script src="/zeno-local.js?v=20261111a"></script>
@@ -2300,6 +2301,21 @@
       decoded:{ hook:'Tactical contrarian', tension:'Short = better collides with the urge to over-explain.', payoff:'A copyable formula for the next message they send.', pattern:'[Small thing] gets [outsized result]. Most people [over-complicate it]. [Stripped-down step]. [Stripped-down step]. [Final action].', why:'The staccato closing ("One clear question. One clear deadline. Hit send.") demonstrates the brevity it preaches — form mirrors content.', apply:'[The lean version] gets [the better result]. Most people [pad it]. [One essential]. [One essential]. [The action].' } },
   ];
 
+  // Browser events inherit the Clerk identity established in clerk-auth.js.
+  // Captures are non-blocking so product actions continue if analytics is unavailable.
+  function captureProductEvent(event, properties) {
+    if (window.posthog && typeof window.posthog.capture === 'function') {
+      window.posthog.capture(event, properties);
+    }
+  }
+
+  // Logs are intentionally limited to records introduced in this integration.
+  function logProductLifecycle(message, attributes) {
+    if (window.posthog && window.posthog.logger && typeof window.posthog.logger.info === 'function') {
+      window.posthog.logger.info(message, attributes);
+    }
+  }
+
   // ─── Outliers (Discover feed) ───
   // If the `outliers` table has curated rows, the Discover feed uses them instead
   // of the static seed above. We mutate SEED_IDEAS in place so every downstream
@@ -2798,6 +2814,10 @@
     renderHomeRecents();
     syncNavCounts();
     maybeAskNiche();
+    logProductLifecycle('workspace ready', {
+      event: 'workspace_ready',
+      mode: demoMode ? 'preview' : 'authenticated'
+    });
   }
 
   // ─── Drafts ───
@@ -2921,6 +2941,7 @@
   }
   async function saveDraft() {
     const d = currentDraft();
+    const isNewDraft = !d.id;
     if (!d.title && !d.body) {
       document.getElementById('draft-status').textContent = 'Add a title or body first.';
       return;
@@ -2975,6 +2996,10 @@
       document.getElementById('draft-meta').textContent = `Saved ${new Date(updated.updatedAt).toLocaleString()}`;
     }
     document.getElementById('draft-status').textContent = 'Saved.';
+    captureProductEvent('draft_saved', {
+      action: isNewDraft ? 'created' : 'updated',
+      platform: d.platform || 'X',
+    });
     renderDrafts();
   }
   async function deleteDraft() {
@@ -3143,6 +3168,12 @@
       localStorage.setItem(storageKey('style-guide'), JSON.stringify(styleGuide));
     }
     status.textContent = 'Saved.';
+    captureProductEvent('playbook_saved', {
+      hook_count: styleGuide.hookPatterns.split('\n').filter(Boolean).length,
+      voice_rule_count: styleGuide.voiceRules.split('\n').filter(Boolean).length,
+      signature_line_count: styleGuide.signatureLines.split('\n').filter(Boolean).length,
+      banned_phrase_count: styleGuide.bannedPhrases.split(',').filter(Boolean).length,
+    });
     renderStyleGuide();
     setTimeout(() => { const s = document.getElementById('style-status'); if (s) s.textContent = 'No unsaved changes.'; }, 1800);
   }
@@ -4069,6 +4100,7 @@
 
   window.toggleSave = async function(ideaId, btn) {
     if (!user) return;
+    const isNewSave = !saved.has(ideaId);
     if (saved.has(ideaId)) {
       saved.delete(ideaId);
       if (!demoMode && sb) await sb.from('saved_ideas').delete().eq('user_id', user.id).eq('idea_id', ideaId);
@@ -4077,6 +4109,11 @@
       if (!demoMode && sb) await sb.from('saved_ideas').insert({ user_id: user.id, idea_id: ideaId });
     }
     if (demoMode || !sb) localStorage.setItem('sona-preview-saved', JSON.stringify([...saved]));
+    if (isNewSave) {
+      captureProductEvent('idea_saved', {
+        item_type: LX.lessons.some(lesson => lesson.id === ideaId) ? 'lesson' : 'post',
+      });
+    }
     document.getElementById('saved-count').textContent = saved.size;
     syncOnboard();
     updateWorkspaceUI();
@@ -5326,6 +5363,7 @@
           await pause(16);
         }
         reply.posts = (out.posts || []).slice(0, 4);
+        captureProductEvent('research_question_answered', { source_count: reply.posts.length });
         convo.push(reply); save();
         renderAll();
         if (follow) toBottom(false);
@@ -5643,6 +5681,12 @@
       const r = await fetch('/api/checkout?plan=creator-monthly');
       const j = await r.json();
       if (j.ok && j.url) {
+        captureProductEvent('checkout_started', { plan: 'creator_monthly', entry_point: 'app_upsell' });
+        logProductLifecycle('checkout redirect started', {
+          event: 'checkout_redirect_started',
+          plan: 'creator_monthly',
+          entry_point: 'app_upsell'
+        });
         const u = new URL(j.url);
         // Prefill the buyer's email and tag the checkout with their user id (Polar's link parameters).
         if (user?.email && !demoMode) u.searchParams.set('customer_email', user.email);
@@ -5661,7 +5705,12 @@
       return;
     }
     if (confirm('Sign out of Sona?')) {
+      if (window.SonaAuth && window.SonaAuth.signOut) {
+        await window.SonaAuth.signOut();
+        return;
+      }
       await sb.auth.signOut();
+      if (window.posthog && typeof window.posthog.reset === 'function') window.posthog.reset();
       window.location.href = '/';
     }
   });
@@ -5688,6 +5737,7 @@
     // Static decode (the 8 seed posts) — instant, free, no API call.
     if (i.decoded) {
       fillDecoder(i.decoded);
+      captureProductEvent('post_decoded', { source: String(i.id).startsWith('paste_') ? 'pasted_post' : 'feed_post' });
       document.getElementById('decoder-back').classList.add('show');
       // Initialize focus trap after modal is shown
       requestAnimationFrame(() => trapDecoderFocus());
@@ -5700,6 +5750,7 @@
     // so there is no loading state and no failure mode to handle.
     i.decoded = localDecode(i.text, { author: i.name, handle: i.handle });
     fillDecoder(i.decoded);
+    captureProductEvent('post_decoded', { source: String(i.id).startsWith('paste_') ? 'pasted_post' : 'feed_post' });
     document.getElementById('decoder-back').classList.add('show');
     requestAnimationFrame(() => trapDecoderFocus());
   };
@@ -5758,6 +5809,7 @@
     if (_cr) _cr.textContent = 'Not saved yet';
     if (window.syncDraftCounts) window.syncDraftCounts();
      document.getElementById('draft-status').textContent = 'Pattern loaded. Rewrite in your voice.';
+     captureProductEvent('draft_template_applied', { source: 'decoded_post' });
      closeDecoder();
      switchView('studio');
      setTimeout(() => document.getElementById('draft-body').focus(), 50);

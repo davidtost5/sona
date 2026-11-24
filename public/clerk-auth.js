@@ -31,6 +31,39 @@
   var clerkReady = null;     // Promise<Clerk>, resolved once Clerk.load() returns
   var supabaseClient = null; // Supabase client bound to Clerk's token
   var config = null;         // { url, anonKey, clerkPublishableKey, ... }
+  var posthogIdentifiedUserId = null;
+  var pendingPosthogUser = null;
+
+  // Identify once when Clerk confirms the authenticated user. The PostHog
+  // initializer loads asynchronously, so retain the known user until it is ready.
+  function identifyPosthogUser(user) {
+    if (!user || !user.id || posthogIdentifiedUserId === user.id) return;
+    if (!window.posthog || typeof window.posthog.identify !== 'function') {
+      pendingPosthogUser = user;
+      return;
+    }
+    if (posthogIdentifiedUserId && posthogIdentifiedUserId !== user.id) {
+      window.posthog.reset();
+    }
+    var properties = {};
+    if (user.email) properties.email = user.email;
+    if (user.name) properties.name = user.name;
+    window.posthog.identify(user.id, properties);
+    posthogIdentifiedUserId = user.id;
+    pendingPosthogUser = null;
+  }
+
+  function resetPosthogUser() {
+    pendingPosthogUser = null;
+    posthogIdentifiedUserId = null;
+    if (window.posthog && typeof window.posthog.reset === 'function') {
+      window.posthog.reset();
+    }
+  }
+
+  window.addEventListener('sona:posthog-ready', function () {
+    identifyPosthogUser(pendingPosthogUser);
+  });
 
   // ─── Config ───
 
@@ -288,6 +321,7 @@
   }
 
   async function signOut() {
+    resetPosthogUser();
     var clerk = await ensureClerk();
     await clerk.signOut();
     window.location.href = '/';
@@ -311,7 +345,9 @@
       window.location.href = redirectTo || '/signin';
       return null;
     }
-    return await getUser();
+    var user = await getUser();
+    identifyPosthogUser(user);
+    return user;
   }
 
   // Swaps the nav between signed-out and signed-in.
@@ -466,7 +502,11 @@
     if (!cfg.clerkPublishableKey) return; // not configured yet — leave the page alone
 
     var clerk = await ensureClerk();
-    var repaint = async function () { paint(await getUser()); };
+    var repaint = async function () {
+      var user = await getUser();
+      identifyPosthogUser(user);
+      paint(user);
+    };
     clerk.addListener(repaint);
     await repaint();
 
