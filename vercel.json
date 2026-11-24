@@ -18,6 +18,10 @@
       "destination": "/api/checkout.js"
     },
     {
+      "source": "/api/posthog-config",
+      "destination": "/api/posthog-config.js"
+    },
+    {
       "source": "/api/billing-portal",
       "destination": "/api/checkout.js?action=portal"
     },
