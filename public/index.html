@@ -23,19 +23,19 @@
 <script src="/site.js?v=20261106d" defer></script>
 <script src="/consent.js?v=20261111b" defer></script>
 <title>Find Substack, X and LinkedIn posts that outperform | Sona</title>
-<meta name="description" content="Sona finds Substack, X and LinkedIn posts that beat their creator&#x27;s usual, shows the hook and structure behind each one, and helps you write your own. Free to start.">
+<meta name="description" content="Sona finds Substack, X and LinkedIn posts that beat their creator&#x27;s usual and shows how each one is built, so you can write your own. Free to start.">
 <link rel="canonical" href="https://buildwithsona.com/">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Sona">
 <meta property="og:title" content="Find Substack, X and LinkedIn posts that outperform | Sona">
-<meta property="og:description" content="Sona finds Substack, X and LinkedIn posts that beat their creator&#x27;s usual, shows the hook and structure behind each one, and helps you write your own. Free to start.">
+<meta property="og:description" content="Sona finds Substack, X and LinkedIn posts that beat their creator&#x27;s usual and shows how each one is built, so you can write your own. Free to start.">
 <meta property="og:url" content="https://buildwithsona.com/">
 <meta property="og:image" content="https://buildwithsona.com/og.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Find Substack, X and LinkedIn posts that outperform | Sona">
-<meta name="twitter:description" content="Sona finds Substack, X and LinkedIn posts that beat their creator&#x27;s usual, shows the hook and structure behind each one, and helps you write your own. Free to start.">
+<meta name="twitter:description" content="Sona finds Substack, X and LinkedIn posts that beat their creator&#x27;s usual and shows how each one is built, so you can write your own. Free to start.">
 <meta name="twitter:image" content="https://buildwithsona.com/og.png">
 <style>
   /* Homepage only. Tokens, rails, nav, keys and footer live in site.css. */
@@ -233,6 +233,13 @@
   .also .icon-sq { margin-bottom: 16px; }
   .also h3 { font-size: 15px; }
   .also p { margin-top: 4px; font-size: 14.5px; color: var(--ink-3); }
+  .guide-cells > a { display: block; padding: 24px; color: inherit; text-decoration: none; transition: background .15s; }
+  .guide-cells > a:hover { background: var(--card); }
+  .guide-cells > a:focus-visible { outline: 2px solid var(--ink); outline-offset: -2px; }
+  .guide-cells h3 { font-size: 15.5px; }
+  .guide-cells p { margin-top: 6px; font-size: 14.5px; line-height: 1.55; color: var(--ink-3); }
+  .guides-more { margin-top: 18px; font-size: 15px; }
+  .guides-more a { color: var(--ink); text-decoration: underline; text-underline-offset: 3px; text-decoration-color: var(--line-2); }
 
   /* Pricing: three ruled columns */
   .tiers { grid-template-columns: repeat(3, 1fr); }
@@ -832,6 +839,21 @@
       <div><span class="icon-sq" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/><path d="M10 6.5h4a3 3 0 0 1 3 3V14"/></svg></span><h3>Canvas</h3><p>Lay ideas out side by side and connect them.</p></div>
       <div><span class="icon-sq" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h4v16H4zM10 4h4v16h-4zM16 5l4 1-3 14-4-1"/></svg></span><h3>Library</h3><p>Everything you've kept, in one place.</p></div>
     </div>
+  </div>
+</section>
+
+<section class="sec ruled" id="guides" aria-labelledby="guides-h">
+  <div class="wrap">
+    <div class="sec-head"><h2 id="guides-h">Guides for Substack writers, <span class="tone">free to read.</span></h2></div>
+    <div class="cells also guide-cells">
+      <a href="/how-to-grow-on-substack.html"><h3>How to grow on Substack</h3><p>Seven things writers who grow tend to do, and a weekly routine.</p></a>
+      <a href="/getting-started-on-substack.html"><h3>Getting started on Substack</h3><p>Set up your publication and send your first post.</p></a>
+      <a href="/substack-notes.html"><h3>Substack Notes</h3><p>How notes differ from posts, what to share and when.</p></a>
+      <a href="/schedule-substack-posts.html"><h3>Schedule Substack posts</h3><p>Plan posts ahead, and what to do with notes.</p></a>
+      <a href="/substack-ideas.html"><h3>Substack newsletter ideas</h3><p>Formats you can repeat and posts for slow weeks.</p></a>
+      <a href="/substack-name-ideas.html"><h3>Substack name ideas</h3><p>Examples in four styles, and how to choose yours.</p></a>
+    </div>
+    <p class="guides-more"><a href="/guides.html">All guides, including LinkedIn</a></p>
   </div>
 </section>
 

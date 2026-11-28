@@ -7,7 +7,7 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://buildwithsona.com/</loc>
-    <lastmod>2026-11-18</lastmod>
+    <lastmod>2026-11-28</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
@@ -67,15 +67,15 @@
   </url>
   <url>
     <loc>https://buildwithsona.com/guides.html</loc>
-    <lastmod>2026-11-18</lastmod>
+    <lastmod>2026-11-28</lastmod>
   </url>
   <url>
     <loc>https://buildwithsona.com/how-to-grow-on-substack.html</loc>
-    <lastmod>2026-11-15</lastmod>
+    <lastmod>2026-11-28</lastmod>
   </url>
   <url>
     <loc>https://buildwithsona.com/substack-notes.html</loc>
-    <lastmod>2026-11-15</lastmod>
+    <lastmod>2026-11-28</lastmod>
   </url>
   <url>
     <loc>https://buildwithsona.com/substack-ideas.html</loc>
@@ -92,5 +92,29 @@
   <url>
     <loc>https://buildwithsona.com/is-substack-a-blog.html</loc>
     <lastmod>2026-11-18</lastmod>
+  </url>
+  <url>
+    <loc>https://buildwithsona.com/getting-started-on-substack.html</loc>
+    <lastmod>2026-11-28</lastmod>
+  </url>
+  <url>
+    <loc>https://buildwithsona.com/schedule-substack-posts.html</loc>
+    <lastmod>2026-11-28</lastmod>
+  </url>
+  <url>
+    <loc>https://buildwithsona.com/substack-restack.html</loc>
+    <lastmod>2026-11-28</lastmod>
+  </url>
+  <url>
+    <loc>https://buildwithsona.com/substack-welcome-email.html</loc>
+    <lastmod>2026-11-28</lastmod>
+  </url>
+  <url>
+    <loc>https://buildwithsona.com/substack-about-page.html</loc>
+    <lastmod>2026-11-28</lastmod>
+  </url>
+  <url>
+    <loc>https://buildwithsona.com/substack-vs-medium.html</loc>
+    <lastmod>2026-11-28</lastmod>
   </url>
 </urlset>
